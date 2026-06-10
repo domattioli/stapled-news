@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run 1 - Stapled News</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1, h2 { color: #333; }
+        .run-header { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .run-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .meta-item { }
+        .meta-label { font-size: 0.9em; color: #666; font-weight: 600; }
+        .meta-value { font-size: 1.1em; color: #333; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f9f9f9; font-weight: 600; color: #555; }
+        tr:hover { background: #fafafa; }
+        .event-section { margin-bottom: 30px; }
+        .event-row { cursor: pointer; }
+        .event-details { display: none; background: #f9f9f9; }
+        .event-row.expanded + .event-details { display: table-row; }
+        .weights-list { margin-top: 12px; padding: 8px; background: #f0f0f0; border-radius: 3px; }
+        .weight-item { margin: 6px 0; font-size: 0.9em; }
+        .weight-outlet { font-weight: 600; color: #0066cc; }
+        .weight-reason { color: #666; margin-left: 12px; }
+        .confidence { display: inline-block; background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 3px; font-size: 0.85em; font-weight: 600; }
+        .uncorroborated { display: inline-block; background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 3px; font-size: 0.85em; font-weight: 600; }
+        .outlet-table { margin-bottom: 40px; }
+        .outlet-row { }
+        .outlet-bar { background: #e3f2fd; height: 30px; display: flex; align-items: center; padding: 0 8px; border-radius: 3px; }
+        footer { color: #999; font-size: 0.9em; margin-top: 40px; padding: 20px; background: white; border-radius: 5px; }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+    <script>
+        function toggleEvent(el) {
+            el.classList.toggle('expanded');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Run #1 Report</h1>
+
+        <div class="run-header">
+            <div class="run-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Status</div>
+                    <div class="meta-value">converged</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Created</div>
+                    <div class="meta-value">2026-06-10T00:14:05.131368</div>
+                </div>
+                
+                <div class="meta-item">
+                    <div class="meta-label">Recovery Verdict</div>
+                    <div class="meta-value">PASS</div>
+                </div>
+                
+            </div>
+        </div>
+
+        <h2>Event Results</h2>
+        <table class="event-section">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Inferred State</th>
+                    <th>Magnitude</th>
+                    <th>Confidence</th>
+                    <th>Corroboration</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 1</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">97%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 2</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">78%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 78%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 78%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 78%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 78%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 78%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 3</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">95%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 95%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 95%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 95%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 95%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 95%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 4</strong></td>
+                    <td>did not happen</td>
+                    <td>1</td>
+                    <td><span class="confidence">71%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 71%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 71%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 71%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 71%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 71%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 5</strong></td>
+                    <td>happened</td>
+                    <td>2</td>
+                    <td><span class="confidence">98%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 6</strong></td>
+                    <td>did not happen</td>
+                    <td>1</td>
+                    <td><span class="confidence">88%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 7</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">77%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 77%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 77%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 77%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 77%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 77%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 8</strong></td>
+                    <td>did not happen</td>
+                    <td>—</td>
+                    <td><span class="confidence">87%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 87%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 87%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 87%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 87%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 87%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 9</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">80%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 80%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 80%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 80%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 80%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 80%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 10</strong></td>
+                    <td>did not happen</td>
+                    <td>—</td>
+                    <td><span class="confidence">92%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 92%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 92%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 92%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 92%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 92%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 11</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">89%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 89%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 89%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 89%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 89%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 89%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 12</strong></td>
+                    <td>happened</td>
+                    <td>2</td>
+                    <td><span class="confidence">94%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 94%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 94%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 94%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 94%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 94%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 13</strong></td>
+                    <td>happened</td>
+                    <td>1</td>
+                    <td><span class="confidence">93%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 93%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 93%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 93%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 93%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 93%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 14</strong></td>
+                    <td>happened</td>
+                    <td>2</td>
+                    <td><span class="confidence">96%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 96%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 96%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 96%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 96%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 96%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 15</strong></td>
+                    <td>happened</td>
+                    <td>—</td>
+                    <td><span class="confidence">97%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 97%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 16</strong></td>
+                    <td>happened</td>
+                    <td>2</td>
+                    <td><span class="confidence">86%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 86%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 86%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 86%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 86%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 86%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 17</strong></td>
+                    <td>happened</td>
+                    <td>2</td>
+                    <td><span class="confidence">98%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 98%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 18</strong></td>
+                    <td>did not happen</td>
+                    <td>2</td>
+                    <td><span class="confidence">69%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 69%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 69%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 69%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 69%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 69%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 19</strong></td>
+                    <td>did not happen</td>
+                    <td>2</td>
+                    <td><span class="confidence">88%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 88%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>Event 20</strong></td>
+                    <td>did not happen</td>
+                    <td>1</td>
+                    <td><span class="confidence">60%</span></td>
+                    <td>
+                        
+                            <span class="confidence">triangulated</span>
+                        
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">reliable-press</span>
+                                <span class="weight-reason">(weight: 60%) — Outlet reliability: 0.81</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">balanced-news</span>
+                                <span class="weight-reason">(weight: 60%) — Outlet reliability: 0.79</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">center-weekly</span>
+                                <span class="weight-reason">(weight: 60%) — Outlet reliability: 0.69</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">moderate-journal</span>
+                                <span class="weight-reason">(weight: 60%) — Outlet reliability: 0.56</span>
+                            </div>
+                            
+                            <div class="weight-item">
+                                <span class="weight-outlet">tabloid-mirror</span>
+                                <span class="weight-reason">(weight: 60%) — Outlet reliability: 0.23</span>
+                            </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+
+        <h2>Outlet Parameters</h2>
+        <table class="outlet-table">
+            <thead>
+                <tr>
+                    <th>Outlet</th>
+                    <th>Est. Reliability</th>
+                    <th>Est. Bias</th>
+                    <th>Est. Calibration</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr class="outlet-row">
+                    <td><strong>reliable-press</strong></td>
+                    <td>
+                        <div class="outlet-bar" style="width: 80.81066759849509px;">
+                            80%
+                        </div>
+                    </td>
+                    <td>-23%</td>
+                    <td>100%</td>
+                </tr>
+                
+                <tr class="outlet-row">
+                    <td><strong>balanced-news</strong></td>
+                    <td>
+                        <div class="outlet-bar" style="width: 78.64479094072743px;">
+                            78%
+                        </div>
+                    </td>
+                    <td>2%</td>
+                    <td>100%</td>
+                </tr>
+                
+                <tr class="outlet-row">
+                    <td><strong>center-weekly</strong></td>
+                    <td>
+                        <div class="outlet-bar" style="width: 68.83809331402053px;">
+                            68%
+                        </div>
+                    </td>
+                    <td>1%</td>
+                    <td>100%</td>
+                </tr>
+                
+                <tr class="outlet-row">
+                    <td><strong>moderate-journal</strong></td>
+                    <td>
+                        <div class="outlet-bar" style="width: 55.78041148803664px;">
+                            55%
+                        </div>
+                    </td>
+                    <td>-22%</td>
+                    <td>100%</td>
+                </tr>
+                
+                <tr class="outlet-row">
+                    <td><strong>tabloid-mirror</strong></td>
+                    <td>
+                        <div class="outlet-bar" style="width: 22.75344873366244px;">
+                            22%
+                        </div>
+                    </td>
+                    <td>21%</td>
+                    <td>100%</td>
+                </tr>
+                
+            </tbody>
+        </table>
+
+        <footer>
+            <p><strong>Note:</strong> Outlet bias and reliability estimates are statistical artifacts of the inference model, not editorial judgments. Bias does not imply malice or intentional distortion; it reflects systematic correlation patterns in the corpus.</p>
+            <p>Generated by stapled-news. | <a href="index.html">← Back to runs</a></p>
+        </footer>
+    </div>
+</body>
+</html>
