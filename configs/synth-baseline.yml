@@ -1,0 +1,24 @@
+outlets:
+  - name: "reliable-press"
+    reliability: 0.9
+    bias: -0.1
+    calibration: 1.0
+  - name: "balanced-news"
+    reliability: 0.85
+    bias: 0.0
+    calibration: 0.95
+  - name: "center-weekly"
+    reliability: 0.8
+    bias: 0.2
+    calibration: 1.05
+  - name: "moderate-journal"
+    reliability: 0.6
+    bias: -0.2
+    calibration: 0.8
+  - name: "tabloid-mirror"
+    reliability: 0.1
+    bias: 0.5
+    calibration: 1.2
+
+n_events: 20
+articles_per_event_per_outlet: 1

@@ -1,0 +1,10 @@
+# Placeholder RSS feeds configuration
+# To use: stapled ingest --feeds configs/feeds.yml
+# Add your RSS feed URLs below in the format:
+# outlets:
+#   - name: "outlet_name"
+#     feed_url: "https://example.com/rss.xml"
+#   - name: "another_outlet"
+#     feed_url: "https://news.example.org/feed.xml"
+
+outlets: []
