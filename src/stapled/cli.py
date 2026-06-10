@@ -1,6 +1,7 @@
 """CLI interface for stapled-news."""
 
 import json
+import sqlite3
 import sys
 from pathlib import Path
 from typing import List, Optional
@@ -17,11 +18,20 @@ from stapled.infer.model import RunConfig
 from stapled.infer.em import run_em
 from stapled.recover.score import score as score_run
 from stapled.export.site import export_run
-from stapled.ingest.csv_loader import load_isot as load_isot_data
+from stapled.ingest.csv_loader import (
+    load_isot as load_isot_data,
+    _get_or_create_outlet,
+    _strip_reuters_dateline,
+    _normalize_subject,
+)
 from stapled.ingest.dedup import dedup_articles
+from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
 from stapled.extract.framing import update_all_framing
 from stapled.align.cluster import align
+from stapled.infer.online_em import OnlineEM
+from stapled.infer.align_incremental import align_incremental
+from stapled.viz.online_convergence import online_convergence
 
 app = typer.Typer()
 synth_app = typer.Typer()
@@ -52,12 +62,16 @@ class CLIOutput:
             print("  (no results)", file=sys.stderr)
             return
         # Simple table format
-        col_widths = {col: max(len(col), max(len(str(r.get(col, ""))) for r in rows)) for col in columns}
+        col_widths = {
+            col: max(len(col), max((len(str(r.get(col, ""))) for r in rows), default=0))
+            for col in columns
+        }
         header = "  " + " | ".join(col.ljust(col_widths[col]) for col in columns)
         print(header, file=sys.stderr)
         print("  " + "-" * (len(header) - 2), file=sys.stderr)
         for row in rows:
-            print("  " + " | ".join(str(row.get(col, "")).ljust(col_widths[col]) for col in columns), file=sys.stderr)
+            cells = [str(row.get(col, "")).ljust(col_widths[col]) for col in columns]
+            print("  " + " | ".join(cells), file=sys.stderr)
 
     def output(self, command: str, exit_code: int = 0):
         """Print final output."""
@@ -108,11 +122,46 @@ def status(db: str = typer.Option("./stapled.db", help="Path to database")):
         )
         passing_recovery = cursor.fetchone()[0]
 
+        # Streaming status
+        cursor = conn.execute(
+            "SELECT COUNT(*) FROM source_cursor WHERE done = 0"
+        )
+        active_sources = cursor.fetchone()[0]
+
+        cursor = conn.execute(
+            "SELECT COUNT(*) FROM source_cursor"
+        )
+        total_sources = cursor.fetchone()[0]
+
+        # EM state and batches
+        cursor = conn.execute(
+            "SELECT batches_seen FROM em_state WHERE id = 1"
+        )
+        em_row = cursor.fetchone()
+        batches_seen = em_row[0] if em_row else 0
+        em_state_exists = em_row is not None
+
+        # Outlet reliabilities from most recent batch
+        cursor = conn.execute(
+            """SELECT outlet_id, reliability FROM reliability_snapshot
+               WHERE batch = (SELECT MAX(batch) FROM reliability_snapshot)
+               ORDER BY reliability DESC LIMIT 5"""
+        )
+        top_outlets = [
+            {"outlet_id": row[0], "reliability": f"{row[1]:.3f}"}
+            for row in cursor.fetchall()
+        ]
+
         out.set_data(
             corpora_total=total_corpora,
             corpora_passed=passed_corpora,
             runs_summary=run_summary,
             recovery_gate_passed=passing_recovery > 0,
+            active_sources=active_sources,
+            total_sources=total_sources,
+            batches_seen=batches_seen,
+            em_state_initialized=em_state_exists,
+            top_outlets=top_outlets,
         )
 
         rows = [
@@ -120,6 +169,10 @@ def status(db: str = typer.Option("./stapled.db", help="Path to database")):
             {"key": "Passed corpora", "value": str(passed_corpora)},
             {"key": "Inference runs", "value": json.dumps(run_summary)},
             {"key": "Recovery gate", "value": "PASS" if passing_recovery > 0 else "BLOCKED"},
+            {"key": "Active sources", "value": f"{active_sources}/{total_sources}"},
+            {"key": "Batches processed", "value": str(batches_seen)},
+            {"key": "EM state", "value": "INITIALIZED" if em_state_exists else "PENDING"},
+            {"key": "Top outlets", "value": json.dumps(top_outlets)},
         ]
         out.print_table(rows, ["key", "value"], "Database Status")
         out.output("status", exit_code=0)
@@ -341,6 +394,8 @@ def infer(
         raise typer.Exit(code=1)
 
 
+
+
 @app.command()
 def score(
     run: int = typer.Option(..., help="Run ID"),
@@ -397,6 +452,307 @@ def export(
         out.add_error(str(e))
         out.output("export", exit_code=1)
         raise typer.Exit(code=1)
+
+
+@app.command()
+def train_stream(
+    source: str = typer.Option(..., "--source", help="Remote CSV URL"),
+    kind: str = typer.Option("true", "--kind", help="true|fake"),
+    batch_mb: int = typer.Option(10, "--batch-mb", help="Batch size in MB"),
+    max_batches: Optional[int] = typer.Option(
+        None, "--max-batches", help="Max batches to process"
+    ),
+    limit_per_outlet: Optional[int] = typer.Option(
+        None, "--limit-per-outlet", help="Limit per outlet"
+    ),
+    reset: bool = typer.Option(False, "--reset", help="Reset stream cursor"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Train online EM on streaming remote CSV."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+
+        # Reset cursor if requested
+        if reset:
+            conn.execute("DELETE FROM source_cursor WHERE source_url = ?", (source,))
+            conn.commit()
+
+        # Initialize online EM lazily (after first batch insert)
+        em = None
+        outlet_ids = None
+
+        # Stream and process batches
+        batch_bytes = batch_mb * 1024 * 1024
+        batch_count = 0
+        total_rows = 0
+        online_ll_trace = []
+        new_events_count = 0
+        new_claims_count = 0
+
+        for batch_rows in iter_remote_lines(source, batch_bytes, conn):
+            if max_batches and batch_count >= max_batches:
+                break
+
+            batch_count += 1
+            total_rows += len(batch_rows)
+
+            # Load articles from batch rows
+            # Handle both custom (outlet field) and ISOT format (subject → outlet mapping for fake)
+            article_ids = []
+            for row in batch_rows:
+                # Use 'text' field if body not present (ISOT format)
+                body_text = row.get("body") or row.get("text", "")
+                title = row.get("title", "")
+
+                # Skip if missing critical fields or body too short
+                if not title or not body_text or len(body_text) < 200:
+                    continue
+
+                # Get or create outlet based on kind
+                outlet_name = row.get("outlet")
+                if outlet_name:
+                    # Custom outlet field: get-or-create with that name
+                    outlet_id = _get_or_create_outlet(
+                        conn, outlet_name, feed_url=None, is_synthetic=0
+                    )
+                elif kind == "true":
+                    # Reuters: get-or-create 'reuters'
+                    outlet_id = _get_or_create_outlet(
+                        conn, "reuters", feed_url=None, is_synthetic=0
+                    )
+                    # Strip Reuters dateline from body
+                    body_text = _strip_reuters_dateline(body_text)
+                elif kind == "fake":
+                    # Fake news: derive outlet name from subject
+                    subject = row.get("subject", "news")
+                    outlet_name = _normalize_subject(subject)
+                    outlet_id = _get_or_create_outlet(
+                        conn, outlet_name, feed_url=None, is_synthetic=0
+                    )
+                else:
+                    continue
+
+                # For ISOT, use title as URL if no explicit URL
+                url = row.get("url", f"http://example.com/{outlet_id}/{title[:50].replace(' ', '_')}")
+
+                # Check if article already exists
+                try:
+                    cursor = conn.execute(
+                        "SELECT id FROM article WHERE outlet_id = ? AND url = ?",
+                        (outlet_id, url),
+                    )
+                    existing = cursor.fetchone()
+                    if existing:
+                        article_ids.append(existing[0])
+                        continue
+
+                    cursor = conn.execute(
+                        """INSERT INTO article (outlet_id, corpus_id, url, title, body, ingest_status)
+                           VALUES (?, NULL, ?, ?, ?, 'ok')""",
+                        (outlet_id, url, title, body_text),
+                    )
+                    article_ids.append(cursor.lastrowid)
+                except sqlite3.IntegrityError:
+                    # Skip on constraint violation
+                    continue
+
+            if not article_ids:
+                continue
+
+            conn.commit()
+
+            # Dedup and extract
+            dedup_new_articles(conn, article_ids)
+            extract_all_unextracted(conn)
+            update_all_framing(conn)
+
+            # Get newly created claim IDs
+            new_claim_ids = []
+            cursor = conn.execute(
+                "SELECT id FROM claim WHERE article_id IN ({})".format(
+                    ",".join("?" * len(article_ids))
+                ),
+                article_ids,
+            )
+            new_claim_ids = [row[0] for row in cursor.fetchall()]
+
+            # Align incremental
+            if new_claim_ids:
+                align_stats = align_incremental(conn, new_claim_ids)
+                new_events_count += align_stats["events_created"]
+                new_claims_count += align_stats["claims_aligned"]
+
+            # Lazy-initialize OnlineEM after first batch with articles
+            if em is None:
+                cursor = conn.execute("SELECT DISTINCT id FROM outlet ORDER BY id")
+                outlet_ids = [row[0] for row in cursor.fetchall()]
+                if not outlet_ids:
+                    raise ValueError("No outlets in database. Load data first (load_isot, load_real, etc.)")
+                em = OnlineEM(outlet_ids, tolerance=1e-5, conn=conn)
+
+            # Get events with claims (no corpus_id)
+            cursor = conn.execute(
+                """SELECT DISTINCT e.id FROM event e
+                   JOIN claim c ON e.id = c.event_id
+                   WHERE e.corpus_id IS NULL"""
+            )
+            event_ids = [row[0] for row in cursor.fetchall()]
+
+            if event_ids:
+                # E-step (loads from DB)
+                result = em.e_step_batch(event_ids)
+                batch_stats = result["batch_stats"]
+                batch_ll = result["batch_ll"]
+
+                batch_stats["ll"] = batch_ll
+                online_ll_trace.append(batch_ll)
+
+                # Accumulate with Robbins-Monro
+                em.accumulate(batch_stats, batch_count - 1)
+
+        # Get top 3 outlets by reliability
+        top_3_outlets = []
+        if em is not None:
+            params = em.params()
+            top_3_outlets = sorted(
+                [(o, params[o]["reliability"]) for o in outlet_ids],
+                key=lambda x: x[1],
+                reverse=True,
+            )[:3]
+
+        out.set_data(
+            source_bytes=total_rows,
+            batches_processed=batch_count,
+            new_events=new_events_count,
+            new_claims=new_claims_count,
+            final_ll=float(online_ll_trace[-1]) if online_ll_trace else 0.0,
+            top_outlets=[{"outlet_id": o, "reliability": float(r)} for o, r in top_3_outlets],
+        )
+
+        rows = [
+            {"metric": "Batches processed", "value": str(batch_count)},
+            {"metric": "Total rows", "value": str(total_rows)},
+            {"metric": "New events", "value": str(new_events_count)},
+            {"metric": "New claims", "value": str(new_claims_count)},
+            {
+                "metric": "Final LL",
+                "value": (
+                    f"{online_ll_trace[-1]:.2f}" if online_ll_trace else "N/A"
+                ),
+            },
+        ]
+        out.print_table(rows, ["metric", "value"], "Online EM Streaming Complete")
+        out.output("train_stream", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("train_stream", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def train_report(
+    out_dir: str = typer.Option("./docs", help="Output directory for report"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Generate streaming EM training report with convergence + reliability charts."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+
+        # Generate convergence viz (PNG)
+        convergence_path = online_convergence(conn, out_dir)
+
+        # Create output directory
+        out_path = Path(out_dir)
+        out_path.mkdir(parents=True, exist_ok=True)
+
+        # Generate HTML report embedding both PNGs
+        html_file = out_path / "stream.html"
+        html_content = _generate_training_report(convergence_path)
+        html_file.write_text(html_content)
+
+        out.set_data(
+            report_path=str(html_file),
+            convergence_chart=convergence_path,
+        )
+        rows = [
+            {"file": "stream.html"},
+            {"file": "convergence chart"},
+        ]
+        out.print_table(rows, ["file"], "Training Report Generated")
+        out.output("train_report", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("train_report", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+def _generate_training_report(convergence_path: Optional[str]) -> str:
+    """Generate HTML report for streaming EM training."""
+    chart_section = ""
+    if convergence_path:
+        chart_section = f"""
+        <div class="chart-section">
+            <h2>Convergence Analysis</h2>
+            <p>See <a href="{Path(convergence_path).name}">convergence chart</a>
+            for detailed analysis.</p>
+        </div>
+        """
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Streaming EM Training Report</title>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }}
+        .container {{
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            color: #222;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }}
+        .chart-section {{
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }}
+        a {{
+            color: #1f77b4;
+            text-decoration: none;
+        }}
+        a:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Streaming EM Training Report</h1>
+        <p>Generated using online Dawid-Skene EM with Robbins-Monro step sizes.</p>
+        {chart_section}
+    </div>
+</body>
+</html>"""
+    return html
 
 
 @app.callback()
