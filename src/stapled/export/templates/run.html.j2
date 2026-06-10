@@ -31,6 +31,10 @@
         .outlet-table { margin-bottom: 40px; }
         .outlet-row { }
         .outlet-bar { background: #e3f2fd; height: 30px; display: flex; align-items: center; padding: 0 8px; border-radius: 3px; }
+        .charts-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; margin-bottom: 40px; }
+        .chart-figure { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .chart-figure img { max-width: 100%; height: auto; }
+        .chart-figure figcaption { margin-top: 12px; font-size: 0.95em; color: #555; font-weight: 500; text-align: center; }
         footer { color: #999; font-size: 0.9em; margin-top: 40px; padding: 20px; background: white; border-radius: 5px; }
         a { color: #0066cc; text-decoration: none; }
         a:hover { text-decoration: underline; }
@@ -132,6 +136,18 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {% if charts %}
+        <h2>Model Visualizations</h2>
+        <div class="charts-gallery">
+            {% for chart in charts %}
+            <figure class="chart-figure">
+                <img src="{{ chart.path }}" alt="{{ chart.caption }}">
+                <figcaption>{{ chart.caption }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <footer>
             <p><strong>Note:</strong> Outlet bias and reliability estimates are statistical artifacts of the inference model, not editorial judgments. Bias does not imply malice or intentional distortion; it reflects systematic correlation patterns in the corpus.</p>
