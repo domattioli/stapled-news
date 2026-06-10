@@ -221,3 +221,6 @@ __marimo__/
 stapled.db
 *.db-wal
 *.db-shm
+
+# raw datasets (not committed)
+data/raw/

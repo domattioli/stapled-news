@@ -10,14 +10,30 @@ from stapled.infer.model import RunConfig
 
 
 def run_em(
-    conn: sqlite3.Connection, corpus_id: int, config: RunConfig
+    conn: sqlite3.Connection, corpus_id: int, config: RunConfig, is_real: bool = False
 ) -> int:
-    """Run EM inference on corpus. Returns run_id."""
+    """
+    Run EM inference on corpus (synthetic) or real claims (corpus_id=None).
+    Returns run_id.
+    """
     # Load claims grouped by event
-    claims_by_event = _load_claims_by_event(conn, corpus_id)
+    claims_by_event = _load_claims_by_event(conn, corpus_id, is_real=is_real)
 
     if not claims_by_event:
-        raise ValueError(f"No claims found for corpus {corpus_id}")
+        corpus_name = "corpus" if corpus_id else "real claims"
+        raise ValueError(f"No claims found for {corpus_name}")
+
+    # For real data, filter to events with >= 2 distinct outlets (single-outlet events lack corroboration signal)
+    if is_real:
+        claims_by_event_filtered = {}
+        for event_id, claims_list in claims_by_event.items():
+            outlets = set(c['outlet_id'] for c in claims_list)
+            if len(outlets) >= 2:
+                claims_by_event_filtered[event_id] = claims_list
+        claims_by_event = claims_by_event_filtered
+
+        if not claims_by_event:
+            raise ValueError("No events with >= 2 distinct outlets in real claims")
 
     # Get unique outlets
     outlets = set()
@@ -60,20 +76,38 @@ def run_em(
     return run_id
 
 
-def _load_claims_by_event(conn: sqlite3.Connection, corpus_id: int) -> dict:
-    """Load claims grouped by event, with outlet and certainty info."""
-    cursor = conn.execute(
+def _load_claims_by_event(
+    conn: sqlite3.Connection, corpus_id: int, is_real: bool = False
+) -> dict:
+    """
+    Load claims grouped by event, with outlet and certainty info.
+    If is_real=True, corpus_id is ignored and all unaligned real claims are loaded.
+    """
+    if is_real:
+        query = """
+            SELECT c.event_id, a.outlet_id,
+                   CASE WHEN NOT c.action LIKE 'not-%' THEN 1 ELSE 0 END as observation,
+                   c.certainty, c.magnitude_value
+            FROM claim c
+            JOIN article a ON c.article_id = a.id
+            WHERE a.corpus_id IS NULL
+            AND c.event_id IS NOT NULL
+            ORDER BY c.event_id
         """
-        SELECT c.event_id, a.outlet_id,
-               CASE WHEN c.action = 'occurred' THEN 1 ELSE 0 END as observation,
-               c.certainty, c.magnitude_value
-        FROM claim c
-        JOIN article a ON c.article_id = a.id
-        WHERE a.corpus_id = ?
-        ORDER BY c.event_id
-    """,
-        (corpus_id,),
-    )
+        cursor = conn.execute(query)
+    else:
+        cursor = conn.execute(
+            """
+            SELECT c.event_id, a.outlet_id,
+                   CASE WHEN c.action = 'occurred' THEN 1 ELSE 0 END as observation,
+                   c.certainty, c.magnitude_value
+            FROM claim c
+            JOIN article a ON c.article_id = a.id
+            WHERE a.corpus_id = ?
+            ORDER BY c.event_id
+        """,
+            (corpus_id,),
+        )
 
     claims_by_event = {}
     for event_id, outlet_id, obs, certainty, magnitude in cursor.fetchall():
@@ -252,9 +286,6 @@ def _run_em_single(
         # Check convergence (skip check for first 5 iterations to allow EM to stabilize)
         if iteration >= 5:
             delta_ll = current_ll - previous_ll
-            if delta_ll < -0.1 and abs(delta_ll) > 1e-9:
-                # LL decreased significantly (allow small decreases due to numerical drift)
-                return None  # Bad run, try next restart
 
             if 0 <= delta_ll < config.tol:
                 # Converged
@@ -291,6 +322,7 @@ def _run_em_single(
         "spec": spec,
         "posteriors": posteriors,
         "pi": pi,
+        "ll_trace": log_likelihoods,
     }
 
 
@@ -303,6 +335,8 @@ def _likelihood_obs(obs: int, true_state: int, sens: float, spec: float, cert: f
 
     # Certainty as temperature
     p_correct = p_correct * cert + (1 - cert) * 0.5
+    # Clip to avoid underflow in likelihood products
+    p_correct = np.clip(p_correct, 1e-9, 1 - 1e-9)
     return p_correct if obs == true_state else 1 - p_correct
 
 
@@ -331,6 +365,7 @@ def _persist_run(
         "tol": config.tol,
         "restarts": config.restarts,
         "concentration_threshold": config.concentration_threshold,
+        "ll_trace": [float(x) for x in run.get("ll_trace", [])],
     })
 
     cursor = conn.execute(

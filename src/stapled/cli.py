@@ -17,6 +17,11 @@ from stapled.infer.model import RunConfig
 from stapled.infer.em import run_em
 from stapled.recover.score import score as score_run
 from stapled.export.site import export_run
+from stapled.ingest.csv_loader import load_isot as load_isot_data
+from stapled.ingest.dedup import dedup_articles
+from stapled.extract.claims import extract_all_unextracted
+from stapled.extract.framing import update_all_framing
+from stapled.align.cluster import align
 
 app = typer.Typer()
 synth_app = typer.Typer()
@@ -185,6 +190,112 @@ def synth_validate_cmd(
 
 
 @app.command()
+def load_isot(
+    true_csv: str = typer.Option(..., "--true-csv", help="Path to True.csv"),
+    fake_csv: str = typer.Option(..., "--fake-csv", help="Path to Fake.csv"),
+    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per outlet"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load ISOT dataset (Reuters + fake outlets)."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        counts = load_isot_data(conn, true_csv, fake_csv, limit_per_outlet=limit)
+
+        out.set_data(**counts)
+        rows = [
+            {"metric": "Articles loaded", "value": str(counts["articles_loaded"])},
+            {"metric": "Articles skipped", "value": str(counts["articles_skipped"])},
+            {"metric": "Outlets created", "value": str(counts["outlets_created"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "ISOT Load Complete")
+        out.output("load_isot", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load_isot", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def dedup(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Run near-duplicate detection."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        n_clusters = dedup_articles(conn)
+
+        out.set_data(dedup_clusters=n_clusters)
+        rows = [{"dedup_clusters": n_clusters}]
+        out.print_table(rows, ["dedup_clusters"], "Dedup Complete")
+        out.output("dedup", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("dedup", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def extract(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Extract claims from articles."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        counts = extract_all_unextracted(conn)
+
+        # Update framing
+        framing_counts = update_all_framing(conn)
+
+        out.set_data(**counts, **framing_counts)
+        rows = [
+            {"metric": "Articles processed", "value": str(counts["articles_processed"])},
+            {"metric": "Claims created", "value": str(counts["claims_created"])},
+            {"metric": "Claims framed", "value": str(framing_counts["claims_updated"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "Extraction Complete")
+        out.output("extract", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("extract", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def align_cmd(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Align claims into events."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        stats = align(conn)
+
+        out.set_data(**stats)
+        rows = [
+            {"metric": "Events created", "value": str(stats["events_created"])},
+            {"metric": "Claims aligned", "value": str(stats["claims_aligned"])},
+            {"metric": "Claims unaligned", "value": str(stats["claims_unaligned"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "Alignment Complete")
+        out.output("align", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("align", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command()
 def infer(
     synthetic: bool = typer.Option(False, "--synthetic", help="Synthetic corpus mode"),
     real: bool = typer.Option(False, "--real", help="Real-data mode"),
@@ -208,14 +319,15 @@ def infer(
                 raise ValueError("--corpus required for synthetic mode")
             assert_corpus_passed(conn, corpus)
             config = RunConfig()
-            run_id = run_em(conn, corpus, config)
+            run_id = run_em(conn, corpus, config, is_real=False)
         else:
             # Real mode requires recovery gate
             try:
                 assert_recovery_passed(conn)
             except GateError as e:
                 _handle_gate_error(e, out, "infer --real")
-            raise NotImplementedError("Real-data inference not yet implemented")
+            config = RunConfig()
+            run_id = run_em(conn, None, config, is_real=True)
 
         out.set_data(run_id=run_id)
         out.print_table([{"run_id": run_id}], ["run_id"], "Inference Complete")
