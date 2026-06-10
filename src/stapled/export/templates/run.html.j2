@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run {{ run_id }} - Stapled News</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1, h2 { color: #333; }
+        .run-header { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .run-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .meta-item { }
+        .meta-label { font-size: 0.9em; color: #666; font-weight: 600; }
+        .meta-value { font-size: 1.1em; color: #333; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f9f9f9; font-weight: 600; color: #555; }
+        tr:hover { background: #fafafa; }
+        .event-section { margin-bottom: 30px; }
+        .event-row { cursor: pointer; }
+        .event-details { display: none; background: #f9f9f9; }
+        .event-row.expanded + .event-details { display: table-row; }
+        .weights-list { margin-top: 12px; padding: 8px; background: #f0f0f0; border-radius: 3px; }
+        .weight-item { margin: 6px 0; font-size: 0.9em; }
+        .weight-outlet { font-weight: 600; color: #0066cc; }
+        .weight-reason { color: #666; margin-left: 12px; }
+        .confidence { display: inline-block; background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 3px; font-size: 0.85em; font-weight: 600; }
+        .uncorroborated { display: inline-block; background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 3px; font-size: 0.85em; font-weight: 600; }
+        .outlet-table { margin-bottom: 40px; }
+        .outlet-row { }
+        .outlet-bar { background: #e3f2fd; height: 30px; display: flex; align-items: center; padding: 0 8px; border-radius: 3px; }
+        footer { color: #999; font-size: 0.9em; margin-top: 40px; padding: 20px; background: white; border-radius: 5px; }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+    <script>
+        function toggleEvent(el) {
+            el.classList.toggle('expanded');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Run #{{ run_id }} Report</h1>
+
+        <div class="run-header">
+            <div class="run-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Status</div>
+                    <div class="meta-value">{{ status }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Created</div>
+                    <div class="meta-value">{{ created_at }}</div>
+                </div>
+                {% if gates.recovery_verdict %}
+                <div class="meta-item">
+                    <div class="meta-label">Recovery Verdict</div>
+                    <div class="meta-value">{{ gates.recovery_verdict }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h2>Event Results</h2>
+        <table class="event-section">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Inferred State</th>
+                    <th>Magnitude</th>
+                    <th>Confidence</th>
+                    <th>Corroboration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr class="event-row" onclick="toggleEvent(this)">
+                    <td><strong>{{ event.label }}</strong></td>
+                    <td>{{ event.inferred_state_text }}</td>
+                    <td>{{ event.magnitude_bucket or "—" }}</td>
+                    <td><span class="confidence">{{ event.confidence_pct }}%</span></td>
+                    <td>
+                        {% if event.corroboration == 'triangulated' %}
+                            <span class="confidence">{{ event.corroboration }}</span>
+                        {% else %}
+                            <span class="uncorroborated">{{ event.corroboration }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr class="event-details">
+                    <td colspan="5">
+                        <div class="weights-list">
+                            <strong>Outlet Weighting:</strong>
+                            {% for weight in event.weights %}
+                            <div class="weight-item">
+                                <span class="weight-outlet">{{ weight.outlet }}</span>
+                                <span class="weight-reason">(weight: {{ (weight.weight * 100)|int }}%) — {{ weight.reason }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Outlet Parameters</h2>
+        <table class="outlet-table">
+            <thead>
+                <tr>
+                    <th>Outlet</th>
+                    <th>Est. Reliability</th>
+                    <th>Est. Bias</th>
+                    <th>Est. Calibration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for outlet in outlets %}
+                <tr class="outlet-row">
+                    <td><strong>{{ outlet.name }}</strong></td>
+                    <td>
+                        <div class="outlet-bar" style="width: {{ (outlet.reliability * 100) }}px;">
+                            {{ (outlet.reliability * 100)|int }}%
+                        </div>
+                    </td>
+                    <td>{{ (outlet.bias * 100)|int }}%</td>
+                    <td>{{ (outlet.calibration * 100)|int }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <footer>
+            <p><strong>Note:</strong> Outlet bias and reliability estimates are statistical artifacts of the inference model, not editorial judgments. Bias does not imply malice or intentional distortion; it reflects systematic correlation patterns in the corpus.</p>
+            <p>Generated by stapled-news. | <a href="index.html">← Back to runs</a></p>
+        </footer>
+    </div>
+</body>
+</html>

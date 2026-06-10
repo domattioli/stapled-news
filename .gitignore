@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# stapled-specific
+stapled.db
+*.db-wal
+*.db-shm
