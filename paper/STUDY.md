@@ -1,79 +1,76 @@
-# Study Design: Streaming Truth Discovery for News Outlet Reliability and Omission Auditing
+# Study Design: Measuring Cross-Outlet Consensus and Selective Omission with Streaming Latent-Class Models
 
 ## Working title
 
-**"Consensus Is Not Truth: Streaming STAPLE for News Outlet Reliability, Its Majority-Capture
-Failure Mode, and a Cheap Fix"**
+**"A Streaming Latent-Class Model of Cross-Outlet News Consensus and Selective Omission"**
+
+## Framing
+
+The model measures *consensus*: the latent variable is the consensus status of each atomic
+claim across outlets, and per-outlet parameters quantify agreement with and deviation from
+that consensus (coverage of consensus claims; propagation of non-consensus claims). This is
+the honest, identifiable target of unsupervised Dawid-Skene/STAPLE inference. The
+relationship between consensus and objective truth — including the conditions under which
+they diverge (unreliable majorities, syndication-inflated vote shares) and the cost of
+anchoring them together — is treated in the Discussion, not claimed in the title or results.
 
 ## Research questions
 
-- **RQ1 (Transfer):** Does the STAPLE/Dawid-Skene latent-truth model transfer from spatial
-  voxels to atomic news claims — i.e., can it recover planted outlet reliabilities from
-  synthetic corpora and separate labeled-reliable from labeled-unreliable sources on real data?
-- **RQ2 (Failure):** Under what conditions does unsupervised consensus inference invert
-  (majority-capture), and can the inversion be predicted from corpus composition?
-- **RQ3 (Fix):** Do two cheap interventions — (a) sparse factual anchoring (<1% of claims)
-  and (b) syndication-deduplicated voting — restore truth-aligned reliability estimates
-  without full supervision?
-- **RQ4 (Utility):** Do the resulting per-outlet parameters correlate with independent
-  third-party ratings (MBFC factual-reporting, AllSides), and does the omission channel
-  (sensitivity p_j) surface interpretable selection-bias patterns?
+- **RQ1 (Validity):** Does the streaming STAPLE/Dawid-Skene adaptation recover planted
+  consensus structure and outlet parameters on synthetic corpora, and produce stable,
+  interpretable estimates on real multi-outlet news (ISOT, ~44k articles)?
+- **RQ2 (Robustness):** How do consensus estimates respond to syndication (near-duplicate
+  articles inflating effective vote share), and does deduplication-aware voting correct this?
+- **RQ3 (Utility):** Do per-outlet consensus-agreement parameters correlate with independent
+  third-party factual-reporting ratings, and does the coverage parameter (sensitivity p_j)
+  support an interpretable selective-omission audit?
 
-## Method (already implemented in this repo)
+## Method (implemented in this repo)
 
-- Online/stepwise EM (Cappé–Moulines), Robbins–Monro step γ_t = (t+2)^-0.6, per-outlet
-  sufficient statistics persisted in SQLite (`src/stapled/infer/online_em.py`).
-- HTTP-Range streaming ingestion with resumable byte cursors — no full corpus download
-  (`src/stapled/ingest/stream.py`); full ISOT corpus (~44k articles) processed this way.
+- Online/stepwise EM (Cappé–Moulines), step γ_t = (t+2)^-0.6, per-outlet sufficient
+  statistics persisted in SQLite (`src/stapled/infer/online_em.py`).
+- HTTP-Range streaming ingestion with resumable byte cursors — constant memory, no full
+  corpus download (`src/stapled/ingest/stream.py`).
 - Claim extraction → event clustering → binary decision matrix D_ij per (claim, outlet).
-- Planned model changes for the study (from external review):
-  1. Dedup-aware E-step: route votes through `dedup_cluster_id` so syndicated copies count once.
-  2. Anchor seeding: clamp posterior W_i for a small set of externally verified claims.
-  3. Inversion sanity gate: flag runs where mean sensitivity < 0.5.
-  4. (Stretch) Three-valued D_ij separating omission (absent) from contradiction.
+- Model changes for the study:
+  1. Dedup-aware E-step: votes routed through `dedup_cluster_id` so syndicated copies count once.
+  2. Reporting language: parameters labeled consensus-agreement, not reliability/truth.
 
-## Experiments
+## Experiments (5)
 
 | # | Experiment | Data | Metric | Expected result |
 |---|---|---|---|---|
-| E1 | Synthetic recovery | Seeded corpora, planted (p_j, q_j) | Spearman ρ vs planted reliability | ρ ≥ 0.8 (existing gate passes) — validates the EM machinery |
-| E2 | Majority-capture characterization | Synthetic, sweep unreliable-source fraction f ∈ {0.1…0.9} and syndication multiplicity m | Inversion rate vs (f, m) | Phase transition: inversion when effective unreliable vote share > 0.5; syndication multiplicity shifts the boundary left — the headline figure |
-| E3 | Real-data baseline (no fix) | ISOT (labels held out) | AUC separating True-corpus vs Fake-corpus sources by estimated reliability | AUC near or below 0.5 in inverted regime — reproduces the observed failure honestly |
-| E4 | Anchoring fix | ISOT + k anchored claims, k ∈ {0, 10, 50, 100, 500} | AUC vs k; anchor budget curve | AUC > 0.9 with k ≈ 50–100 (<1% of claims) — "small labeled seed leverages large unlabeled corpus" |
-| E5 | Dedup-aware voting | ISOT with injected wire-duplicate blocks | Inversion threshold shift | Dedup restores the f > 0.5 boundary; without it, inversion at much lower f |
-| E6 | External validity | Multi-outlet crawl or NELA-GT-style corpus | Spearman vs MBFC factual-reporting; vs AllSides bias | Moderate positive correlation for reliability (ρ ≈ 0.4–0.6 plausible); near-zero for left/right bias axis — supports "measures reliability/omission, not ideology" |
-| E7 | Omission audit (qualitative + quantitative) | Same | Per-outlet sensitivity on corroborated-claim subsets by topic | Interpretable case studies: outlets with low p_j on specific topic clusters |
-| E8 | Streaming efficiency | ISOT full stream | Wall-clock, peak memory, bytes transferred vs batch EM | Constant memory, single pass, resume-after-interrupt — systems contribution |
-| E9 | Temporal holdout (no labels) | Rolling window | Predict later corroboration of early claims | Calibrated W_i predicts corroboration above majority-vote baseline |
+| E1 | Synthetic recovery | Seeded corpora, planted parameters | Spearman ρ vs planted values | ρ ≥ 0.8 (existing gate) — validates the estimator |
+| E2 | Syndication sensitivity | Synthetic, sweep duplicate multiplicity m | Consensus-estimate shift vs m, with/without dedup voting | Without dedup, consensus tracks the syndicated bloc; dedup restores independence — main methods figure |
+| E3 | Real-data application | ISOT (labels held out) | Outlet parameter distributions; separation of True- vs Fake-corpus sources (AUC), reported descriptively | Characterizes what consensus-agreement does and does not capture on real data, including the regime where consensus diverges from held-out labels |
+| E4 | External correlation | Multi-outlet corpus (NELA-GT or crawl) | Spearman of consensus-agreement vs MBFC factual-reporting; vs AllSides left–right | Positive correlation with factual-reporting, near-zero with ideology — parameter measures consensus alignment, not political stance |
+| E5 | Omission audit | Same | Per-outlet sensitivity on corroborated-claim subsets by topic; case studies | Interpretable patterns of selective omission per outlet/topic over time |
+
+Streaming efficiency (memory, single pass, resumability) reported as implementation
+properties in the system description, not as a separate experiment.
 
 ## Baselines
 
-Majority vote; weighted majority (article counts); vanilla batch Dawid-Skene;
-TruthFinder-style iterative credibility; supervised logistic regression on outlet features
-(upper-bound reference, uses labels).
+Majority vote; weighted majority (article counts); vanilla batch Dawid-Skene.
 
-## Anticipated results / claims
+## Discussion section (where truth enters)
 
-1. Unmodified Text-STAPLE measures consensus, not truth — inversion is a provable
-   identifiability property (likelihood invariant under joint relabel
-   T→1−T, (p,q)→(1−q,1−p), π→1−π), and we exhibit it empirically on ISOT (E2, E3).
-2. Two cheap fixes (sparse anchors + dedup voting) restore truth alignment at <1%
-   supervision cost (E4, E5) — the practical contribution.
-3. The calibrated per-outlet sensitivity supports an interpretable omission/selection-bias
-   audit that ideology-focused classifiers do not provide (E6, E7).
-4. The whole pipeline runs as a constant-memory single-pass stream (E8) — deployable as a
-   rolling monitor, unlike batch truth-discovery systems.
+- Consensus ≠ objective truth: the Dawid-Skene likelihood is invariant under joint
+  relabeling (T→1−T, (p,q)→(1−q,1−p), π→1−π), so the unsupervised estimand is consensus by
+  construction. E3 quantifies the divergence on ISOT.
+- Anchoring path: sparse externally verified claims (free fact-checking APIs) can tie
+  consensus estimates to verifiable facts at low labeling cost — sketched as future work
+  with the anchor mechanism already implemented.
+- Scope: binary claim channel measures coverage/omission, not framing or spin
+  (continuous-emission extension noted as future work).
 
-## Honest scope limits (stated up front)
+## Venue
 
-- Output is truth-calibrated consensus, never objective truth; contested interpretive
-  claims are out of scope by construction.
-- Framing/spin is not measured by the binary-claim channel; flagged as future work
-  (continuous-emission two-channel extension).
-- ISOT's fake corpus is a single-source artifact; E6 on a multi-outlet corpus is the
-  external-validity check.
+Primary: **EPJ Data Science** (open-access journal; computational social science methods;
+rolling submission, no length pressure). Backup: *Computational Communication Research*
+(diamond open access, no APC).
 
-## Resources required
+## Resources
 
-All data free (ISOT, MBFC/AllSides public ratings, NELA-GT, Google Fact Check API for
-anchors). No paid annotation. Compute: laptop/CI-scale (online EM is O(claims) memory-light).
+All data free (ISOT, MBFC/AllSides public ratings, NELA-GT). No paid annotation.
+Compute: laptop-scale.
