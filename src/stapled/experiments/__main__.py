@@ -6,12 +6,13 @@ import sys
 from stapled.experiments.runner import run_experiment
 from stapled.experiments import e1_recovery
 from stapled.experiments import e2_syndication
+from stapled.experiments import e3_isot
 
 
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(description="Run stapled-news experiments")
-    parser.add_argument("experiment", choices=["e1", "e2"], help="Experiment name")
+    parser.add_argument("experiment", choices=["e1", "e2", "e3"], help="Experiment name")
     parser.add_argument("--seed", type=int, default=42, help="Random seed (default 42)")
     parser.add_argument("--quick", action="store_true", help="Quick mode (2 seeds instead of 30)")
     parser.add_argument("--out-dir", default="results", help="Output directory (default: results)")
@@ -22,6 +23,7 @@ def main():
     experiment_map = {
         "e1": (e1_recovery, "run"),
         "e2": (e2_syndication, "run"),
+        "e3": (e3_isot, "run"),
     }
 
     if args.experiment not in experiment_map:

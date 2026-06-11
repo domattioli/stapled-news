@@ -158,5 +158,45 @@
       "distortion_at_max_m": -1.7099999999999997
     },
     "timestamp": "2026-06-11T22:53:44.445450+00:00"
+  },
+  {
+    "experiment": "e3",
+    "git_sha": "bf3696135a01ff7032ebc6c4d8c655af66496cb2",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e3_isot.csv",
+      "results/e3_isot.png"
+    ],
+    "metrics": {
+      "auc_dedup_on": 0.0,
+      "real_rank_dedup_on": 7,
+      "mean_reliability_dedup_on": 0.650416040428513,
+      "inversion_flag": false,
+      "n_events_used": 7,
+      "n_outlets": 7,
+      "auc_dedup_off": 0.0
+    },
+    "timestamp": "2026-06-11T23:35:00.506259+00:00"
+  },
+  {
+    "experiment": "e3",
+    "git_sha": "bf3696135a01ff7032ebc6c4d8c655af66496cb2",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e3_isot.csv",
+      "results/e3_isot.png"
+    ],
+    "metrics": {
+      "auc_dedup_on": 0.0,
+      "real_rank_dedup_on": 7,
+      "mean_reliability_dedup_on": 0.650416040428513,
+      "inversion_flag": false,
+      "n_events_used": 2941,
+      "n_outlets": 7,
+      "auc_dedup_off": 0.0
+    },
+    "timestamp": "2026-06-11T23:36:40.036776+00:00"
   }
 ]
