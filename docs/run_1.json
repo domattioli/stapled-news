@@ -1,0 +1,810 @@
+{
+  "run_id": 1,
+  "status": "converged",
+  "created_at": "2026-06-10T03:54:02.347085",
+  "events": [
+    {
+      "event_id": 1,
+      "label": "Event 1",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.9787445214055984,
+      "confidence_pct": 97,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9787445214055984,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9787445214055984,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9787445214055984,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9787445214055984,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9787445214055984,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 2,
+      "label": "Event 2",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.7884245643567978,
+      "confidence_pct": 78,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.7884245643567978,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.7884245643567978,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.7884245643567978,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.7884245643567978,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.7884245643567978,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 3,
+      "label": "Event 3",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.9590407967305274,
+      "confidence_pct": 95,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9590407967305274,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9590407967305274,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9590407967305274,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9590407967305274,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9590407967305274,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 4,
+      "label": "Event 4",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 1,
+      "confidence": 0.7108105502015791,
+      "confidence_pct": 71,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.7108105502015791,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.7108105502015791,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.7108105502015791,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.7108105502015791,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.7108105502015791,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 5,
+      "label": "Event 5",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 2,
+      "confidence": 0.9850380487876212,
+      "confidence_pct": 98,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9850380487876212,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9850380487876212,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9850380487876212,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9850380487876212,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9850380487876212,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 6,
+      "label": "Event 6",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 1,
+      "confidence": 0.8809639592026809,
+      "confidence_pct": 88,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.8809639592026809,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.8809639592026809,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.8809639592026809,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.8809639592026809,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.8809639592026809,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 7,
+      "label": "Event 7",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.775967030650986,
+      "confidence_pct": 77,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.775967030650986,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.775967030650986,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.775967030650986,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.775967030650986,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.775967030650986,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 8,
+      "label": "Event 8",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 0,
+      "confidence": 0.8756789068023714,
+      "confidence_pct": 87,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.8756789068023714,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.8756789068023714,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.8756789068023714,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.8756789068023714,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.8756789068023714,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 9,
+      "label": "Event 9",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.8060398182461112,
+      "confidence_pct": 80,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.8060398182461112,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.8060398182461112,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.8060398182461112,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.8060398182461112,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.8060398182461112,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 10,
+      "label": "Event 10",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 0,
+      "confidence": 0.9209693827854983,
+      "confidence_pct": 92,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9209693827854983,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9209693827854983,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9209693827854983,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9209693827854983,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9209693827854983,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 11,
+      "label": "Event 11",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.8931536366951944,
+      "confidence_pct": 89,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.8931536366951944,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.8931536366951944,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.8931536366951944,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.8931536366951944,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.8931536366951944,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 12,
+      "label": "Event 12",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 2,
+      "confidence": 0.9471766399076309,
+      "confidence_pct": 94,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9471766399076309,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9471766399076309,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9471766399076309,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9471766399076309,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9471766399076309,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 13,
+      "label": "Event 13",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 1,
+      "confidence": 0.9317854985589116,
+      "confidence_pct": 93,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9317854985589116,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9317854985589116,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9317854985589116,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9317854985589116,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9317854985589116,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 14,
+      "label": "Event 14",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 2,
+      "confidence": 0.9616235741669641,
+      "confidence_pct": 96,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9616235741669641,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9616235741669641,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9616235741669641,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9616235741669641,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9616235741669641,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 15,
+      "label": "Event 15",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 0,
+      "confidence": 0.9727776066748891,
+      "confidence_pct": 97,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9727776066748891,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9727776066748891,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9727776066748891,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9727776066748891,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9727776066748891,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 16,
+      "label": "Event 16",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 2,
+      "confidence": 0.8602433626960728,
+      "confidence_pct": 86,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.8602433626960728,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.8602433626960728,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.8602433626960728,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.8602433626960728,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.8602433626960728,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 17,
+      "label": "Event 17",
+      "inferred_state": 1,
+      "inferred_state_text": "happened",
+      "magnitude_bucket": 2,
+      "confidence": 0.9827504605932823,
+      "confidence_pct": 98,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.9827504605932823,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.9827504605932823,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.9827504605932823,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.9827504605932823,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.9827504605932823,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 18,
+      "label": "Event 18",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 2,
+      "confidence": 0.6963875973834566,
+      "confidence_pct": 69,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.6963875973834566,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.6963875973834566,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.6963875973834566,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.6963875973834566,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.6963875973834566,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 19,
+      "label": "Event 19",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 2,
+      "confidence": 0.8857502746657298,
+      "confidence_pct": 88,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.8857502746657298,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.8857502746657298,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.8857502746657298,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.8857502746657298,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.8857502746657298,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    },
+    {
+      "event_id": 20,
+      "label": "Event 20",
+      "inferred_state": 0,
+      "inferred_state_text": "did not happen",
+      "magnitude_bucket": 1,
+      "confidence": 0.6094146102691625,
+      "confidence_pct": 60,
+      "corroboration": "triangulated",
+      "weights": [
+        {
+          "outlet": "reliable-press",
+          "weight": 0.6094146102691625,
+          "reason": "Outlet reliability: 0.81"
+        },
+        {
+          "outlet": "balanced-news",
+          "weight": 0.6094146102691625,
+          "reason": "Outlet reliability: 0.79"
+        },
+        {
+          "outlet": "center-weekly",
+          "weight": 0.6094146102691625,
+          "reason": "Outlet reliability: 0.69"
+        },
+        {
+          "outlet": "moderate-journal",
+          "weight": 0.6094146102691625,
+          "reason": "Outlet reliability: 0.56"
+        },
+        {
+          "outlet": "tabloid-mirror",
+          "weight": 0.6094146102691625,
+          "reason": "Outlet reliability: 0.23"
+        }
+      ]
+    }
+  ],
+  "outlets": [
+    {
+      "outlet_id": 1,
+      "name": "reliable-press",
+      "reliability": 0.8081066759849509,
+      "bias": -0.23268367894881903,
+      "calibration": 1.0
+    },
+    {
+      "outlet_id": 2,
+      "name": "balanced-news",
+      "reliability": 0.7864479094072743,
+      "bias": 0.024912984149693118,
+      "calibration": 1.0
+    },
+    {
+      "outlet_id": 3,
+      "name": "center-weekly",
+      "reliability": 0.6883809331402053,
+      "bias": 0.017239002948659876,
+      "calibration": 1.0
+    },
+    {
+      "outlet_id": 4,
+      "name": "moderate-journal",
+      "reliability": 0.5578041148803664,
+      "bias": -0.22591690415272975,
+      "calibration": 1.0
+    },
+    {
+      "outlet_id": 5,
+      "name": "tabloid-mirror",
+      "reliability": 0.2275344873366244,
+      "bias": 0.21319366605594225,
+      "calibration": 1.0
+    }
+  ],
+  "gates": {
+    "recovery_verdict": "PASS",
+    "recovery_report_id": 1
+  },
+  "charts": [
+    {
+      "path": "assets/run_1_reliability_bias_scatter.png",
+      "caption": "Outlet Reliability vs Bias (size = claim count)"
+    },
+    {
+      "path": "assets/run_1_reliability_ranking.png",
+      "caption": "Outlet Reliability Ranking"
+    },
+    {
+      "path": "assets/run_1_confidence_hist.png",
+      "caption": "Event Confidence Distribution"
+    },
+    {
+      "path": "assets/run_1_convergence_curve.png",
+      "caption": "EM Convergence Curve"
+    },
+    {
+      "path": "assets/run_1_corroboration_pie.png",
+      "caption": "Event Corroboration"
+    }
+  ]
+}
