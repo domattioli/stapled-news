@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAPLE-News — Interactive Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            font-size: 0.9em;
+            color: #0066cc;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            color: #333;
+            margin: 10px 0 5px 0;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .intro {
+            color: #555;
+            margin: 10px 0 5px 0;
+            line-height: 1.5;
+        }
+
+        .generated-at {
+            color: #999;
+            font-size: 0.85em;
+            margin: 5px 0;
+        }
+
+        .callout {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        .callout p {
+            margin: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .chart-card h2 {
+            color: #333;
+            margin: 0 0 8px 0;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .chart-caption {
+            color: #555;
+            font-style: italic;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .plot-container {
+            width: 100%;
+            min-height: 480px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 3px;
+            margin: 10px 0;
+        }
+
+        footer {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Runs</a>
+            <h1>STAPLE-News — Interactive Explorer</h1>
+            <p class="intro">Consensus and divergence across news outlets. Scroll to explore how outlets agree and disagree on reported events, how model estimates stabilize as coverage accumulates, and how wire-service syndication inflates article counts.</p>
+            <p class="generated-at" id="generated-at">Loading...</p>
+        </header>
+
+        <div class="callout">
+            <p><strong>What you're looking at: consensus, not truth.</strong> These charts show where outlets agree and diverge across shared events — a measured signal, not a verdict on factual accuracy. See the discussion for why.</p>
+        </div>
+
+        <div class="chart-card">
+            <h2>Outlet Reliability Landscape</h2>
+            <p class="chart-caption">Each point is a news outlet; higher = more aligned with cross-outlet consensus, left/right = systematic lean.</p>
+            <div id="chart-outlets" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Streaming Convergence</h2>
+            <p class="chart-caption">Online EM updates each outlet's estimate batch by batch — watch them stabilize as more coverage arrives.</p>
+            <div id="chart-trajectory" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Method Recovery Comparison</h2>
+            <p class="chart-caption">Spearman correlation between true and recovered outlet reliability across 30 synthetic seeds; dashed line is the 0.8 recovery gate.</p>
+            <div id="chart-recovery" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Consensus Confidence Distribution</h2>
+            <p class="chart-caption">How confident the model is across all events, colored by how many independent outlets corroborated each one.</p>
+            <div id="chart-confidence" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Syndication Collapse</h2>
+            <p class="chart-caption">Wire-service syndication: many outlets republish one story. Deduplication collapses near-duplicate articles so a syndicated bloc counts once.</p>
+            <div id="chart-dedup" class="plot-container"></div>
+        </div>
+
+        <footer>
+            <p>Outlet estimates are model artifacts measuring consensus agreement, not objective truth. These estimates reflect the degree to which each outlet's coverage aligns with what other outlets report — a proxy for shared ground, not a judgment on factual accuracy.</p>
+        </footer>
+    </div>
+
+    <script>
+        const colorPalette = {
+            red: '#fc4f30',
+            blue: '#008fd5',
+            yellow: '#e5ae38',
+            green: '#6d904f',
+            gray: '#8b8b8b',
+            purple: '#810f7c',
+            teal: '#017361'
+        };
+
+        const colors = ['#fc4f30', '#008fd5', '#e5ae38', '#6d904f', '#8b8b8b', '#810f7c', '#017361'];
+
+        function initPlots(data) {
+            // Update generated_at
+            const generatedAt = new Date(data.generated_at);
+            document.getElementById('generated-at').textContent = 'Generated: ' + generatedAt.toLocaleString();
+
+            // Chart 1: Outlet Reliability Landscape
+            const outletTraces = [];
+            const realOutlets = data.outlets.filter(o => !o.is_synthetic);
+            const syntheticOutlets = data.outlets.filter(o => o.is_synthetic);
+
+            if (realOutlets.length > 0) {
+                outletTraces.push({
+                    x: realOutlets.map(o => o.bias),
+                    y: realOutlets.map(o => o.reliability),
+                    mode: 'markers+text',
+                    type: 'scatter',
+                    marker: {
+                        size: 16,
+                        color: colorPalette.blue,
+                        opacity: 0.8
+                    },
+                    text: realOutlets.map(o => o.name),
+                    textposition: 'top center',
+                    textfont: { size: 10, color: '#333' },
+                    hovertext: realOutlets.map(o => o.name),
+                    hoverinfo: 'text+x+y',
+                    name: 'Real',
+                    showlegend: true
+                });
+            }
+
+            if (syntheticOutlets.length > 0) {
+                outletTraces.push({
+                    x: syntheticOutlets.map(o => o.bias),
+                    y: syntheticOutlets.map(o => o.reliability),
+                    mode: 'markers+text',
+                    type: 'scatter',
+                    marker: {
+                        size: 16,
+                        color: colorPalette.red,
+                        opacity: 0.8
+                    },
+                    text: syntheticOutlets.map(o => o.name),
+                    textposition: 'top center',
+                    textfont: { size: 10, color: '#333' },
+                    hovertext: syntheticOutlets.map(o => o.name),
+                    hoverinfo: 'text+x+y',
+                    name: 'Synthetic',
+                    showlegend: true
+                });
+            }
+
+            const outletLayout = {
+                title: null,
+                xaxis: { title: 'Bias →', zeroline: false, zerolinecolor: '#ddd', zerolinewidth: 2, gridcolor: '#f0f0f0' },
+                yaxis: { title: 'Reliability →', zeroline: false, zerolinecolor: '#ddd', zerolinewidth: 2, gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'closest',
+                showlegend: true,
+                legend: { x: 0.02, y: 0.98 },
+                shapes: [
+                    {
+                        type: 'line',
+                        x0: -1, x1: 1,
+                        y0: 0.5, y1: 0.5,
+                        line: { color: '#999', width: 2, dash: 'dash' }
+                    },
+                    {
+                        type: 'line',
+                        x0: 0, x1: 0,
+                        y0: 0, y1: 1,
+                        line: { color: '#999', width: 2, dash: 'dash' }
+                    }
+                ]
+            };
+
+            Plotly.newPlot('chart-outlets', outletTraces, outletLayout, { responsive: true });
+
+            // Chart 2: Streaming Convergence
+            const trajectoryTraces = data.trajectory.series.map((series, idx) => ({
+                x: data.trajectory.batches,
+                y: series.values,
+                mode: 'lines+markers',
+                name: series.name,
+                line: { color: colors[idx % colors.length], width: 2 },
+                marker: { size: 5 },
+                connectgaps: true
+            }));
+
+            const trajectoryLayout = {
+                title: null,
+                xaxis: { title: 'Batch →', gridcolor: '#f0f0f0' },
+                yaxis: { title: 'Reliability estimate →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x unified',
+                showlegend: true,
+                legend: { x: 0.02, y: 0.98 }
+            };
+
+            Plotly.newPlot('chart-trajectory', trajectoryTraces, trajectoryLayout, { responsive: true });
+
+            // Chart 3: Method Recovery Comparison
+            const methodOrder = ['batch_ds', 'majority', 'online_em_dedup', 'online_em_nodedup', 'weighted_majority'];
+            const recoveryTraces = methodOrder.map((method, idx) => {
+                const data_points = data.recovery.rho_by_seed[method] || [];
+                return {
+                    x: Array(data_points.length).fill(method),
+                    y: data_points.map(d => d.rho),
+                    mode: 'markers',
+                    type: 'box',
+                    name: method,
+                    boxpoints: 'all',
+                    jitter: 0.3,
+                    pointpos: -1.8,
+                    marker: { size: 5, color: colors[idx % colors.length], opacity: 0.4 },
+                    line: { color: colors[idx % colors.length] }
+                };
+            });
+
+            const recoveryLayout = {
+                title: null,
+                yaxis: { title: 'Spearman ρ →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'closest',
+                showlegend: false,
+                shapes: [
+                    {
+                        type: 'line',
+                        x0: -0.5, x1: 4.5,
+                        y0: 0.8, y1: 0.8,
+                        line: { color: '#999', width: 2, dash: 'dash' }
+                    }
+                ]
+            };
+
+            Plotly.newPlot('chart-recovery', recoveryTraces, recoveryLayout, { responsive: true });
+
+            // Chart 4: Consensus Confidence Distribution
+            const eventsByCorroboration = {};
+            data.events.forEach(evt => {
+                if (!eventsByCorroboration[evt.corroboration]) {
+                    eventsByCorroboration[evt.corroboration] = [];
+                }
+                eventsByCorroboration[evt.corroboration].push(evt.confidence);
+            });
+
+            const confidenceTraces = Object.keys(eventsByCorroboration).map((corr, idx) => ({
+                x: eventsByCorroboration[corr],
+                name: corr,
+                nbinsx: 25,
+                type: 'histogram',
+                marker: { color: colors[idx % colors.length], opacity: 0.7 }
+            }));
+
+            const confidenceLayout = {
+                title: null,
+                xaxis: { title: 'Confidence →', gridcolor: '#f0f0f0' },
+                yaxis: { title: 'Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                barmode: 'stack',
+                hovermode: 'x',
+                showlegend: true,
+                legend: { x: 0.02, y: 0.98 }
+            };
+
+            Plotly.newPlot('chart-confidence', confidenceTraces, confidenceLayout, { responsive: true });
+
+            // Chart 5: Syndication Collapse
+            const syndicationTraces = [
+                {
+                    x: ['Total Articles', 'Syndicated Articles', 'Clusters', 'Effective After Collapse'],
+                    y: [data.dedup.total_articles, data.dedup.syndicated_articles, data.dedup.clusters, data.dedup.effective_after_collapse],
+                    type: 'bar',
+                    orientation: 'v',
+                    marker: { color: [colorPalette.blue, colorPalette.red, colorPalette.yellow, colorPalette.green] },
+                    text: [
+                        data.dedup.total_articles.toLocaleString(),
+                        data.dedup.syndicated_articles.toLocaleString(),
+                        data.dedup.clusters.toLocaleString(),
+                        data.dedup.effective_after_collapse.toLocaleString()
+                    ],
+                    textposition: 'outside',
+                    hovertemplate: '<b>%{x}</b><br>%{y:,.0f}<extra></extra>'
+                }
+            ];
+
+            const collapsePct = ((data.dedup.syndicated_articles - data.dedup.clusters) / data.dedup.total_articles * 100).toFixed(1);
+
+            const syndicationLayout = {
+                title: null,
+                yaxis: { title: 'Article Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x',
+                showlegend: false,
+                annotations: [
+                    {
+                        x: 1.5,
+                        y: Math.max(...syndicationTraces[0].y) * 0.9,
+                        text: collapsePct + '% collapsed',
+                        showarrow: false,
+                        bgcolor: '#fff3cd',
+                        bordercolor: '#ffc107',
+                        borderwidth: 1,
+                        borderpad: 8
+                    }
+                ]
+            };
+
+            Plotly.newPlot('chart-dedup', syndicationTraces, syndicationLayout, { responsive: true });
+        }
+
+        function handleError(msg) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = 'Error: ' + msg;
+            document.querySelector('.container').appendChild(errorDiv);
+        }
+
+        // Fetch and initialize
+        fetch('data/explore.json')
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                initPlots(data);
+            })
+            .catch(err => {
+                handleError(err.message);
+                console.error(err);
+            });
+
+        // Responsive resize
+        window.addEventListener('resize', () => {
+            Plotly.Plots.resize('chart-outlets');
+            Plotly.Plots.resize('chart-trajectory');
+            Plotly.Plots.resize('chart-recovery');
+            Plotly.Plots.resize('chart-confidence');
+            Plotly.Plots.resize('chart-dedup');
+        });
+    </script>
+</body>
+</html>
