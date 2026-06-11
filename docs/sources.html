@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAPLE-News — Data & Method</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            font-size: 0.9em;
+            color: #0066cc;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            color: #333;
+            margin: 10px 0 5px 0;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .intro {
+            color: #555;
+            margin: 10px 0 5px 0;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            color: #333;
+            margin: 40px 0 20px 0;
+            font-size: 1.6em;
+            font-weight: 700;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .callout {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        .callout p {
+            margin: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .method-diagram {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .method-diagram svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .method-explanation {
+            color: #555;
+            margin: 15px 0 0 0;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 0.85em;
+            margin: 8px 0 0 0;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .chart-card h2 {
+            color: #333;
+            margin: 0 0 8px 0;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .chart-caption {
+            color: #555;
+            font-style: italic;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .plot-container {
+            width: 100%;
+            min-height: 400px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .table-card h2 {
+            color: #333;
+            margin: 0 0 8px 0;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .table-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-card th {
+            text-align: left;
+            padding: 10px;
+            background: #f9f9f9;
+            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .table-card td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .outlet-real {
+            color: #008fd5;
+            font-weight: 600;
+        }
+
+        .outlet-fake {
+            color: #fc4f30;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 3px;
+            margin: 10px 0;
+        }
+
+        footer {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Runs</a>
+            <h1>STAPLE-News — Data & Method</h1>
+            <p class="intro">Explore the source corpus and the streaming EM pipeline that powers consensus estimation across news outlets.</p>
+        </header>
+
+        <!-- Section 1: How It Works -->
+        <h2 class="section-title">How It Works</h2>
+
+        <div class="method-diagram">
+            <svg viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+                <!-- Define filter for subtle shadow -->
+                <defs>
+                    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+                    </filter>
+                </defs>
+
+                <!-- Step 1: Remote CSVs -->
+                <rect x="20" y="80" width="140" height="80" rx="4" fill="white" stroke="#008fd5" stroke-width="2" filter="url(#shadow)"/>
+                <text x="90" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#333">Remote CSVs</text>
+                <text x="90" y="133" text-anchor="middle" font-size="12" fill="#555">(ISOT, 111 MB)</text>
+
+                <!-- Arrow 1 -->
+                <line x1="160" y1="120" x2="200" y2="120" stroke="#008fd5" stroke-width="3" marker-end="url(#arrowhead)"/>
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#008fd5"/>
+                    </marker>
+                </defs>
+
+                <!-- Step 2: HTTP Range Streaming -->
+                <rect x="200" y="80" width="140" height="80" rx="4" fill="white" stroke="#008fd5" stroke-width="2" filter="url(#shadow)"/>
+                <text x="270" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#333">HTTP Range</text>
+                <text x="270" y="133" text-anchor="middle" font-size="12" fill="#555">streaming</text>
+                <text x="270" y="165" text-anchor="middle" font-size="11" fill="#e5ae38" font-style="italic">resumable cursor</text>
+
+                <!-- Arrow 2 -->
+                <line x1="340" y1="120" x2="380" y2="120" stroke="#008fd5" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+                <!-- Step 3: Claim Extraction -->
+                <rect x="380" y="80" width="140" height="80" rx="4" fill="white" stroke="#008fd5" stroke-width="2" filter="url(#shadow)"/>
+                <text x="450" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#333">Claim</text>
+                <text x="450" y="133" text-anchor="middle" font-size="13" font-weight="600" fill="#333">extraction</text>
+                <text x="450" y="165" text-anchor="middle" font-size="11" fill="#e5ae38" font-style="italic">actor-action-object</text>
+
+                <!-- Arrow 3 -->
+                <line x1="520" y1="120" x2="560" y2="120" stroke="#008fd5" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+                <!-- Step 4: Event Clustering -->
+                <rect x="560" y="80" width="140" height="80" rx="4" fill="white" stroke="#008fd5" stroke-width="2" filter="url(#shadow)"/>
+                <text x="630" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#333">Event</text>
+                <text x="630" y="133" text-anchor="middle" font-size="13" font-weight="600" fill="#333">clustering</text>
+                <text x="630" y="165" text-anchor="middle" font-size="11" fill="#e5ae38" font-style="italic">same-story grouping</text>
+
+                <!-- Arrow 4 -->
+                <line x1="700" y1="120" x2="740" y2="120" stroke="#008fd5" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+                <!-- Step 5: Dedup -->
+                <rect x="740" y="80" width="120" height="80" rx="4" fill="white" stroke="#008fd5" stroke-width="2" filter="url(#shadow)"/>
+                <text x="800" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#333">Dedup</text>
+                <text x="800" y="133" text-anchor="middle" font-size="13" font-weight="600" fill="#333">(simhash)</text>
+                <text x="800" y="165" text-anchor="middle" font-size="11" fill="#e5ae38" font-style="italic">collapse syndication</text>
+
+                <!-- Arrow 5 to EM loop -->
+                <line x1="860" y1="120" x2="900" y2="120" stroke="#008fd5" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+                <!-- EM Loop Box -->
+                <rect x="900" y="40" width="260" height="160" rx="4" fill="white" stroke="#fc4f30" stroke-width="2" filter="url(#shadow)"/>
+                <text x="1030" y="65" text-anchor="middle" font-size="13" font-weight="700" fill="#fc4f30">Online EM Loop</text>
+
+                <!-- E-step -->
+                <rect x="920" y="80" width="110" height="50" rx="3" fill="#fef5f0" stroke="#fc4f30" stroke-width="1.5"/>
+                <text x="975" y="95" text-anchor="middle" font-size="11" font-weight="600" fill="#333">E-step:</text>
+                <text x="975" y="110" text-anchor="middle" font-size="10" fill="#555">infer consensus</text>
+
+                <!-- M-step -->
+                <rect x="1050" y="80" width="110" height="50" rx="3" fill="#fef5f0" stroke="#fc4f30" stroke-width="1.5"/>
+                <text x="1105" y="95" text-anchor="middle" font-size="11" font-weight="600" fill="#333">M-step:</text>
+                <text x="1105" y="110" text-anchor="middle" font-size="10" fill="#555">update sensitivity</text>
+
+                <!-- Circular arrows between E and M -->
+                <path d="M 1030 80 Q 1040 70 1050 80" fill="none" stroke="#fc4f30" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <path d="M 1050 130 Q 1040 140 1030 130" fill="none" stroke="#fc4f30" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- EM label -->
+                <text x="1030" y="155" text-anchor="middle" font-size="11" fill="#555" font-style="italic">STAPLE / Dawid-Skene</text>
+
+                <!-- Arrow from EM to output -->
+                <line x1="1160" y1="120" x2="1200" y2="120" stroke="#008fd5" stroke-width="3"/>
+
+                <!-- Step 7: Output -->
+                <rect x="1200" y="80" width="180" height="80" rx="4" fill="white" stroke="#008fd5" stroke-width="2" filter="url(#shadow)"/>
+                <text x="1290" y="110" text-anchor="middle" font-size="12" font-weight="600" fill="#333">Outlet</text>
+                <text x="1290" y="128" text-anchor="middle" font-size="12" font-weight="600" fill="#333">consensus +</text>
+                <text x="1290" y="146" text-anchor="middle" font-size="12" font-weight="600" fill="#333">omission profile</text>
+            </svg>
+
+            <p class="method-explanation">
+                The pipeline streams articles from remote ISOT CSVs using resumable HTTP Range requests, avoiding full downloads.
+                Claims (atomic actor-action-object units) are extracted per article and grouped by event (same headlines).
+                Syndication clustering via simhash collapses near-duplicate copies into single votes. An online EM algorithm then iteratively
+                estimates outlet consensus agreement and systematic omission/sensationalism by alternating between inferring event labels
+                (E-step) and updating outlet reliability parameters (M-step), converging to a Dawid-Skene-style consensus model.
+            </p>
+        </div>
+
+        <div class="callout">
+            <p><strong>What this measures.</strong> The model estimates consensus, not objective truth — it identifies where outlets agree and diverge across reported events. These estimates reflect shared ground, not factual accuracy.</p>
+        </div>
+
+        <!-- Section 2: The Source Data -->
+        <h2 class="section-title">The Source Data</h2>
+
+        <div class="stats-strip" id="stats-container">
+            <div class="stat-card">
+                <p class="stat-number" id="stat-articles">—</p>
+                <p class="stat-label">Articles</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number" id="stat-events">—</p>
+                <p class="stat-label">Events</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number" id="stat-claims">—</p>
+                <p class="stat-label">Claims</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number" id="stat-multi">—</p>
+                <p class="stat-label">Multi-outlet events</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number" id="stat-bytes">—</p>
+                <p class="stat-label">Streamed</p>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Articles per Outlet</h2>
+            <p class="chart-caption">Reuters (blue) is the real outlet from ISOT; fake:* (red) are synthetic sources. Total coverage: 42,681 articles.</p>
+            <div id="chart-outlets" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Body Length Distribution</h2>
+            <p class="chart-caption">Histogram of article word counts across the corpus (20,000 samples).</p>
+            <div id="chart-body-words" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Title Length Distribution</h2>
+            <p class="chart-caption">Histogram of title character counts across the corpus (20,000 samples).</p>
+            <div id="chart-title-len" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Claim Verbs</h2>
+            <p class="chart-caption">Distribution of top claim-action predicates extracted from articles (12 primary verbs).</p>
+            <div id="chart-actions" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Event Corroboration Profile</h2>
+            <p class="chart-caption">Most events appear in only one outlet; 2,941 multi-outlet events drive consensus inference. Log y-axis.</p>
+            <div id="chart-events-size" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Syndication Cluster Sizes</h2>
+            <p class="chart-caption">Near-duplicate articles cluster via simhash. Most clusters (size ≥2) represent wire-service syndication. Log y-axis.</p>
+            <div id="chart-clusters" class="plot-container"></div>
+        </div>
+
+        <div class="table-card">
+            <h2>Sample Headlines</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Outlet</th>
+                        <th>Title</th>
+                    </tr>
+                </thead>
+                <tbody id="sample-headlines">
+                    <tr><td colspan="2" style="text-align: center; padding: 20px; color: #999;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p>The corpus spans 7 outlets (1 real, 6 synthetic) from the ISOT dataset, totaling ~111 MB of streaming data. Articles are deduplicated by cluster and analyzed for claim-level consensus. All charts render from live data; network errors are reported inline.</p>
+        </footer>
+    </div>
+
+    <script>
+        const colorPalette = {
+            red: '#fc4f30',
+            blue: '#008fd5',
+            yellow: '#e5ae38',
+            green: '#6d904f',
+            gray: '#8b8b8b',
+            purple: '#810f7c',
+            teal: '#017361'
+        };
+
+        const colors = ['#fc4f30', '#008fd5', '#e5ae38', '#6d904f', '#8b8b8b', '#810f7c', '#017361'];
+
+        function formatNumber(n) {
+            return n.toLocaleString();
+        }
+
+        function formatBytes(bytes) {
+            const mb = (bytes / (1024 * 1024)).toFixed(0);
+            return mb + ' MB';
+        }
+
+        function initPlots(data) {
+            // Update stats
+            document.getElementById('stat-articles').textContent = formatNumber(data.totals.articles);
+            document.getElementById('stat-events').textContent = formatNumber(data.totals.events);
+            document.getElementById('stat-claims').textContent = formatNumber(data.totals.claims);
+            document.getElementById('stat-multi').textContent = formatNumber(data.totals.multi_outlet_events);
+            document.getElementById('stat-bytes').textContent = formatBytes(data.totals.bytes_streamed);
+
+            // Chart 1: Articles per outlet
+            const outletNames = data.outlets.map(o => o.name);
+            const outletColors = data.outlets.map(o => o.name === 'reuters' ? colorPalette.blue : colorPalette.red);
+            const outletTraces = [{
+                y: outletNames,
+                x: data.outlets.map(o => o.articles),
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: outletColors },
+                text: data.outlets.map(o => o.articles.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{y}</b><br>%{x:,.0f} articles<extra></extra>'
+            }];
+
+            const outletLayout = {
+                title: null,
+                xaxis: { title: 'Article Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                margin: { l: 120 },
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('chart-outlets', outletTraces, outletLayout, { responsive: true });
+
+            // Chart 2: Body words histogram
+            const bodyWordsTraces = [{
+                x: data.body_words_sample,
+                nbinsx: 40,
+                type: 'histogram',
+                marker: { color: colorPalette.blue, opacity: 0.7 }
+            }];
+
+            const bodyWordsLayout = {
+                title: null,
+                xaxis: { title: 'Words per Article →', gridcolor: '#f0f0f0' },
+                yaxis: { title: 'Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x'
+            };
+
+            Plotly.newPlot('chart-body-words', bodyWordsTraces, bodyWordsLayout, { responsive: true });
+
+            // Chart 3: Title length histogram
+            const titleLenTraces = [{
+                x: data.title_len_hist,
+                nbinsx: 40,
+                type: 'histogram',
+                marker: { color: colorPalette.yellow, opacity: 0.7 }
+            }];
+
+            const titleLenLayout = {
+                title: null,
+                xaxis: { title: 'Characters per Title →', gridcolor: '#f0f0f0' },
+                yaxis: { title: 'Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x'
+            };
+
+            Plotly.newPlot('chart-title-len', titleLenTraces, titleLenLayout, { responsive: true });
+
+            // Chart 4: Actions/verbs
+            const sortedActions = [...data.actions].sort((a, b) => b.count - a.count);
+            const actionTraces = [{
+                x: sortedActions.map(a => a.action),
+                y: sortedActions.map(a => a.count),
+                type: 'bar',
+                marker: { color: colorPalette.green },
+                text: sortedActions.map(a => a.count.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{x}</b><br>%{y:,.0f}<extra></extra>'
+            }];
+
+            const actionLayout = {
+                title: null,
+                yaxis: { title: 'Frequency →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x',
+                margin: { b: 100 }
+            };
+
+            Plotly.newPlot('chart-actions', actionTraces, actionLayout, { responsive: true });
+
+            // Chart 5: Events by size (corroboration)
+            const eventsSizeTraces = [{
+                x: data.events_by_size.map(e => e.n_outlets),
+                y: data.events_by_size.map(e => e.n_events),
+                type: 'bar',
+                marker: { color: colorPalette.purple },
+                text: data.events_by_size.map(e => e.n_events.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{x} outlet(s)</b><br>%{y:,.0f} events<extra></extra>'
+            }];
+
+            const eventsSizeLayout = {
+                title: null,
+                xaxis: { title: 'Outlets Reporting Event →' },
+                yaxis: { title: 'Event Count →', type: 'log', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x'
+            };
+
+            Plotly.newPlot('chart-events-size', eventsSizeTraces, eventsSizeLayout, { responsive: true });
+
+            // Chart 6: Dedup cluster sizes
+            const clusterTraces = [{
+                x: data.dedup_cluster_sizes.map(c => c.size),
+                y: data.dedup_cluster_sizes.map(c => c.clusters),
+                type: 'bar',
+                marker: { color: colorPalette.teal },
+                text: data.dedup_cluster_sizes.map(c => c.clusters.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>Size %{x}</b><br>%{y:,.0f} clusters<extra></extra>'
+            }];
+
+            const clusterLayout = {
+                title: null,
+                xaxis: { title: 'Cluster Size (articles) →' },
+                yaxis: { title: 'Cluster Count →', type: 'log', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x'
+            };
+
+            Plotly.newPlot('chart-clusters', clusterTraces, clusterLayout, { responsive: true });
+
+            // Sample headlines table
+            const headlinesHtml = data.sample_titles.map(s => {
+                const isReal = s.outlet === 'reuters';
+                const outletClass = isReal ? 'outlet-real' : 'outlet-fake';
+                return `<tr>
+                    <td><span class="${outletClass}">${s.outlet}</span></td>
+                    <td>${escapeHtml(s.title)}</td>
+                </tr>`;
+            }).join('');
+            document.getElementById('sample-headlines').innerHTML = headlinesHtml;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function handleError(msg) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = 'Error: ' + msg;
+            document.querySelector('.container').appendChild(errorDiv);
+        }
+
+        // Fetch and initialize
+        fetch('data/sources.json')
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                initPlots(data);
+            })
+            .catch(err => {
+                handleError(err.message);
+                console.error(err);
+            });
+
+        // Responsive resize
+        window.addEventListener('resize', () => {
+            Plotly.Plots.resize('chart-outlets');
+            Plotly.Plots.resize('chart-body-words');
+            Plotly.Plots.resize('chart-title-len');
+            Plotly.Plots.resize('chart-actions');
+            Plotly.Plots.resize('chart-events-size');
+            Plotly.Plots.resize('chart-clusters');
+        });
+    </script>
+</body>
+</html>
