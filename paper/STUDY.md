@@ -1,8 +1,29 @@
-# Study Design: Measuring Cross-Outlet Consensus and Selective Omission with Streaming Latent-Class Models
+# Study Design: STAPLE-News
 
 ## Working title
 
-**"A Streaming Latent-Class Model of Cross-Outlet News Consensus and Selective Omission"**
+**"STAPLE-News: Estimating Cross-Outlet Consensus and Selective Omission from Streaming
+News Coverage"**
+
+Naming follows the established STAPLE-extension convention in the imaging literature
+(COLLATE, STAPLER, Local MAP STAPLE), signaling lineage to readers who know the family.
+
+## Model papers (structure templates)
+
+- **Pasternack & Roth, "Latent Credibility Analysis" (WWW 2013)** — closest methodological
+  ancestor (EM over latent claim truth + source reliability). Template for model exposition
+  and identifiability discussion; our deltas: online/streaming EM, omission channel,
+  syndication dedup, news domain.
+- **"Reliability Estimation of News Media Sources: Birds of a Feather Flock Together"
+  (NAACL 2024, arXiv:2404.09565)** — unsupervised outlet reliability validated by Spearman
+  vs expert ratings (ρ=0.80). Template and direct comparison point for E4's external
+  validation protocol.
+- **"Truth Discovery Algorithms: An Experimental Evaluation" (arXiv:1409.6428)** — standard
+  baselines (majority vote, Dawid-Skene variants, TruthFinder) and metrics for E1–E3.
+- **"A Survey on Predicting the Factuality and Bias of News Media" (arXiv:2103.12506)** —
+  taxonomy for the related-work positioning (unsupervised, claim-level, coverage-based cell).
+- EPJ Data Science house style: Intro → Data → Methods → Results → Discussion, substantive
+  limitations section, data/code availability statement.
 
 ## Framing
 

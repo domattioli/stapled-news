@@ -1,6 +1,6 @@
 # Abstract
 
-**A Streaming Latent-Class Model of Cross-Outlet News Consensus and Selective Omission**
+**STAPLE-News: Estimating Cross-Outlet Consensus and Selective Omission from Streaming News Coverage**
 
 When many outlets cover the same event, their accounts overlap imperfectly: claims are
 asserted, contradicted, or silently omitted. We present a method for quantifying this
