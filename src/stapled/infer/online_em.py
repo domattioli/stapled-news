@@ -244,7 +244,7 @@ class OnlineEM:
             f"""
             SELECT e.id, json_group_array(json_object(
                 'outlet_id', a.outlet_id,
-                'observation', CASE WHEN c.action NOT LIKE 'not-%' THEN 1 ELSE 0 END,
+                'observation', CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END,
                 'certainty', COALESCE(c.certainty, 0.5),
                 'vote_key', CASE WHEN a.dedup_cluster_id IS NOT NULL THEN 'c' || a.dedup_cluster_id ELSE 'a' || a.id END
             )) as claims_json

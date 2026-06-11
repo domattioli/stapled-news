@@ -1,0 +1,131 @@
+[
+  {
+    "experiment": "e1",
+    "git_sha": "bae850410ee125c60725be663f26d0b2ab67dc73",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e1_recovery.csv",
+      "results/e1_recovery.png"
+    ],
+    "metrics": {
+      "mean_rho": {
+        "batch_ds": 0.0,
+        "majority": 0.0,
+        "online_em_dedup": 0.0,
+        "online_em_nodedup": 0.0,
+        "weighted_majority": 0.0
+      },
+      "ci95": {
+        "batch_ds": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "majority": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "online_em_dedup": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "online_em_nodedup": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "weighted_majority": {
+          "low": 0.0,
+          "high": 0.0
+        }
+      },
+      "gate_rho_ge_0.8": false
+    },
+    "timestamp": "2026-06-11T22:39:08.964728+00:00"
+  },
+  {
+    "experiment": "e1",
+    "git_sha": "0190c9cb6d757b6abb1d81d25329e002ebbdcf55",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e1_recovery.csv",
+      "results/e1_recovery.png"
+    ],
+    "metrics": {
+      "mean_rho": {
+        "batch_ds": 0.0,
+        "majority": 0.0,
+        "online_em_dedup": 0.8766666666666665,
+        "online_em_nodedup": 0.8766666666666665,
+        "weighted_majority": 0.0
+      },
+      "ci95": {
+        "batch_ds": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "majority": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "online_em_dedup": {
+          "low": 0.5175,
+          "high": 0.9999999999999999
+        },
+        "online_em_nodedup": {
+          "low": 0.5175,
+          "high": 0.9999999999999999
+        },
+        "weighted_majority": {
+          "low": 0.0,
+          "high": 0.0
+        }
+      },
+      "gate_rho_ge_0.8": true
+    },
+    "timestamp": "2026-06-11T22:41:56.428411+00:00"
+  },
+  {
+    "experiment": "e1",
+    "git_sha": "0190c9cb6d757b6abb1d81d25329e002ebbdcf55",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e1_recovery.csv",
+      "results/e1_recovery.png"
+    ],
+    "metrics": {
+      "mean_rho": {
+        "batch_ds": 0.8966666666666664,
+        "majority": 0.7064210719709476,
+        "online_em_dedup": 0.8766666666666665,
+        "online_em_nodedup": 0.8766666666666665,
+        "weighted_majority": 0.8699999999999998
+      },
+      "ci95": {
+        "batch_ds": {
+          "low": 0.6174999999999999,
+          "high": 0.9999999999999999
+        },
+        "majority": {
+          "low": 0.08660720234117086,
+          "high": 0.9999999999999999
+        },
+        "online_em_dedup": {
+          "low": 0.5175,
+          "high": 0.9999999999999999
+        },
+        "online_em_nodedup": {
+          "low": 0.5175,
+          "high": 0.9999999999999999
+        },
+        "weighted_majority": {
+          "low": 0.545,
+          "high": 0.9999999999999999
+        }
+      },
+      "gate_rho_ge_0.8": true
+    },
+    "timestamp": "2026-06-11T22:42:26.464816+00:00"
+  }
+]
