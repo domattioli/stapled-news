@@ -7,7 +7,15 @@ from typing import Optional
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
+mpl.rcParams.update({
+    'figure.facecolor': '#f0f0f0',
+    'axes.facecolor': '#f0f0f0',
+    'font.family': 'DejaVu Sans',
+    'axes.titlesize': 14,
+    'axes.titleweight': 'bold',
+})
 
 
 def online_convergence(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
@@ -54,6 +62,7 @@ def online_convergence(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
         reliability_by_outlet[outlet_id].append([batch, reliability])
 
     # Generate matplotlib figure
+    plt.style.use('fivethirtyeight')
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
 
     # Plot 1: Log-likelihood per batch
@@ -87,6 +96,7 @@ def online_convergence(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
     ax2.set_ylim([0, 1])
 
     plt.tight_layout()
+    fig.text(0.1, 0.01, "Each point = one training batch; rising curve = model learning from streaming data", fontsize=9, color='#555555', style='italic')
 
     # Create assets directory
     assets_dir = out_path / "assets"
@@ -140,6 +150,7 @@ def reliability_trajectory(conn: sqlite3.Connection, out_dir: str) -> Optional[s
         return None
 
     # Generate matplotlib figure
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots(figsize=(12, 6))
 
     colors = plt.cm.tab10(np.linspace(0, 1, len(reliability_by_outlet)))
@@ -156,6 +167,7 @@ def reliability_trajectory(conn: sqlite3.Connection, out_dir: str) -> Optional[s
     ax.set_ylim([0, 1])
 
     plt.tight_layout()
+    fig.text(0.1, 0.01, "Reliability score per outlet across training batches; convergence = stable lines", fontsize=9, color='#555555', style='italic')
 
     # Create assets directory
     assets_dir = out_path / "assets"

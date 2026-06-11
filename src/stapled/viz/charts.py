@@ -8,6 +8,14 @@ from typing import List
 import matplotlib
 matplotlib.use('Agg')  # Non-interactive backend
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.rcParams.update({
+    'figure.facecolor': '#f0f0f0',
+    'axes.facecolor': '#f0f0f0',
+    'font.family': 'DejaVu Sans',
+    'axes.titlesize': 14,
+    'axes.titleweight': 'bold',
+})
 
 
 def render_all(conn: sqlite3.Connection, run_id: int, out_dir: str) -> List[str]:
@@ -98,6 +106,7 @@ def _render_reliability_bias_scatter(
     biases = [row[3] for row in rows]
     claim_counts = [max(row[4] or 1, 1) for row in rows]
 
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.scatter(
         reliabilities, biases, s=[c * 10 for c in claim_counts],
@@ -116,6 +125,7 @@ def _render_reliability_bias_scatter(
     ax.axhline(y=0, color='k', linestyle='--', alpha=0.3)
     ax.axvline(x=0.5, color='k', linestyle='--', alpha=0.3)
 
+    fig.text(0.1, 0.01, "Outlets near top-right are reliable truth-reporters; bottom-left lean anti-correlated", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_reliability_bias_scatter.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
@@ -147,6 +157,7 @@ def _render_reliability_ranking(
     outlet_names = [row[0] for row in rows]
     reliabilities = [row[1] for row in rows]
 
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots(figsize=(10, max(4, len(outlet_names) * 0.3)))
     ax.barh(outlet_names, reliabilities, color='steelblue')
 
@@ -178,6 +189,7 @@ def _render_reliability_ranking(
     ax.set_xlim(0, 1.1)
     ax.grid(alpha=0.3, axis='x')
 
+    fig.text(0.1, 0.01, "Higher reliability = closer to true consensus on disputed claims", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_reliability_ranking.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
@@ -203,6 +215,7 @@ def _render_confidence_hist(
     if not confidences:
         return ""
 
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.hist(confidences, bins=20, color='steelblue', edgecolor='black')
 
@@ -211,6 +224,7 @@ def _render_confidence_hist(
     ax.set_title("Event Confidence Distribution")
     ax.grid(alpha=0.3, axis='y')
 
+    fig.text(0.1, 0.01, "Peaks near 1.0 indicate high-confidence inferences; flat = uncertain events", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_confidence_hist.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
@@ -233,6 +247,7 @@ def _render_convergence_curve(
     if not ll_trace:
         return ""
 
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(ll_trace, marker='o', linestyle='-', color='steelblue')
 
@@ -241,6 +256,7 @@ def _render_convergence_curve(
     ax.set_title("EM Convergence Curve")
     ax.grid(alpha=0.3)
 
+    fig.text(0.1, 0.01, "Log-likelihood rising then flattening = EM converged successfully", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_convergence_curve.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
@@ -270,10 +286,12 @@ def _render_corroboration_pie(
     labels = [row[0] for row in rows]
     sizes = [row[1] for row in rows]
 
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
     ax.set_title("Event Corroboration")
 
+    fig.text(0.1, 0.01, "Triangulated = 3+ outlets agree; uncorroborated = single-source claim", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_corroboration_pie.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
