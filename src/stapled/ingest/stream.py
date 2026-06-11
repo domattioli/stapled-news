@@ -144,7 +144,9 @@ def iter_remote_lines(
                         batch_byte_count = 0
                         consumed_bytes = 0
 
-            # Handle final incomplete record
+            # Handle final incomplete record (file without trailing newline)
+            if buffer:
+                consumed_bytes += len(buffer.encode("utf-8"))
             if buffer.strip() and headers is not None:
                 try:
                     row = next(csv.reader(io.StringIO(buffer)))
@@ -159,9 +161,10 @@ def iter_remote_lines(
                 except Exception:
                     malformed_count += 1
 
-            # Yield remaining batch
+            # Yield remaining batch; always advance cursor past consumed tail bytes
             if batch_rows:
                 yield batch_rows
+            if consumed_bytes:
                 byte_offset += consumed_bytes
                 _update_cursor(conn, cursor_id, byte_offset, new_etag, rows_ingested)
 

@@ -169,10 +169,9 @@ def test_split_quoted_records_chunk_boundary():
     # Append chunk2 to the incomplete buffer and resplit
     combined = records1[1] + chunk2
     records2 = _split_quoted_records(combined)
-    assert len(records2) == 3
-    assert records2[0] == '1,"Line\nLineTwo"'
-    assert records2[1] == '2,"Normal"'
-    assert records2[2] == ''  # Trailing empty (ends with newline)
+    assert len(records2) == 2
+    assert records2[0] == '1,"LineOne\nLineTwo"'
+    assert records2[1] == '2,"Normal"'  # Incomplete trailing record (no final newline)
 
 
 def test_iter_remote_lines_quoted_embedded_newline(tmp_path):
