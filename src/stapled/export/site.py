@@ -6,6 +6,7 @@ from pathlib import Path
 from jinja2 import Environment, PackageLoader
 
 from stapled.gates import GateError
+from stapled.viz.charts import render_all as render_charts
 
 
 def export_run(conn: sqlite3.Connection, run_id: int, out_dir: str) -> None:
@@ -117,6 +118,29 @@ def export_run(conn: sqlite3.Connection, run_id: int, out_dir: str) -> None:
             gates_info["recovery_verdict"] = recovery_row[1]
             gates_info["recovery_report_id"] = recovery_row[0]
 
+    # Render charts
+    chart_files = render_charts(conn, run_id, str(out_path))
+
+    # Build chart metadata (path + captions for template)
+    chart_metadata = []
+    chart_captions = {
+        "reliability_bias_scatter": "Outlet Reliability vs Bias (size = claim count)",
+        "reliability_ranking": "Outlet Reliability Ranking",
+        "confidence_hist": "Event Confidence Distribution",
+        "convergence_curve": "EM Convergence Curve",
+        "corroboration_pie": "Event Corroboration",
+    }
+    for chart_path in chart_files:
+        # Extract chart type from filename (e.g., "assets/run_1_reliability_ranking.png" → "reliability_ranking")
+        filename = chart_path.split('/')[-1]
+        # Remove run_id prefix and .png extension
+        chart_type = filename.replace(f"run_{run_id}_", "").replace(".png", "")
+        caption = chart_captions.get(chart_type, chart_type)
+        chart_metadata.append({
+            "path": chart_path,
+            "caption": caption,
+        })
+
     # Build run.json
     run_data = {
         "run_id": run_id_val,
@@ -125,10 +149,11 @@ def export_run(conn: sqlite3.Connection, run_id: int, out_dir: str) -> None:
         "events": events,
         "outlets": outlets,
         "gates": gates_info,
+        "charts": chart_metadata,
     }
 
-    # Write run.json
-    run_json_path = out_path / "run.json"
+    # Write run_<run_id>.json
+    run_json_path = out_path / f"run_{run_id_val}.json"
     run_json_path.write_text(json.dumps(run_data, indent=2))
 
     # Render templates
@@ -150,3 +175,10 @@ def export_run(conn: sqlite3.Connection, run_id: int, out_dir: str) -> None:
     run_html = run_template.render(**run_data)
     run_html_path = out_path / f"run_{run_id_val}.html"
     run_html_path.write_text(run_html)
+
+    # Add note for real runs
+    if corpus_id is None:
+        # Real run: add footer note about derived outlets
+        footer_note = "Outlets derived from ISOT dataset labels (reuters + fake:<channel> pseudo-outlets); reliability/bias are model estimates, not editorial judgments."
+        # Could add to run_data or template context
+        run_data["footer_note"] = footer_note

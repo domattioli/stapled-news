@@ -27478,10 +27478,25 @@
     "recovery_report_id": null
   },
   "charts": [
-    "assets/reliability_bias_scatter.png",
-    "assets/reliability_ranking.png",
-    "assets/confidence_hist.png",
-    "assets/convergence_curve.png",
-    "assets/corroboration_pie.png"
+    {
+      "path": "assets/run_2_reliability_bias_scatter.png",
+      "caption": "Outlet Reliability vs Bias (size = claim count)"
+    },
+    {
+      "path": "assets/run_2_reliability_ranking.png",
+      "caption": "Outlet Reliability Ranking"
+    },
+    {
+      "path": "assets/run_2_confidence_hist.png",
+      "caption": "Event Confidence Distribution"
+    },
+    {
+      "path": "assets/run_2_convergence_curve.png",
+      "caption": "EM Convergence Curve"
+    },
+    {
+      "path": "assets/run_2_corroboration_pie.png",
+      "caption": "Event Corroboration"
+    }
   ]
 }
