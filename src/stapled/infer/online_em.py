@@ -99,6 +99,21 @@ class OnlineEM:
         """Bind database connection."""
         self.conn = conn
 
+    def ensure_outlets(self, outlet_ids: List[int]) -> None:
+        """Register outlets discovered after init (streaming creates outlets lazily)."""
+        for o in outlet_ids:
+            if o not in self.sens:
+                self.outlet_ids.append(o)
+                self.sens[o] = 0.7
+                self.spec[o] = 0.7
+                self.exp_tp[o] = 0.0
+                self.exp_fp[o] = 0.0
+                self.exp_tn[o] = 0.0
+                self.exp_fn[o] = 0.0
+                self.n_obs[o] = 0
+                if hasattr(self, "_prev_sens"):
+                    self._prev_sens[o] = 0.7
+
     def e_step_batch(self, events):
         """
         E-step on batch of events.
@@ -127,6 +142,7 @@ class OnlineEM:
         for event in events:
             event_id = event["event_id"]
             claims = event["claims"]
+            self.ensure_outlets([c["outlet_id"] for c in claims])
 
             # Check for anchor
             anchor_true_state = self._get_anchor(event_id) if self.conn else None
@@ -236,6 +252,21 @@ class OnlineEM:
 
         for event_id, claims_json in event_rows:
             claims = json.loads(claims_json)
+
+            # Register outlets created after EM init (streaming adds outlets lazily)
+            claim_outlets = {c["outlet_id"] for c in claims}
+            self.ensure_outlets(list(claim_outlets))
+            for o in claim_outlets:
+                if o not in batch_stats:
+                    batch_stats[o] = {
+                        "sens": self.sens[o],
+                        "spec": self.spec[o],
+                        "exp_tp": 0.0,
+                        "exp_fp": 0.0,
+                        "exp_tn": 0.0,
+                        "exp_fn": 0.0,
+                        "n_obs": 0.0,
+                    }
 
             # Check for anchor
             anchor_true_state = self._get_anchor(event_id)
