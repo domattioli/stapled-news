@@ -466,6 +466,7 @@ def train_stream(
         None, "--limit-per-outlet", help="Limit per outlet"
     ),
     reset: bool = typer.Option(False, "--reset", help="Reset stream cursor"),
+    dedup_voting: bool = typer.Option(True, "--dedup-voting/--no-dedup-voting", help="Count near-duplicate article clusters as one fractional vote"),
     db: str = typer.Option("./stapled.db", help="Path to database"),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
@@ -590,7 +591,7 @@ def train_stream(
                 outlet_ids = [row[0] for row in cursor.fetchall()]
                 if not outlet_ids:
                     raise ValueError("No outlets in database. Load data first (load_isot, load_real, etc.)")
-                em = OnlineEM(outlet_ids, tolerance=1e-5, conn=conn)
+                em = OnlineEM(outlet_ids, tolerance=1e-5, conn=conn, dedup_voting=dedup_voting)
 
             # Get events with claims (no corpus_id)
             cursor = conn.execute(
