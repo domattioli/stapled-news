@@ -225,3 +225,4 @@ stapled.db
 # raw datasets (not committed)
 data/raw/
 *.db
+*.db.bak

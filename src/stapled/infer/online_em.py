@@ -15,6 +15,7 @@ class OnlineEM:
         outlet_ids: List[int],
         tolerance: float = 1e-5,
         conn: sqlite3.Connection = None,
+        dedup_voting: bool = True,
     ):
         """
         Initialize online EM state. Load prior from em_state table if available.
@@ -23,10 +24,12 @@ class OnlineEM:
             outlet_ids: List of outlet IDs
             tolerance: Convergence tolerance
             conn: Database connection (optional, set via connect())
+            dedup_voting: If True, count near-duplicate clusters as one fractional vote
         """
         self.outlet_ids = outlet_ids
         self.tolerance = tolerance
         self.conn: sqlite3.Connection = conn
+        self.dedup_voting = dedup_voting
 
         # Initialize parameters: uninformative 0.7 if no prior
         self.sens = {o: 0.7 for o in outlet_ids}
@@ -155,6 +158,7 @@ class OnlineEM:
                 outlet_id = claim["outlet_id"]
                 obs = claim["observation"]
                 cert = claim.get("certainty", 0.5)
+                w = claim.get("weight", 1.0)
 
                 sens = self.sens[outlet_id]
                 spec = self.spec[outlet_id]
@@ -171,6 +175,9 @@ class OnlineEM:
                     p_correct = np.clip(p_correct, 1e-9, 1 - 1e-9)
 
                     p_obs_given_state = p_correct if obs == true_state else 1 - p_correct
+
+                    # Apply fractional weight via exponentiation
+                    p_obs_given_state = p_obs_given_state ** w
 
                     if true_state == 0:
                         ll_s0 *= p_obs_given_state
@@ -237,8 +244,9 @@ class OnlineEM:
             f"""
             SELECT e.id, json_group_array(json_object(
                 'outlet_id', a.outlet_id,
-                'observation', CASE WHEN c.action NOT LIKE 'not-%' THEN 1 ELSE 0 END,
-                'certainty', COALESCE(c.certainty, 0.5)
+                'observation', CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END,
+                'certainty', COALESCE(c.certainty, 0.5),
+                'vote_key', CASE WHEN a.dedup_cluster_id IS NOT NULL THEN 'c' || a.dedup_cluster_id ELSE 'a' || a.id END
             )) as claims_json
             FROM event e
             JOIN claim c ON e.id = c.event_id
@@ -268,6 +276,20 @@ class OnlineEM:
                         "n_obs": 0.0,
                     }
 
+            # Compute per-claim weight based on dedup clustering
+            if self.dedup_voting:
+                vote_key_counts = {}
+                for claim in claims:
+                    vk = claim.get("vote_key", f"a{id(claim)}")
+                    vote_key_counts[vk] = vote_key_counts.get(vk, 0) + 1
+
+                for claim in claims:
+                    vk = claim.get("vote_key", f"a{id(claim)}")
+                    claim["weight"] = 1.0 / vote_key_counts[vk]
+            else:
+                for claim in claims:
+                    claim["weight"] = 1.0
+
             # Check for anchor
             anchor_true_state = self._get_anchor(event_id)
 
@@ -279,6 +301,7 @@ class OnlineEM:
                 outlet_id = claim["outlet_id"]
                 obs = claim["observation"]
                 cert = claim.get("certainty", 0.5)
+                w = claim.get("weight", 1.0)
 
                 sens = self.sens[outlet_id]
                 spec = self.spec[outlet_id]
@@ -295,6 +318,9 @@ class OnlineEM:
                     p_correct = np.clip(p_correct, 1e-9, 1 - 1e-9)
 
                     p_obs_given_state = p_correct if obs == true_state else 1 - p_correct
+
+                    # Apply fractional weight via exponentiation
+                    p_obs_given_state = p_obs_given_state ** w
 
                     if true_state == 0:
                         ll_s0 *= p_obs_given_state
@@ -332,24 +358,26 @@ class OnlineEM:
                 outlet_id = claim["outlet_id"]
                 obs = claim["observation"]
                 cert = claim.get("certainty", 0.5)
+                w = claim.get("weight", 1.0)
 
                 if obs == 1:
-                    batch_stats[outlet_id]["exp_tp"] += p_s1 * cert
-                    batch_stats[outlet_id]["n_obs"] += p_s1 * cert
+                    batch_stats[outlet_id]["exp_tp"] += p_s1 * cert * w
+                    batch_stats[outlet_id]["n_obs"] += p_s1 * cert * w
                 else:
-                    batch_stats[outlet_id]["exp_fn"] += p_s1 * cert
-                    batch_stats[outlet_id]["n_obs"] += p_s1 * cert
+                    batch_stats[outlet_id]["exp_fn"] += p_s1 * cert * w
+                    batch_stats[outlet_id]["n_obs"] += p_s1 * cert * w
 
                 if obs == 0:
-                    batch_stats[outlet_id]["exp_tn"] += p_s0 * cert
+                    batch_stats[outlet_id]["exp_tn"] += p_s0 * cert * w
                 else:
-                    batch_stats[outlet_id]["exp_fp"] += p_s0 * cert
+                    batch_stats[outlet_id]["exp_fp"] += p_s0 * cert * w
 
             # Compute log-likelihood
             for claim in claims:
                 outlet_id = claim["outlet_id"]
                 obs = claim["observation"]
                 cert = claim.get("certainty", 0.5)
+                w = claim.get("weight", 1.0)
 
                 sens = self.sens[outlet_id]
                 spec = self.spec[outlet_id]
@@ -364,7 +392,7 @@ class OnlineEM:
 
                 p_s0 = posteriors[event_id][0]
                 p_s1 = posteriors[event_id][1]
-                batch_ll += np.log(p_s0 * p_obs_s0 + p_s1 * p_obs_s1 + 1e-10)
+                batch_ll += w * np.log(p_s0 * p_obs_s0 + p_s1 * p_obs_s1 + 1e-10)
 
         return {
             "posteriors": posteriors,
