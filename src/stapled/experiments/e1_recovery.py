@@ -171,7 +171,7 @@ def _build_events_for_baselines(conn, event_ids: list) -> list:
         cursor = conn.execute(
             """
             SELECT a.outlet_id,
-                   CASE WHEN c.action NOT LIKE 'not-%' THEN 1 ELSE 0 END as observation,
+                   CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END as observation,
                    COALESCE(c.certainty, 0.5) as certainty
             FROM claim c
             JOIN article a ON c.article_id = a.id
