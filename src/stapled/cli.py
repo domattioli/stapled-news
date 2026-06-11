@@ -31,7 +31,7 @@ from stapled.extract.framing import update_all_framing
 from stapled.align.cluster import align
 from stapled.infer.online_em import OnlineEM
 from stapled.infer.align_incremental import align_incremental
-from stapled.viz.online_convergence import online_convergence
+from stapled.viz.online_convergence import online_convergence, reliability_trajectory
 
 app = typer.Typer()
 synth_app = typer.Typer()
@@ -663,8 +663,9 @@ def train_report(
     try:
         conn = connect(db)
 
-        # Generate convergence viz (PNG)
+        # Generate convergence + reliability trajectory PNGs
         convergence_path = online_convergence(conn, out_dir)
+        trajectory_path = reliability_trajectory(conn, out_dir)
 
         # Create output directory
         out_path = Path(out_dir)
@@ -672,16 +673,18 @@ def train_report(
 
         # Generate HTML report embedding both PNGs
         html_file = out_path / "stream.html"
-        html_content = _generate_training_report(convergence_path)
+        html_content = _generate_training_report(convergence_path, trajectory_path, conn)
         html_file.write_text(html_content)
 
         out.set_data(
             report_path=str(html_file),
             convergence_chart=convergence_path,
+            trajectory_chart=trajectory_path,
         )
         rows = [
             {"file": "stream.html"},
             {"file": "convergence chart"},
+            {"file": "trajectory chart"},
         ]
         out.print_table(rows, ["file"], "Training Report Generated")
         out.output("train_report", exit_code=0)
@@ -692,16 +695,74 @@ def train_report(
         raise typer.Exit(code=1)
 
 
-def _generate_training_report(convergence_path: Optional[str]) -> str:
+def _generate_training_report(
+    convergence_path: Optional[str],
+    trajectory_path: Optional[str] = None,
+    conn=None,
+) -> str:
     """Generate HTML report for streaming EM training."""
+    # Pull training stats from DB if available
+    stats_rows = ""
+    if conn is not None:
+        try:
+            for src, rows_n, done in conn.execute(
+                "SELECT source_url, rows_ingested, done FROM source_cursor"
+            ):
+                name = src.rsplit("/", 1)[-1]
+                status = "complete" if done else "in progress"
+                stats_rows += f"<tr><td>{name}</td><td>{rows_n:,}</td><td>{status}</td></tr>"
+            n_articles = conn.execute("SELECT COUNT(*) FROM article").fetchone()[0]
+            n_outlets = conn.execute("SELECT COUNT(*) FROM outlet").fetchone()[0]
+            n_events = conn.execute("SELECT COUNT(*) FROM event").fetchone()[0]
+            n_claims = conn.execute("SELECT COUNT(*) FROM claim").fetchone()[0]
+            stats_rows += (
+                f"<tr><td>articles</td><td>{n_articles:,}</td><td>—</td></tr>"
+                f"<tr><td>outlets</td><td>{n_outlets:,}</td><td>—</td></tr>"
+                f"<tr><td>events</td><td>{n_events:,}</td><td>—</td></tr>"
+                f"<tr><td>claims</td><td>{n_claims:,}</td><td>—</td></tr>"
+            )
+        except Exception:
+            pass
+
+    stats_section = ""
+    if stats_rows:
+        stats_section = f"""
+        <div class="chart-section">
+            <h2>Training Data</h2>
+            <table style="width:100%;border-collapse:collapse;">
+                <tr><th align="left">source / metric</th><th align="left">rows</th><th align="left">status</th></tr>
+                {stats_rows}
+            </table>
+        </div>
+        """
+
     chart_section = ""
     if convergence_path:
-        chart_section = f"""
+        chart_section += f"""
         <div class="chart-section">
             <h2>Convergence Analysis</h2>
-            <p>See <a href="{Path(convergence_path).name}">convergence chart</a>
-            for detailed analysis.</p>
+            <figure>
+                <img src="{convergence_path}" alt="Online EM convergence" style="max-width:100%;">
+                <figcaption>Per-batch log-likelihood during streaming training — flattening curve means the model stopped learning new structure.</figcaption>
+            </figure>
         </div>
+        """
+    if trajectory_path:
+        chart_section += f"""
+        <div class="chart-section">
+            <h2>Outlet Reliability Trajectory</h2>
+            <figure>
+                <img src="{trajectory_path}" alt="Reliability trajectory" style="max-width:100%;">
+                <figcaption>Per-outlet reliability estimate after each training batch — stable lines indicate converged parameters.</figcaption>
+            </figure>
+        </div>
+        """
+
+    chart_section = stats_section + chart_section + """
+        <p style="background:#fff3cd;border-left:4px solid #ffc107;padding:12px 16px;margin:16px 0;font-size:0.9em;">
+        Note: This model measures consensus among outlets, not objective truth.
+        Outlets dominating coverage may outrank factual but minority voices.
+        Treat reliability scores as a starting point for investigation, not final verdicts.</p>
         """
 
     html = f"""<!DOCTYPE html>
