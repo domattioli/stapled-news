@@ -1,6 +1,6 @@
 # Feature Specification: STAPLE-News Study Implementation
 
-**Branch**: `development` | **Status**: Draft | **Created**: 2026-06-11
+**Branch**: `development` | **Status**: Clarified | **Created**: 2026-06-11
 **Input**: paper/STUDY.md (study design), paper/ABSTRACT.md (target claims)
 
 ## Overview
@@ -25,9 +25,9 @@ output artifact paths.
 ### FR1 — Dedup-aware E-step (model change, blocking)
 - E-step vote counting MUST route through `dedup_cluster_id`: all articles in one
   near-duplicate cluster contribute ONE effective vote per claim.
-- [NEEDS CLARIFICATION: which outlet "owns" the deduplicated vote — first-seen article,
-  random member, or fractional credit split across cluster members? Affects per-outlet
-  suffstats attribution.]
+- Vote attribution: fractional credit — each of the N outlets in a duplicate cluster
+  receives 1/N weight in its suffstats for that claim (all made the editorial choice to
+  carry it; none counts as an independent voter). [RESOLVED 2026-06-11]
 - Existing suffstats persistence and online update path unchanged otherwise.
 - Toggleable via config flag (`dedup_voting: on|off`) so E2 can compare both modes.
 
@@ -38,7 +38,7 @@ output artifact paths.
 
 ### FR3 — E1: Synthetic recovery
 - Reuse existing `recover/score.py` gate (Spearman ρ ≥ 0.8 vs planted parameters).
-- Add: run across [NEEDS CLARIFICATION: how many seeds — 10? 30?] seeds, report mean ± CI.
+- Add: run across 30 seeds, report mean ± 95% CI. [RESOLVED 2026-06-11]
 - Output: `results/e1_recovery.csv` + box plot figure.
 
 ### FR4 — E2: Syndication sensitivity sweep (main figure)
@@ -46,23 +46,22 @@ output artifact paths.
   to a designated "wire" source bloc.
 - For each m × {dedup on, off}: measure shift in consensus estimates (W_i agreement with
   planted consensus) and outlet-parameter distortion.
-- [NEEDS CLARIFICATION: synthetic duplicates — exact copies, or perturbed near-duplicates
-  that exercise the simhash banding? Latter is more realistic but couples E2 to dedup
-  recall.]
+- Duplicates: both modes, reported separately — exact copies for the main figure (clean
+  test of voting logic), lightly perturbed near-duplicates as a robustness check (also
+  exercises simhash recall). [RESOLVED 2026-06-11]
 - Output: line figure (distortion vs m, two series) + `results/e2_syndication.csv`.
 
 ### FR5 — E3: ISOT application (descriptive)
 - Run streaming pipeline on full ISOT with dedup voting on; labels held out.
 - Report: outlet parameter distributions, AUC of True-corpus vs Fake-corpus source
   separation (descriptive, including the inverted regime if it occurs).
-- [NEEDS CLARIFICATION: ISOT fake corpus is largely single-source — keep per-subject
-  synthetic outlets (fake:<subject>) as the unit, or collapse to one fake outlet?]
+- Fake-corpus unit: keep per-subject synthetic outlets (fake:<subject>) — one collapsed
+  mega-outlet would itself distort consensus weighting. [RESOLVED 2026-06-11]
 - Output: distribution figure + AUC table.
 
 ### FR6 — E4: External correlation
-- Corpus: [NEEDS CLARIFICATION: NELA-GT (which year — 2020/2021/2022?) vs own crawl via
-  configs/feeds.yml. NELA-GT ships outlet labels aligned to MBFC; crawl is fresher but
-  needs scraping infra.]
+- Corpus: NELA-GT-2022 — free, ~500 named outlets, ships with MBFC-aligned source labels,
+  widely cited; no scraping infra needed. [RESOLVED 2026-06-11]
 - Compute Spearman of per-outlet consensus-agreement vs MBFC factual-reporting rating,
   and vs AllSides left–right rating.
 - Success criterion: factual-reporting ρ significantly > 0; |ideology ρ| near 0.
@@ -72,8 +71,8 @@ output artifact paths.
 - Per-outlet sensitivity computed on corroborated-claim subsets grouped by topic cluster.
 - Deliverable: 2–3 case studies (tables + short narratives) + heatmap figure
   (outlet × topic sensitivity).
-- [NEEDS CLARIFICATION: topic grouping source — existing event clusters, ISOT subject
-  field, or a topic model run over claims?]
+- Topic grouping: existing event clusters (already computed by the pipeline); no separate
+  topic model. [RESOLVED 2026-06-11]
 
 ### FR8 — Baselines
 - Majority vote, article-count-weighted majority, batch Dawid-Skene (same data, no
@@ -101,8 +100,8 @@ output artifact paths.
 ## Dependencies & Assumptions
 
 - ISOT already streamed into stream.db (done; 42,681 articles).
-- MBFC/AllSides ratings obtainable as static CSV [NEEDS CLARIFICATION: scrape vs use a
-  published snapshot, e.g. the ratings file shipped with NELA-GT?].
+- MBFC/AllSides ratings: use the labels snapshot shipped with NELA-GT-2022 (no scraping).
+  [RESOLVED 2026-06-11]
 - Existing dedup banding (`simhash_bucket`, 4 bands) has adequate recall for wire copies.
 
 ## Acceptance Checklist
@@ -112,4 +111,4 @@ output artifact paths.
 - [ ] E1–E5 each produce figure + table + manifest entry from one command
 - [ ] Baselines reported alongside in E1–E3
 - [ ] CI smoke lane green
-- [ ] All [NEEDS CLARIFICATION] resolved before implementation
+- [x] All [NEEDS CLARIFICATION] resolved (2026-06-11, operator approved all six defaults)
