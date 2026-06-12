@@ -114,20 +114,15 @@ def iter_remote_lines(
                     record_bytes = len(record_text.encode("utf-8")) + 1  # +1 for newline
 
                     # At offset==0, first record is header (only if fieldnames not provided)
-                    if byte_offset == 0 and consumed_bytes == 0:
-                        if fieldnames is None:
-                            try:
-                                reader = csv.reader(io.StringIO(record_text), delimiter=delimiter)
-                                row = next(reader)
-                                headers = [h.strip() for h in row]
-                                consumed_bytes += record_bytes
-                                continue
-                            except Exception:
-                                pass
-                        else:
-                            # fieldnames provided: skip the header row
+                    if byte_offset == 0 and consumed_bytes == 0 and fieldnames is None:
+                        try:
+                            reader = csv.reader(io.StringIO(record_text), delimiter=delimiter)
+                            row = next(reader)
+                            headers = [h.strip() for h in row]
                             consumed_bytes += record_bytes
                             continue
+                        except Exception:
+                            pass
 
                     # Parse data row
                     if headers is not None:
