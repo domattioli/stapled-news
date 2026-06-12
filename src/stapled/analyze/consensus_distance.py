@@ -156,6 +156,7 @@ def compute_distances(
                 "event_id": event_id,
                 "title": title,
                 "distance": dist,
+                "event_outlets": len(set(outlet_names)),
             })
 
         # Find consensus headline (closest to centroid)
@@ -202,24 +203,32 @@ def aggregate_outlets(
         List of dicts sorted by mean_distance (ascending):
         {outlet, n_articles, mean_distance, ci_low, ci_high, deciles: [11 floats]}
     """
-    # Group by outlet
+    # Group by outlet. Each article weighted by its event's outlet count, so a
+    # headline on a story the whole field covered moves an outlet's average more
+    # than a headline on a barely-corroborated story.
     outlet_data = defaultdict(list)
     for row in article_rows:
-        outlet_data[row["outlet"]].append(row["distance"])
+        outlet_data[row["outlet"]].append(
+            (row["distance"], float(row.get("event_outlets", 1)))
+        )
 
     rng = np.random.default_rng(seed)
 
     results = []
-    for outlet, distances in outlet_data.items():
-        distances_arr = np.array(distances)
-        mean_dist = float(distances_arr.mean())
-        n_articles = len(distances)
+    for outlet, pairs in outlet_data.items():
+        distances_arr = np.array([p[0] for p in pairs])
+        w = np.array([p[1] for p in pairs])
+        w = w / w.sum()
+        mean_dist = float(np.dot(distances_arr, w))
+        n_articles = len(pairs)
 
-        # Bootstrap CI
+        # Bootstrap CI (resample articles, recompute the weighted mean)
         bootstrap_means = []
+        idx = np.arange(len(pairs))
         for _ in range(n_boot):
-            sample = rng.choice(distances_arr, size=len(distances_arr), replace=True)
-            bootstrap_means.append(sample.mean())
+            s = rng.choice(idx, size=len(idx), replace=True)
+            sw = w[s]
+            bootstrap_means.append(float(np.dot(distances_arr[s], sw / sw.sum())))
 
         bootstrap_means = np.array(bootstrap_means)
         ci_low = float(np.quantile(bootstrap_means, 0.025))
@@ -665,21 +674,54 @@ def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000)
     for r in article_rows:
         lean = PANEL_LEAN.get(r["outlet"])
         if lean:
-            groups[lean].append(r["distance"])
+            groups[lean].append((r["distance"], float(r.get("event_outlets", 1))))
         else:
             unmapped.add(r["outlet"])
 
     out = {"groups": {}, "unmapped_outlets": sorted(unmapped)}
-    for g, vals in groups.items():
-        if not vals:
+    for g, pairs in groups.items():
+        if not pairs:
             out["groups"][g] = {"n_articles": 0}
             continue
-        arr = np.array(vals)
-        boots = [rng.choice(arr, size=len(arr), replace=True).mean() for _ in range(n_boot)]
+        arr = np.array([p[0] for p in pairs])
+        w = np.array([p[1] for p in pairs])
+        w = w / w.sum()
+        idx = np.arange(len(pairs))
+        boots = []
+        for _ in range(n_boot):
+            s = rng.choice(idx, size=len(idx), replace=True)
+            sw = w[s]
+            boots.append(float(np.dot(arr[s], sw / sw.sum())))
         out["groups"][g] = {
-            "n_articles": len(vals),
-            "mean_distance": round(float(arr.mean()), 6),
+            "n_articles": len(pairs),
+            "mean_distance": round(float(np.dot(arr, w)), 6),
             "ci_low": round(float(np.quantile(boots, 0.025)), 6),
             "ci_high": round(float(np.quantile(boots, 0.975)), 6),
         }
     return out
+
+
+def panel_composition(article_rows: List[Dict]) -> Dict:
+    """Panel makeup by lean bucket: outlet counts, article counts, and
+    coverage-weighted article share. This is the composition the consensus
+    centroid is built from — the direct evidence for or against a leaning panel.
+    """
+    outlets_by = defaultdict(set)
+    articles_by = defaultdict(int)
+    weight_by = defaultdict(float)
+    for r in article_rows:
+        lean = PANEL_LEAN.get(r["outlet"])
+        if not lean:
+            continue
+        outlets_by[lean].add(r["outlet"])
+        articles_by[lean] += 1
+        weight_by[lean] += float(r.get("event_outlets", 1))
+    total_w = sum(weight_by.values()) or 1.0
+    return {
+        g: {
+            "outlets": len(outlets_by[g]),
+            "articles": articles_by[g],
+            "weighted_share": round(weight_by[g] / total_w, 4),
+        }
+        for g in ("left", "center", "right")
+    }
