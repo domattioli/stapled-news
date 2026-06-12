@@ -525,6 +525,45 @@
             </table>
         </div>
 
+        <div class="section-kicker">Corpus No. 2</div>
+        <h2 class="section-title">A Second Corpus: FakeNewsNet</h2>
+        <p class="intro">ISOT includes one real outlet — Reuters. FakeNewsNet adds 2,531 real publisher domains with story-level fact-check labels from Gossip Cop and PolitiFact (held out from inference for evaluation).</p>
+
+        <div class="stats-strip" id="fnn-stats">
+            <div class="stat-card">
+                <p class="stat-number">21,575</p>
+                <p class="stat-label">Articles</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">2,531</p>
+                <p class="stat-label">Outlets</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">318</p>
+                <p class="stat-label">Multi-outlet events</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">115</p>
+                <p class="stat-label">MBFC-rated outlets</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">6,113</p>
+                <p class="stat-label">Claims</p>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Top 25 Publishers by Coverage</h2>
+            <p class="chart-caption">The 25 most-covered publishers; color = MBFC factual-reporting rating where available (high = blue, mixed = yellow, low = red, unrated = gray).</p>
+            <div id="fnn-outlets" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Label Distribution</h2>
+            <p class="chart-caption">Articles by fact-check dataset and label (held out for evaluation; labels are NOT used during model inference).</p>
+            <div id="fnn-labels" class="plot-container"></div>
+        </div>
+
     </div>
 
     <footer>
@@ -719,6 +758,69 @@
             document.querySelector('.container').appendChild(errorDiv);
         }
 
+        function initFnnPlots(fnnData) {
+            // Chart: Top 25 outlets by article count, colored by MBFC rating
+            const outletNames = fnnData.top_outlets.map(o => o.name);
+            const outletArticles = fnnData.top_outlets.map(o => o.articles);
+            const outletColors = fnnData.top_outlets.map(o => {
+                if (o.fact === 'high') return colorPalette.blue;
+                if (o.fact === 'mixed') return colorPalette.yellow;
+                if (o.fact === 'low') return colorPalette.red;
+                return colorPalette.gray;
+            });
+
+            const fnnOutletTraces = [{
+                y: outletNames,
+                x: outletArticles,
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: outletColors },
+                text: outletArticles.map(a => a.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{y}</b><br>%{x:,.0f} articles<extra></extra>'
+            }];
+
+            const fnnOutletLayout = {
+                title: null,
+                xaxis: { title: 'Article Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                margin: { l: 150 },
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('fnn-outlets', fnnOutletTraces, fnnOutletLayout, { responsive: true });
+
+            // Chart: Label distribution (4 bars)
+            const labelNames = fnnData.labels.map(l => l.dataset);
+            const labelCounts = fnnData.labels.map(l => l.count);
+            const labelBarColors = labelNames.map(name => {
+                if (name.includes('fake')) return colorPalette.red;
+                return colorPalette.blue;
+            });
+
+            const fnnLabelTraces = [{
+                x: labelNames,
+                y: labelCounts,
+                type: 'bar',
+                marker: { color: labelBarColors },
+                text: labelCounts.map(c => c.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{x}</b><br>%{y:,.0f} articles<extra></extra>'
+            }];
+
+            const fnnLabelLayout = {
+                title: null,
+                yaxis: { title: 'Article Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x',
+                margin: { b: 100 }
+            };
+
+            Plotly.newPlot('fnn-labels', fnnLabelTraces, fnnLabelLayout, { responsive: true });
+        }
+
         // Fetch and initialize
         fetch('data/sources.json')
             .then(response => {
@@ -727,6 +829,9 @@
             })
             .then(data => {
                 initPlots(data);
+                if (data.fnn) {
+                    initFnnPlots(data.fnn);
+                }
             })
             .catch(err => {
                 handleError(err.message);
@@ -741,6 +846,8 @@
             Plotly.Plots.resize('chart-actions');
             Plotly.Plots.resize('chart-events-size');
             Plotly.Plots.resize('chart-clusters');
+            Plotly.Plots.resize('fnn-outlets');
+            Plotly.Plots.resize('fnn-labels');
         });
     </script>
 </body>

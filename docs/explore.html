@@ -240,7 +240,7 @@
         </div>
 
         <div class="chart-card">
-            <h2>Outlet Reliability Landscape</h2>
+            <h2>ISOT: Outlet Reliability Landscape</h2>
             <p class="chart-caption">Each point is a news outlet; higher = more aligned with cross-outlet consensus, left/right = systematic lean.</p>
             <div id="chart-outlets" class="plot-container"></div>
         </div>
@@ -267,6 +267,13 @@
             <h2>Syndication Collapse</h2>
             <p class="chart-caption">Wire-service syndication: many outlets republish one story. Deduplication collapses near-duplicate articles so a syndicated bloc counts once.</p>
             <div id="chart-dedup" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-card-kicker">Real Publishers</div>
+            <h2>FakeNewsNet: Consensus-Agreement vs Fact-Checker Labels</h2>
+            <p class="chart-caption">On a corpus of 2,531 real publisher domains, outlets carrying more articles flagged as fabricated by fact-checkers show <i>higher</i> consensus-agreement with other outlets — the in-the-wild inversion (ρ = −0.16, p = 0.003).</p>
+            <div id="fnn-scatter" class="plot-container"></div>
         </div>
     </div>
 
@@ -513,14 +520,59 @@
             document.querySelector('.container').appendChild(errorDiv);
         }
 
+        function initFnnScatter(scatterData) {
+            const outletNames = scatterData.map(d => d.outlet);
+            const fakeShare = scatterData.map(d => d.fake_share);
+            const reliability = scatterData.map(d => d.reliability);
+
+            const fnnScatterTraces = [{
+                x: fakeShare,
+                y: reliability,
+                mode: 'markers+text',
+                type: 'scatter',
+                marker: {
+                    size: 14,
+                    color: colorPalette.purple,
+                    opacity: 0.7
+                },
+                text: outletNames,
+                textposition: 'top center',
+                textfont: { size: 10, color: '#333' },
+                hovertemplate: '<b>%{text}</b><br>Fake share: %{x:.1%}<br>Consensus agreement: %{y:.3f}<extra></extra>'
+            }];
+
+            const fnnScatterLayout = {
+                title: null,
+                xaxis: { title: 'Share of articles flagged fake by fact-checkers →', gridcolor: '#f0f0f0' },
+                yaxis: { title: 'Consensus-agreement (reliability) →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('fnn-scatter', fnnScatterTraces, fnnScatterLayout, { responsive: true });
+        }
+
         // Fetch and initialize
+        let exploreData = null;
         fetch('data/explore.json')
             .then(response => {
                 if (!response.ok) throw new Error('HTTP ' + response.status);
                 return response.json();
             })
             .then(data => {
+                exploreData = data;
                 initPlots(data);
+                return fetch('data/results.json');
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(resultsData => {
+                if (resultsData.e3b_scatter && exploreData) {
+                    initFnnScatter(resultsData.e3b_scatter);
+                }
             })
             .catch(err => {
                 handleError(err.message);
@@ -534,6 +586,7 @@
             Plotly.Plots.resize('chart-recovery');
             Plotly.Plots.resize('chart-confidence');
             Plotly.Plots.resize('chart-dedup');
+            Plotly.Plots.resize('fnn-scatter');
         });
     </script>
 </body>
