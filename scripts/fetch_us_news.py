@@ -143,13 +143,25 @@ def probe_hf(report):
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     report = [f"# US headline fetch — {datetime.now(timezone.utc).isoformat()}", ""]
-    rows = fetch_gdelt(DAYS, report)
+    mode = os.environ.get("FETCH_MODE", "all")
+    rows = {} if mode == "rss" else fetch_gdelt(DAYS, report)
     rss_rows = fetch_rss(report)
     for u, r in rss_rows.items():
         rows.setdefault(u, r)
     probe_hf(report)
 
     out = os.path.join(OUT_DIR, "headlines.csv.gz")
+    # Accumulate across runs: prior corpus rows are kept (URL-keyed).
+    if os.path.exists(out):
+        try:
+            with gzip.open(out, "rt", encoding="utf-8") as f:
+                for prior in csv.DictReader(f):
+                    rows.setdefault(prior["url"], (
+                        prior["domain"], prior["title"], prior["url"],
+                        prior["seendate"], prior["source"],
+                    ))
+        except Exception as e:  # noqa: BLE001
+            report.append(f"- prior-corpus merge failed: {type(e).__name__}")
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow(["domain", "title", "url", "seendate", "source"])
