@@ -88,7 +88,10 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         outlet_scores = _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet)
 
         # Filter outlets with sufficient labeled articles
-        valid_outlets = [s for s in outlet_scores if s["n_labeled_articles"] >= min_articles_per_outlet]
+        valid_outlets = [
+            s for s in outlet_scores
+            if s["n_labeled_articles"] >= min_articles_per_outlet and s["n_obs"] > 0
+        ]
 
         # Compute global metrics
         metrics = _compute_metrics(valid_outlets, len(event_ids))

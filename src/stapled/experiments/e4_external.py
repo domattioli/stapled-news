@@ -90,7 +90,10 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         # Filter outlets with sufficient articles and valid external labels
         valid_outlets = [
             s for s in outlet_scores
-            if s["n_articles"] >= min_articles_per_outlet and s["fact_ordinal"] is not None and s["bias_distance"] is not None
+            if s["n_articles"] >= min_articles_per_outlet
+            and s["n_obs"] > 0
+            and s["fact_ordinal"] is not None
+            and s["bias_distance"] is not None
         ]
 
         # Compute global metrics with bootstrap CI
