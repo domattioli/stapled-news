@@ -402,5 +402,29 @@
       "min_budget_full_recovery": 2500
     },
     "timestamp": "2026-06-12T03:22:41.240961+00:00"
+  },
+  {
+    "experiment": "e5",
+    "git_sha": "69a179af4e96a31a3801e1260ad55ed1894f7d82",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e5_omission.csv",
+      "results/e5_omission.png",
+      "results/e5_case_studies.md"
+    ],
+    "metrics": {
+      "n_events_used": 7166,
+      "n_outlets_audited": 30,
+      "mean_coverage_by_category": {
+        "uci_b": 0.17760546940136734,
+        "uci_t": 0.1260633314596215,
+        "uci_e": 0.20341715022566084,
+        "uci_m": 0.08977272727272728
+      },
+      "max_asymmetry_value": 0.5608950510071283,
+      "max_asymmetry_outlet": "contactmusic.com"
+    },
+    "timestamp": "2026-06-12T03:34:25.266972+00:00"
   }
 ]
