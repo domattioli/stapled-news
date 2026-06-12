@@ -1,5 +1,6 @@
 """Stream FakeNewsNet dataset with held-out labels and outlet metadata."""
 
+import re
 import sqlite3
 import urllib.request
 import urllib.parse
@@ -8,6 +9,13 @@ from typing import Dict, Optional, List
 from stapled.ingest.stream import iter_remote_lines
 from stapled.ingest.csv_loader import _get_or_create_outlet
 from stapled.db import insert_and_get_id
+
+# Share/aggregator domains that are not publishers
+PLATFORM_DOMAINS = {
+    "youtube.com", "youtu.be", "twitter.com", "x.com", "facebook.com",
+    "instagram.com", "t.co", "bit.ly", "goo.gl", "tinyurl.com",
+    "web.archive.org", "archive.org", "archive.is", "archive.today",
+}
 
 
 # FakeNewsNet sources: (dataset, label, url)
@@ -49,6 +57,13 @@ def normalize_domain(url: str) -> Optional[str]:
 
     url = url.strip().lower()
 
+    # Unwrap Wayback Machine URLs: web.archive.org/web/<ts>/<original-url>
+    m = re.search(r"web\.archive\.org/web/[^/]+/(https?://.*|[^/].*)", url)
+    if m:
+        url = m.group(1)
+        if not url.startswith(("http://", "https://")):
+            url = "https://" + url
+
     # Add scheme if missing
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
@@ -73,6 +88,10 @@ def normalize_domain(url: str) -> Optional[str]:
 
     # Ensure at least one dot (not a bare hostname)
     if "." not in domain:
+        return None
+
+    # Platform/share domains are not publishers
+    if domain in PLATFORM_DOMAINS:
         return None
 
     return domain if domain else None
@@ -119,7 +138,7 @@ def load_fakenewsnet(
             "labels": 0,
         }
 
-        for batch_rows in iter_remote_lines(url, batch_bytes, conn):
+        for batch_rows in iter_remote_lines(url, batch_bytes, conn, malformed_threshold=0.05):
             if limit and rows_loaded >= limit:
                 break
 

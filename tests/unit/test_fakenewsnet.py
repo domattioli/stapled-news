@@ -72,7 +72,7 @@ def test_load_fakenewsnet_mocked():
             },
         ]
 
-        def mock_iter_remote_lines(url, batch_bytes, conn):
+        def mock_iter_remote_lines(url, batch_bytes, conn, **kwargs):
             # Only for politifact_real
             if "politifact_real" in url:
                 yield mock_batch

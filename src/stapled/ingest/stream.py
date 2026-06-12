@@ -10,7 +10,8 @@ from typing import List, Dict, Generator, Optional
 
 
 def iter_remote_lines(
-    url: str, batch_bytes: int, conn: sqlite3.Connection
+    url: str, batch_bytes: int, conn: sqlite3.Connection,
+    malformed_threshold: float = 0.01,
 ) -> Generator[List[Dict[str, str]], None, None]:
     """
     Resume from source_cursor using etag + Range header (HTTP 206).
@@ -171,9 +172,10 @@ def iter_remote_lines(
             # Check malformed rate before marking done
             if total_records > 0:
                 malformed_rate = malformed_count / total_records
-                if malformed_rate > 0.01:
+                if malformed_rate > malformed_threshold:
                     raise RuntimeError(
-                        f"Malformed record rate {malformed_rate:.2%} exceeds 1% threshold "
+                        f"Malformed record rate {malformed_rate:.2%} exceeds "
+                        f"{malformed_threshold:.0%} threshold "
                         f"({malformed_count} malformed of {total_records} total records)"
                     )
 
