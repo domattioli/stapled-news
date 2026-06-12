@@ -230,49 +230,49 @@
 
     <div class="container">
         <header>
-            <h1>Interactive Explorer</h1>
-            <p class="intro">Consensus and divergence across news outlets. Scroll to explore how outlets agree and disagree on reported events, how model estimates stabilize as coverage accumulates, and how wire-service syndication inflates article counts.</p>
+            <h1>Outlet Consensus Landscape</h1>
+            <p class="intro">Consensus-agreement estimates per outlet across ISOT, FakeNewsNet, and UCI. Streams show how online EM stabilizes reliability estimates per batch. Dedup voting isolates real outlets from syndication clusters. Consensus-agreement is a structural property of coverage, not a factuality verdict.</p>
             <p class="generated-at" id="generated-at">Loading...</p>
         </header>
 
         <div class="callout">
-            <p><strong>What you're looking at: consensus, not truth.</strong> These charts show where outlets agree and diverge across shared events — a measured signal, not a verdict on factual accuracy. See the discussion for why.</p>
+            <p><strong>Consensus-agreement is not factuality.</strong> These estimates show where outlets align on shared coverage. A high consensus-agreement score means an outlet usually agrees with other outlets when both report the same event — it does not measure whether those outlets are correct. High consensus-agreement can reflect either accuracy or synchronized misinformation.</p>
         </div>
 
         <div class="chart-card">
-            <h2>ISOT: Outlet Reliability Landscape</h2>
-            <p class="chart-caption">Each point is a news outlet; higher = more aligned with cross-outlet consensus, left/right = systematic lean.</p>
+            <h2>ISOT: Consensus-Agreement Landscape (7 outlets)</h2>
+            <p class="chart-caption">Each point is an outlet; vertical axis = consensus-agreement (agreement with other outlets when covering same events), horizontal = systematic bias direction. Reuters (blue, real) ranks last at ρ = 0.0 because synthetic sources dominate; this is majority-capture, not a measurement failure.</p>
             <div id="chart-outlets" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Streaming Convergence</h2>
-            <p class="chart-caption">Online EM updates each outlet's estimate batch by batch — watch them stabilize as more coverage arrives.</p>
+            <h2>Online EM Convergence: Outlet Estimates Per Batch</h2>
+            <p class="chart-caption">Each outlet's consensus-agreement estimate evolves as the online EM algorithm processes articles in batches. Estimates stabilize as coverage accumulates; real outlets converge to true signal faster than synthetic noise.</p>
             <div id="chart-trajectory" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Method Recovery Comparison</h2>
-            <p class="chart-caption">Spearman correlation between true and recovered outlet reliability across 30 synthetic seeds; dashed line is the 0.8 recovery gate.</p>
+            <h2>Parameter Recovery: Planted vs. Recovered Consensus-Agreement (30 synthetic seeds)</h2>
+            <p class="chart-caption">Online EM (dedup-on ρ = 0.88) recovers planted outlet parameters better than batch Dawid-Skene (0.90), weighted majority (0.87), or plain majority vote (0.71). Dashed line marks the 0.8 gate for usable recovery. Streaming approximation introduces negligible loss.</p>
             <div id="chart-recovery" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Consensus Confidence Distribution</h2>
-            <p class="chart-caption">How confident the model is across all events, colored by how many independent outlets corroborated each one.</p>
+            <h2>Consensus Confidence by Multi-outlet Coverage</h2>
+            <p class="chart-caption">EM confidence (posterior probability) per event, stratified by the number of independent outlets reporting it. Single-outlet events show broad confidence; high-corroboration events cluster near 0 or 1 (strong convergence on agreed label).</p>
             <div id="chart-confidence" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Syndication Collapse</h2>
-            <p class="chart-caption">Wire-service syndication: many outlets republish one story. Deduplication collapses near-duplicate articles so a syndicated bloc counts once.</p>
+            <h2>Syndication Collapse via Simhash Deduplication</h2>
+            <p class="chart-caption">ISOT: 42,681 articles cluster via simhash into ~2,800 clusters; 73% of articles are syndicated near-duplicates. Dedup voting collapses syndicated blocs to fractional votes so one wire story cannot dominate consensus by sheer repetition.</p>
             <div id="chart-dedup" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <div class="chart-card-kicker">Real Publishers</div>
-            <h2>FakeNewsNet: Consensus-Agreement vs Fact-Checker Labels</h2>
-            <p class="chart-caption">On a corpus of 2,531 real publisher domains, outlets carrying more articles flagged as fabricated by fact-checkers show <i>higher</i> consensus-agreement with other outlets — the in-the-wild inversion (ρ = −0.16, p = 0.003).</p>
+            <div class="chart-card-kicker">Natural Corpus</div>
+            <h2>FakeNewsNet In-the-Wild Inversion: Consensus-Agreement Rises With Fabrication Share</h2>
+            <p class="chart-caption">FakeNewsNet: 341 outlets after alignment filter, 21,575 articles. Outlets carrying more fabricated stories (flagged by Gossip Cop / PolitiFact fact-checkers) exhibit higher consensus-agreement (ρ = −0.16, p = 0.003). Fabricated celebrity stories are heavily syndicated; consensus masquerades as corroboration. This is the organic counterpart to E3's designed majority-capture.</p>
             <div id="fnn-scatter" class="plot-container"></div>
         </div>
     </div>
