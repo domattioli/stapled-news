@@ -12,6 +12,8 @@ from typing import List, Dict, Generator, Optional
 def iter_remote_lines(
     url: str, batch_bytes: int, conn: sqlite3.Connection,
     malformed_threshold: float = 0.01,
+    delimiter: str = ",",
+    fieldnames: Optional[List[str]] = None,
 ) -> Generator[List[Dict[str, str]], None, None]:
     """
     Resume from source_cursor using etag + Range header (HTTP 206).
@@ -23,6 +25,8 @@ def iter_remote_lines(
         url: Remote CSV URL
         batch_bytes: Target batch size in bytes
         conn: Database connection
+        delimiter: Field delimiter (default ',')
+        fieldnames: Pre-defined field names. If provided, skip header parsing.
 
     Yields:
         Lists of CSV row dicts
@@ -43,10 +47,10 @@ def iter_remote_lines(
         byte_offset = 0
         rows_ingested = 0
 
-    headers = None
+    headers = fieldnames if fieldnames else None
 
     # On resume (byte_offset > 0), fetch header from byte 0 to initialize headers
-    if byte_offset > 0:
+    if byte_offset > 0 and fieldnames is None:
         try:
             header_req = urllib.request.Request(url)
             header_req.add_header("Range", "bytes=0-4095")
@@ -56,7 +60,8 @@ def iter_remote_lines(
                 header_line = header_chunk.split("\n")[0]
                 if header_line:
                     try:
-                        headers = [h.strip() for h in next(csv.reader(io.StringIO(header_line)))]
+                        reader = csv.reader(io.StringIO(header_line), delimiter=delimiter)
+                        headers = [h.strip() for h in next(reader)]
                     except Exception:
                         pass
         except Exception:
@@ -108,20 +113,27 @@ def iter_remote_lines(
                 for record_text in complete_records:
                     record_bytes = len(record_text.encode("utf-8")) + 1  # +1 for newline
 
-                    # At offset==0, first record is header
-                    if headers is None and byte_offset == 0 and consumed_bytes == 0:
-                        try:
-                            row = next(csv.reader(io.StringIO(record_text)))
-                            headers = [h.strip() for h in row]
+                    # At offset==0, first record is header (only if fieldnames not provided)
+                    if byte_offset == 0 and consumed_bytes == 0:
+                        if fieldnames is None:
+                            try:
+                                reader = csv.reader(io.StringIO(record_text), delimiter=delimiter)
+                                row = next(reader)
+                                headers = [h.strip() for h in row]
+                                consumed_bytes += record_bytes
+                                continue
+                            except Exception:
+                                pass
+                        else:
+                            # fieldnames provided: skip the header row
                             consumed_bytes += record_bytes
                             continue
-                        except Exception:
-                            pass
 
                     # Parse data row
                     if headers is not None:
                         try:
-                            row = next(csv.reader(io.StringIO(record_text)))
+                            reader = csv.reader(io.StringIO(record_text), delimiter=delimiter)
+                            row = next(reader)
                             values = [v.strip() for v in row]
                             if len(values) == len(headers):
                                 row_dict = dict(zip(headers, values))
@@ -150,7 +162,8 @@ def iter_remote_lines(
                 consumed_bytes += len(buffer.encode("utf-8"))
             if buffer.strip() and headers is not None:
                 try:
-                    row = next(csv.reader(io.StringIO(buffer)))
+                    reader = csv.reader(io.StringIO(buffer), delimiter=delimiter)
+                    row = next(reader)
                     values = [v.strip() for v in row]
                     if len(values) == len(headers):
                         row_dict = dict(zip(headers, values))
