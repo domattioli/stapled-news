@@ -579,8 +579,8 @@ def test_empty_repo_fields(tmp_path):
             },
             {
                 "title": "No URL article",
-                "teaser": "Bad",
-                "url": "",  # Missing URL
+                "teaser": "Linkless teaser block",
+                "url": "",  # Missing URL → keyed by title hash, still loaded
             },
         ],
     }
