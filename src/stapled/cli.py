@@ -24,11 +24,13 @@ from stapled.ingest.csv_loader import (
     _strip_reuters_dateline,
     _normalize_subject,
 )
+from stapled.ingest.fakenewsnet import load_fakenewsnet, load_external_labels
 from stapled.ingest.dedup import dedup_articles
 from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
 from stapled.extract.framing import update_all_framing
 from stapled.align.cluster import align
+from stapled.align.embed_align import realign_all
 from stapled.infer.online_em import OnlineEM
 from stapled.infer.align_incremental import align_incremental
 from stapled.viz.online_convergence import online_convergence, reliability_trajectory
@@ -271,6 +273,61 @@ def load_isot(
         raise typer.Exit(code=1)
 
 
+@app.command("load-fakenewsnet")
+def load_fakenewsnet_cmd(
+    batch_bytes: int = typer.Option(262144, "--batch-bytes", help="Batch size in bytes"),
+    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per source"),
+    datasets: Optional[str] = typer.Option(None, "--datasets", help="Comma-separated dataset names"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load FakeNewsNet dataset with streaming."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        datasets_list = None
+        if datasets:
+            datasets_list = [d.strip() for d in datasets.split(",")]
+
+        counts = load_fakenewsnet(conn, batch_bytes=batch_bytes, limit=limit, datasets=datasets_list)
+
+        out.set_data(**{k: v for k, v in counts.items() if k != "per_dataset"})
+        rows = [
+            {"metric": "Articles loaded", "value": str(counts["articles_loaded"])},
+            {"metric": "Outlets created", "value": str(counts["outlets_created"])},
+            {"metric": "Labels written", "value": str(counts["labels_written"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "FakeNewsNet Load Complete")
+        out.output("load-fakenewsnet", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-fakenewsnet", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("load-external-labels")
+def load_external_labels_cmd(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load external outlet labels (MBFC)."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        count = load_external_labels(conn)
+
+        out.set_data(labels_loaded=count)
+        rows = [{"labels_loaded": str(count)}]
+        out.print_table(rows, ["labels_loaded"], "External Labels Load Complete")
+        out.output("load-external-labels", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-external-labels", exit_code=1)
+        raise typer.Exit(code=1)
+
+
 @app.command()
 def dedup(
     db: str = typer.Option("./stapled.db", help="Path to database"),
@@ -345,6 +402,35 @@ def align_cmd(
     except Exception as e:
         out.add_error(str(e))
         out.output("align", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("realign-embed")
+def realign_embed_cmd(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    threshold: float = typer.Option(0.5, "--threshold", help="Similarity threshold"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Realign claims into events using enhanced TF-IDF + entity boosting."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        stats = realign_all(conn, similarity_threshold=threshold, entity_mode="boost")
+
+        out.set_data(**stats)
+        rows = [
+            {"metric": "Claims total", "value": str(stats["claims_total"])},
+            {"metric": "Clusters (multi)", "value": str(stats["clusters_multi"])},
+            {"metric": "Events created", "value": str(stats["events_created"])},
+            {"metric": "Claims in multi", "value": str(stats["claims_in_multi"])},
+            {"metric": "Multi-outlet events", "value": str(stats["multi_outlet_events"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "Enhanced Realignment Complete")
+        out.output("realign-embed", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("realign-embed", exit_code=1)
         raise typer.Exit(code=1)
 
 
