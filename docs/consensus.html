@@ -208,7 +208,8 @@
         #chart-distribution,
         #chart-weekly,
         #us-ranking,
-        #us-weekly {
+        #us-weekly,
+        #us-lean-breakdown {
             width: 100%;
             height: 400px;
         }
@@ -465,10 +466,21 @@
             </div>
         </div>
 
+        <!-- Panel Composition: Lean Breakdown -->
+        <div class="section">
+            <div class="article-kicker" style="margin-bottom: 15px;">PANEL COMPOSITION</div>
+            <h2 class="section-title">Is the Consensus Itself Leaning?</h2>
+            <div class="plotly-container">
+                <div id="us-lean-breakdown"></div>
+            </div>
+            <p class="figure-caption" style="margin-bottom: 25px;">Mean distance from consensus by outlet lean (AllSides classification). Confidence intervals indicate whether the three groups' means differ meaningfully. All intervals overlap — no detectable lean in the stapled consensus itself.</p>
+            <div id="lean-prose" style="max-width: 740px; margin: 0 auto; font-size: 16px; line-height: 1.7; color: #333;"></div>
+        </div>
+
         <!-- Headline Diff Explorer -->
         <div class="section">
             <h2 class="section-title">The Headline Diff Explorer</h2>
-            <p class="figure-caption" style="margin-bottom: 25px;">Highlighted words pull a headline away from the stapled consensus; intensity = how much.</p>
+            <p class="figure-caption" style="margin-bottom: 25px;">Green words match the stapled consensus wording; red words pull the headline away. Color richness tracks each word's share of the effect.</p>
             <div id="explorer-container">
                 <!-- Populated by JS -->
             </div>
@@ -566,6 +578,8 @@
 
         .token {
             white-space: nowrap;
+            padding: 0 2px;
+            border-radius: 1px;
         }
 
         .member-distance {
@@ -605,9 +619,10 @@
 
     <script>
         // Responsive resize handler
-        let chartsDrawn = {ranking: false, weekly: false};
+        let chartsDrawn = {ranking: false, weekly: false, lean: false};
         window.addEventListener('resize', function() {
             if (chartsDrawn.ranking) Plotly.Plots.resize('us-ranking');
+            if (chartsDrawn.lean) Plotly.Plots.resize('us-lean-breakdown');
             if (chartsDrawn.weekly) Plotly.Plots.resize('us-weekly');
         });
 
@@ -654,7 +669,13 @@
                     showlegend: false
                 };
 
-                // Mean dot trace (overlay)
+                // Mean dot trace (overlay) with lean coloring
+                const leanColorMap = {
+                    'left': '#008fd5',
+                    'center': '#8b8b8b',
+                    'right': '#fc4f30'
+                };
+                const dotColors = ranking.map(r => leanColorMap[r.lean] || '#222');
                 const dotTrace = {
                     x: ranking.map(r => r.mean_distance),
                     y: ranking.map(r => r.outlet),
@@ -662,11 +683,12 @@
                     mode: 'markers',
                     marker: {
                         size: 12,
-                        color: '#222'
+                        color: dotColors
                     },
                     hovertemplate: '<b>%{y}</b><br>Mean: %{x:.3f}<br>CI: [' +
                         ranking.map((r, i) => r.ci_low.toFixed(3) + '–' + r.ci_high.toFixed(3)).join('] [') + ']<br>Articles: ' +
-                        ranking.map(r => r.n_articles).join(', ') +
+                        ranking.map(r => r.n_articles).join(', ') + '<br>Lean: ' +
+                        ranking.map(r => (r.lean || 'unmapped')).join(', ') +
                         '<extra></extra>',
                     showlegend: false
                 };
@@ -682,7 +704,7 @@
                     yaxis: {title: ''},
                     plot_bgcolor: '#fff',
                     paper_bgcolor: '#fff',
-                    margin: {l: 180, r: 60, t: 40, b: 50},
+                    margin: {l: 180, r: 60, t: 40, b: 80},
                     showlegend: false,
                     hovermode: 'closest',
                     shapes: [{
@@ -705,11 +727,109 @@
                         font: {size: 11, color: '#999'},
                         xanchor: 'center',
                         yanchor: 'bottom'
+                    }, {
+                        x: -0.05,
+                        y: -1.7,
+                        xref: 'paper',
+                        yref: 'paper',
+                        text: '● Left    ● Center    ● Right',
+                        showarrow: false,
+                        font: {size: 11, color: '#666'},
+                        xanchor: 'left',
+                        yanchor: 'top',
+                        align: 'left'
                     }]
                 };
 
                 Plotly.newPlot('us-ranking', [ciBarTrace, dotTrace], rankingLayout, {responsive: true, displayModeBar: false});
                 chartsDrawn.ranking = true;
+
+                // Lean Breakdown Chart (optional, if lean_breakdown exists)
+                const leanBreakdown = usData.lean_breakdown || null;
+                if (leanBreakdown && leanBreakdown.groups) {
+                    const groups = leanBreakdown.groups;
+                    const groupNames = ['left', 'center', 'right'];
+                    const groupLabels = ['Left-leaning outlets', 'Center outlets', 'Right-leaning outlets'];
+
+                    // Extract data for each group
+                    const leanCIBars = {
+                        x: groupNames.map(g => (groups[g] && groups[g].n_articles) ? `${groups[g].n_articles}` : '0'),
+                        y: groupNames.map(g => {
+                            if (groups[g]) return groupLabels[groupNames.indexOf(g)] + ' (' + groups[g].n_articles + ' articles)';
+                            return groupLabels[groupNames.indexOf(g)];
+                        }),
+                        base: groupNames.map(g => groups[g] ? groups[g].ci_low : 0),
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: {color: '#e0e0e0'},
+                        hoverinfo: 'skip',
+                        showlegend: false
+                    };
+
+                    const leanDots = {
+                        x: groupNames.map(g => groups[g] ? groups[g].mean_distance : 0),
+                        y: groupNames.map(g => {
+                            if (groups[g]) return groupLabels[groupNames.indexOf(g)] + ' (' + groups[g].n_articles + ' articles)';
+                            return groupLabels[groupNames.indexOf(g)];
+                        }),
+                        type: 'scatter',
+                        mode: 'markers',
+                        marker: {
+                            size: 12,
+                            color: ['#008fd5', '#8b8b8b', '#fc4f30']
+                        },
+                        hovertemplate: '<b>%{y}</b><br>Mean: %{x:.4f}<br>CI: [' +
+                            groupNames.map(g => groups[g] ? groups[g].ci_low.toFixed(4) + '–' + groups[g].ci_high.toFixed(4) : 'N/A').join('] [') + ']<extra></extra>',
+                        showlegend: false
+                    };
+
+                    const overallMeanDist = ranking.reduce((sum, r) => sum + r.mean_distance, 0) / ranking.length;
+
+                    const leanLayout = {
+                        title: '',
+                        xaxis: {
+                            title: 'Mean Distance from Consensus',
+                            zeroline: false,
+                            gridcolor: '#f0f0f0',
+                            showgrid: true
+                        },
+                        yaxis: {title: ''},
+                        plot_bgcolor: '#fff',
+                        paper_bgcolor: '#fff',
+                        margin: {l: 220, r: 60, t: 40, b: 50},
+                        showlegend: false,
+                        hovermode: 'closest',
+                        shapes: [{
+                            type: 'line',
+                            x0: overallMeanDist,
+                            x1: overallMeanDist,
+                            y0: -0.5,
+                            y1: 2.5,
+                            line: {
+                                color: '#999',
+                                width: 1,
+                                dash: 'dash'
+                            }
+                        }]
+                    };
+
+                    Plotly.newPlot('us-lean-breakdown', [leanCIBars, leanDots], leanLayout, {responsive: true, displayModeBar: false});
+                    chartsDrawn.lean = true;
+
+                    // Populate lean prose
+                    const proseDiv = document.getElementById('lean-prose');
+                    const leftGroup = groups['left'];
+                    const centerGroup = groups['center'];
+                    const rightGroup = groups['right'];
+
+                    let proseText = '<strong>Composition by AllSides rating:</strong> ';
+                    if (leftGroup && centerGroup && rightGroup) {
+                        proseText += `Left-leaning outlets contribute ${leftGroup.n_articles} articles (mean distance ${leftGroup.mean_distance.toFixed(4)}), center outlets ${centerGroup.n_articles} (${centerGroup.mean_distance.toFixed(4)}), and right-leaning outlets ${rightGroup.n_articles} (${rightGroup.mean_distance.toFixed(4)}). `;
+                        proseText += `With all three confidence intervals overlapping, no lean is statistically detectable in the consensus wording itself. The stapled consensus is built from ${leftGroup.n_articles + centerGroup.n_articles + rightGroup.n_articles} qualifying articles across ${ranking.length} outlets. `;
+                        proseText += `When an outlet matches the consensus closely, it matches the panel-majority <em>phrasing</em> on these stories—distance measures wording similarity, not editorial stance. This corpus spans ${(corpus.n_events || 6)} early-stage events; conclusions are tentative pending more data.`;
+                    }
+                    proseDiv.innerHTML = proseText;
+                }
 
                 // Chart 2: Weekly (conditional)
                 const usWeekly = usData.weekly || {};
@@ -822,29 +942,35 @@
                             span.className = 'token';
 
                             const weight = token.weight || 0;
-                            const alignment = token.alignment || 0;
-                            const impact = 1 - alignment;
+                            const alignment = token.alignment || 0.5;
+                            // effect: (alignment - 0.5) * 2, clamped to [-1, 1]
+                            // positive = toward consensus (green), negative = away (red)
+                            const effect = (alignment - 0.5) * 2;
+                            const effectClamped = Math.max(-1, Math.min(1, effect));
+                            // intensity: richness of color tracks word's share of the effect
+                            const intensity = Math.min(1, weight * 12);
 
-                            // Skip highlight for weight < 0.01
-                            if (weight < 0.01) {
+                            // Skip background entirely when weight < 0.008 (massless stopwords)
+                            if (weight < 0.008) {
                                 span.textContent = token.token + ' ';
                                 span.style.color = '#222';
                             } else {
-                                let bgOpacity = 0;
-                                if (impact < 0.25) {
-                                    bgOpacity = 0;
-                                } else if (impact < 0.5) {
-                                    bgOpacity = 0.12;
-                                } else if (impact < 0.75) {
-                                    bgOpacity = 0.28;
+                                let bgColor = '';
+
+                                if (effectClamped >= 0) {
+                                    // Green: positive effect (toward consensus), rgba(109,144,79, 0.55 * effect * intensity)
+                                    const opacity = 0.55 * effectClamped * intensity;
+                                    bgColor = `rgba(109, 144, 79, ${opacity})`;
                                 } else {
-                                    bgOpacity = 0.45;
+                                    // Red: negative effect (away from consensus), rgba(252,79,48, 0.6 * (-effect) * intensity)
+                                    const opacity = 0.6 * (-effectClamped) * intensity;
+                                    bgColor = `rgba(252, 79, 48, ${opacity})`;
                                 }
 
-                                const rgba = `rgba(252, 79, 48, ${bgOpacity * weight})`;
-                                span.style.backgroundColor = bgOpacity > 0 ? rgba : 'transparent';
-                                span.style.color = impact > 0.75 && weight > 0.1 ? '#222' : '#222';
-                                if (impact > 0.75 && weight > 0.1) {
+                                span.style.backgroundColor = bgColor;
+                                span.style.color = '#222';
+                                // Bold only when (-effect) * intensity > 0.35
+                                if ((-effectClamped) * intensity > 0.35) {
                                     span.style.fontWeight = '600';
                                 }
 

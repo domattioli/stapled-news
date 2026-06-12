@@ -628,3 +628,58 @@ def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List
             })
         out.append(rows)
     return out
+
+
+# Panel lean assignments from AllSides public media-bias ratings (allsides.com,
+# retrieved 2026-06). Three buckets: lean-left+left -> "left", lean-right+right
+# -> "right". Static because the Baly/MBFC corpus lacks most mainstream majors.
+PANEL_LEAN = {
+    "cnn.com": "left", "huffpost.com": "left", "salon.com": "left",
+    "motherjones.com": "left", "dailykos.com": "left", "rawstory.com": "left",
+    "thedailybeast.com": "left", "msnbc.com": "left", "theguardian.com": "left",
+    "nytimes.com": "left", "washingtonpost.com": "left", "npr.org": "left",
+    "abcnews.go.com": "left", "cbsnews.com": "left", "nbcnews.com": "left",
+    "politico.com": "left", "axios.com": "left", "yahoo.com": "left",
+    "thehill.com": "center", "reuters.com": "center", "apnews.com": "center",
+    "usatoday.com": "center", "wsj.com": "center",
+    "foxnews.com": "right", "washingtontimes.com": "right",
+    "washingtonexaminer.com": "right", "nationalreview.com": "right",
+    "dailycaller.com": "right", "breitbart.com": "right", "newsmax.com": "right",
+    # Alias for rows ingested before the domain lstrip fix mangled the name.
+    "ashingtonexaminer.com": "right",
+}
+
+
+def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000) -> Dict:
+    """
+    Mean distance from consensus by panel lean bucket, with bootstrap CIs.
+
+    Answers "is the consensus itself leaning?": if the centroid sat nearer one
+    bloc's wording, that bloc's mean distance would be systematically lower.
+    Composition context included — the centroid is the consensus of THIS panel,
+    so bucket sizes matter as much as bucket means.
+    """
+    rng = np.random.default_rng(seed)
+    groups: Dict[str, List[float]] = {"left": [], "center": [], "right": []}
+    unmapped = set()
+    for r in article_rows:
+        lean = PANEL_LEAN.get(r["outlet"])
+        if lean:
+            groups[lean].append(r["distance"])
+        else:
+            unmapped.add(r["outlet"])
+
+    out = {"groups": {}, "unmapped_outlets": sorted(unmapped)}
+    for g, vals in groups.items():
+        if not vals:
+            out["groups"][g] = {"n_articles": 0}
+            continue
+        arr = np.array(vals)
+        boots = [rng.choice(arr, size=len(arr), replace=True).mean() for _ in range(n_boot)]
+        out["groups"][g] = {
+            "n_articles": len(vals),
+            "mean_distance": round(float(arr.mean()), 6),
+            "ci_low": round(float(np.quantile(boots, 0.025)), 6),
+            "ci_high": round(float(np.quantile(boots, 0.975)), 6),
+        }
+    return out

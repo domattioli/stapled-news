@@ -93,7 +93,9 @@ def fetch_gdelt(days, report):
             for a in data.get("articles", []):
                 u = (a.get("url") or "").split("?")[0]
                 t = (a.get("title") or "").strip()
-                dom = (a.get("domain") or "").lower().lstrip("www.")
+                dom = (a.get("domain") or "").lower()
+                if dom.startswith("www."):
+                    dom = dom[4:]
                 if u and t and dom and u not in rows:
                     rows[u] = (dom, t, u, a.get("seendate", ""), "gdelt")
                     got_q += 1
