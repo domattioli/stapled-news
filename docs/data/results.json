@@ -96,6 +96,20 @@
    },
    "git_sha": "23063403e111b071afbc5659185f085ced94a903",
    "timestamp": "2026-06-12T00:50:51.177976+00:00"
+  },
+  "e4_uci": {
+   "metrics": {
+    "n_outlets_joined": 149,
+    "n_events_used": 4207,
+    "spearman_fact": -0.00948745970691045,
+    "spearman_bias_abs": -0.08466292345881919,
+    "spearman_fact_ci_lower": -0.16688269867626992,
+    "spearman_fact_ci_upper": 0.14762588975177773,
+    "spearman_bias_abs_ci_lower": -0.22778696258656794,
+    "spearman_bias_abs_ci_upper": 0.07646055793820827
+   },
+   "git_sha": "c7033c842f0f4dd1f3c940185c5a3295e9d4eec7",
+   "timestamp": "2026-06-12T01:59:51.023144+00:00"
   }
  },
  "corpora": {
@@ -109,6 +123,12 @@
    "articles": 21575,
    "outlets": 2531,
    "multi_outlet_events": 318
+  },
+  "uci": {
+   "articles": 228257,
+   "outlets": 9364,
+   "multi_outlet_events": 4207,
+   "mbfc_joined": 149
   }
  },
  "e2_curve": {
@@ -227,6 +247,1051 @@
    "outlet": "elle.com",
    "fake_share": 0.2344,
    "reliability": 0.4647
+  }
+ ],
+ "e4_uci_scatter": [
+  {
+   "outlet": "scotsman.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.99,
+   "n_articles": 74
+  },
+  {
+   "outlet": "taipeitimes.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.99,
+   "n_articles": 81
+  },
+  {
+   "outlet": "abc.net.au",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.986,
+   "n_articles": 159
+  },
+  {
+   "outlet": "newstatesman.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9843,
+   "n_articles": 16
+  },
+  {
+   "outlet": "jpost.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9782,
+   "n_articles": 44
+  },
+  {
+   "outlet": "mirror.co.uk",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.9762,
+   "n_articles": 348
+  },
+  {
+   "outlet": "breitbart.com",
+   "fact": "low",
+   "fact_ordinal": 0,
+   "reliability": 0.9762,
+   "n_articles": 157
+  },
+  {
+   "outlet": "theconversation.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9728,
+   "n_articles": 50
+  },
+  {
+   "outlet": "euronews.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9713,
+   "n_articles": 217
+  },
+  {
+   "outlet": "scmp.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9692,
+   "n_articles": 275
+  },
+  {
+   "outlet": "thewrap.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.9675,
+   "n_articles": 287
+  },
+  {
+   "outlet": "cp24.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9669,
+   "n_articles": 93
+  },
+  {
+   "outlet": "vox.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9632,
+   "n_articles": 108
+  },
+  {
+   "outlet": "japantimes.co.jp",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9584,
+   "n_articles": 172
+  },
+  {
+   "outlet": "cosmopolitan.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9506,
+   "n_articles": 53
+  },
+  {
+   "outlet": "townhall.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.9482,
+   "n_articles": 41
+  },
+  {
+   "outlet": "dailycaller.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.9453,
+   "n_articles": 192
+  },
+  {
+   "outlet": "680news.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9385,
+   "n_articles": 29
+  },
+  {
+   "outlet": "torontosun.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.9296,
+   "n_articles": 82
+  },
+  {
+   "outlet": "huffingtonpost.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.8849,
+   "n_articles": 1383
+  },
+  {
+   "outlet": "financialexpress.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.8561,
+   "n_articles": 385
+  },
+  {
+   "outlet": "wonkette.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.8214,
+   "n_articles": 16
+  },
+  {
+   "outlet": "thegrio.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.817,
+   "n_articles": 58
+  },
+  {
+   "outlet": "consumerist.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.8024,
+   "n_articles": 171
+  },
+  {
+   "outlet": "dailymail.co.uk",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.7806,
+   "n_articles": 1268
+  },
+  {
+   "outlet": "weeklystandard.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.7496,
+   "n_articles": 13
+  },
+  {
+   "outlet": "people.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.6531,
+   "n_articles": 227
+  },
+  {
+   "outlet": "vanityfair.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.6091,
+   "n_articles": 23
+  },
+  {
+   "outlet": "rte.ie",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5272,
+   "n_articles": 322
+  },
+  {
+   "outlet": "slate.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5188,
+   "n_articles": 281
+  },
+  {
+   "outlet": "novinite.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5142,
+   "n_articles": 32
+  },
+  {
+   "outlet": "digitaljournal.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 274
+  },
+  {
+   "outlet": "wnd.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 102
+  },
+  {
+   "outlet": "thinkprogress.org",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 82
+  },
+  {
+   "outlet": "rawstory.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 206
+  },
+  {
+   "outlet": "voanews.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 102
+  },
+  {
+   "outlet": "business2community.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 156
+  },
+  {
+   "outlet": "thenation.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 12
+  },
+  {
+   "outlet": "allgov.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 11
+  },
+  {
+   "outlet": "indianexpress.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 164
+  },
+  {
+   "outlet": "pastemagazine.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 111
+  },
+  {
+   "outlet": "rappler.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 165
+  },
+  {
+   "outlet": "opednews.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 16
+  },
+  {
+   "outlet": "thefederalist.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 12
+  },
+  {
+   "outlet": "jacksonsun.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 11
+  },
+  {
+   "outlet": "abqjournal.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 86
+  },
+  {
+   "outlet": "pnj.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 17
+  },
+  {
+   "outlet": "beliefnet.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 23
+  },
+  {
+   "outlet": "albawaba.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 33
+  },
+  {
+   "outlet": "castanet.net",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 104
+  },
+  {
+   "outlet": "aninews.in",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 70
+  },
+  {
+   "outlet": "dailyrecord.co.uk",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 77
+  },
+  {
+   "outlet": "thefrisky.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 75
+  },
+  {
+   "outlet": "postandcourier.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 86
+  },
+  {
+   "outlet": "bdnews24.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 66
+  },
+  {
+   "outlet": "newyorker.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 37
+  },
+  {
+   "outlet": "recode.net",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 205
+  },
+  {
+   "outlet": "wsws.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 14
+  },
+  {
+   "outlet": "heraldtribune.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 33
+  },
+  {
+   "outlet": "daytondailynews.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 37
+  },
+  {
+   "outlet": "makeuseof.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 14
+  },
+  {
+   "outlet": "nationaljournal.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 66
+  },
+  {
+   "outlet": "patheos.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 34
+  },
+  {
+   "outlet": "towleroad.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 59
+  },
+  {
+   "outlet": "personalliberty.com",
+   "fact": "low",
+   "fact_ordinal": 0,
+   "reliability": 0.5,
+   "n_articles": 20
+  },
+  {
+   "outlet": "thejournal.ie",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 34
+  },
+  {
+   "outlet": "auburnpub.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 22
+  },
+  {
+   "outlet": "knoxnews.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 27
+  },
+  {
+   "outlet": "theday.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 64
+  },
+  {
+   "outlet": "canadafreepress.com",
+   "fact": "low",
+   "fact_ordinal": 0,
+   "reliability": 0.5,
+   "n_articles": 27
+  },
+  {
+   "outlet": "goerie.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 91
+  },
+  {
+   "outlet": "ft.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 14
+  },
+  {
+   "outlet": "msnbc.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 61
+  },
+  {
+   "outlet": "queerty.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 20
+  },
+  {
+   "outlet": "gq.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 20
+  },
+  {
+   "outlet": "thenews.com.pk",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 65
+  },
+  {
+   "outlet": "mcall.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 22
+  },
+  {
+   "outlet": "english.ahram.org.eg",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 31
+  },
+  {
+   "outlet": "esquire.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 14
+  },
+  {
+   "outlet": "en.mercopress.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 23
+  },
+  {
+   "outlet": "dailytelegraph.com.au",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 11
+  },
+  {
+   "outlet": "concordmonitor.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 31
+  },
+  {
+   "outlet": "rferl.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 16
+  },
+  {
+   "outlet": "pinknews.co.uk",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 37
+  },
+  {
+   "outlet": "twitchy.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 11
+  },
+  {
+   "outlet": "lifenews.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 12
+  },
+  {
+   "outlet": "ny1.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 16
+  },
+  {
+   "outlet": "consumerreports.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 20
+  },
+  {
+   "outlet": "inthesetimes.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 10
+  },
+  {
+   "outlet": "newsbusters.org",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 44
+  },
+  {
+   "outlet": "spectator.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 14
+  },
+  {
+   "outlet": "mediamatters.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 13
+  },
+  {
+   "outlet": "govexec.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 13
+  },
+  {
+   "outlet": "morningstaronline.co.uk",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 10
+  },
+  {
+   "outlet": "humanevents.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 13
+  },
+  {
+   "outlet": "dailysabah.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 64
+  },
+  {
+   "outlet": "observer.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 40
+  },
+  {
+   "outlet": "truth-out.org",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 10
+  },
+  {
+   "outlet": "timesofsandiego.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 15
+  },
+  {
+   "outlet": "tasnimnews.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 11
+  },
+  {
+   "outlet": "guampdn.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.5,
+   "n_articles": 11
+  },
+  {
+   "outlet": "foxnews.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.5,
+   "n_articles": 433
+  },
+  {
+   "outlet": "wral.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4998,
+   "n_articles": 39
+  },
+  {
+   "outlet": "freebeacon.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4994,
+   "n_articles": 26
+  },
+  {
+   "outlet": "americanthinker.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4993,
+   "n_articles": 22
+  },
+  {
+   "outlet": "nymag.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4982,
+   "n_articles": 107
+  },
+  {
+   "outlet": "thejakartapost.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4979,
+   "n_articles": 39
+  },
+  {
+   "outlet": "mashable.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4974,
+   "n_articles": 407
+  },
+  {
+   "outlet": "newsmax.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4973,
+   "n_articles": 287
+  },
+  {
+   "outlet": "gizmodo.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4971,
+   "n_articles": 89
+  },
+  {
+   "outlet": "federalnewsradio.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4969,
+   "n_articles": 10
+  },
+  {
+   "outlet": "jezebel.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4957,
+   "n_articles": 182
+  },
+  {
+   "outlet": "timesofindia.indiatimes.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4948,
+   "n_articles": 711
+  },
+  {
+   "outlet": "economist.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4939,
+   "n_articles": 51
+  },
+  {
+   "outlet": "christianpost.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4924,
+   "n_articles": 147
+  },
+  {
+   "outlet": "uproxx.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4915,
+   "n_articles": 203
+  },
+  {
+   "outlet": "csmonitor.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4908,
+   "n_articles": 300
+  },
+  {
+   "outlet": "marketwatch.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4897,
+   "n_articles": 816
+  },
+  {
+   "outlet": "washingtonexaminer.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4886,
+   "n_articles": 87
+  },
+  {
+   "outlet": "thedailybeast.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4886,
+   "n_articles": 262
+  },
+  {
+   "outlet": "indiatoday.intoday.in",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4877,
+   "n_articles": 156
+  },
+  {
+   "outlet": "news24.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.486,
+   "n_articles": 118
+  },
+  {
+   "outlet": "theroot.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4858,
+   "n_articles": 49
+  },
+  {
+   "outlet": "newrepublic.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4846,
+   "n_articles": 41
+  },
+  {
+   "outlet": "firstpost.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4842,
+   "n_articles": 116
+  },
+  {
+   "outlet": "afr.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4841,
+   "n_articles": 95
+  },
+  {
+   "outlet": "mediaite.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4832,
+   "n_articles": 115
+  },
+  {
+   "outlet": "idahostatesman.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4831,
+   "n_articles": 27
+  },
+  {
+   "outlet": "reuters.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4826,
+   "n_articles": 733
+  },
+  {
+   "outlet": "motherjones.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4826,
+   "n_articles": 43
+  },
+  {
+   "outlet": "mlive.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4784,
+   "n_articles": 143
+  },
+  {
+   "outlet": "theblaze.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4779,
+   "n_articles": 124
+  },
+  {
+   "outlet": "upi.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4761,
+   "n_articles": 471
+  },
+  {
+   "outlet": "themarysue.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4756,
+   "n_articles": 70
+  },
+  {
+   "outlet": "salon.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4741,
+   "n_articles": 188
+  },
+  {
+   "outlet": "i24news.tv",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4721,
+   "n_articles": 20
+  },
+  {
+   "outlet": "bangkokpost.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.472,
+   "n_articles": 153
+  },
+  {
+   "outlet": "takepart.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4699,
+   "n_articles": 23
+  },
+  {
+   "outlet": "boingboing.net",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4681,
+   "n_articles": 48
+  },
+  {
+   "outlet": "express.co.uk",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4653,
+   "n_articles": 276
+  },
+  {
+   "outlet": "pjmedia.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4552,
+   "n_articles": 36
+  },
+  {
+   "outlet": "nextgov.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4536,
+   "n_articles": 59
+  },
+  {
+   "outlet": "truthdig.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4533,
+   "n_articles": 23
+  },
+  {
+   "outlet": "westernjournalism.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4526,
+   "n_articles": 19
+  },
+  {
+   "outlet": "democracynow.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.4188,
+   "n_articles": 13
+  },
+  {
+   "outlet": "patriotpost.us",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.4077,
+   "n_articles": 20
+  },
+  {
+   "outlet": "courthousenews.com",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.3966,
+   "n_articles": 12
+  },
+  {
+   "outlet": "bizpacreview.com",
+   "fact": "mixed",
+   "fact_ordinal": 1,
+   "reliability": 0.3906,
+   "n_articles": 22
+  },
+  {
+   "outlet": "poynter.org",
+   "fact": "high",
+   "fact_ordinal": 2,
+   "reliability": 0.3804,
+   "n_articles": 12
   }
  ]
 }
