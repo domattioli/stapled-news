@@ -84,7 +84,6 @@ def realign_all(
 
     claims_total = len(claim_rows)
     claim_ids = [row[0] for row in claim_rows]
-    outlet_ids = [row[5] for row in claim_rows]
 
     # 2. Build claim texts and extract entities from original (non-lowercased) text
     claim_texts = []

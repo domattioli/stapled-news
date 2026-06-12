@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper — STAPLE-News</title>
+    <style>
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #333;
+        }
+
+        .masthead {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .masthead-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .masthead-row {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .wordmark {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #222;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .kicker {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #fc4f30;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        nav a {
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #fc4f30;
+        }
+
+        nav a.active {
+            color: #222;
+            border-bottom: 2px solid #fc4f30;
+            padding-bottom: 2px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .paper-header {
+            max-width: 740px;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .paper-kicker {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fc4f30;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .paper-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #222;
+            margin: 15px 0;
+            line-height: 1.2;
+        }
+
+        .paper-meta {
+            font-size: 13px;
+            color: #777;
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .artifacts-card {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .artifacts-card a {
+            color: #fc4f30;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .artifacts-card a:hover {
+            text-decoration: underline;
+        }
+
+        .abstract {
+            max-width: 740px;
+            margin: 30px auto;
+            background: #fafafa;
+            border-left: 3px solid #fc4f30;
+            padding: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .article-body {
+            max-width: 740px;
+            margin: 40px auto;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .article-body p {
+            margin: 0 0 16px 0;
+        }
+
+        .article-body em {
+            font-style: italic;
+        }
+
+        .article-body strong {
+            font-weight: 600;
+        }
+
+        .section-number {
+            color: #fc4f30;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .article-body h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #222;
+            margin: 35px 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .references-section {
+            max-width: 740px;
+            margin: 50px auto;
+        }
+
+        .references-section h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #222;
+            margin: 0 0 20px 0;
+        }
+
+        .references-list {
+            list-style: decimal;
+            padding: 0;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .references-list li {
+            margin-left: 30px;
+            margin-bottom: 12px;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            margin-top: 80px;
+            padding: 40px 0;
+        }
+
+        footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .footer-link {
+            color: #fc4f30;
+        }
+
+        @media (max-width: 760px) {
+            .masthead-row {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            nav {
+                width: 100%;
+                flex-wrap: wrap;
+                padding-top: 10px;
+                border-top: none;
+                gap: 15px;
+            }
+
+            .paper-title {
+                font-size: 24px;
+            }
+
+            .article-body {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="masthead">
+        <div class="masthead-content">
+            <div class="masthead-row">
+                <a href="index.html" class="wordmark">STAPLE‑News</a>
+                <div class="kicker">Consensus Lab</div>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="explore.html">Explorer</a>
+                <a href="sources.html">Data & Method</a>
+                <a href="results.html">Results</a>
+                <a href="paper.html" class="active">Paper</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="paper-header">
+            <div class="paper-kicker">Working Paper · 2026</div>
+            <h1 class="paper-title">STAPLE-News: Estimating Cross-Outlet Consensus and Selective Omission from Streaming News Coverage</h1>
+            <p class="paper-meta">Working paper — 2026-06-12. Target length: 4 pages (≈2,400 words excluding references).</p>
+            <div class="artifacts-card">
+                <strong>Cite / Artifacts:</strong> <a href="https://github.com/domattioli/stapled-news">GitHub repository</a> · <a href="results.html">Results visualization</a> · <a href="https://github.com/domattioli/stapled-news/blob/development/paper/PAPER.md">Markdown source</a>
+            </div>
+        </div>
+
+        <div class="abstract">
+            <p>We adapt STAPLE — the Simultaneous Truth and Performance Level Estimation algorithm from medical image segmentation [1] — to multi-outlet news coverage, treating outlets as noisy raters of a hidden per-claim consensus and estimating, with no labeled data, each outlet's coverage of consensus claims (sensitivity) and propagation of non-consensus claims (1−specificity). The system runs as a single-pass, constant-memory <em>online</em> EM [3] over an HTTP-Range streaming ingestion layer. On synthetic corpora the estimator recovers planted outlet parameters (Spearman ρ ≈ 0.88). We then characterize its central failure mode, <em>majority-capture</em>: because the Dawid-Skene likelihood [2] is invariant under joint relabeling of the latent state and rater parameters, unsupervised inference can only equate "reliability" with majority agreement. We exhibit this empirically three ways: a syndication sweep in which un-deduplicated wire copies drive recovery from ρ = 0.82 to ρ = −0.87; a real-corpus run (ISOT, 42,681 articles) in which the only real outlet ranks last among seven (AUC = 0.0); and an in-the-wild replication on FakeNewsNet (2,531 publisher domains) where outlets carrying mostly-fabricated stories obtain significantly <em>higher</em> consensus-agreement (ρ = −0.16, p = 0.003; AUC = 0.09). Deduplicated fractional voting repairs the syndication pathway specifically (recovery stays at ρ ≈ 0.82–0.84 across 20× duplication) but cannot repair unreliable majorities. We argue the estimand should be named what it is — truth-calibrated consensus under anchoring, raw consensus without — and position the method as an omission-auditing tool rather than a truth detector.</p>
+        </div>
+
+        <div class="article-body">
+            <h2><span class="section-number">1. Background and Motivation</span></h2>
+
+            <p><strong>Label fusion in imaging.</strong> When multiple human raters segment the same medical image, STAPLE [1] estimates the hidden true segmentation and each rater's sensitivity/specificity simultaneously via expectation-maximization, with no gold standard. The approach descends from Dawid and Skene's 1979 latent-class model of observer error [2] and has spawned a family of refinements — consensus-level modeling in COLLATE [11], spatially varying performance in Local MAP STAPLE [12] — that treat <em>disagreement structure itself</em> as the object of inference.</p>
+
+            <p><strong>Truth discovery on the web.</strong> The same latent-truth-plus-source-reliability template was rediscovered for conflicting web claims: TruthFinder's iterative credibility propagation [4], Latent Credibility Analysis [5], and a large literature surveyed by Li et al. [6]. Google's Knowledge-Based Trust [7] scaled the idea to web-source trustworthiness using a knowledge base as reference. Crowdsourcing research established the statistical limits of the unsupervised setting: spectral and EM estimators are consistent <em>given</em> conditional independence and informative majorities [8, 9], and break predictably without them.</p>
+
+            <p><strong>Why news, why unsupervised.</strong> Media-reliability estimation today is dominated by supervised classification against curated outlet ratings — e.g., predicting Media Bias/Fact Check (MBFC) factuality labels from articles, Twitter, and Wikipedia features [10], or from the ACL-2020 corpus of 859 rated sources [13]. Supervision imports the annotators' own priors, covers only outlets someone bothered to rate, and goes stale. News, meanwhile, has exactly the structure label fusion exploits: many raters (outlets) repeatedly "segmenting" the same hidden objects (events) by choosing which atomic claims to assert, contradict, or omit. The temptation is to run STAPLE over claims and read off outlet truthfulness with no labels at all. This paper is about what that gets you — which is real but narrower than "truthfulness," and fails in instructive, <em>predictable</em> ways that prior truth-discovery deployments also encountered but rarely quantified [6, 7].</p>
+
+            <p>Two structural facts about news make naive transfer unsafe. First, raters are not conditionally independent: wire services syndicate one underlying account to many mastheads [14], so N copies masquerade as N independent votes. Second, no labeling symmetry-breaker exists in the data: the Dawid-Skene likelihood is invariant under (T → 1−T, p ↔ 1−q, π → 1−π), so "the majority is reliable" and "the majority is unreliable" fit the data equally well [2, 8]. Both facts have measurable consequences, and one of them has a cheap fix.</p>
+
+            <h2><span class="section-number">2. Methods</span></h2>
+
+            <p><strong>Pipeline.</strong> Articles stream in over HTTP Range requests with a persistent byte cursor (resume-after-interrupt; the corpus is never fully downloaded or stored). A lexicon-based extractor reduces each title/lede to atomic actor–action–object claims; TF-IDF clustering groups claims about the same occurrence into events; simhash banding marks near-duplicate articles with a shared cluster id. Per event <em>i</em>, outlet <em>j</em>'s observation D_ij ∈ {0,1} encodes assertion vs. negation of the event's claim set.</p>
+
+            <p><strong>Online EM.</strong> We fit the binary Dawid-Skene model — P(D_ij=1 | T_i=1) = sens_j, P(D_ij=0 | T_i=0) = spec_j, prior π — with stepwise online EM [3]: per batch <em>t</em>, an E-step computes posteriors W_i over the hidden state, and sufficient statistics are blended with Robbins-Monro weight γ_t = (t+2)^−0.6, giving constant memory and incremental updates as coverage arrives. Outlets discovered mid-stream are registered lazily.</p>
+
+            <p><strong>Deduplicated fractional voting.</strong> Within an event, claims sharing a near-duplicate cluster receive weight w = 1/(cluster size): likelihood contributions are raised to the power w (one effective vote per syndicated bloc, split as a geometric mean) and sufficient-statistics increments are scaled by w. A flag disables this for ablation.</p>
+
+            <p><strong>Experiments.</strong> E1: parameter recovery on synthetic corpora with planted (sens, spec), 30 seeds, against majority-vote, certainty-weighted majority, and batch Dawid-Skene baselines. E2: syndication sweep — duplicates of the least-reliable outlet's articles injected at multiplicity m ∈ {1,2,5,10,20} and re-attributed across outlets, exact and lightly perturbed variants, dedup voting on/off. E3: full ISOT corpus [15] (42,681 articles; one real outlet, Reuters, vs. six per-topic synthetic fake sources; labels held out). E3b/E4: FakeNewsNet [16] (21,575 title-only articles across 2,531 real publisher domains, PolitiFact/GossipCop story labels held out), scored against article labels (E3b) and MBFC factuality/bias ratings from the ACL-2020 corpus [13] (E4). All experiments are seeded, manifest-logged, and reproducible from one command each.</p>
+
+            <h2><span class="section-number">3. Results</span></h2>
+
+            <p><strong>E1 — the estimator works when its assumptions hold.</strong> Across 30 seeds, online EM recovers planted outlet reliability at mean ρ = 0.88 (batch Dawid-Skene 0.90, certainty-weighted majority 0.87, plain majority 0.71). Online ≈ batch confirms the streaming approximation costs little; both beat majority voting, consistent with the crowdsourcing literature [8, 9].</p>
+
+            <p><strong>E2 — syndication is an inversion machine, and dedup voting fixes exactly that.</strong> With dedup off, recovery degrades monotonically with duplicate multiplicity: ρ = 0.82 (m=1), 0.73 (m=2), 0.31 (m=10), <strong>−0.87 (m=20)</strong> — at high multiplicity the model ranks outlets <em>backwards</em>, having adopted the echoed unreliable wire account as consensus. With fractional dedup voting on, recovery is flat (0.78–0.84) across the entire sweep. Perturbed near-duplicates behave like exact copies. This isolates one mechanism of majority-capture — manufactured majorities — and shows it is fully repairable from data.</p>
+
+            <p><strong>E3 — an unreliable true majority is not repairable.</strong> On ISOT, where six synthetic sources structurally outnumber one real outlet, Reuters ranks 7/7 by estimated reliability (AUC = 0.0): textbook majority-capture, exactly as the identifiability argument predicts. Dedup voting deflates the fake bloc's estimates (mean 0.83 → 0.67) but cannot reorder them — there is no information in the data to do so [2, 8].</p>
+
+            <p><strong>E3b — inversion replicates in the wild, significantly.</strong> On FakeNewsNet's natural 2,531-domain corpus (341 outlets participating after an alignment upgrade described below), outlet consensus-agreement correlates <em>negatively</em> with held-out fact-checker labels: ρ = −0.16 (p = 0.003), binary separation AUC = 0.09. Domains carrying mostly-fabricated stories obtain higher consensus-agreement because fabricated celebrity stories are heavily co-covered — popularity masquerades as corroboration. This is the organic counterpart of E3's designed inversion.</p>
+
+            <p><strong>E4 — external validity is extraction-limited.</strong> Against MBFC ratings, factuality correlation is null (ρ = −0.11, bootstrap CI [−0.46, 0.24], n = 34 joined outlets). We tested whether claim alignment was the binding constraint by replacing frozen-vocab word TF-IDF (cosine ≥ 0.55) with dual word + character-n-gram vectors plus entity-anchored blocking: multi-outlet event coverage rose 23% (258 → 318 events; outlets scored 167 → 341) and made E3b's inversion significant, but manual audit found roughly 40% false merges at the operating threshold (distinct stories united by a shared celebrity name) and the MBFC correlation remained null. Title-only claims with lexical matching sit below the fidelity this validation axis needs — the "voxelization" bottleneck dominates before the model can speak.</p>
+
+            <h2><span class="section-number">4. Discussion</span></h2>
+
+            <p><strong>What the parameters mean.</strong> Without an external anchor, the fitted "reliability" is agreement-with-consensus, definitionally — the labeling symmetry of the likelihood admits no other reading [2, 8]. Our three inversions are not bugs but the theorem manifesting: E2's manufactured majorities, E3's designed unreliable majority, E3b's organic and statistically significant one. Knowledge-Based Trust faced the same issue and anchored against a knowledge base [7]; crowdsourcing systems anchor with gold questions [9]. The honest unsupervised deliverable is therefore <em>consensus structure</em>: which outlets systematically omit claims the rest of the field corroborates (the sensitivity channel), and which propagate claims nobody else carries. That omission-auditing use is real, label-free, and to our knowledge not served by the supervised outlet-classification line [10, 13].</p>
+
+            <p><strong>The repair hierarchy.</strong> Correlated raters (syndication) are repairable from data alone — near-duplicate detection plus fractional voting, our E2 result — and should be standard in any news application of rater models, given documented wire dependence in modern newsrooms [14]. Unreliable majorities are repairable only with anchors: sparse externally verified claims (fact-check APIs) clamp posteriors, break the symmetry, and let calibrated reliabilities propagate to unanchored claims. The anchor mechanism is implemented; quantifying the anchor budget (how few labels suffice) is the natural next experiment. Extraction fidelity is the third, mundane, binding constraint: E4 is null not because the model is wrong but because lexical claim-matching on short titles starves it of corroboration structure — precisely the gap between voxels (free correspondence) and claims (correspondence must be inferred).</p>
+
+            <p><strong>Relation to prior work.</strong> Against supervised outlet profiling [10, 13] we trade accuracy on rated outlets for coverage of unrated ones and independence from rating authorities. Against classical truth discovery [4, 5, 6] our contributions are the streaming/online formulation, the explicit syndication correction, and quantified inversion boundaries on real corpora rather than the implicit assumption of informative majorities. The negative results align with Pennycook and Rand's finding that crowd signals track quality only under conditions [17] — consensus is evidence, not verdict.</p>
+
+            <p><strong>Limitations.</strong> Binary D_ij conflates omission with contradiction; titles understate claim content; FakeNewsNet labels are story-level, not outlet-level; MBFC join coverage is small; gossip-domain consensus may differ qualitatively from political news; and all "reliability" language in outputs is consensus-relative by construction.</p>
+
+            <h2><span class="section-number">5. Conclusions</span></h2>
+
+            <p>STAPLE transfers to news mechanically but not semantically: the EM machinery recovers rater structure wherever conditional independence and informative majorities hold, and measurably inverts wherever they fail. One failure mode (syndication) is fixable with a one-line change to vote counting; the other (unreliable majorities) is informationally unfixable without anchors and should be disclosed, not engineered around. Named honestly — consensus and omission measurement, truth-calibrated only where anchored — the framework is a cheap, streaming, interpretable instrument for a question supervised classifiers do not answer: <em>who leaves what out</em>.</p>
+        </div>
+
+        <div class="references-section">
+            <h2>References</h2>
+            <ol class="references-list">
+                <li>S. K. Warfield, K. H. Zou, W. M. Wells. "Simultaneous Truth and Performance Level Estimation (STAPLE): An Algorithm for the Validation of Image Segmentation." <em>IEEE Transactions on Medical Imaging</em> 23(7), 2004.</li>
+                <li>A. P. Dawid, A. M. Skene. "Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm." <em>Applied Statistics</em> 28(1), 1979.</li>
+                <li>O. Cappé, E. Moulines. "On-line Expectation–Maximization Algorithm for Latent Data Models." <em>Journal of the Royal Statistical Society B</em> 71(3), 2009.</li>
+                <li>X. Yin, J. Han, P. S. Yu. "Truth Discovery with Multiple Conflicting Information Providers on the Web." <em>IEEE TKDE</em> 20(6), 2008.</li>
+                <li>J. Pasternack, D. Roth. "Latent Credibility Analysis." <em>WWW</em>, 2013.</li>
+                <li>Y. Li, J. Gao, C. Meng, Q. Li, L. Su, B. Zhao, W. Fan, J. Han. "A Survey on Truth Discovery." <em>ACM SIGKDD Explorations</em> 17(2), 2016.</li>
+                <li>X. L. Dong, E. Gabrilovich, K. Murphy, V. Dang, W. Horn, C. Lugaresi, S. Sun, W. Zhang. "Knowledge-Based Trust: Estimating the Trustworthiness of Web Sources." <em>PVLDB</em> 8(9), 2015.</li>
+                <li>Y. Zhang, X. Chen, D. Zhou, M. I. Jordan. "Spectral Methods Meet EM: A Provably Optimal Algorithm for Crowdsourcing." <em>NeurIPS</em>, 2014.</li>
+                <li>V. C. Raykar, S. Yu, L. H. Zhao, G. H. Valadez, C. Florin, L. Bogoni, L. Moy. "Learning from Crowds." <em>JMLR</em> 11, 2010.</li>
+                <li>R. Baly, G. Karadzhov, D. Alexandrov, J. Glass, P. Nakov. "Predicting Factuality of Reporting and Bias of News Media Sources." <em>EMNLP</em>, 2018.</li>
+                <li>A. J. Asman, B. A. Landman. "Robust Statistical Label Fusion through COnsensus Level, Labeler Accuracy, and Truth Estimation (COLLATE)." <em>IEEE TMI</em> 30(10), 2011.</li>
+                <li>O. Commowick, A. Akhondi-Asl, S. K. Warfield. "Estimating a Reference Standard Segmentation with Spatially Varying Performance Parameters: Local MAP STAPLE." <em>IEEE TMI</em> 31(8), 2012.</li>
+                <li>R. Baly, G. Da San Martino, J. Glass, P. Nakov. "What Was Written vs. Who Read It: News Media Profiling Using Text Analysis and Social Media Context." <em>ACL</em>, 2020.</li>
+                <li>P. J. Boczkowski. <em>News at Work: Imitation in an Age of Information Abundance.</em> University of Chicago Press, 2010.</li>
+                <li>H. Ahmed, I. Traore, S. Saad. "Detecting Opinion Spams and Fake News Using Text Classification." <em>Security and Privacy</em> 1(1), 2018. (ISOT Fake News Dataset.)</li>
+                <li>K. Shu, D. Mahudeswaran, S. Wang, D. Lee, H. Liu. "FakeNewsNet: A Data Repository with News Content, Social Context, and Spatiotemporal Information for Studying Fake News on Social Media." <em>Big Data</em> 8(3), 2020.</li>
+                <li>G. Pennycook, D. G. Rand. "Fighting Misinformation on Social Media Using Crowdsourced Judgments of News Source Quality." <em>PNAS</em> 116(7), 2019.</li>
+            </ol>
+        </div>
+    </div>
+
+    <footer>
+        <footer-content>
+            <p>STAPLE‑News — measuring consensus, not truth. Outlet estimates are model artifacts.</p>
+            <p><a href="https://github.com/domattioli/stapled-news" class="footer-link">GitHub</a> · <a href="paper.html" class="footer-link">Paper</a></p>
+        </footer-content>
+    </footer>
+</body>
+</html>

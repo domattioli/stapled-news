@@ -171,7 +171,7 @@ def test_no_entity_fallback(test_db):
 
     outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
 
-    stats = realign_all(test_db, similarity_threshold=0.4, entity_mode="boost")
+    realign_all(test_db, similarity_threshold=0.4, entity_mode="boost")
 
     # Should eventually find some similarity via word-based blocking + TF-IDF
     # (both have "house" and "passes" as rare words)
