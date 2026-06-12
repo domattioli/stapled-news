@@ -54,6 +54,9 @@ def load_uci(
     for story_id, event_id in cursor.fetchall():
         story_to_event[story_id] = event_id
 
+    seen_domains = set(
+        r[0] for r in conn.execute("SELECT name FROM outlet").fetchall()
+    )
     for batch_rows in iter_remote_lines(
         UCI_URL,
         batch_bytes,
@@ -64,8 +67,6 @@ def load_uci(
     ):
         if limit and rows_processed >= limit:
             break
-
-        batch_outlets_created = set()
 
         for row in batch_rows:
             if limit and rows_processed >= limit:
@@ -97,8 +98,8 @@ def load_uci(
 
             # Get or create outlet
             outlet_id = _get_or_create_outlet(conn, domain, feed_url=None, is_synthetic=0)
-            if domain not in batch_outlets_created:
-                batch_outlets_created.add(domain)
+            if domain not in seen_domains:
+                seen_domains.add(domain)
                 counts["outlets_created"] += 1
 
             # Event handling: get or create event for story_id

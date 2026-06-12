@@ -118,14 +118,14 @@ def _render_reliability_bias_scatter(
         ax.annotate(name, (reliabilities[i], biases[i]),
                    fontsize=8, ha='center')
 
-    ax.set_xlabel("Estimated Reliability")
+    ax.set_xlabel("Estimated Consensus-Agreement")
     ax.set_ylabel("Estimated Bias")
-    ax.set_title("Outlet Reliability vs Bias")
+    ax.set_title("Outlet Consensus-Agreement vs Bias")
     ax.grid(alpha=0.3)
     ax.axhline(y=0, color='k', linestyle='--', alpha=0.3)
     ax.axvline(x=0.5, color='k', linestyle='--', alpha=0.3)
 
-    fig.text(0.1, 0.01, "Outlets near top-right are reliable truth-reporters; bottom-left lean anti-correlated", fontsize=9, color='#555555', style='italic')
+    fig.text(0.1, 0.01, "Outlets near top-right show high consensus-agreement with cross-outlet consensus; bottom-left diverge most", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_reliability_bias_scatter.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
@@ -184,12 +184,12 @@ def _render_reliability_ranking(
                     ax.plot([val, val], [idx - 0.4, idx + 0.4],
                            'r-', linewidth=2, label='Seeded' if idx == 0 else '')
 
-    ax.set_xlabel("Reliability")
-    ax.set_title("Outlet Reliability Ranking")
+    ax.set_xlabel("Consensus-Agreement")
+    ax.set_title("Outlet Consensus-Agreement Ranking")
     ax.set_xlim(0, 1.1)
     ax.grid(alpha=0.3, axis='x')
 
-    fig.text(0.1, 0.01, "Higher reliability = closer to true consensus on disputed claims", fontsize=9, color='#555555', style='italic')
+    fig.text(0.1, 0.01, "Higher consensus-agreement = closer to cross-outlet consensus", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_reliability_ranking.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')
