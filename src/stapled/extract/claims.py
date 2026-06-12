@@ -9,10 +9,28 @@ from stapled.db import insert_and_get_id
 
 # Curated verb lexicon
 VERB_LEXICON = [
+    # Political / hard-news (past tense)
     "said", "announced", "voted", "passed", "signed", "killed", "won",
     "banned", "approved", "rejected", "claimed", "denied", "arrested",
     "fired", "resigned", "met", "attacked", "proposed", "opposed",
     "urged", "warned", "demanded", "called", "declared", "ruled",
+    "accused", "admitted", "confirmed", "revealed", "released", "launched",
+    "filed", "sued", "died", "blamed", "praised", "criticized", "slammed",
+    # Present-tense headline forms (headlines favor simple present)
+    "says", "announces", "votes", "passes", "signs", "kills", "wins",
+    "bans", "approves", "rejects", "claims", "denies", "arrests",
+    "fires", "resigns", "meets", "attacks", "proposes", "opposes",
+    "urges", "warns", "demands", "calls", "declares", "rules",
+    "accuses", "admits", "confirms", "reveals", "releases", "launches",
+    "files", "sues", "dies", "blames", "praises", "criticizes", "slams",
+    # Entertainment / lifestyle coverage
+    "shares", "shared", "posts", "posted", "debuts", "debuted",
+    "welcomes", "welcomed", "marries", "married", "splits", "split",
+    "dating", "engaged", "expecting", "spotted", "responds", "responded",
+    "celebrates", "celebrated", "joins", "joined", "leaves", "left",
+    "quits", "quit", "drops", "dropped", "hosts", "hosted",
+    "opens", "opened", "breaks", "broke", "returns", "returned",
+    "shows", "showed", "talks", "talked", "speaks", "spoke",
 ]
 
 # Month names for date regex
