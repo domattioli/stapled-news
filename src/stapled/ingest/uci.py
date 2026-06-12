@@ -60,6 +60,7 @@ def load_uci(
         conn,
         delimiter="\t",
         fieldnames=UCI_FIELDNAMES,
+        quoting=False,
     ):
         if limit and rows_processed >= limit:
             break

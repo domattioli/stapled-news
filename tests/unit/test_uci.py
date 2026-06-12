@@ -232,3 +232,61 @@ def test_iter_remote_lines_delimiter_fieldnames():
             assert len(batches[0]) == 2
             assert batches[0][0]["COL1"] == "value1"
             assert batches[0][0]["COL2"] == "value2"
+
+
+def test_iter_remote_lines_unquoted_stray_quotes():
+    """Test quoting=False with TAB-delimited unquoted data containing stray quotes."""
+    from stapled.ingest.stream import iter_remote_lines
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "test.db"
+        conn = connect(str(db_path))
+
+        # Mock HTTP response with TAB-delimited unquoted data
+        # Row 1: normal
+        # Row 2: title contains stray quote (Fed's "tapering" plan)
+        # Row 3: normal
+        # With quoting=True, the stray quote would flip in_quotes, gluing rows 2+3
+        # With quoting=False, plain newline split should parse all 3 correctly
+        csv_content = (
+            "1\tNormal Title\thttps://example.com/1\texample.com\n"
+            "2\tFed's \"tapering\" plan announced\thttps://example.com/2\texample.com\n"
+            "3\tAnother story\thttps://example.com/3\texample.com\n"
+        )
+
+        mock_response = MagicMock()
+        mock_response.__enter__ = lambda self: self
+        mock_response.__exit__ = lambda self, *args: None
+        mock_response.read = MagicMock(
+            side_effect=[csv_content.encode("utf-8"), b""]
+        )
+        mock_response.headers = {
+            "Content-Length": str(len(csv_content.encode("utf-8"))),
+            "ETag": "test-etag",
+        }
+
+        with patch("urllib.request.urlopen", return_value=mock_response):
+            # Call with quoting=False (unquoted mode)
+            batches = list(
+                iter_remote_lines(
+                    "https://example.com/test.csv",
+                    262144,
+                    conn,
+                    delimiter="\t",
+                    fieldnames=["ID", "TITLE", "URL", "HOSTNAME"],
+                    quoting=False,
+                )
+            )
+            # Should get all 3 rows parsed correctly (no gluing)
+            assert len(batches) > 0
+            all_rows = [row for batch in batches for row in batch]
+            assert len(all_rows) == 3
+            # Row 1
+            assert all_rows[0]["ID"] == "1"
+            assert all_rows[0]["TITLE"] == "Normal Title"
+            # Row 2 (with stray quotes)
+            assert all_rows[1]["ID"] == "2"
+            assert 'tapering' in all_rows[1]["TITLE"]
+            # Row 3
+            assert all_rows[2]["ID"] == "3"
+            assert all_rows[2]["TITLE"] == "Another story"
