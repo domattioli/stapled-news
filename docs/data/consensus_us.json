@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T21:40:44.425896",
+  "generated_at": "2026-06-12T21:46:38.033483",
   "corpus": {
     "repo": "defgsus/frontpage-archive-2026",
     "since": "2026-05-14",
@@ -13,17 +13,17 @@
     {
       "outlet": "dailycaller.com",
       "n_articles": 2,
-      "mean_distance": 0.332569,
+      "mean_distance": 0.327513,
       "ci_low": 0.246623,
       "ci_high": 0.418515,
       "lean": "right"
     },
     {
-      "outlet": "theguardian.com",
-      "n_articles": 3,
-      "mean_distance": 0.380165,
-      "ci_low": 0.287916,
-      "ci_high": 0.435271,
+      "outlet": "nbcnews.com",
+      "n_articles": 4,
+      "mean_distance": 0.380704,
+      "ci_low": 0.255657,
+      "ci_high": 0.497141,
       "lean": "left"
     },
     {
@@ -35,25 +35,25 @@
       "lean": "left"
     },
     {
-      "outlet": "nbcnews.com",
-      "n_articles": 4,
-      "mean_distance": 0.389653,
-      "ci_low": 0.268291,
-      "ci_high": 0.496261,
+      "outlet": "theguardian.com",
+      "n_articles": 3,
+      "mean_distance": 0.390821,
+      "ci_low": 0.287916,
+      "ci_high": 0.435271,
       "lean": "left"
     },
     {
       "outlet": "cbsnews.com",
       "n_articles": 6,
-      "mean_distance": 0.392611,
-      "ci_low": 0.32546,
-      "ci_high": 0.450541,
+      "mean_distance": 0.399453,
+      "ci_low": 0.330359,
+      "ci_high": 0.453924,
       "lean": "left"
     },
     {
       "outlet": "breitbart.com",
       "n_articles": 2,
-      "mean_distance": 0.394507,
+      "mean_distance": 0.401853,
       "ci_low": 0.343081,
       "ci_high": 0.445932,
       "lean": "right"
@@ -61,31 +61,31 @@
     {
       "outlet": "abcnews.go.com",
       "n_articles": 4,
-      "mean_distance": 0.40035,
-      "ci_low": 0.341385,
-      "ci_high": 0.459773,
-      "lean": "left"
-    },
-    {
-      "outlet": "nytimes.com",
-      "n_articles": 3,
-      "mean_distance": 0.408587,
-      "ci_low": 0.332102,
-      "ci_high": 0.517378,
+      "mean_distance": 0.404386,
+      "ci_low": 0.341518,
+      "ci_high": 0.470232,
       "lean": "left"
     },
     {
       "outlet": "dailykos.com",
       "n_articles": 2,
-      "mean_distance": 0.408743,
+      "mean_distance": 0.419939,
       "ci_low": 0.263199,
       "ci_high": 0.554288,
       "lean": "left"
     },
     {
+      "outlet": "nytimes.com",
+      "n_articles": 3,
+      "mean_distance": 0.429572,
+      "ci_low": 0.350703,
+      "ci_high": 0.517378,
+      "lean": "left"
+    },
+    {
       "outlet": "huffpost.com",
       "n_articles": 3,
-      "mean_distance": 0.416011,
+      "mean_distance": 0.440786,
       "ci_low": 0.318045,
       "ci_high": 0.564658,
       "lean": "left"
@@ -93,39 +93,39 @@
     {
       "outlet": "ashingtonexaminer.com",
       "n_articles": 2,
-      "mean_distance": 0.432173,
+      "mean_distance": 0.441051,
       "ci_low": 0.316753,
       "ci_high": 0.547593,
       "lean": "right"
     },
     {
-      "outlet": "thehill.com",
-      "n_articles": 5,
-      "mean_distance": 0.447593,
-      "ci_low": 0.347203,
-      "ci_high": 0.549499,
-      "lean": "center"
-    },
-    {
       "outlet": "foxnews.com",
       "n_articles": 6,
-      "mean_distance": 0.448371,
-      "ci_low": 0.384477,
-      "ci_high": 0.498026,
+      "mean_distance": 0.453284,
+      "ci_low": 0.394426,
+      "ci_high": 0.496219,
       "lean": "right"
+    },
+    {
+      "outlet": "thehill.com",
+      "n_articles": 5,
+      "mean_distance": 0.460004,
+      "ci_low": 0.363839,
+      "ci_high": 0.550041,
+      "lean": "center"
     },
     {
       "outlet": "yahoo.com",
       "n_articles": 11,
-      "mean_distance": 0.473162,
-      "ci_low": 0.423263,
-      "ci_high": 0.525845,
+      "mean_distance": 0.477166,
+      "ci_low": 0.426713,
+      "ci_high": 0.528693,
       "lean": "left"
     },
     {
       "outlet": "cnn.com",
       "n_articles": 2,
-      "mean_distance": 0.481671,
+      "mean_distance": 0.486892,
       "ci_low": 0.413803,
       "ci_high": 0.54954,
       "lean": "left"
@@ -133,9 +133,9 @@
     {
       "outlet": "wsj.com",
       "n_articles": 4,
-      "mean_distance": 0.484264,
-      "ci_low": 0.43927,
-      "ci_high": 0.556115,
+      "mean_distance": 0.487956,
+      "ci_low": 0.438395,
+      "ci_high": 0.561431,
       "lean": "center"
     },
     {
@@ -151,24 +151,41 @@
     "groups": {
       "left": {
         "n_articles": 41,
-        "mean_distance": 0.423913,
-        "ci_low": 0.393449,
-        "ci_high": 0.455226
+        "mean_distance": 0.427977,
+        "ci_low": 0.395345,
+        "ci_high": 0.460051
       },
       "center": {
         "n_articles": 9,
-        "mean_distance": 0.463891,
-        "ci_low": 0.402914,
-        "ci_high": 0.534351
+        "mean_distance": 0.472996,
+        "ci_low": 0.418158,
+        "ci_high": 0.536491
       },
       "right": {
         "n_articles": 12,
-        "mean_distance": 0.417394,
-        "ci_low": 0.365245,
-        "ci_high": 0.466743
+        "mean_distance": 0.418998,
+        "ci_low": 0.363838,
+        "ci_high": 0.466653
       }
     },
     "unmapped_outlets": []
+  },
+  "panel_composition": {
+    "left": {
+      "outlets": 11,
+      "articles": 41,
+      "weighted_share": 0.6435
+    },
+    "center": {
+      "outlets": 2,
+      "articles": 9,
+      "weighted_share": 0.1592
+    },
+    "right": {
+      "outlets": 4,
+      "articles": 12,
+      "weighted_share": 0.1973
+    }
   },
   "weekly": {},
   "events": [
