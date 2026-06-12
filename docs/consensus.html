@@ -676,7 +676,7 @@
         });
 
         // Main US Corpus fetch
-        fetch('data/consensus_us.json')
+        fetch('data/consensus_us.json?v=' + Date.now())
             .then(response => {
                 if (!response.ok) throw new Error('Not found');
                 return response.json();
