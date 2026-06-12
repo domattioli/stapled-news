@@ -6,6 +6,11 @@ on:
       days:
         description: "Days of GDELT history"
         default: "30"
+      mode:
+        description: "all | rss"
+        default: "all"
+  schedule:
+    - cron: "17 * * * *"
 
 permissions:
   contents: write
@@ -25,7 +30,8 @@ jobs:
 
       - name: Fetch headlines
         env:
-          FETCH_DAYS: ${{ github.event.inputs.days }}
+          FETCH_DAYS: ${{ github.event.inputs.days || '10' }}
+          FETCH_MODE: ${{ github.event.inputs.mode || 'rss' }}
         run: python scripts/fetch_us_news.py
 
       - name: Commit corpus
