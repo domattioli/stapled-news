@@ -387,14 +387,16 @@
 
         <!-- E4 -->
         <div class="experiment-section">
-            <div class="experiment-kicker">E4 External</div>
-            <h2 class="experiment-title">External Validity Is Extraction-Limited</h2>
+            <div class="experiment-kicker">E4 Consensus-Agreement vs. Factuality</div>
+            <h2 class="experiment-title">Consensus-Agreement Does Not Track Outlet Factuality, and the Null Is Precise</h2>
             <div class="experiment-text">
-                <p>Against Media Bias/Fact Check (MBFC) ratings, factuality correlation is null: ρ = −0.11 with bootstrap CI [−0.46, 0.24] (n=34 outlets). We tested whether claim-matching fidelity was the binding constraint by upgrading from frozen-vocab TF-IDF (cosine ≥ 0.55) to dual word + character-n-gram vectors plus entity-anchored blocking. Multi-outlet event coverage rose 23% (258 → 318 events; outlets scored 167 → 341) and made E3b's inversion reach significance, but manual audit found roughly 40% false merges at the operating threshold and the MBFC correlation remained null. Title-only claims with lexical matching sit below the fidelity this validation axis needs — the "voxelization" bottleneck dominates before the model can speak.</p>
+                <p>Against Media Bias/Fact Check (MBFC) ratings on FakeNewsNet, factuality correlation is null: ρ = −0.11, CI [−0.46, 0.24] (n=34 outlets). The UCI dataset, with 13× more coverage (4,207 multi-outlet events, 149 MBFC-rated outlets), sharpens the null to ρ = −0.009, CI [−0.17, 0.15]. Two representative outlets are indistinguishable: breitbart.com (low-rated, 0.976 reliability) and abc.net.au (high-rated, 0.986 reliability) — both high consensus agreement, one factually bankrupt by external standards. Roughly 3% of UCI headlines carry explicit negation; these assertion signals carry no factuality information. E3b and E4 together isolate a single estimand mismatch: consensus-agreement, like AUC under majority capture, is unidentifiable from coverage data alone.</p>
             </div>
-            <div class="figure-card">
-                <img src="assets/e4_external.png" alt="MBFC external validation: null correlation" class="figure-image">
-                <div class="figure-caption">Against MBFC ratings, factuality correlation is null, bounded by claim-extraction fidelity rather than the model itself.</div>
+            <div class="plotly-container">
+                <div id="e4-uci-scatter"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive scatter: x-axis = outlet MBFC factual rating, y-axis = estimated consensus-agreement reliability, marker size ∝ log(n articles). 149 MBFC-rated outlets; ρ = −0.009, CI [−0.17, 0.15]. <a href="assets/e4_external.png">See FakeNewsNet-only version</a>.
             </div>
         </div>
 
@@ -487,11 +489,47 @@
                 };
 
                 Plotly.newPlot('e3bChart', [scatterTrace], e3bLayout, {responsive: true, displayModeBar: false});
+
+                // E4 UCI Scatter
+                const e4UciData = data.e4_uci_scatter;
+                const factMap = {0: 'low', 1: 'mixed', 2: 'high'};
+                const factColorMap = {0: '#fc4f30', 1: '#e5ae38', 2: '#008fd5'};
+
+                const e4UciTrace = {
+                    x: e4UciData.map(d => d.fact_ordinal),
+                    y: e4UciData.map(d => d.reliability),
+                    text: e4UciData.map(d => d.outlet),
+                    mode: 'markers',
+                    marker: {
+                        size: e4UciData.map(d => Math.log(d.n_articles + 1) * 4),
+                        color: e4UciData.map(d => factColorMap[d.fact_ordinal]),
+                        opacity: 0.7
+                    },
+                    hovertemplate: '<b>%{text}</b><br>MBFC: %{customdata}<br>Reliability: %{y:.4f}<extra></extra>',
+                    customdata: e4UciData.map(d => factMap[d.fact_ordinal])
+                };
+
+                const e4UciLayout = {
+                    title: 'E4 (UCI): Consensus-Agreement vs. MBFC Factuality Rating',
+                    xaxis: {
+                        title: 'MBFC Factual Rating →',
+                        zeroline: false,
+                        tickvals: [0, 1, 2],
+                        ticktext: ['low', 'mixed', 'high']
+                    },
+                    yaxis: { title: 'Estimated Consensus-Agreement Reliability →', zeroline: false },
+                    hovermode: 'closest',
+                    plot_bgcolor: '#fafafa',
+                    margin: {l: 60, r: 40, t: 40, b: 50}
+                };
+
+                Plotly.newPlot('e4-uci-scatter', [e4UciTrace], e4UciLayout, {responsive: true, displayModeBar: false});
             })
             .catch(err => {
                 console.error('Error loading results.json:', err);
                 document.getElementById('e2Chart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
                 document.getElementById('e3bChart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+                document.getElementById('e4-uci-scatter').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
             });
     </script>
 </body>
