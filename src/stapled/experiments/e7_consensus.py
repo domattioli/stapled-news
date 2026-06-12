@@ -152,9 +152,32 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         # Top 30 events by n_outlets
         top_events = sorted(event_rows, key=lambda e: e["n_outlets"], reverse=True)[:30]
 
+        # Corpus metadata for the site bundle (date range from fp_article_meta
+        # when present; falls back to article.published_at).
+        try:
+            row = conn.execute(
+                "SELECT MIN(first_seen), MAX(last_seen) FROM fp_article_meta"
+            ).fetchone()
+            since, until = (row[0] or "")[:10], (row[1] or "")[:10]
+        except Exception:
+            row = conn.execute(
+                "SELECT MIN(published_at), MAX(published_at) FROM article"
+            ).fetchone()
+            since, until = (row[0] or "")[:10], (row[1] or "")[:10]
+        n_corpus_articles = conn.execute("SELECT COUNT(*) FROM article").fetchone()[0]
+        n_corpus_outlets = conn.execute("SELECT COUNT(*) FROM outlet").fetchone()[0]
+
         consensus_bundle = {
             "generated_at": datetime.utcnow().isoformat(),
-            "corpus": "fp.db",
+            "corpus": {
+                "repo": "defgsus/frontpage-archive-2026",
+                "since": since,
+                "until": until,
+                "n_events": len(event_rows),
+                "n_articles": len(article_rows),
+                "n_corpus_articles": n_corpus_articles,
+                "n_outlets": n_corpus_outlets,
+            },
             "ranking": [
                 {
                     "outlet": m["outlet"],

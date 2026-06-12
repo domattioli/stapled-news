@@ -402,11 +402,22 @@ def validate_planted(data_dict: Dict) -> Dict:
 
     copier_mean = float(np.mean(copier_distances))
     noise_mean = float(np.mean(noise_distances))
-    gate_pass = (copier_mean < 0.1) and (noise_mean > copier_mean + 0.3)
+
+    # Gate criteria are relative, not absolute: char-n-gram cosine distances on
+    # short headlines are scale-dependent (sparse German titles put even the
+    # nearest member ~0.3 from a centroid). The metric is sane when the copier
+    # sits well inside the real articles' own mean distance and far below noise.
+    corpus_mean = float(np.mean([r["distance"] for r in articles])) if articles else 0.0
+    gate_pass = (
+        noise_mean > copier_mean + 0.3
+        and corpus_mean > 0
+        and copier_mean < 0.6 * corpus_mean
+    )
 
     return {
         "copier_mean": copier_mean,
         "noise_mean": noise_mean,
+        "corpus_mean": corpus_mean,
         "gate_pass": bool(gate_pass),
     }
 
