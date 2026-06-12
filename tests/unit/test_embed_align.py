@@ -90,7 +90,7 @@ def test_paraphrase_merges(test_db):
     outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
 
     # Use lower threshold for nearly-identical claims
-    realign_all(test_db, similarity_threshold=0.3, entity_mode="boost")
+    stats = realign_all(test_db, similarity_threshold=0.3, entity_mode="boost")
 
     # Both claims should be in same event (very similar text + same entity)
     cursor = test_db.execute(
