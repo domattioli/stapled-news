@@ -30,6 +30,7 @@ from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
 from stapled.extract.framing import update_all_framing
 from stapled.align.cluster import align
+from stapled.align.embed_align import realign_all
 from stapled.infer.online_em import OnlineEM
 from stapled.infer.align_incremental import align_incremental
 from stapled.viz.online_convergence import online_convergence, reliability_trajectory
@@ -401,6 +402,35 @@ def align_cmd(
     except Exception as e:
         out.add_error(str(e))
         out.output("align", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("realign-embed")
+def realign_embed_cmd(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    threshold: float = typer.Option(0.5, "--threshold", help="Similarity threshold"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Realign claims into events using enhanced TF-IDF + entity boosting."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        stats = realign_all(conn, similarity_threshold=threshold, entity_mode="boost")
+
+        out.set_data(**stats)
+        rows = [
+            {"metric": "Claims total", "value": str(stats["claims_total"])},
+            {"metric": "Clusters (multi)", "value": str(stats["clusters_multi"])},
+            {"metric": "Events created", "value": str(stats["events_created"])},
+            {"metric": "Claims in multi", "value": str(stats["claims_in_multi"])},
+            {"metric": "Multi-outlet events", "value": str(stats["multi_outlet_events"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "Enhanced Realignment Complete")
+        out.output("realign-embed", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("realign-embed", exit_code=1)
         raise typer.Exit(code=1)
 
 
