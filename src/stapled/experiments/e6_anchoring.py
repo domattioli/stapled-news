@@ -146,14 +146,25 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                             anchored_event_ids = [
                                 int(x) for x in rng.choice(candidate_events, size=n_to_anchor, replace=False)
                             ]
-                            for event_id in anchored_event_ids:
-                                true_state = _get_event_anchor_truth(
-                                    budget_conn, event_id, budget_reuters_id
-                                )
-                                budget_conn.execute(
-                                    "INSERT INTO anchor (event_id, true_state, source) VALUES (?, ?, ?)",
-                                    (event_id, int(true_state), "e6_sweep"),
-                                )
+                            # Batch the truth lookup: one query for all events the real
+                            # outlet (reuters) touches, then anchor truth is a set test.
+                            reuters_events = set()
+                            if budget_reuters_id:
+                                reuters_events = {
+                                    int(r[0]) for r in budget_conn.execute(
+                                        "SELECT DISTINCT c.event_id FROM claim c "
+                                        "JOIN article a ON c.article_id = a.id "
+                                        "WHERE a.outlet_id = ?",
+                                        (budget_reuters_id,),
+                                    )
+                                }
+                            budget_conn.executemany(
+                                "INSERT INTO anchor (event_id, true_state, source) VALUES (?, ?, ?)",
+                                [
+                                    (e, 1 if e in reuters_events else 0, "e6_sweep")
+                                    for e in anchored_event_ids
+                                ],
+                            )
                             budget_conn.commit()
 
                     auc, real_rank, reuters_reliability, mean_fake_reliability = _run_em_and_score(
