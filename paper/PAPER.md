@@ -26,9 +26,12 @@ publishers in the UCI News Aggregator corpus (228,257 headlines; ground-truth st
 clusters), the factuality correlation is a precise null (ρ = −0.009, CI [−0.17, 0.15]).
 Deduplicated fractional voting repairs the syndication pathway specifically
 (recovery stays at ρ ≈ 0.82–0.84 across 20× duplication) but cannot repair unreliable
-majorities. We argue the estimand should be named what it is — truth-calibrated consensus
-under anchoring, raw consensus without — and position the method as an omission-auditing
-tool rather than a truth detector.
+majorities — and neither, cheaply, can anchoring: on ISOT, posterior-clamping anchors on
+externally verified events left rankings inverted at every budget below 50% of events
+(AUC ≤ 0.33 at 1,500 of 2,941) and recovered fully only at 85% coverage. We argue the
+estimand should be named what it is — consensus, truth-calibrated only where anchor
+coverage overwhelms the echo — and position the method as an omission-auditing tool
+rather than a truth detector.
 
 ---
 
@@ -145,16 +148,25 @@ character-n-gram vectors plus entity-anchored blocking raised multi-outlet event
 but a manual audit found roughly 40% false merges at the operating threshold (distinct
 stories united by a shared celebrity name) and the correlation stayed null. The UCI News
 Aggregator corpus [18] removes the alignment bottleneck entirely — its story identifiers
-supply ground-truth event clusters (228,257 headlines, 9,364 publisher domains, 4,207
-multi-outlet events, 13× FakeNewsNet's coverage) — and the null sharpens rather than
-resolves: ρ = −0.009, CI [−0.17, 0.15], n = 149 joined outlets. MBFC-rated "low" and
-"high" outlets sit interleaved at the top of the consensus-agreement ranking
-(breitbart.com 0.976 beside abc.net.au 0.986). The mechanism is visible in the data:
+supply ground-truth event clusters (422,703 headlines parsed from 422,937 source rows,
+10,980 publisher domains, 7,202 multi-outlet events, 22× FakeNewsNet's coverage) — and
+the null sharpens rather than resolves: factuality ρ = −0.10, CI [−0.24, 0.05], with
+ideological lean cleanly orthogonal (ρ = 0.02, CI [−0.12, 0.17]), n = 176 joined outlets
+at a 10-article participation floor. MBFC-rated "low" and "high" outlets sit interleaved
+at the top of the consensus-agreement ranking. The mechanism is visible in the data:
 only 3% of UCI claims are negations, so mainstream outlets overwhelmingly assert the
 same consensus stories and the assertion channel carries no factuality signal.
 E3b and E4 are two faces of one estimand mismatch — on fabrication-heavy corpora
 consensus-agreement *inverts* against factuality; on mainstream coverage it is
 *orthogonal* to it.
+
+**E6 — anchoring breaks the symmetry only when it overwhelms the echo.** On ISOT,
+posterior-clamping anchors derived from externally verified events were applied at
+budgets k ∈ {0, 5, 10, 25, 50, 100, 200, 400, 800, 1,500, 2,500} of 2,941 multi-outlet
+events. Recovery is flat at AUC 0.0 through k = 100, reaches only 0.17 by k = 800, 0.33
+at k = 1,500 (51% coverage), and attains the correct ranking (AUC 1.0) only at k = 2,500
+— 85% of events anchored. Sparse anchoring, the standard prescription, does not repair
+an echo-dominated majority.
 
 ## 4. Discussion
 
@@ -170,13 +182,19 @@ the field corroborates (the sensitivity channel), and which propagate claims nob
 carries. That omission-auditing use is real, label-free, and to our knowledge not served
 by the supervised outlet-classification line [10, 13].
 
-**The repair hierarchy.** Correlated raters (syndication) are repairable from data alone —
-near-duplicate detection plus fractional voting, our E2 result — and should be standard in
-any news application of rater models, given documented wire dependence in modern newsrooms
-[14]. Unreliable majorities are repairable only with anchors: sparse externally verified
-claims (fact-check APIs) clamp posteriors, break the symmetry, and let calibrated
-reliabilities propagate to unanchored claims. The anchor mechanism is implemented;
-quantifying the anchor budget (how few labels suffice) is the natural next experiment.
+**The repair hierarchy, with measured costs.** Correlated raters (syndication) are
+repairable from data alone — near-duplicate detection plus fractional voting, the E2
+result — and should be standard in any news application of rater models, given documented
+wire dependence in modern newsrooms [14]. Unreliable majorities are repairable only with
+anchors, and E6 measures what that costs: clamping posteriors on externally verified
+events restored nothing below k = 200 of 2,941 multi-outlet events (AUC 0.0), reached
+AUC 0.33 at k = 1,500 (51%), and recovered the correct ranking only at k = 2,500 (85%
+coverage). The mechanism is plain: anchors fix the events they touch, but a 6:1 echo bloc
+continues to majority-capture every unanchored event, keeping its parameters inflated.
+Anchoring is therefore not the cheap symmetry-breaker the truth-discovery literature
+implicitly assumes [7, 9] — its cost scales with the dominance of the unreliable bloc,
+and is highest exactly where it is needed most. Gold-question budgets calibrated on
+honest-majority crowds [9] do not transfer to adversarial-majority media ecosystems.
 Extraction fidelity is the third, mundane, binding constraint: E4 is null not because the
 model is wrong but because lexical claim-matching on short titles starves it of
 corroboration structure — precisely the gap between voxels (free correspondence) and
