@@ -381,5 +381,26 @@
       "min_budget_full_recovery": null
     },
     "timestamp": "2026-06-12T02:37:19.312388+00:00"
+  },
+  {
+    "experiment": "e6_ext",
+    "git_sha": "1ee87af8c6dca31721c4d14d1aca5e05b9ea8851",
+    "seed": 42,
+    "config_hash": "fae147071c7428a049c39fd7eacaf19a34a357f9a93f02f3a0c5b4968fe7bc8f",
+    "outputs": [
+      "results/e6_anchoring.csv",
+      "results/e6_anchoring.png"
+    ],
+    "metrics": {
+      "auc_by_budget": {
+        "400": 0.16666666666666663,
+        "800": 0.16666666666666663,
+        "1500": 0.33333333333333337,
+        "2500": 1.0
+      },
+      "n_multi_outlet_events": 2941,
+      "min_budget_full_recovery": 2500
+    },
+    "timestamp": "2026-06-12T03:22:41.240961+00:00"
   }
 ]
