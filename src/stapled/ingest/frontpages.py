@@ -252,7 +252,7 @@ def load_frontpages(
                         # without links; key them by a stable title hash so they
                         # still enter the corpus.
                         url = "frontpage://{}/{}".format(
-                            outlet,
+                            outlet_name,
                             hashlib.sha1(title.encode("utf-8")).hexdigest()[:16],
                         )
 
