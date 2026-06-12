@@ -206,13 +206,40 @@
 
         #chart-outlet-ranking,
         #chart-distribution,
-        #chart-weekly {
+        #chart-weekly,
+        #us-ranking,
+        #us-weekly {
             width: 100%;
             height: 400px;
         }
 
         #chart-distribution {
             height: 500px;
+        }
+
+        .us-section {
+            border-top: 2px solid #ddd;
+            padding-top: 60px;
+            margin-top: 60px;
+        }
+
+        .us-section .article-kicker {
+            margin-bottom: 15px;
+        }
+
+        .us-section .section-title {
+            margin-top: 0;
+        }
+
+        .us-pending-notice {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 2px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+            font-size: 15px;
+            margin: 30px 0;
         }
 
         .figure-caption {
@@ -472,6 +499,15 @@
                 <!-- Populated by JS -->
             </div>
         </div>
+
+        <!-- US Corpus Section -->
+        <div class="section us-section">
+            <div class="article-kicker">Corpus No. 2 — United States</div>
+            <h2 class="section-title">US Political Headlines: Distance From Consensus</h2>
+            <div id="us-content">
+                <!-- Populated by JS if data/consensus_us.json available -->
+            </div>
+        </div>
     </div>
 
     <footer>
@@ -482,11 +518,20 @@
     </footer>
 
     <script>
+        // Track which US charts were drawn
+        let usChartsDrawn = {ranking: false, weekly: false};
+
         // Responsive resize handler
         window.addEventListener('resize', function() {
             Plotly.Plots.resize('chart-outlet-ranking');
             Plotly.Plots.resize('chart-distribution');
             Plotly.Plots.resize('chart-weekly');
+            if (usChartsDrawn.ranking) {
+                Plotly.Plots.resize('us-ranking');
+            }
+            if (usChartsDrawn.weekly) {
+                Plotly.Plots.resize('us-weekly');
+            }
         });
 
         fetch('data/consensus.json')
@@ -648,6 +693,167 @@
                 document.getElementById('chart-weekly').innerHTML = '<div class="error-message">Unable to load chart data.</div>';
                 const tbody = document.getElementById('story-tbody');
                 tbody.innerHTML = '<tr><td colspan="5" class="error-message">Unable to load story data.</td></tr>';
+            });
+
+        // US Corpus fetch
+        fetch('data/consensus_us.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Not found');
+                return response.json();
+            })
+            .then(usData => {
+                const usContent = document.getElementById('us-content');
+                const usCorpus = usData.corpus;
+
+                // Intro paragraph
+                const introPara = document.createElement('p');
+                introPara.style.marginBottom = '30px';
+                const dateRange = `${usCorpus.since} to ${usCorpus.until}`;
+                introPara.textContent = `Corpus of ${usCorpus.n_articles.toLocaleString()} articles from ${usCorpus.n_outlets} outlets covering ${usCorpus.n_events} US political stories (${usCorpus.n_events} stories with five or more outlets). Data collected ${dateRange} via GDELT DOC API and national RSS feeds through automated CI runner.`;
+                usContent.appendChild(introPara);
+
+                // Outlet ranking chart
+                const usRanking = usData.ranking;
+                const usRankingTrace = {
+                    y: usRanking.map(r => r.outlet),
+                    x: usRanking.map(r => r.mean_distance),
+                    error_x: {
+                        type: 'data',
+                        symmetric: false,
+                        array: usRanking.map(r => r.ci_high - r.mean_distance),
+                        arrayminus: usRanking.map(r => r.mean_distance - r.ci_low)
+                    },
+                    type: 'bar',
+                    orientation: 'h',
+                    marker: {
+                        color: '#008fd5'
+                    },
+                    hovertemplate: '<b>%{y}</b><br>Mean: %{x:.3f}<extra></extra>'
+                };
+
+                const usRankingLayout = {
+                    title: '',
+                    xaxis: {title: 'Mean Distance from Consensus', zeroline: false},
+                    yaxis: {title: ''},
+                    plot_bgcolor: '#f0f0f0',
+                    margin: {l: 150, r: 40, t: 40, b: 50},
+                    showlegend: false,
+                    hovermode: 'closest'
+                };
+
+                const rankingSection = document.createElement('div');
+                rankingSection.className = 'section';
+                rankingSection.innerHTML = '<h2 class="section-title">Outlet Ranking</h2><div class="plotly-container"><div id="us-ranking"></div></div><p class="figure-caption">Mean distance per outlet with bootstrap 95% confidence intervals. Bars sorted ascending. Outlets closer to consensus appear at top.</p>';
+                usContent.appendChild(rankingSection);
+
+                Plotly.newPlot('us-ranking', [usRankingTrace], usRankingLayout, {responsive: true, displayModeBar: false});
+                usChartsDrawn.ranking = true;
+
+                // Weekly trajectory (conditional)
+                const usWeekly = usData.weekly || {};
+                const usOutlets = Object.keys(usWeekly);
+                if (usOutlets.length > 0) {
+                    const weeklyColors = ['#008fd5', '#fc4f30', '#e5ae38', '#6d904f', '#8b8b8b', '#810f7c'];
+                    const usWeeklyTraces = [];
+                    for (let i = 0; i < usOutlets.length; i++) {
+                        const outlet = usOutlets[i];
+                        const weeks = usWeekly[outlet] || [];
+                        weeks.sort((a, b) => a.week.localeCompare(b.week));
+
+                        const trace = {
+                            x: weeks.map(w => w.week),
+                            y: weeks.map(w => w.mean_distance),
+                            mode: 'lines+markers',
+                            name: outlet,
+                            line: {color: weeklyColors[i % weeklyColors.length], width: 2},
+                            marker: {size: 5},
+                            hovertemplate: '<b>' + outlet + '</b><br>%{x}<br>Mean: %{y:.3f}<extra></extra>'
+                        };
+                        usWeeklyTraces.push(trace);
+                    }
+
+                    const usWeeklyLayout = {
+                        title: '',
+                        xaxis: {title: 'Week', zeroline: false},
+                        yaxis: {title: 'Mean Distance', zeroline: false},
+                        plot_bgcolor: '#f0f0f0',
+                        margin: {l: 60, r: 40, t: 40, b: 50},
+                        hovermode: 'closest',
+                        legend: {x: 0.01, y: 0.99}
+                    };
+
+                    const weeklySection = document.createElement('div');
+                    weeklySection.className = 'section';
+                    weeklySection.innerHTML = '<h2 class="section-title">Weekly Trajectory</h2><div class="plotly-container"><div id="us-weekly"></div></div><p class="figure-caption">Mean distance per outlet across rolling weeks. Shows stability and drift in outlet positioning.</p>';
+                    usContent.appendChild(weeklySection);
+
+                    Plotly.newPlot('us-weekly', usWeeklyTraces, usWeeklyLayout, {responsive: true, displayModeBar: false});
+                    usChartsDrawn.weekly = true;
+                }
+
+                // Story explorer table
+                const usEvents = usData.events || [];
+                const storySection = document.createElement('div');
+                storySection.className = 'section';
+                storySection.innerHTML = '<h2 class="section-title">Story Explorer</h2><p>Top 10 events by maximum outlet distance. The story\'s consensus headline reflects the n-gram centroid across all outlets covering it.</p>';
+
+                const storyTable = document.createElement('table');
+                storyTable.className = 'story-table';
+                storyTable.innerHTML = '<thead><tr><th>Story</th><th>Outlets</th><th>Nearest</th><th>Farthest</th><th>Distance</th></tr></thead><tbody id="us-story-tbody"></tbody>';
+                storySection.appendChild(storyTable);
+                usContent.appendChild(storySection);
+
+                const usStorybody = document.getElementById('us-story-tbody');
+                for (let i = 0; i < Math.min(usEvents.length, 10); i++) {
+                    const event = usEvents[i];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.consensus_headline}</td>
+                        <td>${event.n_outlets}</td>
+                        <td>${event.nearest_outlet}</td>
+                        <td>${event.farthest_outlet}</td>
+                        <td>${event.farthest_distance.toFixed(2)}</td>
+                    `;
+                    usStorybody.appendChild(row);
+                }
+
+                // Validation cards
+                const usValidation = usData.validation || {};
+                const usValidationSection = document.createElement('div');
+                usValidationSection.className = 'section';
+                usValidationSection.innerHTML = '<h2 class="section-title">Validation</h2><div class="validation-cards" id="us-validation-cards"></div>';
+                usContent.appendChild(usValidationSection);
+
+                const usValidationCardsDiv = document.getElementById('us-validation-cards');
+
+                if (usValidation.v1_planted) {
+                    const planted = usValidation.v1_planted;
+                    const plantedCard = document.createElement('div');
+                    plantedCard.className = 'validation-card';
+                    plantedCard.innerHTML = `
+                        <div class="card-title">Planted Baseline</div>
+                        <p>Copier mean distance: ${(planted.copier_mean).toFixed(3)}<br/>Noise mean distance: ${(planted.noise_mean).toFixed(3)}</p>
+                        <span class="validation-pill ${planted.gate_pass ? 'pill-pass' : 'pill-fail'}">${planted.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
+                    `;
+                    usValidationCardsDiv.appendChild(plantedCard);
+                }
+
+                if (usValidation.v2_split_half) {
+                    const splitHalf = usValidation.v2_split_half;
+                    const splitCard = document.createElement('div');
+                    splitCard.className = 'validation-card';
+                    splitCard.innerHTML = `
+                        <div class="card-title">Split-Half Stability</div>
+                        <p>Spearman ρ: ${(splitHalf.rho).toFixed(3)}<br/>Outlets: ${splitHalf.n_outlets}</p>
+                        <span class="validation-pill ${splitHalf.gate_pass ? 'pill-pass' : 'pill-fail'}">${splitHalf.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
+                    `;
+                    usValidationCardsDiv.appendChild(splitCard);
+                }
+            })
+            .catch(err => {
+                console.warn('US corpus data not available (data/consensus_us.json missing or invalid)');
+                const usContent = document.getElementById('us-content');
+                usContent.innerHTML = '<div class="us-pending-notice">US corpus run pending — this section renders automatically once data/consensus_us.json is published.</div>';
             });
     </script>
 </body>

@@ -547,5 +547,28 @@
       "bottom_outlet": "compact-online.de"
     },
     "timestamp": "2026-06-12T16:08:09.989638+00:00"
+  },
+  {
+    "experiment": "e7",
+    "git_sha": "50a72cb82bac0675d0b5ba2733b6493babca4c5c",
+    "seed": 42,
+    "config_hash": "92923f66458b8736a6de816e954a38377b06d9847325a506188b8e04cf6effc3",
+    "outputs": [
+      "results/e7_consensus_distance.csv",
+      "results/e7_outlet_distance.csv",
+      "results/e7_consensus.png",
+      "results/consensus.json"
+    ],
+    "metrics": {
+      "n_events": 32,
+      "n_articles": 4654,
+      "n_outlets_ranked": 10,
+      "v1_gate": true,
+      "v2_rho": 0.4286,
+      "v2_gate": false,
+      "top_outlet": "spiegel.de",
+      "bottom_outlet": "compact-online.de"
+    },
+    "timestamp": "2026-06-12T21:17:08.600300+00:00"
   }
 ]
