@@ -14,11 +14,13 @@ def iter_remote_lines(
     malformed_threshold: float = 0.01,
     delimiter: str = ",",
     fieldnames: Optional[List[str]] = None,
+    quoting: bool = True,
 ) -> Generator[List[Dict[str, str]], None, None]:
     """
     Resume from source_cursor using etag + Range header (HTTP 206).
     Yield lists of CSV rows (dicts), batch_bytes ≈ bytes yielded before yield.
-    Quote-aware record splitting: records are split on newlines that fall OUTSIDE quotes.
+    Record splitting: if quoting=True, split on newlines OUTSIDE quotes (RFC 4180).
+    If quoting=False, split on plain newlines (no quote logic).
     On completion, set done=1 in source_cursor.
 
     Args:
@@ -27,6 +29,7 @@ def iter_remote_lines(
         conn: Database connection
         delimiter: Field delimiter (default ',')
         fieldnames: Pre-defined field names. If provided, skip header parsing.
+        quoting: If True, use RFC 4180 quote-aware splitting. If False, use plain newline split.
 
     Yields:
         Lists of CSV row dicts
@@ -105,8 +108,11 @@ def iter_remote_lines(
             for chunk in iter(lambda: response.read(8192), b""):
                 buffer += chunk.decode("utf-8", errors="replace")
 
-                # Split on newlines that fall OUTSIDE quotes (RFC 4180 aware)
-                records = _split_quoted_records(buffer)
+                # Split records: quoted (RFC 4180) or plain newline split
+                if quoting:
+                    records = _split_quoted_records(buffer)
+                else:
+                    records = _split_plain_records(buffer)
                 buffer = records[-1]  # Last element is incomplete record
                 complete_records = records[:-1]
 
@@ -127,9 +133,13 @@ def iter_remote_lines(
                     # Parse data row
                     if headers is not None:
                         try:
-                            reader = csv.reader(io.StringIO(record_text), delimiter=delimiter)
-                            row = next(reader)
-                            values = [v.strip() for v in row]
+                            if quoting:
+                                reader = csv.reader(io.StringIO(record_text), delimiter=delimiter)
+                                row = next(reader)
+                                values = [v.strip() for v in row]
+                            else:
+                                # Plain split: no quote logic
+                                values = [v.strip() for v in record_text.split(delimiter)]
                             if len(values) == len(headers):
                                 row_dict = dict(zip(headers, values))
                                 batch_rows.append(row_dict)
@@ -157,9 +167,13 @@ def iter_remote_lines(
                 consumed_bytes += len(buffer.encode("utf-8"))
             if buffer.strip() and headers is not None:
                 try:
-                    reader = csv.reader(io.StringIO(buffer), delimiter=delimiter)
-                    row = next(reader)
-                    values = [v.strip() for v in row]
+                    if quoting:
+                        reader = csv.reader(io.StringIO(buffer), delimiter=delimiter)
+                        row = next(reader)
+                        values = [v.strip() for v in row]
+                    else:
+                        # Plain split: no quote logic
+                        values = [v.strip() for v in buffer.split(delimiter)]
                     if len(values) == len(headers):
                         row_dict = dict(zip(headers, values))
                         batch_rows.append(row_dict)
@@ -243,6 +257,18 @@ def _split_quoted_records(text: str) -> List[str]:
 
     # Append incomplete final record
     records.append(current)
+    return records
+
+
+def _split_plain_records(text: str) -> List[str]:
+    """
+    Split unquoted records on plain newlines (no quote logic).
+    For unquoted tab-separated data where titles may contain stray quotes.
+
+    Returns list where last element is the incomplete trailing record.
+    """
+    records = text.split('\n')
+    # Keep last element even if empty (mirrors _split_quoted_records contract)
     return records
 
 
