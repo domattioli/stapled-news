@@ -193,15 +193,25 @@ def test_validate_planted_gate(tmp_path):
         conn.execute("INSERT INTO event (id) VALUES (?)", (event_id,))
 
     article_id = 1
-    titles = [
-        "Government announces new climate policy",
-        "Climate agreement signed by leaders",
-        "Healthcare reform bill passed",
-        "Major economic changes ahead",
-    ]
+    # Distinct topics per event so the noise derangement (event 1 gets event 2's
+    # consensus headline) is a genuinely different text, not the same string.
+    titles_by_event = {
+        1: [
+            "Government announces new climate policy",
+            "Climate agreement signed by leaders",
+            "New climate policy announced by government",
+            "Leaders sign sweeping climate agreement",
+        ],
+        2: [
+            "Star quarterback traded after playoff defeat",
+            "Quarterback trade follows playoff loss",
+            "Team trades star quarterback in shakeup",
+            "Playoff defeat triggers quarterback trade",
+        ],
+    }
 
     for event_id in [1, 2]:
-        for outlet_name, title in zip(outlets, titles):
+        for outlet_name, title in zip(outlets, titles_by_event[event_id]):
             outlet_id = outlet_ids[outlet_name]
             conn.execute(
                 "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
