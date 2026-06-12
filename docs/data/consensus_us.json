@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T21:46:38.033483",
+  "generated_at": "2026-06-12T22:01:46.857261",
   "corpus": {
     "repo": "defgsus/frontpage-archive-2026",
     "since": "2026-05-14",
@@ -2971,6 +2971,442 @@
           ]
         }
       ]
+    }
+  ],
+  "articles": [
+    {
+      "outlet": "abcnews.go.com",
+      "event_id": 12,
+      "distance": 0.499,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "abcnews.go.com",
+      "event_id": 12,
+      "distance": 0.3421,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "cbsnews.com",
+      "event_id": 12,
+      "distance": 0.3752,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "dailycaller.com",
+      "event_id": 12,
+      "distance": 0.2466,
+      "event_outlets": 9,
+      "lean": "right"
+    },
+    {
+      "outlet": "foxnews.com",
+      "event_id": 12,
+      "distance": 0.4661,
+      "event_outlets": 9,
+      "lean": "right"
+    },
+    {
+      "outlet": "nbcnews.com",
+      "event_id": 12,
+      "distance": 0.1967,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "npr.org",
+      "event_id": 12,
+      "distance": 0.5247,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "npr.org",
+      "event_id": 12,
+      "distance": 0.2377,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "nytimes.com",
+      "event_id": 12,
+      "distance": 0.4205,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "nytimes.com",
+      "event_id": 12,
+      "distance": 0.5174,
+      "event_outlets": 9,
+      "lean": "left"
+    },
+    {
+      "outlet": "thehill.com",
+      "event_id": 12,
+      "distance": 0.459,
+      "event_outlets": 9,
+      "lean": "center"
+    },
+    {
+      "outlet": "wsj.com",
+      "event_id": 12,
+      "distance": 0.4649,
+      "event_outlets": 9,
+      "lean": "center"
+    },
+    {
+      "outlet": "wsj.com",
+      "event_id": 12,
+      "distance": 0.5936,
+      "event_outlets": 9,
+      "lean": "center"
+    },
+    {
+      "outlet": "wsj.com",
+      "event_id": 12,
+      "distance": 0.4349,
+      "event_outlets": 9,
+      "lean": "center"
+    },
+    {
+      "outlet": "abcnews.go.com",
+      "event_id": 18,
+      "distance": 0.4196,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "abcnews.go.com",
+      "event_id": 18,
+      "distance": 0.3407,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "cbsnews.com",
+      "event_id": 18,
+      "distance": 0.2502,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "politico.com",
+      "event_id": 18,
+      "distance": 0.5025,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "theguardian.com",
+      "event_id": 18,
+      "distance": 0.4173,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "wsj.com",
+      "event_id": 18,
+      "distance": 0.4436,
+      "event_outlets": 6,
+      "lean": "center"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 18,
+      "distance": 0.441,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 18,
+      "distance": 0.3651,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "ashingtonexaminer.com",
+      "event_id": 26,
+      "distance": 0.5476,
+      "event_outlets": 7,
+      "lean": "right"
+    },
+    {
+      "outlet": "cbsnews.com",
+      "event_id": 26,
+      "distance": 0.4263,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "cbsnews.com",
+      "event_id": 26,
+      "distance": 0.4677,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "cnn.com",
+      "event_id": 26,
+      "distance": 0.5495,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "dailykos.com",
+      "event_id": 26,
+      "distance": 0.5543,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "foxnews.com",
+      "event_id": 26,
+      "distance": 0.5039,
+      "event_outlets": 7,
+      "lean": "right"
+    },
+    {
+      "outlet": "foxnews.com",
+      "event_id": 26,
+      "distance": 0.423,
+      "event_outlets": 7,
+      "lean": "right"
+    },
+    {
+      "outlet": "foxnews.com",
+      "event_id": 26,
+      "distance": 0.5169,
+      "event_outlets": 7,
+      "lean": "right"
+    },
+    {
+      "outlet": "nbcnews.com",
+      "event_id": 26,
+      "distance": 0.4831,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.4375,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.4677,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.4338,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.5325,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.4966,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.616,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 26,
+      "distance": 0.6203,
+      "event_outlets": 7,
+      "lean": "left"
+    },
+    {
+      "outlet": "ashingtonexaminer.com",
+      "event_id": 32,
+      "distance": 0.3168,
+      "event_outlets": 6,
+      "lean": "right"
+    },
+    {
+      "outlet": "breitbart.com",
+      "event_id": 32,
+      "distance": 0.3431,
+      "event_outlets": 6,
+      "lean": "right"
+    },
+    {
+      "outlet": "cnn.com",
+      "event_id": 32,
+      "distance": 0.4138,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "dailykos.com",
+      "event_id": 32,
+      "distance": 0.2632,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "foxnews.com",
+      "event_id": 32,
+      "distance": 0.2998,
+      "event_outlets": 6,
+      "lean": "right"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 32,
+      "distance": 0.4511,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "yahoo.com",
+      "event_id": 32,
+      "distance": 0.3431,
+      "event_outlets": 6,
+      "lean": "left"
+    },
+    {
+      "outlet": "breitbart.com",
+      "event_id": 60,
+      "distance": 0.4459,
+      "event_outlets": 8,
+      "lean": "right"
+    },
+    {
+      "outlet": "cbsnews.com",
+      "event_id": 60,
+      "distance": 0.4865,
+      "event_outlets": 8,
+      "lean": "left"
+    },
+    {
+      "outlet": "dailycaller.com",
+      "event_id": 60,
+      "distance": 0.4185,
+      "event_outlets": 8,
+      "lean": "right"
+    },
+    {
+      "outlet": "foxnews.com",
+      "event_id": 60,
+      "distance": 0.4805,
+      "event_outlets": 8,
+      "lean": "right"
+    },
+    {
+      "outlet": "huffpost.com",
+      "event_id": 60,
+      "distance": 0.5647,
+      "event_outlets": 8,
+      "lean": "left"
+    },
+    {
+      "outlet": "nbcnews.com",
+      "event_id": 60,
+      "distance": 0.3694,
+      "event_outlets": 8,
+      "lean": "left"
+    },
+    {
+      "outlet": "nbcnews.com",
+      "event_id": 60,
+      "distance": 0.5095,
+      "event_outlets": 8,
+      "lean": "left"
+    },
+    {
+      "outlet": "theguardian.com",
+      "event_id": 60,
+      "distance": 0.4353,
+      "event_outlets": 8,
+      "lean": "left"
+    },
+    {
+      "outlet": "thehill.com",
+      "event_id": 60,
+      "distance": 0.3874,
+      "event_outlets": 8,
+      "lean": "center"
+    },
+    {
+      "outlet": "thehill.com",
+      "event_id": 60,
+      "distance": 0.4661,
+      "event_outlets": 8,
+      "lean": "center"
+    },
+    {
+      "outlet": "thehill.com",
+      "event_id": 60,
+      "distance": 0.6313,
+      "event_outlets": 8,
+      "lean": "center"
+    },
+    {
+      "outlet": "cbsnews.com",
+      "event_id": 117,
+      "distance": 0.3497,
+      "event_outlets": 5,
+      "lean": "left"
+    },
+    {
+      "outlet": "huffpost.com",
+      "event_id": 117,
+      "distance": 0.3653,
+      "event_outlets": 5,
+      "lean": "left"
+    },
+    {
+      "outlet": "huffpost.com",
+      "event_id": 117,
+      "distance": 0.318,
+      "event_outlets": 5,
+      "lean": "left"
+    },
+    {
+      "outlet": "nytimes.com",
+      "event_id": 117,
+      "distance": 0.2879,
+      "event_outlets": 5,
+      "lean": "left"
+    },
+    {
+      "outlet": "theguardian.com",
+      "event_id": 117,
+      "distance": 0.2879,
+      "event_outlets": 5,
+      "lean": "left"
+    },
+    {
+      "outlet": "thehill.com",
+      "event_id": 117,
+      "distance": 0.2942,
+      "event_outlets": 5,
+      "lean": "center"
     }
   ],
   "validation": {
