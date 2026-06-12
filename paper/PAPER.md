@@ -1,4 +1,4 @@
-# STAPLE-News: Estimating Cross-Outlet Consensus and Selective Omission from Streaming News Coverage
+# STAPLE-News: Streaming Consensus Estimation Recovers Outlet Structure on Clean Corpora and Predictably Inverts Under Unreliable Majorities
 
 **Working paper — 2026-06-12. Target length: 4 pages (≈2,400 words excluding references).**
 
@@ -63,8 +63,9 @@ conditionally independent: wire services syndicate one underlying account to man
 mastheads [14], so N copies masquerade as N independent votes. Second, no labeling
 symmetry-breaker exists in the data: the Dawid-Skene likelihood is invariant under
 (T → 1−T, p ↔ 1−q, π → 1−π), so "the majority is reliable" and "the majority is
-unreliable" fit the data equally well [2, 8]. Both facts have measurable consequences,
-and one of them has a cheap fix.
+unreliable" fit the data equally well [2, 8]. Both facts have measurable consequences;
+the first is repairable by a change to vote counting (Section 3, E2), the second only by
+external anchoring.
 
 ## 2. Methods
 
@@ -81,10 +82,11 @@ E-step computes posteriors W_i over the hidden state, and sufficient statistics 
 blended with Robbins-Monro weight γ_t = (t+2)^−0.6, giving constant memory and incremental
 updates as coverage arrives. Outlets discovered mid-stream are registered lazily.
 
-**Deduplicated fractional voting.** Within an event, claims sharing a near-duplicate
-cluster receive weight w = 1/(cluster size): likelihood contributions are raised to the
-power w (one effective vote per syndicated bloc, split as a geometric mean) and
-sufficient-statistics increments are scaled by w. A flag disables this for ablation.
+**Deduplicated fractional voting (hereafter dedup voting).** Within an event, claims
+sharing a near-duplicate cluster receive weight w = 1/(cluster size): likelihood
+contributions are raised to the power w (one effective vote per syndicated bloc, split as
+a geometric mean) and sufficient-statistics increments are scaled by w. A flag disables
+dedup voting for ablation.
 
 **Experiments.** E1: parameter recovery on synthetic corpora with planted (sens, spec),
 30 seeds, against majority-vote, certainty-weighted majority, and batch Dawid-Skene
@@ -109,7 +111,7 @@ crowdsourcing literature [8, 9].
 dedup off, recovery degrades monotonically with duplicate multiplicity: ρ = 0.82 (m=1),
 0.73 (m=2), 0.31 (m=10), **−0.87 (m=20)** — at high multiplicity the model ranks outlets
 *backwards*, having adopted the echoed unreliable wire account as consensus. With
-fractional dedup voting on, recovery is flat (0.78–0.84) across the entire sweep.
+dedup voting on, recovery is flat (0.78–0.84) across the entire sweep.
 Perturbed near-duplicates behave like exact copies. This isolates one mechanism of
 majority-capture — manufactured majorities — and shows it is fully repairable from data.
 
@@ -142,7 +144,7 @@ bottleneck dominates before the model can speak.
 
 **What the parameters mean.** Without an external anchor, the fitted "reliability" is
 agreement-with-consensus, definitionally — the labeling symmetry of the likelihood admits
-no other reading [2, 8]. Our three inversions are not bugs but the theorem manifesting:
+no other reading [2, 8]. The three inversions are not bugs but the theorem manifesting:
 E2's manufactured majorities, E3's designed unreliable majority, E3b's organic and
 statistically significant one.
 Knowledge-Based Trust faced the same issue and anchored against a knowledge base [7];
@@ -186,7 +188,9 @@ one-line change to vote counting; the other (unreliable majorities) is informati
 unfixable without anchors and should be disclosed, not engineered around. Named honestly —
 consensus and omission measurement, truth-calibrated only where anchored — the framework
 is a cheap, streaming, interpretable instrument for a question supervised classifiers do
-not answer: *who leaves what out*.
+not answer: *who leaves what out*. Each result in this paper reproduces from one seeded
+command against a manifest-logged artifact; the pipeline, corpora cursors, and figures
+are public in the project repository.
 
 ---
 
