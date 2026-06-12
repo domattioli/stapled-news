@@ -208,6 +208,16 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 for e in top_events
             ],
             "events_detail": _build_events_detail(article_rows, top_events),
+            "articles": [
+                {
+                    "outlet": r["outlet"],
+                    "event_id": r["event_id"],
+                    "distance": round(r["distance"], 4),
+                    "event_outlets": r.get("event_outlets", 1),
+                    "lean": PANEL_LEAN.get(r["outlet"]),
+                }
+                for r in article_rows
+            ],
             "validation": {
                 "v1_planted": {
                     "copier_mean": round(v1_validation["copier_mean"], 6),

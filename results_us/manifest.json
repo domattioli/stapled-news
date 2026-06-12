@@ -136,5 +136,28 @@
       "bottom_outlet": "politico.com"
     },
     "timestamp": "2026-06-12T21:46:38.135428+00:00"
+  },
+  {
+    "experiment": "e7_us",
+    "git_sha": "88747b56caab7ddf8f2776b1d1a35145ae992d54",
+    "seed": 42,
+    "config_hash": "2285e01d7ff6af795f43a263d376b1e0debddf9e8b940fd5fef0cb661a5fa5c4",
+    "outputs": [
+      "results_us/e7_consensus_distance.csv",
+      "results_us/e7_outlet_distance.csv",
+      "results_us/e7_consensus.png",
+      "results_us/consensus.json"
+    ],
+    "metrics": {
+      "n_events": 6,
+      "n_articles": 62,
+      "n_outlets_ranked": 17,
+      "v1_gate": true,
+      "v2_rho": 0.0,
+      "v2_gate": false,
+      "top_outlet": "dailycaller.com",
+      "bottom_outlet": "politico.com"
+    },
+    "timestamp": "2026-06-12T22:01:46.960414+00:00"
   }
 ]

@@ -380,6 +380,42 @@
             margin: 0;
         }
 
+        #hero-swarm {
+            width: 100%;
+            height: 240px;
+            margin-bottom: 25px;
+        }
+
+        .hero-stats-strip {
+            display: flex;
+            gap: 30px;
+            max-width: 740px;
+            margin: 25px auto;
+            padding: 0;
+            border: none;
+            font-size: 15px;
+            justify-content: space-around;
+        }
+
+        .hero-stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .hero-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #222;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+
+        .hero-stat-label {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
         .commentary-kicker {
             font-size: 11px;
             letter-spacing: 2px;
@@ -452,6 +488,19 @@
         <div class="article-header">
             <div class="article-kicker">Live US Corpus</div>
             <h1 class="article-title">How Far Each Outlet Drifts From the Consensus Headline</h1>
+            <div class="article-dek">Data spans <span id="header-date-range">—</span></div>
+        </div>
+
+        <!-- Hero Section: Beeswarm + Stats -->
+        <div class="section" style="margin-top: 40px; margin-bottom: 40px;">
+            <div class="article-kicker" style="margin-bottom: 15px;">EVERY HEADLINE, ONE DOT</div>
+            <div class="plotly-container">
+                <div id="hero-swarm"></div>
+            </div>
+            <p class="figure-caption">Each dot is one headline. Position reflects distance from the stapled consensus headline. Blue dots: left-rated outlets; gray: center; red: right (AllSides classification).</p>
+            <div class="hero-stats-strip" id="hero-stats">
+                <!-- Populated by JS -->
+            </div>
         </div>
 
         <div class="method-box">
@@ -667,49 +716,143 @@
     </style>
 
     <script>
+        // Helper: safe text setter
+        function setText(id, v) {
+            const el = document.getElementById(id);
+            if(el) el.textContent = v;
+            return !!el;
+        }
+
         // Responsive resize handler
-        let chartsDrawn = {ranking: false, weekly: false, lean: false};
+        let chartsDrawn = {hero: false, ranking: false, weekly: false, lean: false};
         window.addEventListener('resize', function() {
+            if (chartsDrawn.hero) Plotly.Plots.resize('hero-swarm');
             if (chartsDrawn.ranking) Plotly.Plots.resize('us-ranking');
             if (chartsDrawn.lean) Plotly.Plots.resize('us-lean-breakdown');
             if (chartsDrawn.weekly) Plotly.Plots.resize('us-weekly');
         });
 
-        // Main US Corpus fetch
-        fetch('data/consensus_us.json?v=' + Date.now())
-            .then(response => {
-                if (!response.ok) throw new Error('Not found');
-                return response.json();
-            })
-            .then(usData => {
-                // Verify data shape
-                if (!usData.corpus || !usData.ranking || !usData.events_detail) {
-                    throw new Error('Invalid data structure');
-                }
+        // === RENDER FUNCTIONS (independent, wrapped in own try/catch) ===
 
-                const corpus = usData.corpus;
+        function renderHeader(corpus) {
+            try {
+                setText('header-date-range', corpus.since + ' to ' + corpus.until);
+            } catch (err) {
+                console.error('Header section failed:', err);
+            }
+        }
 
-                // Update header date range
-                document.getElementById('header-date-range').textContent = corpus.since + ' to ' + corpus.until;
-
-                // Populate stats
-                document.getElementById('stat-articles').textContent = (corpus.n_articles || 0).toLocaleString();
-                document.getElementById('stat-outlets').textContent = (corpus.n_outlets || 17).toLocaleString();
-                document.getElementById('stat-events').textContent = (corpus.n_events || 0).toLocaleString();
-
-                // Populate commentary placeholders
-                document.getElementById('n-events-text').textContent = corpus.n_events || 6;
-
+        function renderStats(corpus, usData) {
+            try {
+                setText('stat-articles', (corpus.n_articles || 0).toLocaleString());
+                setText('stat-outlets', (corpus.n_outlets || 17).toLocaleString());
+                setText('stat-events', (corpus.n_events || 0).toLocaleString());
+                setText('n-events-text', corpus.n_events || 6);
                 const generated = new Date(usData.generated_at);
-                document.getElementById('stat-date').textContent = generated.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'});
+                setText('stat-date', generated.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}));
+            } catch (err) {
+                console.error('Stats strip section failed:', err);
+            }
+        }
 
-                // Chart 1: FiveThirtyEight-style ranking (CI bar + mean dot)
+        function renderHero(usData) {
+            try {
+                const articles = usData.articles || [];
+                if (articles.length > 0) {
+                    // Beeswarm: distance on x, jitter on y (deterministic)
+                    const leanColorMap = {'left': '#008fd5', 'center': '#8b8b8b', 'right': '#fc4f30'};
+                    const heroTrace = {
+                        x: articles.map(a => a.distance),
+                        y: articles.map((a, i) => {
+                            // Deterministic jitter: use golden ratio
+                            const jitterBand = (i * 0.618) % 1;
+                            return (jitterBand - 0.5) * 0.3;
+                        }),
+                        type: 'scatter',
+                        mode: 'markers',
+                        marker: {
+                            size: 11,
+                            color: articles.map(a => leanColorMap[a.lean] || '#222'),
+                            opacity: 0.85
+                        },
+                        hovertemplate: '<b>%{customdata[0]}</b><br>Distance: %{x:.3f}<br>Event: %{customdata[1]}<extra></extra>',
+                        customdata: articles.map(a => [a.outlet, a.event_id || '?']),
+                        showlegend: false
+                    };
+
+                    // Mean distance line
+                    const meanDist = articles.reduce((sum, a) => sum + a.distance, 0) / articles.length;
+                    const heroLayout = {
+                        title: '',
+                        xaxis: {
+                            title: 'Distance from the Stapled Consensus Headline',
+                            zeroline: false,
+                            gridcolor: '#f0f0f0',
+                            showgrid: true
+                        },
+                        yaxis: {visible: false},
+                        plot_bgcolor: '#fff',
+                        paper_bgcolor: '#fff',
+                        margin: {l: 40, r: 40, t: 20, b: 50},
+                        hovermode: 'closest',
+                        shapes: [{
+                            type: 'line',
+                            x0: meanDist,
+                            x1: meanDist,
+                            y0: -0.2,
+                            y1: 0.2,
+                            line: {color: '#999', width: 2, dash: 'dash'}
+                        }],
+                        annotations: [{
+                            x: meanDist,
+                            y: 0.25,
+                            text: 'field average',
+                            showarrow: false,
+                            font: {size: 10, color: '#999'},
+                            xanchor: 'center',
+                            yanchor: 'bottom'
+                        }]
+                    };
+
+                    Plotly.newPlot('hero-swarm', [heroTrace], heroLayout, {responsive: true, displayModeBar: false});
+                    chartsDrawn.hero = true;
+
+                    // Hero stats tiles
+                    const heroStatsDiv = document.getElementById('hero-stats');
+                    if (heroStatsDiv) {
+                        heroStatsDiv.innerHTML = `
+                            <div class="hero-stat-item">
+                                <div class="hero-stat-value">${articles.length}</div>
+                                <div class="hero-stat-label">headlines</div>
+                            </div>
+                            <div class="hero-stat-item">
+                                <div class="hero-stat-value">${new Set(articles.map(a => a.outlet)).size}</div>
+                                <div class="hero-stat-label">outlets</div>
+                            </div>
+                            <div class="hero-stat-item">
+                                <div class="hero-stat-value">${new Set(articles.map(a => a.event_id)).size}</div>
+                                <div class="hero-stat-label">stories ≥5 outlets</div>
+                            </div>
+                            <div class="hero-stat-item">
+                                <div class="hero-stat-value">${new Date(usData.generated_at).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</div>
+                                <div class="hero-stat-label">updated</div>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (err) {
+                console.error('Hero section failed:', err);
+            }
+        }
+
+        function renderRanking(usData) {
+            try {
                 const ranking = usData.ranking || [];
                 const corpusMeanDist = ranking.length > 0
                     ? ranking.reduce((sum, r) => sum + r.mean_distance, 0) / ranking.length
                     : 0;
 
-                // CI bar trace (background)
+                const leanColorMap = {'left': '#008fd5', 'center': '#8b8b8b', 'right': '#fc4f30'};
                 const ciBarTrace = {
                     x: ranking.map(r => r.ci_high - r.ci_low),
                     y: ranking.map(r => r.outlet),
@@ -721,22 +864,13 @@
                     showlegend: false
                 };
 
-                // Mean dot trace (overlay) with lean coloring
-                const leanColorMap = {
-                    'left': '#008fd5',
-                    'center': '#8b8b8b',
-                    'right': '#fc4f30'
-                };
                 const dotColors = ranking.map(r => leanColorMap[r.lean] || '#222');
                 const dotTrace = {
                     x: ranking.map(r => r.mean_distance),
                     y: ranking.map(r => r.outlet),
                     type: 'scatter',
                     mode: 'markers',
-                    marker: {
-                        size: 12,
-                        color: dotColors
-                    },
+                    marker: {size: 12, color: dotColors},
                     hovertemplate: '<b>%{y}</b><br>Mean: %{x:.3f}<br>CI: [' +
                         ranking.map((r, i) => r.ci_low.toFixed(3) + '–' + r.ci_high.toFixed(3)).join('] [') + ']<br>Articles: ' +
                         ranking.map(r => r.n_articles).join(', ') + '<br>Lean: ' +
@@ -765,11 +899,7 @@
                         x1: corpusMeanDist,
                         y0: -0.5,
                         y1: ranking.length - 0.5,
-                        line: {
-                            color: '#999',
-                            width: 1,
-                            dash: 'dash'
-                        }
+                        line: {color: '#999', width: 1, dash: 'dash'}
                     }],
                     annotations: [{
                         x: corpusMeanDist,
@@ -795,27 +925,30 @@
 
                 Plotly.newPlot('us-ranking', [ciBarTrace, dotTrace], rankingLayout, {responsive: true, displayModeBar: false});
                 chartsDrawn.ranking = true;
+            } catch (err) {
+                console.error('Ranking section failed:', err);
+            }
+        }
 
-                // Lean Breakdown Chart (optional, if lean_breakdown exists)
+        function renderComposition(usData) {
+            try {
                 const leanBreakdown = usData.lean_breakdown || null;
                 if (leanBreakdown && leanBreakdown.groups) {
                     const groups = leanBreakdown.groups;
                     const groupNames = ['left', 'center', 'right'];
                     const groupLabels = ['Left-leaning outlets', 'Center outlets', 'Right-leaning outlets'];
 
-                    // Calculate and update panel composition shares from panel_composition
                     const panelComp = usData.panel_composition || {};
                     const totalWeightedShare = (panelComp.left?.weighted_share || 0) + (panelComp.center?.weighted_share || 0) + (panelComp.right?.weighted_share || 0);
                     if (totalWeightedShare > 0) {
                         const leftShare = Math.round((panelComp.left?.weighted_share || 0) / totalWeightedShare * 100);
                         const centerShare = Math.round((panelComp.center?.weighted_share || 0) / totalWeightedShare * 100);
                         const rightShare = Math.round((panelComp.right?.weighted_share || 0) / totalWeightedShare * 100);
-                        document.getElementById('left-share-text').textContent = leftShare;
-                        document.getElementById('center-share-text').textContent = centerShare;
-                        document.getElementById('right-share-text').textContent = rightShare;
+                        setText('left-share-text', leftShare);
+                        setText('center-share-text', centerShare);
+                        setText('right-share-text', rightShare);
                     }
 
-                    // Extract data for each group
                     const leanCIBars = {
                         x: groupNames.map(g => (groups[g] && groups[g].n_articles) ? `${groups[g].n_articles}` : '0'),
                         y: groupNames.map(g => {
@@ -838,15 +971,13 @@
                         }),
                         type: 'scatter',
                         mode: 'markers',
-                        marker: {
-                            size: 12,
-                            color: ['#008fd5', '#8b8b8b', '#fc4f30']
-                        },
+                        marker: {size: 12, color: ['#008fd5', '#8b8b8b', '#fc4f30']},
                         hovertemplate: '<b>%{y}</b><br>Mean: %{x:.4f}<br>CI: [' +
                             groupNames.map(g => groups[g] ? groups[g].ci_low.toFixed(4) + '–' + groups[g].ci_high.toFixed(4) : 'N/A').join('] [') + ']<extra></extra>',
                         showlegend: false
                     };
 
+                    const ranking = usData.ranking || [];
                     const overallMeanDist = ranking.reduce((sum, r) => sum + r.mean_distance, 0) / ranking.length;
 
                     const leanLayout = {
@@ -869,109 +1000,93 @@
                             x1: overallMeanDist,
                             y0: -0.5,
                             y1: 2.5,
-                            line: {
-                                color: '#999',
-                                width: 1,
-                                dash: 'dash'
-                            }
+                            line: {color: '#999', width: 1, dash: 'dash'}
                         }]
                     };
 
                     Plotly.newPlot('us-lean-breakdown', [leanCIBars, leanDots], leanLayout, {responsive: true, displayModeBar: false});
                     chartsDrawn.lean = true;
 
-                    // Panel Composition Stacked Bar
+                    // Panel composition bar
                     const panelCompLeft = panelComp.left?.weighted_share || 0;
                     const panelCompCenter = panelComp.center?.weighted_share || 0;
                     const panelCompRight = panelComp.right?.weighted_share || 0;
                     const totalShare = panelCompLeft + panelCompCenter + panelCompRight;
 
                     if (totalShare > 0) {
-                        const leftShare = panelCompLeft;
-                        const centerShare = panelCompCenter;
-                        const rightShare = panelCompRight;
-                        const leftPct = (leftShare / totalShare * 100).toFixed(1);
-                        const centerPct = (centerShare / totalShare * 100).toFixed(1);
-                        const rightPct = (rightShare / totalShare * 100).toFixed(1);
+                        const leftPct = (panelCompLeft / totalShare * 100).toFixed(1);
+                        const centerPct = (panelCompCenter / totalShare * 100).toFixed(1);
+                        const rightPct = (panelCompRight / totalShare * 100).toFixed(1);
 
-                        const panelCompositionTrace = {
-                            x: [totalShare],
-                            y: [''],
-                            type: 'bar',
-                            orientation: 'h',
-                            marker: {
-                                color: '#008fd5',
-                                width: 0
+                        const traces = [
+                            {
+                                x: [panelCompLeft],
+                                y: [''],
+                                type: 'bar',
+                                orientation: 'h',
+                                marker: {color: '#008fd5', width: 0},
+                                showlegend: false,
+                                hovertemplate: 'Left-leaning: ' + leftPct + '%<extra></extra>',
+                                base: 0
                             },
-                            showlegend: false,
-                            hovertemplate: 'Left-leaning: ' + leftPct + '%<extra></extra>',
-                            base: 0
-                        };
-
-                        const panelCompositionTrace2 = {
-                            x: [centerShare],
-                            y: [''],
-                            type: 'bar',
-                            orientation: 'h',
-                            marker: {
-                                color: '#8b8b8b',
-                                width: 0
+                            {
+                                x: [panelCompCenter],
+                                y: [''],
+                                type: 'bar',
+                                orientation: 'h',
+                                marker: {color: '#8b8b8b', width: 0},
+                                showlegend: false,
+                                hovertemplate: 'Center: ' + centerPct + '%<extra></extra>'
                             },
-                            showlegend: false,
-                            hovertemplate: 'Center: ' + centerPct + '%<extra></extra>'
-                        };
-
-                        const panelCompositionTrace3 = {
-                            x: [rightShare],
-                            y: [''],
-                            type: 'bar',
-                            orientation: 'h',
-                            marker: {
-                                color: '#fc4f30',
-                                width: 0
-                            },
-                            showlegend: false,
-                            hovertemplate: 'Right-leaning: ' + rightPct + '%<extra></extra>'
-                        };
+                            {
+                                x: [panelCompRight],
+                                y: [''],
+                                type: 'bar',
+                                orientation: 'h',
+                                marker: {color: '#fc4f30', width: 0},
+                                showlegend: false,
+                                hovertemplate: 'Right-leaning: ' + rightPct + '%<extra></extra>'
+                            }
+                        ];
 
                         const panelCompositionLayout = {
                             barmode: 'stack',
-                            xaxis: {
-                                showticklabels: false,
-                                showgrid: false,
-                                zeroline: false
-                            },
-                            yaxis: {
-                                showticklabels: false
-                            },
+                            xaxis: {showticklabels: false, showgrid: false, zeroline: false},
+                            yaxis: {showticklabels: false},
                             margin: {l: 0, r: 0, t: 10, b: 10},
                             plot_bgcolor: '#fff',
                             paper_bgcolor: '#fff',
                             showlegend: false,
                             annotations: [
-                                {x: leftShare / 2, y: 0, text: leftPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
-                                {x: leftShare + centerShare / 2, y: 0, text: centerPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
-                                {x: leftShare + centerShare + rightShare / 2, y: 0, text: rightPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'}
+                                {x: panelCompLeft / 2, y: 0, text: leftPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
+                                {x: panelCompLeft + panelCompCenter / 2, y: 0, text: centerPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
+                                {x: panelCompLeft + panelCompCenter + panelCompRight / 2, y: 0, text: rightPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'}
                             ]
                         };
 
-                        Plotly.newPlot('panel-composition-bar', [panelCompositionTrace, panelCompositionTrace2, panelCompositionTrace3], panelCompositionLayout, {responsive: true, displayModeBar: false});
+                        Plotly.newPlot('panel-composition-bar', traces, panelCompositionLayout, {responsive: true, displayModeBar: false});
                     }
 
-                    // Populate lean prose (minimal, not duplicating the commentary)
+                    // Lean prose
                     const proseDiv = document.getElementById('lean-prose');
-                    const leftGroup = groups['left'];
-                    const centerGroup = groups['center'];
-                    const rightGroup = groups['right'];
-
-                    let proseText = '';
-                    if (leftGroup && centerGroup && rightGroup) {
-                        proseText = `<strong>Chart interpretation:</strong> All three confidence intervals overlap—no lean is statistically detectable in the consensus wording itself. When an outlet's distance clusters with others in the same ideological lean, it simply means it phrases stories the way others in that bloc do. Distance measures wording similarity, not accuracy or editorial stance.`;
+                    if (proseDiv) {
+                        const leftGroup = groups['left'];
+                        const centerGroup = groups['center'];
+                        const rightGroup = groups['right'];
+                        let proseText = '';
+                        if (leftGroup && centerGroup && rightGroup) {
+                            proseText = `<strong>Chart interpretation:</strong> All three confidence intervals overlap—no lean is statistically detectable in the consensus wording itself. When an outlet's distance clusters with others in the same ideological lean, it simply means it phrases stories the way others in that bloc do. Distance measures wording similarity, not accuracy or editorial stance.`;
+                        }
+                        proseDiv.innerHTML = proseText;
                     }
-                    proseDiv.innerHTML = proseText;
                 }
+            } catch (err) {
+                console.error('Composition section failed:', err);
+            }
+        }
 
-                // Chart 2: Weekly (conditional)
+        function renderWeekly(usData) {
+            try {
                 const usWeekly = usData.weekly || {};
                 const weeklyOutlets = Object.keys(usWeekly).filter(o => (usWeekly[o] || []).length > 0);
 
@@ -998,7 +1113,6 @@
                         };
                         weeklyTraces.push(trace);
 
-                        // End-of-line label
                         if (weeks.length > 0) {
                             const lastWeek = weeks[weeks.length - 1];
                             endLabels.push({
@@ -1026,177 +1140,212 @@
                     };
 
                     const weeklySection = document.getElementById('weekly-section');
-                    weeklySection.style.display = 'block';
+                    if (weeklySection) weeklySection.style.display = 'block';
                     Plotly.newPlot('us-weekly', weeklyTraces, weeklyLayout, {responsive: true, displayModeBar: false});
                     chartsDrawn.weekly = true;
                 }
+            } catch (err) {
+                console.error('Weekly section failed:', err);
+            }
+        }
 
-                // Headline Diff Explorer (6 events from events_detail)
+        function renderExplorer(usData) {
+            try {
                 const eventsDetail = usData.events_detail || [];
                 const explorerContainer = document.getElementById('explorer-container');
-                explorerContainer.innerHTML = '';
+                if (explorerContainer) {
+                    explorerContainer.innerHTML = '';
+                    const ranking = usData.ranking || [];
+                    const corpusMeanDist = ranking.length > 0
+                        ? ranking.reduce((sum, r) => sum + r.mean_distance, 0) / ranking.length
+                        : 0;
 
-                for (let eventIdx = 0; eventIdx < Math.min(eventsDetail.length, 6); eventIdx++) {
-                    const event = eventsDetail[eventIdx];
-                    if (!event || !event.members) continue;
+                    for (let eventIdx = 0; eventIdx < Math.min(eventsDetail.length, 6); eventIdx++) {
+                        const event = eventsDetail[eventIdx];
+                        if (!event || !event.members) continue;
 
-                    const card = document.createElement('div');
-                    const outletCount = (event.members || []).length;
-                    const distances = (event.members || []).map(m => m.distance);
-                    const minDist = Math.min(...distances);
-                    const maxDist = Math.max(...distances);
-                    const avgDist = distances.reduce((a, b) => a + b, 0) / distances.length;
+                        const card = document.createElement('div');
+                        const outletCount = (event.members || []).length;
+                        const distances = (event.members || []).map(m => m.distance);
+                        const avgDist = distances.reduce((a, b) => a + b, 0) / distances.length;
 
-                    card.className = 'explorer-card ' + (avgDist < corpusMeanDist ? 'near-consensus' : 'far-consensus');
+                        card.className = 'explorer-card ' + (avgDist < corpusMeanDist ? 'near-consensus' : 'far-consensus');
 
-                    // Card header
-                    const headline = document.createElement('div');
-                    headline.className = 'card-headline-row';
-                    headline.innerHTML = `
-                        <div class="card-kicker">STAPLED HEADLINE · ${outletCount} OUTLETS</div>
-                        <p class="card-consensus-headline">${event.consensus_headline || '(consensus headline)'}</p>
-                    `;
-                    card.appendChild(headline);
+                        const headline = document.createElement('div');
+                        headline.className = 'card-headline-row';
+                        headline.innerHTML = `
+                            <div class="card-kicker">STAPLED HEADLINE · ${outletCount} OUTLETS</div>
+                            <p class="card-consensus-headline">${event.consensus_headline || '(consensus headline)'}</p>
+                        `;
+                        card.appendChild(headline);
 
-                    // Members
-                    const membersDiv = document.createElement('div');
-                    membersDiv.className = 'card-members';
+                        const membersDiv = document.createElement('div');
+                        membersDiv.className = 'card-members';
 
-                    const members = (event.members || []).slice().sort((a, b) => a.distance - b.distance);
+                        const members = (event.members || []).slice().sort((a, b) => a.distance - b.distance);
 
-                    for (const member of members) {
-                        const row = document.createElement('div');
-                        row.className = 'member-row';
+                        for (const member of members) {
+                            const row = document.createElement('div');
+                            row.className = 'member-row';
 
-                        const outlet = document.createElement('div');
-                        outlet.className = 'member-outlet';
-                        outlet.textContent = member.outlet || '';
-                        row.appendChild(outlet);
+                            const outlet = document.createElement('div');
+                            outlet.className = 'member-outlet';
+                            outlet.textContent = member.outlet || '';
+                            row.appendChild(outlet);
 
-                        const headlineDiv = document.createElement('div');
-                        headlineDiv.className = 'member-headline';
+                            const headlineDiv = document.createElement('div');
+                            headlineDiv.className = 'member-headline';
 
-                        const tokens = member.tokens || [];
-                        for (const token of tokens) {
-                            const span = document.createElement('span');
-                            span.className = 'token';
+                            const tokens = member.tokens || [];
+                            for (const token of tokens) {
+                                const span = document.createElement('span');
+                                span.className = 'token';
 
-                            const weight = token.weight || 0;
-                            const alignment = token.alignment || 0.5;
-                            // effect: (alignment - 0.5) * 2, clamped to [-1, 1]
-                            // positive = toward consensus (green), negative = away (red)
-                            const effect = (alignment - 0.5) * 2;
-                            const effectClamped = Math.max(-1, Math.min(1, effect));
-                            // intensity: richness of color tracks word's share of the effect
-                            const intensity = Math.min(1, weight * 12);
+                                const weight = token.weight || 0;
+                                const alignment = token.alignment || 0.5;
+                                const effect = (alignment - 0.5) * 2;
+                                const effectClamped = Math.max(-1, Math.min(1, effect));
+                                const intensity = Math.min(1, weight * 12);
 
-                            // Skip background entirely when weight < 0.008 (massless stopwords)
-                            if (weight < 0.008) {
-                                span.textContent = token.token + ' ';
-                                span.style.color = '#222';
-                            } else {
-                                let bgColor = '';
-
-                                if (effectClamped >= 0) {
-                                    // Green: positive effect (toward consensus), rgba(109,144,79, 0.55 * effect * intensity)
-                                    const opacity = 0.55 * effectClamped * intensity;
-                                    bgColor = `rgba(109, 144, 79, ${opacity})`;
+                                if (weight < 0.008) {
+                                    span.textContent = token.token + ' ';
+                                    span.style.color = '#222';
                                 } else {
-                                    // Red: negative effect (away from consensus), rgba(252,79,48, 0.6 * (-effect) * intensity)
-                                    const opacity = 0.6 * (-effectClamped) * intensity;
-                                    bgColor = `rgba(252, 79, 48, ${opacity})`;
+                                    let bgColor = '';
+
+                                    if (effectClamped >= 0) {
+                                        const opacity = 0.55 * effectClamped * intensity;
+                                        bgColor = `rgba(109, 144, 79, ${opacity})`;
+                                    } else {
+                                        const opacity = 0.6 * (-effectClamped) * intensity;
+                                        bgColor = `rgba(252, 79, 48, ${opacity})`;
+                                    }
+
+                                    span.style.backgroundColor = bgColor;
+                                    span.style.color = '#222';
+                                    if ((-effectClamped) * intensity > 0.35) {
+                                        span.style.fontWeight = '600';
+                                    }
+
+                                    span.textContent = token.token + ' ';
                                 }
 
-                                span.style.backgroundColor = bgColor;
-                                span.style.color = '#222';
-                                // Bold only when (-effect) * intensity > 0.35
-                                if ((-effectClamped) * intensity > 0.35) {
-                                    span.style.fontWeight = '600';
-                                }
-
-                                span.textContent = token.token + ' ';
+                                headlineDiv.appendChild(span);
                             }
 
-                            headlineDiv.appendChild(span);
+                            row.appendChild(headlineDiv);
+
+                            const distance = document.createElement('div');
+                            distance.className = 'member-distance';
+                            distance.textContent = member.distance.toFixed(3);
+                            row.appendChild(distance);
+
+                            membersDiv.appendChild(row);
                         }
 
-                        row.appendChild(headlineDiv);
-
-                        const distance = document.createElement('div');
-                        distance.className = 'member-distance';
-                        distance.textContent = member.distance.toFixed(3);
-                        row.appendChild(distance);
-
-                        membersDiv.appendChild(row);
+                        card.appendChild(membersDiv);
+                        explorerContainer.appendChild(card);
                     }
-
-                    card.appendChild(membersDiv);
-                    explorerContainer.appendChild(card);
                 }
+            } catch (err) {
+                console.error('Explorer section failed:', err);
+            }
+        }
 
-                // Validation cards
+        function renderValidation(usData) {
+            try {
                 const validation = usData.validation || {};
                 const validationCardsDiv = document.getElementById('validation-cards');
-                validationCardsDiv.innerHTML = '';
+                if (validationCardsDiv) {
+                    validationCardsDiv.innerHTML = '';
 
-                if (validation.v1_planted) {
-                    const v1 = validation.v1_planted;
-                    const card = document.createElement('div');
-                    card.className = 'validation-card';
-                    card.innerHTML = `
-                        <div class="card-title">Planted Baseline (V1)</div>
-                        <div class="validation-metric-row">
-                            <span class="metric-label">Copier mean:</span>
-                            <span class="metric-value">${(v1.copier_mean || 0).toFixed(3)}</span>
-                        </div>
-                        <div class="validation-metric-row">
-                            <span class="metric-label">Noise mean:</span>
-                            <span class="metric-value">${(v1.noise_mean || 0).toFixed(3)}</span>
-                        </div>
-                        <div class="validation-metric-row">
-                            <span class="metric-label">Corpus mean:</span>
-                            <span class="metric-value">${(v1.corpus_mean || 0).toFixed(3)}</span>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <span class="validation-pill ${v1.gate_pass ? 'pill-pass' : 'pill-fail'}">${v1.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
-                        </div>
-                    `;
-                    validationCardsDiv.appendChild(card);
+                    if (validation.v1_planted) {
+                        const v1 = validation.v1_planted;
+                        const card = document.createElement('div');
+                        card.className = 'validation-card';
+                        card.innerHTML = `
+                            <div class="card-title">Planted Baseline (V1)</div>
+                            <div class="validation-metric-row">
+                                <span class="metric-label">Copier mean:</span>
+                                <span class="metric-value">${(v1.copier_mean || 0).toFixed(3)}</span>
+                            </div>
+                            <div class="validation-metric-row">
+                                <span class="metric-label">Noise mean:</span>
+                                <span class="metric-value">${(v1.noise_mean || 0).toFixed(3)}</span>
+                            </div>
+                            <div class="validation-metric-row">
+                                <span class="metric-label">Corpus mean:</span>
+                                <span class="metric-value">${(v1.corpus_mean || 0).toFixed(3)}</span>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <span class="validation-pill ${v1.gate_pass ? 'pill-pass' : 'pill-fail'}">${v1.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
+                            </div>
+                        `;
+                        validationCardsDiv.appendChild(card);
+                    }
+
+                    if (validation.v2_split_half) {
+                        const v2 = validation.v2_split_half;
+                        const card = document.createElement('div');
+                        card.className = 'validation-card';
+                        card.innerHTML = `
+                            <div class="card-title">Split-Half Stability (V2)</div>
+                            <div class="validation-metric-row">
+                                <span class="metric-label">Spearman ρ:</span>
+                                <span class="metric-value">${(v2.rho || 0).toFixed(3)}</span>
+                            </div>
+                            <div class="validation-metric-row">
+                                <span class="metric-label">Target:</span>
+                                <span class="metric-value">0.600</span>
+                            </div>
+                            <div class="validation-metric-row">
+                                <span class="metric-label">Outlets:</span>
+                                <span class="metric-value">${v2.n_outlets || 0}</span>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <span class="validation-pill ${v2.gate_pass ? 'pill-pass' : 'pill-fail'}">${v2.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
+                            </div>
+                            ${v2.rho < 0.6 ? '<div class="validation-note">Stability below target — corpus too young or insufficient week coverage.</div>' : ''}
+                        `;
+                        validationCardsDiv.appendChild(card);
+                    }
+                }
+            } catch (err) {
+                console.error('Validation section failed:', err);
+            }
+        }
+
+        // === MAIN FETCH ===
+        fetch('data/consensus_us.json?v=' + Date.now())
+            .then(response => {
+                if (!response.ok) throw new Error('Not found');
+                return response.json();
+            })
+            .then(usData => {
+                // Verify data shape
+                if (!usData.corpus || !usData.ranking || !usData.events_detail) {
+                    throw new Error('Invalid data structure');
                 }
 
-                if (validation.v2_split_half) {
-                    const v2 = validation.v2_split_half;
-                    const card = document.createElement('div');
-                    card.className = 'validation-card';
-                    card.innerHTML = `
-                        <div class="card-title">Split-Half Stability (V2)</div>
-                        <div class="validation-metric-row">
-                            <span class="metric-label">Spearman ρ:</span>
-                            <span class="metric-value">${(v2.rho || 0).toFixed(3)}</span>
-                        </div>
-                        <div class="validation-metric-row">
-                            <span class="metric-label">Target:</span>
-                            <span class="metric-value">0.600</span>
-                        </div>
-                        <div class="validation-metric-row">
-                            <span class="metric-label">Outlets:</span>
-                            <span class="metric-value">${v2.n_outlets || 0}</span>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <span class="validation-pill ${v2.gate_pass ? 'pill-pass' : 'pill-fail'}">${v2.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
-                        </div>
-                        ${v2.rho < 0.6 ? '<div class="validation-note">Stability below target — corpus too young or insufficient week coverage.</div>' : ''}
-                    `;
-                    validationCardsDiv.appendChild(card);
-                }
+                const corpus = usData.corpus;
+
+                // Call render functions independently
+                renderHeader(corpus);
+                renderStats(corpus, usData);
+                renderHero(usData);
+                renderRanking(usData);
+                renderComposition(usData);
+                renderWeekly(usData);
+                renderExplorer(usData);
+                renderValidation(usData);
             })
             .catch(err => {
                 console.error('Error loading consensus_us.json:', err);
                 const explorerContainer = document.getElementById('explorer-container');
-                explorerContainer.innerHTML = '<div style="background:#f9f9f9; border:1px solid #eee; padding:40px 20px; text-align:center; color:#999; font-size:15px;">Unable to load US consensus data. Check that data/consensus_us.json exists and is valid.</div>';
+                if (explorerContainer) explorerContainer.innerHTML = '<div style="background:#f9f9f9; border:1px solid #eee; padding:40px 20px; text-align:center; color:#999; font-size:15px;">Unable to load US consensus data. Check that data/consensus_us.json exists and is valid.</div>';
 
                 const validationCardsDiv = document.getElementById('validation-cards');
-                validationCardsDiv.innerHTML = '<div style="background:#f9f9f9; border:1px solid #eee; padding:40px 20px; text-align:center; color:#999; font-size:15px;">Validation data unavailable.</div>';
+                if (validationCardsDiv) validationCardsDiv.innerHTML = '<div style="background:#f9f9f9; border:1px solid #eee; padding:40px 20px; text-align:center; color:#999; font-size:15px;">Validation data unavailable.</div>';
             });
     </script>
 </body>
