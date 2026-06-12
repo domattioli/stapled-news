@@ -23,7 +23,7 @@ OUTLET_SECTIONS = {
     "spiegel.de": ["politik", "ausland"],
     "sueddeutsche.de": ["politik"],
     "welt.de": ["politik"],
-    "zeit.de": ["politik", "news"],
+    "zeit.de": ["politik"],
     "gmx.net": ["news"],
     "volksstimme.de": ["deutschland-und-welt"],
 }
