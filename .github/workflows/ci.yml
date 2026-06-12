@@ -31,3 +31,11 @@ jobs:
 
       - name: Run tests
         run: pytest -q
+
+      - name: Experiment smoke (E1 + E2 quick)
+        run: |
+          python -m stapled.experiments e1 --seed 42 --quick --out-dir /tmp/ci_smoke
+          python -m stapled.experiments e2 --seed 42 --quick --out-dir /tmp/ci_smoke
+          test -f /tmp/ci_smoke/e1_recovery.csv
+          test -f /tmp/ci_smoke/e2_syndication.csv
+          test -f /tmp/ci_smoke/manifest.json

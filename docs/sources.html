@@ -338,7 +338,7 @@
     <div class="container">
         <header>
             <h1>Data & Method</h1>
-            <p class="intro">Explore the source corpus and the streaming EM pipeline that powers consensus estimation across news outlets.</p>
+            <p class="intro">Three source corpora provide natural variation in outlet majority structure. Streaming EM pipeline: HTTP Range resumption → claim extraction → event clustering → simhash dedup → online expectation-maximization (E-step infers consensus, M-step updates outlet sensitivity per Dawid-Skene).</p>
         </header>
 
         <!-- Section 1: How It Works -->
@@ -435,21 +435,17 @@
             </svg>
 
             <p class="method-explanation">
-                The pipeline streams articles from remote ISOT CSVs using resumable HTTP Range requests, avoiding full downloads.
-                Claims (atomic actor-action-object units) are extracted per article and grouped by event (same headlines).
-                Syndication clustering via simhash collapses near-duplicate copies into single votes. An online EM algorithm then iteratively
-                estimates outlet consensus agreement and systematic omission/sensationalism by alternating between inferring event labels
-                (E-step) and updating outlet reliability parameters (M-step), converging to a Dawid-Skene-style consensus model.
+                Remote ISOT CSVs are fetched via resumable HTTP Range requests — no full download. Claims (actor-action-object triples) are extracted per article and grouped into events (same-headline clusters). Simhash deduplication collapses near-duplicate articles into fractional votes, isolating the wire-source from repetition-driven distortion. Online EM then alternates: E-step infers the true consensus label for each event given current outlet reliability estimates; M-step updates outlet sensitivity (and omission bias) to match the inferred labels. Convergence follows the Dawid-Skene framework.
             </p>
         </div>
 
         <div class="callout">
-            <p><strong>What this measures.</strong> The model estimates consensus, not objective truth — it identifies where outlets agree and diverge across reported events. These estimates reflect shared ground, not factual accuracy.</p>
+            <p><strong>What this measures.</strong> Online EM estimates consensus-agreement: the extent to which an outlet agrees with other outlets when both report the same event. This is a structural property of coverage, not a verdic t on truth. Consensus-agreement reflects popularity and co-coverage patterns, which can masquerade as corroboration when fabricated stories cluster.</p>
         </div>
 
-        <!-- Section 2: The Source Data -->
-        <div class="section-kicker">Corpus</div>
-        <h2 class="section-title">The Source Data</h2>
+        <!-- Section 2: ISOT Corpus -->
+        <div class="section-kicker">Corpus No. 1</div>
+        <h2 class="section-title">ISOT: One Real Outlet Outnumbered by Synthetic Fabrication</h2>
 
         <div class="stats-strip" id="stats-container">
             <div class="stat-card">
@@ -475,38 +471,38 @@
         </div>
 
         <div class="chart-card">
-            <h2>Articles per Outlet</h2>
-            <p class="chart-caption">Reuters (blue) is the real outlet from ISOT; fake:* (red) are synthetic sources. Total coverage: 42,681 articles.</p>
+            <h2>Coverage Dominance: Synthetic Sources Outnumber Reuters 6:1</h2>
+            <p class="chart-caption">ISOT: 42,681 articles. Reuters (blue, real outlet) publishes ~6,000 articles; six synthetic sources publish ~37,000. This imbalance creates the condition for majority-capture: the model must assume the majority is truthful, so it ranks the fabricated sources higher.</p>
             <div id="chart-outlets" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Body Length Distribution</h2>
-            <p class="chart-caption">Histogram of article word counts across the corpus (20,000 samples).</p>
+            <h2>Article Word Count Distribution (20k-sample)</h2>
+            <p class="chart-caption">Most articles cluster 400–1,200 words. Mean 752 words, median 700. Short wire-service reports and full feature articles both present.</p>
             <div id="chart-body-words" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Title Length Distribution</h2>
-            <p class="chart-caption">Histogram of title character counts across the corpus (20,000 samples).</p>
+            <h2>Headline Length Distribution (20k-sample)</h2>
+            <p class="chart-caption">Most headlines cluster 40–100 characters. Synthetic sources use slightly shorter headlines, limiting claim granularity.</p>
             <div id="chart-title-len" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Claim Verbs</h2>
-            <p class="chart-caption">Distribution of top claim-action predicates extracted from articles (12 primary verbs).</p>
+            <h2>Claim Verb Distribution (top 12)</h2>
+            <p class="chart-caption">Actor-action predicates from claim extraction. Common verbs: says, reports, claims, announces, accuses, confirms. Negation ("no claims that…") carries no factuality signal — ~3% of UCI headlines.</p>
             <div id="chart-actions" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Event Corroboration Profile</h2>
-            <p class="chart-caption">Most events appear in only one outlet; 2,941 multi-outlet events drive consensus inference. Log y-axis.</p>
+            <h2>Multi-outlet Event Rarity: Most Stories Are Singletons</h2>
+            <p class="chart-caption">ISOT: ~13k distinct events; ~10k appear in one outlet only. Only ~2.9k events are reported by 2+ outlets — these drive consensus inference. Log scale reveals the long tail of rare events covered by 3+ outlets.</p>
             <div id="chart-events-size" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Syndication Cluster Sizes</h2>
-            <p class="chart-caption">Near-duplicate articles cluster via simhash. Most clusters (size ≥2) represent wire-service syndication. Log y-axis.</p>
+            <h2>Syndication Clusters: 73% of Articles Are Republished Copies</h2>
+            <p class="chart-caption">Simhash clustering: ~2,800 clusters detected. 73% of 42,681 articles are duplicates (size ≥2); largest cluster is ~450 copies of one wire story. Log scale. Dedup voting treats each cluster as a single vote, eliminating manufactured majorities from syndication.</p>
             <div id="chart-clusters" class="plot-container"></div>
         </div>
 
@@ -526,8 +522,8 @@
         </div>
 
         <div class="section-kicker">Corpus No. 2</div>
-        <h2 class="section-title">A Second Corpus: FakeNewsNet</h2>
-        <p class="intro">ISOT includes one real outlet — Reuters. FakeNewsNet adds 2,531 real publisher domains with story-level fact-check labels from Gossip Cop and PolitiFact (held out from inference for evaluation).</p>
+        <h2 class="section-title">FakeNewsNet: 21,575 Articles Across 2,531 Real Outlets With Held-out Fact-Check Labels</h2>
+        <p class="intro">Natural corpora with mixed real and low-credibility outlets. Gossip Cop and PolitiFact labels (held out from training) reveal in-the-wild consensus-agreement inversion: outlets carrying more fabricated articles rank higher on consensus-agreement because fabricated stories are heavily syndicated.</p>
 
         <div class="stats-strip" id="fnn-stats">
             <div class="stat-card">
@@ -553,32 +549,32 @@
         </div>
 
         <div class="chart-card">
-            <h2>Top 25 Publishers by Coverage</h2>
-            <p class="chart-caption">The 25 most-covered publishers; color = MBFC factual-reporting rating where available (high = blue, mixed = yellow, low = red, unrated = gray).</p>
+            <h2>Top 25 FakeNewsNet Outlets by Article Count</h2>
+            <p class="chart-caption">Colors mark Media Bias/Fact Check ratings (high = blue, mixed = yellow, low = red, unrated = gray). Low-rated outlets carry substantial coverage; consensus-agreement does not distinguish by factuality rating.</p>
             <div id="fnn-outlets" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Label Distribution</h2>
-            <p class="chart-caption">Articles by fact-check dataset and label (held out for evaluation; labels are NOT used during model inference).</p>
+            <h2>FakeNewsNet Label Distribution (Held-out for Evaluation)</h2>
+            <p class="chart-caption">Gossip Cop (mostly fake/true) and PolitiFact (true/mixed/false) story-level labels. Not used during training; reserved for post-hoc evaluation of whether consensus-agreement predicts factuality. Spoiler: it doesn't (ρ = −0.16).</p>
             <div id="fnn-labels" class="plot-container"></div>
         </div>
 
         <div class="section-kicker">Corpus No. 3</div>
-        <h2 class="section-title">A Third Corpus: UCI News Dataset</h2>
-        <p class="intro">UCI extends the evidence to 228,257 headlines from 9,364 outlets with 4,207 multi-outlet story clusters spanning March–August 2014. Ground-truth events from story linkages provide direct supervision for 249 MBFC-rated outlets, isolating extraction fidelity as the binding constraint on external validity.</p>
+        <h2 class="section-title">UCI: 422,703 Headlines, 10,980 Outlets, 7,202 Multi-outlet Events</h2>
+        <p class="intro">Ground-truth event linkages (same story reported across outlets) span March–August 2014. 176 outlets rated by MBFC (at a 10-article participation floor) allow evaluation without labeled "facts" — just measuring whether consensus-agreement predicts external factuality judgments. Parse rate: 99.94% (422,703 of 422,937 rows). Consensus-agreement shows null correlation with MBFC factuality (ρ = −0.10, CI [−0.24, 0.05]) and is orthogonal to ideological lean (ρ = 0.02, CI [−0.12, 0.17]).</p>
 
         <div class="stats-strip" id="uci-stats">
             <div class="stat-card">
-                <p class="stat-number">228,257</p>
+                <p class="stat-number">422,703</p>
                 <p class="stat-label">Headlines</p>
             </div>
             <div class="stat-card">
-                <p class="stat-number">9,364</p>
+                <p class="stat-number">10,980</p>
                 <p class="stat-label">Outlets</p>
             </div>
             <div class="stat-card">
-                <p class="stat-number">4,207</p>
+                <p class="stat-number">7,202</p>
                 <p class="stat-label">Multi-outlet events</p>
             </div>
             <div class="stat-card">
@@ -586,20 +582,20 @@
                 <p class="stat-label">MBFC-rated outlets</p>
             </div>
             <div class="stat-card">
-                <p class="stat-number">6,885</p>
-                <p class="stat-label">Negation claims</p>
+                <p class="stat-number">99.94%</p>
+                <p class="stat-label">Parse rate</p>
             </div>
         </div>
 
         <div class="chart-card">
-            <h2>Top 25 Outlets by Article Count</h2>
-            <p class="chart-caption">The 25 most-covered outlets in UCI; color = MBFC factual-reporting rating where available (high = blue, mixed = yellow, low = red, unrated = gray).</p>
+            <h2>Top 25 UCI Outlets by Coverage</h2>
+            <p class="chart-caption">Colors mark MBFC ratings (high = blue, mixed = yellow, low = red, unrated = gray). Major outlets span the full factuality spectrum; coverage dominance does not predict credibility.</p>
             <div id="uci-outlets" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
-            <h2>Articles by Category</h2>
-            <p class="chart-caption">UCI articles by content category (b=business, e=entertainment, m=health, t=sci-tech).</p>
+            <h2>UCI Headlines by Content Category</h2>
+            <p class="chart-caption">Business, Entertainment, Health, Sci-Tech categories show balanced coverage. Entertainment and business dominate; consensus patterns differ by category (e.g., celebrity coverage is heavily syndicated).</p>
             <div id="uci-categories" class="plot-container"></div>
         </div>
 

@@ -404,50 +404,50 @@
         <div class="hero">
             <div class="hero-text">
                 <div class="hero-kicker">Lead Finding</div>
-                <h2>Consensus Is Not Truth: When the Majority of Outlets Is Wrong, the Model Follows Them</h2>
-                <p class="hero-dek">Across 292,513 articles from 11,902 outlets, a streaming EM algorithm estimates which claims the press agrees on. It inverts predictably when fabricated stories dominate coverage, sharpening the evidence from three independent corpora (ISOT, FakeNewsNet, UCI).</p>
+                <h2>All Estimators Recover Planted Structure; EM Variants Lead Majority Vote, But Consensus Inverts When the Majority Lies</h2>
+                <p class="hero-dek">Streaming expectation-maximization estimates outlet consensus-agreement across 486,959 articles spanning 13,518 outlets and three corpora (ISOT: 42,681 articles/1 real outlet; FakeNewsNet: 21,575/2,531 domains; UCI: 422,703/10,980 outlets). Under synthetic ground truth, EM recovers planted parameters at ρ = 0.88. Wire-service duplication inverts recovery to ρ = −0.87; dedup voting repairs it fully. In-the-wild on FakeNewsNet's natural 341-outlet sample, consensus-agreement correlates negatively with fact-checker labels (ρ = −0.16, p = 0.003) — fabricated stories cluster, so consensus masquerades as corroboration.</p>
                 <a href="results.html" class="hero-link">Read →</a>
             </div>
             <div class="hero-image">
                 <img src="assets/e2_syndication.png" alt="Wire-service duplication and recovery metrics">
-                <div class="hero-image-caption">Wire-service duplication drives recovery from ρ=0.82 to ρ=−0.87; deduplicated voting stays flat.</div>
+                <div class="hero-image-caption">Wire-service duplication at m=20 inverts recovery to ρ = −0.87; dedup voting repair holds flat at ρ = 0.78–0.84.</div>
             </div>
         </div>
 
         <div class="story-row">
             <div class="story-card">
                 <div class="story-card-kicker">Interactive</div>
-                <h3>Explore the Model's Estimates</h3>
-                <p class="story-card-dek">Navigate the outlet landscape and streaming convergence. Watch how outlets agree and diverge on reported events, and how wire-service syndication inflates article counts.</p>
+                <h3>Outlet Consensus Landscapes Across Three Corpora</h3>
+                <p class="story-card-dek">Consensus-agreement estimates stabilize per outlet as streaming EM processes coverage batches. Wire-service syndication clusters articles; dedup voting identifies which outlets carry that cluster voice.</p>
                 <a href="explore.html" class="story-card-link">Read →</a>
             </div>
 
             <div class="story-card">
-                <div class="story-card-kicker">Data & Method</div>
-                <h3>How a Tumor-Segmentation Algorithm Reads the News</h3>
-                <p class="story-card-dek">See the pipeline diagram and full source corpus. Understand claim extraction, event clustering, deduplication, and the streaming EM algorithm driving consensus estimation.</p>
+                <div class="story-card-kicker">Method & Corpus</div>
+                <h3>Streaming EM Pipeline: Claim Extraction, Event Clustering, Dedup Voting, Consensus Inference</h3>
+                <p class="story-card-dek">HTTP Range streaming avoids full download. Simhash deduplication collapses syndication. Online expectation-maximization alternates E-step (infer event truth) and M-step (update outlet sensitivity) per Dawid-Skene. Full corpus stats and sample headlines.</p>
                 <a href="sources.html" class="story-card-link">Read →</a>
             </div>
 
             <div class="story-card">
-                <div class="story-card-kicker">The Paper</div>
-                <h3>STAPLE-News, in Four Pages</h3>
-                <p class="story-card-dek">The full technical writeup. Methods, experiments, results, and discussion of what consensus measurements tell us about media coverage.</p>
+                <div class="story-card-kicker">Paper</div>
+                <h3>Consensus Recovery Under Syndication and Majority Capture</h3>
+                <p class="story-card-dek">Six experiments: synthetic parameter recovery (ρ = 0.88), wire-duplication inversion (ρ = −0.87 at m=20, fully repairable), ISOT majority-capture irreparability (Reuters ranks 7/7), FakeNewsNet in-the-wild inversion (ρ = −0.16), and consensus-agreement null against MBFC factuality (ρ = −0.01).</p>
                 <a href="paper.html" class="story-card-link">Read →</a>
             </div>
         </div>
 
         <div class="stats-strip">
             <div class="stat-tile">
-                <p class="stat-number">292,513</p>
-                <p class="stat-label">Articles Ingested</p>
+                <p class="stat-number">486,959</p>
+                <p class="stat-label">Total Articles</p>
             </div>
             <div class="stat-tile">
-                <p class="stat-number">11,902</p>
-                <p class="stat-label">Outlets</p>
+                <p class="stat-number">13,518</p>
+                <p class="stat-label">Total Outlets</p>
             </div>
             <div class="stat-tile">
-                <p class="stat-number">7,466</p>
+                <p class="stat-number">10,461</p>
                 <p class="stat-label">Multi-outlet Events</p>
             </div>
             <div class="stat-tile">
@@ -455,8 +455,8 @@
                 <p class="stat-label">Experiments</p>
             </div>
             <div class="stat-tile">
-                <p class="stat-number">−0.16</p>
-                <p class="stat-label">In-the-wild Inversion (p=0.003)</p>
+                <p class="stat-number">ρ = −0.16</p>
+                <p class="stat-label">FakeNewsNet Factuality Correlation (p=0.003)</p>
             </div>
         </div>
 
@@ -483,7 +483,7 @@
             </table>
 
             <p class="stream-link">
-                Online EM trained over the full ISOT dataset (44k+ articles) via HTTP Range streaming — no full download required.
+                Online EM trained over ISOT (42,681 articles) via resumable HTTP Range streaming — no full dataset download required.
                 <a href="stream.html">View streaming training report</a>.
             </p>
         </div>
