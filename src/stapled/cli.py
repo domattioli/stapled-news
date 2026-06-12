@@ -24,6 +24,7 @@ from stapled.ingest.csv_loader import (
     _strip_reuters_dateline,
     _normalize_subject,
 )
+from stapled.ingest.fakenewsnet import load_fakenewsnet, load_external_labels
 from stapled.ingest.dedup import dedup_articles
 from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
@@ -268,6 +269,61 @@ def load_isot(
     except Exception as e:
         out.add_error(str(e))
         out.output("load_isot", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("load-fakenewsnet")
+def load_fakenewsnet_cmd(
+    batch_bytes: int = typer.Option(262144, "--batch-bytes", help="Batch size in bytes"),
+    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per source"),
+    datasets: Optional[str] = typer.Option(None, "--datasets", help="Comma-separated dataset names"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load FakeNewsNet dataset with streaming."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        datasets_list = None
+        if datasets:
+            datasets_list = [d.strip() for d in datasets.split(",")]
+
+        counts = load_fakenewsnet(conn, batch_bytes=batch_bytes, limit=limit, datasets=datasets_list)
+
+        out.set_data(**{k: v for k, v in counts.items() if k != "per_dataset"})
+        rows = [
+            {"metric": "Articles loaded", "value": str(counts["articles_loaded"])},
+            {"metric": "Outlets created", "value": str(counts["outlets_created"])},
+            {"metric": "Labels written", "value": str(counts["labels_written"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "FakeNewsNet Load Complete")
+        out.output("load-fakenewsnet", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-fakenewsnet", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("load-external-labels")
+def load_external_labels_cmd(
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load external outlet labels (MBFC)."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        count = load_external_labels(conn)
+
+        out.set_data(labels_loaded=count)
+        rows = [{"labels_loaded": str(count)}]
+        out.print_table(rows, ["labels_loaded"], "External Labels Load Complete")
+        out.output("load-external-labels", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-external-labels", exit_code=1)
         raise typer.Exit(code=1)
 
 
