@@ -1,0 +1,232 @@
+{
+ "experiments": {
+  "e1": {
+   "metrics": {
+    "mean_rho": {
+     "batch_ds": 0.8966666666666664,
+     "majority": 0.7064210719709476,
+     "online_em_dedup": 0.8766666666666665,
+     "online_em_nodedup": 0.8766666666666665,
+     "weighted_majority": 0.8699999999999998
+    },
+    "ci95": {
+     "batch_ds": {
+      "low": 0.6174999999999999,
+      "high": 0.9999999999999999
+     },
+     "majority": {
+      "low": 0.08660720234117086,
+      "high": 0.9999999999999999
+     },
+     "online_em_dedup": {
+      "low": 0.5175,
+      "high": 0.9999999999999999
+     },
+     "online_em_nodedup": {
+      "low": 0.5175,
+      "high": 0.9999999999999999
+     },
+     "weighted_majority": {
+      "low": 0.545,
+      "high": 0.9999999999999999
+     }
+    },
+    "gate_rho_ge_0.8": true
+   },
+   "git_sha": "0190c9cb6d757b6abb1d81d25329e002ebbdcf55",
+   "timestamp": "2026-06-11T22:42:26.464816+00:00"
+  },
+  "e2": {
+   "metrics": {
+    "mean_rho_by_m": {
+     "dedup_on": {
+      "1": 0.82,
+      "2": 0.7799999999999999,
+      "5": 0.82,
+      "10": 0.82,
+      "20": 0.8399999999999999
+     },
+     "dedup_off": {
+      "1": 0.82,
+      "2": 0.7299999999999999,
+      "5": 0.7899999999999998,
+      "10": 0.31,
+      "20": -0.8699999999999999
+     }
+    },
+    "distortion_at_max_m": -1.7099999999999997
+   },
+   "git_sha": "9edfbb8afafb802eef231a70d318643987adca59",
+   "timestamp": "2026-06-11T22:53:44.445450+00:00"
+  },
+  "e3": {
+   "metrics": {
+    "auc_dedup_on": 0.0,
+    "real_rank_dedup_on": 7,
+    "mean_reliability_dedup_on": 0.650416040428513,
+    "inversion_flag": false,
+    "n_events_used": 2941,
+    "n_outlets": 7,
+    "auc_dedup_off": 0.0
+   },
+   "git_sha": "bf3696135a01ff7032ebc6c4d8c655af66496cb2",
+   "timestamp": "2026-06-11T23:36:40.036776+00:00"
+  },
+  "e3b": {
+   "metrics": {
+    "n_outlets_scored": 341,
+    "n_events_used": 318,
+    "spearman_rho": -0.1586816121530916,
+    "spearman_pval": 0.0033020686888971676,
+    "auc_mostly_fake": 0.08816837315130831
+   },
+   "git_sha": "23063403e111b071afbc5659185f085ced94a903",
+   "timestamp": "2026-06-12T00:50:48.373770+00:00"
+  },
+  "e4": {
+   "metrics": {
+    "n_outlets_joined": 34,
+    "n_events_used": 318,
+    "spearman_fact": -0.1093171208471434,
+    "spearman_bias_abs": 0.2002727982561811,
+    "spearman_fact_ci_lower": -0.45763933267133494,
+    "spearman_fact_ci_upper": 0.24275204072616427,
+    "spearman_bias_abs_ci_lower": -0.08927187581846602,
+    "spearman_bias_abs_ci_upper": 0.4050270802418091
+   },
+   "git_sha": "23063403e111b071afbc5659185f085ced94a903",
+   "timestamp": "2026-06-12T00:50:51.177976+00:00"
+  }
+ },
+ "corpora": {
+  "isot": {
+   "articles": 42681,
+   "outlets": 7,
+   "multi_outlet_events": 2941,
+   "real_outlets": 1
+  },
+  "fakenewsnet": {
+   "articles": 21575,
+   "outlets": 2531,
+   "multi_outlet_events": 318
+  }
+ },
+ "e2_curve": {
+  "dedup_off": [
+   {
+    "m": 1,
+    "mean_rho": 0.82
+   },
+   {
+    "m": 2,
+    "mean_rho": 0.73
+   },
+   {
+    "m": 5,
+    "mean_rho": 0.79
+   },
+   {
+    "m": 10,
+    "mean_rho": 0.31
+   },
+   {
+    "m": 20,
+    "mean_rho": -0.87
+   }
+  ],
+  "dedup_on": [
+   {
+    "m": 1,
+    "mean_rho": 0.82
+   },
+   {
+    "m": 2,
+    "mean_rho": 0.78
+   },
+   {
+    "m": 5,
+    "mean_rho": 0.82
+   },
+   {
+    "m": 10,
+    "mean_rho": 0.82
+   },
+   {
+    "m": 20,
+    "mean_rho": 0.84
+   }
+  ]
+ },
+ "e3b_scatter": [
+  {
+   "outlet": "longroom.com",
+   "fake_share": 0.0,
+   "reliability": 0.5837
+  },
+  {
+   "outlet": "etonline.com",
+   "fake_share": 0.1049,
+   "reliability": 0.5415
+  },
+  {
+   "outlet": "people.com",
+   "fake_share": 0.1166,
+   "reliability": 0.5255
+  },
+  {
+   "outlet": "hollywoodlife.com",
+   "fake_share": 0.8658,
+   "reliability": 0.5097
+  },
+  {
+   "outlet": "usatoday.com",
+   "fake_share": 0.1053,
+   "reliability": 0.5085
+  },
+  {
+   "outlet": "dailymail.co.uk",
+   "fake_share": 0.1991,
+   "reliability": 0.5069
+  },
+  {
+   "outlet": "usmagazine.com",
+   "fake_share": 0.1964,
+   "reliability": 0.5051
+  },
+  {
+   "outlet": "foxnews.com",
+   "fake_share": 0.2677,
+   "reliability": 0.5
+  },
+  {
+   "outlet": "time.com",
+   "fake_share": 0.1667,
+   "reliability": 0.5
+  },
+  {
+   "outlet": "hollywoodreporter.com",
+   "fake_share": 0.1032,
+   "reliability": 0.5
+  },
+  {
+   "outlet": "variety.com",
+   "fake_share": 0.1408,
+   "reliability": 0.5
+  },
+  {
+   "outlet": "today.com",
+   "fake_share": 0.0722,
+   "reliability": 0.5
+  },
+  {
+   "outlet": "celebrityinsider.org",
+   "fake_share": 0.3221,
+   "reliability": 0.5
+  },
+  {
+   "outlet": "elle.com",
+   "fake_share": 0.2344,
+   "reliability": 0.4647
+  }
+ ]
+}
