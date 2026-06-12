@@ -1,4 +1,4 @@
-# STAPLE-News: Estimating Cross-Outlet Consensus and Selective Omission from Streaming News Coverage
+# STAPLE-News: Streaming Consensus Estimation Recovers Outlet Structure on Clean Corpora and Predictably Inverts Under Unreliable Majorities
 
 **Working paper — 2026-06-12. Target length: 4 pages (≈2,400 words excluding references).**
 
@@ -20,7 +20,11 @@ sweep in which un-deduplicated wire copies drive recovery from ρ = 0.82 to ρ =
 a real-corpus run (ISOT, 42,681 articles) in which the only real outlet ranks last among
 seven (AUC = 0.0); and an in-the-wild replication on FakeNewsNet (2,531 publisher domains)
 where outlets carrying mostly-fabricated stories obtain significantly *higher*
-consensus-agreement (ρ = −0.16, p = 0.003; AUC = 0.09). Deduplicated fractional voting repairs the syndication pathway specifically
+consensus-agreement (ρ = −0.16, p = 0.003; AUC = 0.09). On mainstream coverage the same
+estimand is orthogonal to factuality rather than inverted: across 149 MBFC-rated
+publishers in the UCI News Aggregator corpus (228,257 headlines; ground-truth story
+clusters), the factuality correlation is a precise null (ρ = −0.009, CI [−0.17, 0.15]).
+Deduplicated fractional voting repairs the syndication pathway specifically
 (recovery stays at ρ ≈ 0.82–0.84 across 20× duplication) but cannot repair unreliable
 majorities. We argue the estimand should be named what it is — truth-calibrated consensus
 under anchoring, raw consensus without — and position the method as an omission-auditing
@@ -63,8 +67,9 @@ conditionally independent: wire services syndicate one underlying account to man
 mastheads [14], so N copies masquerade as N independent votes. Second, no labeling
 symmetry-breaker exists in the data: the Dawid-Skene likelihood is invariant under
 (T → 1−T, p ↔ 1−q, π → 1−π), so "the majority is reliable" and "the majority is
-unreliable" fit the data equally well [2, 8]. Both facts have measurable consequences,
-and one of them has a cheap fix.
+unreliable" fit the data equally well [2, 8]. Both facts have measurable consequences;
+the first is repairable by a change to vote counting (Section 3, E2), the second only by
+external anchoring.
 
 ## 2. Methods
 
@@ -81,10 +86,11 @@ E-step computes posteriors W_i over the hidden state, and sufficient statistics 
 blended with Robbins-Monro weight γ_t = (t+2)^−0.6, giving constant memory and incremental
 updates as coverage arrives. Outlets discovered mid-stream are registered lazily.
 
-**Deduplicated fractional voting.** Within an event, claims sharing a near-duplicate
-cluster receive weight w = 1/(cluster size): likelihood contributions are raised to the
-power w (one effective vote per syndicated bloc, split as a geometric mean) and
-sufficient-statistics increments are scaled by w. A flag disables this for ablation.
+**Deduplicated fractional voting (hereafter dedup voting).** Within an event, claims
+sharing a near-duplicate cluster receive weight w = 1/(cluster size): likelihood
+contributions are raised to the power w (one effective vote per syndicated bloc, split as
+a geometric mean) and sufficient-statistics increments are scaled by w. A flag disables
+dedup voting for ablation.
 
 **Experiments.** E1: parameter recovery on synthetic corpora with planted (sens, spec),
 30 seeds, against majority-vote, certainty-weighted majority, and batch Dawid-Skene
@@ -94,8 +100,11 @@ lightly perturbed variants, dedup voting on/off. E3: full ISOT corpus [15] (42,6
 articles; one real outlet, Reuters, vs. six per-topic synthetic fake sources; labels held
 out). E3b/E4: FakeNewsNet [16] (21,575 title-only articles across 2,531 real publisher
 domains, PolitiFact/GossipCop story labels held out), scored against article labels (E3b)
-and MBFC factuality/bias ratings from the ACL-2020 corpus [13] (E4). All experiments are
-seeded, manifest-logged, and reproducible from one command each.
+and MBFC factuality/bias ratings from the ACL-2020 corpus [13] (E4); E4 is then repeated
+on the UCI News Aggregator corpus [18] (228,257 headlines, 9,364 publisher domains),
+whose story identifiers provide ground-truth event clusters and remove claim alignment
+from the error budget. All experiments are seeded, manifest-logged, and reproducible
+from one command each.
 
 ## 3. Results
 
@@ -109,7 +118,7 @@ crowdsourcing literature [8, 9].
 dedup off, recovery degrades monotonically with duplicate multiplicity: ρ = 0.82 (m=1),
 0.73 (m=2), 0.31 (m=10), **−0.87 (m=20)** — at high multiplicity the model ranks outlets
 *backwards*, having adopted the echoed unreliable wire account as consensus. With
-fractional dedup voting on, recovery is flat (0.78–0.84) across the entire sweep.
+dedup voting on, recovery is flat (0.78–0.84) across the entire sweep.
 Perturbed near-duplicates behave like exact copies. This isolates one mechanism of
 majority-capture — manufactured majorities — and shows it is fully repairable from data.
 
@@ -127,22 +136,31 @@ mostly-fabricated stories obtain higher consensus-agreement because fabricated c
 stories are heavily co-covered — popularity masquerades as corroboration. This is the
 organic counterpart of E3's designed inversion.
 
-**E4 — external validity is extraction-limited.** Against MBFC ratings, factuality
-correlation is null (ρ = −0.11, bootstrap CI [−0.46, 0.24], n = 34 joined outlets).
-We tested whether claim alignment was the binding constraint by replacing frozen-vocab
-word TF-IDF (cosine ≥ 0.55) with dual word + character-n-gram vectors plus
-entity-anchored blocking: multi-outlet event coverage rose 23% (258 → 318 events;
-outlets scored 167 → 341) and made E3b's inversion significant, but manual audit found
-roughly 40% false merges at the operating threshold (distinct stories united by a shared
-celebrity name) and the MBFC correlation remained null. Title-only claims with lexical
-matching sit below the fidelity this validation axis needs — the "voxelization"
-bottleneck dominates before the model can speak.
+**E4 — consensus-agreement does not track outlet factuality, and the null is precise.**
+Two estimates at increasing statistical power agree. On FakeNewsNet, the MBFC factuality
+correlation is null but imprecise (ρ = −0.11, bootstrap CI [−0.46, 0.24], n = 34 joined
+outlets); replacing frozen-vocab word TF-IDF (cosine ≥ 0.55) with dual word +
+character-n-gram vectors plus entity-anchored blocking raised multi-outlet event coverage
+23% (258 → 318 events; outlets scored 167 → 341) and made E3b's inversion significant,
+but a manual audit found roughly 40% false merges at the operating threshold (distinct
+stories united by a shared celebrity name) and the correlation stayed null. The UCI News
+Aggregator corpus [18] removes the alignment bottleneck entirely — its story identifiers
+supply ground-truth event clusters (228,257 headlines, 9,364 publisher domains, 4,207
+multi-outlet events, 13× FakeNewsNet's coverage) — and the null sharpens rather than
+resolves: ρ = −0.009, CI [−0.17, 0.15], n = 149 joined outlets. MBFC-rated "low" and
+"high" outlets sit interleaved at the top of the consensus-agreement ranking
+(breitbart.com 0.976 beside abc.net.au 0.986). The mechanism is visible in the data:
+only 3% of UCI claims are negations, so mainstream outlets overwhelmingly assert the
+same consensus stories and the assertion channel carries no factuality signal.
+E3b and E4 are two faces of one estimand mismatch — on fabrication-heavy corpora
+consensus-agreement *inverts* against factuality; on mainstream coverage it is
+*orthogonal* to it.
 
 ## 4. Discussion
 
 **What the parameters mean.** Without an external anchor, the fitted "reliability" is
 agreement-with-consensus, definitionally — the labeling symmetry of the likelihood admits
-no other reading [2, 8]. Our three inversions are not bugs but the theorem manifesting:
+no other reading [2, 8]. The three inversions are not bugs but the theorem manifesting:
 E2's manufactured majorities, E3's designed unreliable majority, E3b's organic and
 statistically significant one.
 Knowledge-Based Trust faced the same issue and anchored against a knowledge base [7];
@@ -173,9 +191,11 @@ majorities. The negative results align with Pennycook and Rand's finding that cr
 signals track quality only under conditions [17] — consensus is evidence, not verdict.
 
 **Limitations.** Binary D_ij conflates omission with contradiction; titles understate
-claim content; FakeNewsNet labels are story-level, not outlet-level; MBFC join coverage
-is small; gossip-domain consensus may differ qualitatively from political news; and all
-"reliability" language in outputs is consensus-relative by construction.
+claim content; FakeNewsNet labels are story-level, not outlet-level; the UCI corpus
+predates 2015 and parses 228,340 of 422,937 raw rows (unbalanced quotation marks in
+titles defeat the RFC-4180 record splitter for the remainder — a quantified, not
+hand-waved, ingestion loss); and all "reliability" language in outputs is
+consensus-relative by construction.
 
 ## 5. Conclusions
 
@@ -186,7 +206,9 @@ one-line change to vote counting; the other (unreliable majorities) is informati
 unfixable without anchors and should be disclosed, not engineered around. Named honestly —
 consensus and omission measurement, truth-calibrated only where anchored — the framework
 is a cheap, streaming, interpretable instrument for a question supervised classifiers do
-not answer: *who leaves what out*.
+not answer: *who leaves what out*. Each result in this paper reproduces from one seeded
+command against a manifest-logged artifact; the pipeline, corpora cursors, and figures
+are public in the project repository.
 
 ---
 
@@ -245,3 +267,6 @@ on Social Media." *Big Data* 8(3), 2020.
 
 [17] G. Pennycook, D. G. Rand. "Fighting Misinformation on Social Media Using
 Crowdsourced Judgments of News Source Quality." *PNAS* 116(7), 2019.
+
+[18] F. Gasparetti. "News Aggregator Data Set." UCI Machine Learning Repository, 2017.
+422,937 headlines with same-story cluster identifiers, collected March–August 2014.

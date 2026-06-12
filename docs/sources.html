@@ -564,6 +564,45 @@
             <div id="fnn-labels" class="plot-container"></div>
         </div>
 
+        <div class="section-kicker">Corpus No. 3</div>
+        <h2 class="section-title">A Third Corpus: UCI News Dataset</h2>
+        <p class="intro">UCI extends the evidence to 228,257 headlines from 9,364 outlets with 4,207 multi-outlet story clusters spanning March–August 2014. Ground-truth events from story linkages provide direct supervision for 249 MBFC-rated outlets, isolating extraction fidelity as the binding constraint on external validity.</p>
+
+        <div class="stats-strip" id="uci-stats">
+            <div class="stat-card">
+                <p class="stat-number">228,257</p>
+                <p class="stat-label">Headlines</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">9,364</p>
+                <p class="stat-label">Outlets</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">4,207</p>
+                <p class="stat-label">Multi-outlet events</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">249</p>
+                <p class="stat-label">MBFC-rated outlets</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-number">6,885</p>
+                <p class="stat-label">Negation claims</p>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Top 25 Outlets by Article Count</h2>
+            <p class="chart-caption">The 25 most-covered outlets in UCI; color = MBFC factual-reporting rating where available (high = blue, mixed = yellow, low = red, unrated = gray).</p>
+            <div id="uci-outlets" class="plot-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Articles by Category</h2>
+            <p class="chart-caption">UCI articles by content category (b=business, e=entertainment, m=health, t=sci-tech).</p>
+            <div id="uci-categories" class="plot-container"></div>
+        </div>
+
     </div>
 
     <footer>
@@ -821,6 +860,66 @@
             Plotly.newPlot('fnn-labels', fnnLabelTraces, fnnLabelLayout, { responsive: true });
         }
 
+        function initUciPlots(uciData) {
+            // Chart: Top 25 outlets by article count, colored by MBFC rating
+            const outletNames = uciData.top_outlets.map(o => o.name);
+            const outletArticles = uciData.top_outlets.map(o => o.articles);
+            const outletColors = uciData.top_outlets.map(o => {
+                if (o.fact === 'high') return colorPalette.blue;
+                if (o.fact === 'mixed') return colorPalette.yellow;
+                if (o.fact === 'low') return colorPalette.red;
+                return colorPalette.gray;
+            });
+
+            const uciOutletTraces = [{
+                y: outletNames,
+                x: outletArticles,
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: outletColors },
+                text: outletArticles.map(a => a.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{y}</b><br>%{x:,.0f} articles<extra></extra>'
+            }];
+
+            const uciOutletLayout = {
+                title: null,
+                xaxis: { title: 'Article Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                margin: { l: 180 },
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('uci-outlets', uciOutletTraces, uciOutletLayout, { responsive: true });
+
+            // Chart: Categories bar chart
+            const categoryMap = { 'b': 'Business', 'e': 'Entertainment', 'm': 'Health', 't': 'Sci-Tech' };
+            const categoryNames = uciData.categories.map(c => categoryMap[c.category] || c.category);
+            const categoryCounts = uciData.categories.map(c => c.count);
+
+            const uciCategoryTraces = [{
+                x: categoryNames,
+                y: categoryCounts,
+                type: 'bar',
+                marker: { color: colorPalette.green },
+                text: categoryCounts.map(c => c.toLocaleString()),
+                textposition: 'outside',
+                hovertemplate: '<b>%{x}</b><br>%{y:,.0f} articles<extra></extra>'
+            }];
+
+            const uciCategoryLayout = {
+                title: null,
+                yaxis: { title: 'Article Count →', gridcolor: '#f0f0f0' },
+                plot_bgcolor: '#f0f0f0',
+                paper_bgcolor: '#f0f0f0',
+                hovermode: 'x',
+                margin: { b: 80 }
+            };
+
+            Plotly.newPlot('uci-categories', uciCategoryTraces, uciCategoryLayout, { responsive: true });
+        }
+
         // Fetch and initialize
         fetch('data/sources.json')
             .then(response => {
@@ -831,6 +930,9 @@
                 initPlots(data);
                 if (data.fnn) {
                     initFnnPlots(data.fnn);
+                }
+                if (data.uci) {
+                    initUciPlots(data.uci);
                 }
             })
             .catch(err => {
@@ -848,6 +950,8 @@
             Plotly.Plots.resize('chart-clusters');
             Plotly.Plots.resize('fnn-outlets');
             Plotly.Plots.resize('fnn-labels');
+            Plotly.Plots.resize('uci-outlets');
+            Plotly.Plots.resize('uci-categories');
         });
     </script>
 </body>
