@@ -195,8 +195,16 @@
             border-radius: 2px;
         }
 
-        #e2Chart, #e3bChart {
+        #e2Chart, #e3bChart, #e5-heatmap, #e6-curve {
             width: 100%;
+            height: 400px;
+        }
+
+        #e5-heatmap {
+            height: 560px;
+        }
+
+        #e6-curve {
             height: 400px;
         }
 
@@ -324,8 +332,8 @@
     <div class="container">
         <div class="article-header">
             <div class="article-kicker">Results</div>
-            <h1 class="article-title">Six Experiments: Recovery Under Synthetic Truth, Syndication Inversion, Majority Capture, and In-the-Wild Null</h1>
-            <p class="article-dek">Online EM recovers planted parameters at ρ = 0.88. Wire duplication inverts recovery to ρ = −0.87 (fully repaired by dedup voting). Unreliable majorities are unrepair able (Reuters ranks last on ISOT). FakeNewsNet shows in-the-wild inversion (ρ = −0.16). Consensus-agreement is null against factuality (ρ = −0.10, CI [−0.24, 0.05]).</p>
+            <h1 class="article-title">Six Experiments: Recovery Under Synthetic Truth, Syndication Inversion, Majority Capture, Omission Auditing, and Sparse Anchoring</h1>
+            <p class="article-dek">Online EM recovers planted parameters at ρ = 0.88. Wire duplication inverts recovery to ρ = −0.87 (fully repaired by dedup voting). Unreliable majorities are unrepairable (Reuters ranks last on ISOT). FakeNewsNet shows in-the-wild inversion (ρ = −0.16). Consensus-agreement is null against factuality (ρ = −0.10, CI [−0.24, 0.05]). Omission patterns separate by editorial beat with zero labels. Sparse anchoring does not repair echo dominance.</p>
         </div>
 
         <!-- E1 -->
@@ -390,7 +398,7 @@
             <div class="experiment-kicker">E4 Factuality Null</div>
             <h2 class="experiment-title">Consensus-Agreement Is Null Against MBFC Factuality: ρ = −0.10 (UCI, n=176 outlets)</h2>
             <div class="experiment-text">
-                <p>FakeNewsNet (MBFC labels on 34 outlets): ρ = −0.11, CI [−0.46, 0.24]. UCI (422,703 headlines, 176 MBFC-rated outlets at the 10-article participation floor, 7,202 multi-outlet events): fact ρ = −0.10, CI [−0.24, 0.05]; ideological-lean ρ = 0.02, CI [−0.12, 0.17]. The null is precise and replicates. Two representative outlets are indistinguishable by consensus-agreement: breitbart.com (low MBFC factuality, ≥99.6% reliability) vs. abc.net.au (high MBFC, ≥99.6% reliability) — both cluster high, one factually bankrupt by external standards. Roughly 3% of UCI headlines carry explicit negation; negation markers carry no factuality signal. E3b (syndication-driven inversion) and E4 (external factuality null) together show consensus-agreement is unidentifiable from coverage patterns alone: it measures co-coverage intensity and popularity clustering, not truth.</p>
+                <p>FakeNewsNet (MBFC labels on 34 outlets): ρ = −0.11, CI [−0.46, 0.24]. UCI (422,703 headlines, 176 MBFC-rated outlets at the 10-article participation floor, 7,202 multi-outlet events): fact ρ = −0.10, CI [−0.24, 0.05]; ideological-lean ρ = 0.02, CI [−0.12, 0.17]. The null is precise and replicates. Two representative outlets are indistinguishable by consensus-agreement: one low-MBFC source ranking high, another high-MBFC source ranking equally high — both cluster identically, yet one factually bankrupt by external standards. Roughly 3% of UCI headlines carry explicit negation; negation markers carry no factuality signal. E3b (syndication-driven inversion) and E4 (external factuality null) together show consensus-agreement is unidentifiable from coverage patterns alone: it measures co-coverage intensity and popularity clustering, not truth.</p>
             </div>
             <div class="plotly-container">
                 <div id="e4-uci-scatter"></div>
@@ -400,12 +408,43 @@
             </div>
         </div>
 
+        <!-- E5 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E5 Omission Audit</div>
+            <h2 class="experiment-title">The Sensitivity Channel Recovers Editorial Beats With No Labels</h2>
+            <div class="experiment-text">
+                <p>The same fitted model exposes per-outlet × per-topic coverage of well-corroborated stories (≥3 outlets, 7,166 events, 30 outlets). Coverage separates by editorial beat with zero supervision. contactmusic.com covers 56% of corroborated entertainment stories but 0.1% of business — a 56-point gap. Entertainment shows the widest spread: tabloids 41–56% (contactmusic.com, thecelebritycafe.com, dailymail.co.uk) vs wire and financial desks 1–3% (bloomberg.com, reuters.com, marketwatch.com, nasdaq.com).</p>
+                <p>This is the label-free product the paper argues for: not "which outlet is truthful" but "which outlet systematically declines to cover what its peers corroborate." Omission auditing measures are available across all outlets whether or not they carry MBFC labels, and the structure is immediately actionable: readers can ask which outlets are omitting claims the broader field treats as corroborated facts.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="e5-heatmap"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive heatmap: outlets (rows) × editorial categories (columns) showing coverage rate. <a href="assets/e5_omission.png">See static version</a>.
+            </div>
+        </div>
+
+        <!-- E6 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E6 Anchor Cost</div>
+            <h2 class="experiment-title">Sparse Anchoring Does Not Repair an Echo-Dominated Majority</h2>
+            <div class="experiment-text">
+                <p>Posterior-clamping anchors on externally verified ISOT events, averaged over 10 independent anchor draws per budget (single draws are noisy — which events are anchored matters as much as how many). Mean separation is flat at AUC 0.0 through k=100 (3.4% of 2,941 events), rises to 0.15 at k=400, 0.22 at k=800, 0.67 at k=1,200 (41%), and plateaus at 0.73 by k=2,500 (85%). The real outlet climbs from rank 7 of 7 to rank 2 but never to first; full separation (AUC 1.0) is reached at no budget tested. The standard "add a few fact-checks" prescription fails when the unreliable bloc dominates: anchors fix only the events they touch, but the 6:1 echo majority continues to majority-capture every unanchored event. Even near-complete anchoring only partially repairs the inversion.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="e6-curve"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive line chart: anchored event budget vs. AUC recovery. <a href="assets/e6_anchoring.png">See static version</a>.
+            </div>
+        </div>
+
         <!-- Closing -->
         <div class="closing-section">
             <h2 class="closing-title">What This Adds Up To</h2>
             <p class="closing-point"><strong>The estimator is sound.</strong> On synthetic data, online EM recovers planted parameters at ρ = 0.88 — matching batch Dawid-Skene and beating majority voting. The machinery works when its assumptions hold.</p>
             <p class="closing-point"><strong>Consensus is not truth.</strong> Fitted consensus-agreement measures co-coverage intensity by construction. Syndication duplication inverts recovery to ρ = −0.87 (fully repairable via dedup voting). Unreliable majorities invert recovery irreparably (Reuters ranks last on ISOT). The in-the-wild inversion on FakeNewsNet (ρ = −0.16) replicates this: fabricated stories cluster, so consensus masquerades as corroboration. Consensus-agreement null against factuality (ρ = −0.10, CI [−0.24, 0.05] on UCI) confirms the estimand mismatch.</p>
-            <p class="closing-point"><strong>Omission auditing is the honest use case.</strong> Consensus-agreement estimates which outlets systematically omit claims the broader field corroborates, and which propagate outlier stories. Label-free, not available from supervised outlet classifiers.</p>
+            <p class="closing-point"><strong>Omission auditing is the honest use case.</strong> Consensus-agreement estimates which outlets systematically omit claims the broader field corroborates, and which propagate outlier stories (E5). The estimates are label-free and separate outlets by editorial beat without supervision — a real and actionable product not available from supervised outlet classifiers. Anchoring can break the majority-capture symmetry but at a cost that scales with echo dominance: sparse anchoring (the standard prescription) fails when the unreliable bloc dominates (E6).</p>
 
             <div class="callout-box">
                 <strong>STAPLE-News Consensus Principle.</strong> Outlet consensus-agreement is a structural property of coverage, not a verdict on factuality. Estimates measure co-coverage intensity and popularity clustering. High consensus-agreement can reflect accuracy or synchronized misinformation. Use consensus estimates to audit omission and understand outlet ecosystem structure. Do not use to rank truthfulness.
@@ -421,7 +460,7 @@
     </footer>
 
     <script>
-        // Load results.json and render E2 and E3b charts
+        // Load results.json and render all charts
         fetch('data/results.json')
             .then(response => response.json())
             .then(data => {
@@ -524,12 +563,89 @@
                 };
 
                 Plotly.newPlot('e4-uci-scatter', [e4UciTrace], e4UciLayout, {responsive: true, displayModeBar: false});
+
+                // E5 Heatmap
+                if (data.e5_heatmap) {
+                    const e5HeatmapTrace = {
+                        z: data.e5_heatmap.z,
+                        x: data.e5_heatmap.categories,
+                        y: data.e5_heatmap.outlets,
+                        type: 'heatmap',
+                        colorscale: 'Blues',
+                        colorbar: {
+                            title: 'Coverage rate',
+                            thickness: 15,
+                            len: 0.7
+                        },
+                        hovertemplate: '<b>%{y}</b><br>%{x}<br>Coverage: %{z:.1%}<extra></extra>',
+                        zmin: 0,
+                        zmax: 0.6
+                    };
+
+                    const e5HeatmapLayout = {
+                        title: 'E5: Per-Outlet Coverage by Editorial Category',
+                        xaxis: {title: 'Editorial Category'},
+                        yaxis: {title: 'Outlet'},
+                        plot_bgcolor: '#f0f0f0',
+                        margin: {l: 180, r: 60, t: 50, b: 50},
+                        height: 560
+                    };
+
+                    Plotly.newPlot('e5-heatmap', [e5HeatmapTrace], e5HeatmapLayout, {responsive: true, displayModeBar: false});
+                }
+
+                // E6 Anchoring Curve
+                if (data.e6_curve) {
+                    const e6CurveTrace = {
+                        x: data.e6_curve.map(d => d.budget),
+                        y: data.e6_curve.map(d => d.auc),
+                        mode: 'lines+markers',
+                        name: 'Recovery (AUC)',
+                        line: {color: '#fc4f30', width: 3},
+                        marker: {size: 8}
+                    };
+
+                    const e6ChanceLine = {
+                        x: [0, 2500],
+                        y: [0.5, 0.5],
+                        mode: 'lines',
+                        name: 'Chance (AUC=0.5)',
+                        line: {color: '#999', width: 1, dash: 'dash'},
+                        hoverinfo: 'skip',
+                        showlegend: true
+                    };
+
+                    const e6FullRecoveryLine = {
+                        x: [0, 2500],
+                        y: [1.0, 1.0],
+                        mode: 'lines',
+                        name: 'Full Recovery (AUC=1.0)',
+                        line: {color: '#999', width: 1, dash: 'dash'},
+                        hoverinfo: 'skip',
+                        showlegend: true
+                    };
+
+                    const e6Layout = {
+                        title: 'E6: AUC Recovery vs. Anchor Budget',
+                        xaxis: {title: 'Anchored events (of 2,941)', zeroline: false},
+                        yaxis: {title: 'AUC (real vs synthetic separation)', zeroline: false, range: [-0.05, 1.1]},
+                        hovermode: 'closest',
+                        plot_bgcolor: '#f0f0f0',
+                        margin: {l: 60, r: 40, t: 40, b: 50},
+                        showlegend: true,
+                        legend: {x: 0.6, y: 0.1}
+                    };
+
+                    Plotly.newPlot('e6-curve', [e6CurveTrace, e6ChanceLine, e6FullRecoveryLine], e6Layout, {responsive: true, displayModeBar: false});
+                }
             })
             .catch(err => {
                 console.error('Error loading results.json:', err);
                 document.getElementById('e2Chart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
                 document.getElementById('e3bChart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
                 document.getElementById('e4-uci-scatter').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+                document.getElementById('e5-heatmap').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+                document.getElementById('e6-curve').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
             });
     </script>
 </body>
