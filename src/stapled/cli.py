@@ -25,6 +25,7 @@ from stapled.ingest.csv_loader import (
     _normalize_subject,
 )
 from stapled.ingest.fakenewsnet import load_fakenewsnet, load_external_labels
+from stapled.ingest.uci import load_uci
 from stapled.ingest.dedup import dedup_articles
 from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
@@ -303,6 +304,41 @@ def load_fakenewsnet_cmd(
     except Exception as e:
         out.add_error(str(e))
         out.output("load-fakenewsnet", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("load-uci")
+def load_uci_cmd(
+    batch_bytes: int = typer.Option(524288, "--batch-bytes", help="Batch size in bytes"),
+    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per source"),
+    categories: Optional[str] = typer.Option(None, "--categories", help="Comma-separated categories (b,t,e,m)"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load UCI News Aggregator dataset with streaming."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        categories_list = None
+        if categories:
+            categories_list = set(c.strip() for c in categories.split(","))
+
+        counts = load_uci(conn, batch_bytes=batch_bytes, limit=limit, categories=categories_list)
+
+        out.set_data(**counts)
+        rows = [
+            {"metric": "Articles loaded", "value": str(counts["articles_loaded"])},
+            {"metric": "Outlets created", "value": str(counts["outlets_created"])},
+            {"metric": "Events created", "value": str(counts["events_created"])},
+            {"metric": "Labels written", "value": str(counts["labels_written"])},
+            {"metric": "Skipped", "value": str(counts["skipped"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "UCI Load Complete")
+        out.output("load-uci", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-uci", exit_code=1)
         raise typer.Exit(code=1)
 
 
