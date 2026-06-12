@@ -93,90 +93,94 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         multi_outlet_events = [row[0] for row in event_with_counts]
         n_multi_outlet_events = len(multi_outlet_events)
 
-        # Run experiment for each budget
+        # Average each budget over n_seeds independent anchor draws so the curve
+        # reflects the budget, not a single lucky/unlucky draw (single draws are
+        # non-monotonic: which events land in the anchor set matters as much as how many).
+        n_seeds = config.get("n_seeds", 1)
         results = []
 
         for budget_k in budgets:
-            # Per-budget RNG so each anchor sample is reproducible and independent of
-            # the budget list ordering (a shared RNG advanced cumulatively made the
-            # k=2500 result depend on which smaller budgets preceded it).
-            rng = np.random.default_rng([seed, budget_k])
-            # Fresh temp copy for each budget
-            with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp2:
-                budget_db_path = tmp2.name
-
-            try:
-                shutil.copy(db_path, budget_db_path)
-                budget_conn = connect(budget_db_path)
-
-                # Clear EM state
-                budget_conn.execute("DELETE FROM em_suffstats")
-                budget_conn.execute("DELETE FROM reliability_snapshot")
-                budget_conn.execute("DELETE FROM em_state")
-                budget_conn.execute("DELETE FROM anchor")
-                budget_conn.commit()
-
-                # Get reuters_id from budget DB (may differ from original)
-                cursor = budget_conn.execute("SELECT id FROM outlet WHERE name = 'reuters'")
-                budget_reuters_id = cursor.fetchone()
-                budget_reuters_id = budget_reuters_id[0] if budget_reuters_id else None
-
-                # Get fresh multi-outlet events from this budget DB
-                cursor = budget_conn.execute(
-                    """
-                    SELECT c.event_id, COUNT(DISTINCT a.outlet_id) as outlet_count
-                    FROM claim c
-                    JOIN article a ON c.article_id = a.id
-                    WHERE c.event_id IS NOT NULL
-                    GROUP BY c.event_id
-                    HAVING COUNT(DISTINCT a.outlet_id) >= ?
-                    ORDER BY outlet_count DESC, c.event_id
-                    """,
-                    (min_outlets,),
-                )
-                budget_multi_outlet_events = [int(row[0]) for row in cursor.fetchall()]
-
-                # Select and anchor k events
-                if budget_k > 0 and len(budget_multi_outlet_events) > 0:
-                    # Prefer well-corroborated events: take top 3k by outlet count, sample k
-                    top_k_indices = min(3 * budget_k, len(budget_multi_outlet_events))
-                    candidate_events = budget_multi_outlet_events[:top_k_indices]
-                    n_to_anchor = min(budget_k, len(candidate_events))
-
-                    if n_to_anchor > 0:
-                        anchored_event_ids = [int(x) for x in rng.choice(candidate_events, size=n_to_anchor, replace=False)]
-
-                        # Insert anchors: true_state = 1 if ANY reuters claim, else 0
-                        for event_id in anchored_event_ids:
-                            true_state = _get_event_anchor_truth(budget_conn, event_id, budget_reuters_id)
-                            budget_conn.execute(
-                                "INSERT INTO anchor (event_id, true_state, source) VALUES (?, ?, ?)",
-                                (event_id, int(true_state), "e6_sweep"),
-                            )
-                        budget_conn.commit()
-
-                # Run OnlineEM
-                auc, real_rank, reuters_reliability, mean_fake_reliability = _run_em_and_score(
-                    budget_conn, outlet_ids, outlet_info, event_ids, batch_size
-                )
-
-                results.append({
-                    "budget": budget_k,
-                    "auc": auc,
-                    "real_rank": real_rank,
-                    "reuters_reliability": reuters_reliability,
-                    "mean_fake_reliability": mean_fake_reliability,
-                })
-
-            finally:
+            trial_aucs = []
+            trial_ranks = []
+            trial_reuters = []
+            trial_fake = []
+            for s in range(n_seeds):
+                rng = np.random.default_rng([seed, budget_k, s])
+                with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp2:
+                    budget_db_path = tmp2.name
                 try:
-                    budget_conn.close()
-                except Exception:  # noqa: BLE001
-                    pass
-                try:
-                    os.remove(budget_db_path)
-                except OSError:
-                    pass
+                    shutil.copy(db_path, budget_db_path)
+                    budget_conn = connect(budget_db_path)
+
+                    budget_conn.execute("DELETE FROM em_suffstats")
+                    budget_conn.execute("DELETE FROM reliability_snapshot")
+                    budget_conn.execute("DELETE FROM em_state")
+                    budget_conn.execute("DELETE FROM anchor")
+                    budget_conn.commit()
+
+                    cursor = budget_conn.execute("SELECT id FROM outlet WHERE name = 'reuters'")
+                    budget_reuters_id = cursor.fetchone()
+                    budget_reuters_id = budget_reuters_id[0] if budget_reuters_id else None
+
+                    cursor = budget_conn.execute(
+                        """
+                        SELECT c.event_id, COUNT(DISTINCT a.outlet_id) as outlet_count
+                        FROM claim c
+                        JOIN article a ON c.article_id = a.id
+                        WHERE c.event_id IS NOT NULL
+                        GROUP BY c.event_id
+                        HAVING COUNT(DISTINCT a.outlet_id) >= ?
+                        ORDER BY outlet_count DESC, c.event_id
+                        """,
+                        (min_outlets,),
+                    )
+                    budget_multi_outlet_events = [int(row[0]) for row in cursor.fetchall()]
+
+                    if budget_k > 0 and len(budget_multi_outlet_events) > 0:
+                        # Prefer well-corroborated events: top 3k by outlet count, sample k
+                        top_k_indices = min(3 * budget_k, len(budget_multi_outlet_events))
+                        candidate_events = budget_multi_outlet_events[:top_k_indices]
+                        n_to_anchor = min(budget_k, len(candidate_events))
+
+                        if n_to_anchor > 0:
+                            anchored_event_ids = [
+                                int(x) for x in rng.choice(candidate_events, size=n_to_anchor, replace=False)
+                            ]
+                            for event_id in anchored_event_ids:
+                                true_state = _get_event_anchor_truth(
+                                    budget_conn, event_id, budget_reuters_id
+                                )
+                                budget_conn.execute(
+                                    "INSERT INTO anchor (event_id, true_state, source) VALUES (?, ?, ?)",
+                                    (event_id, int(true_state), "e6_sweep"),
+                                )
+                            budget_conn.commit()
+
+                    auc, real_rank, reuters_reliability, mean_fake_reliability = _run_em_and_score(
+                        budget_conn, outlet_ids, outlet_info, event_ids, batch_size
+                    )
+                    trial_aucs.append(auc)
+                    trial_ranks.append(real_rank)
+                    trial_reuters.append(reuters_reliability)
+                    trial_fake.append(mean_fake_reliability)
+                finally:
+                    try:
+                        budget_conn.close()
+                    except Exception:  # noqa: BLE001
+                        pass
+                    try:
+                        os.remove(budget_db_path)
+                    except OSError:
+                        pass
+
+            results.append({
+                "budget": budget_k,
+                "auc": float(np.mean(trial_aucs)),
+                "auc_std": float(np.std(trial_aucs)),
+                "real_rank": float(np.mean(trial_ranks)),
+                "reuters_reliability": float(np.mean(trial_reuters)),
+                "mean_fake_reliability": float(np.mean(trial_fake)),
+            })
 
         # Write CSV
         out_path = Path(out_dir)
