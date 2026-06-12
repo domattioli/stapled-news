@@ -40244,5 +40244,160 @@
   "claims": 35564,
   "multi_outlet_events": 2941,
   "bytes_streamed": 116351398
+ },
+ "fnn": {
+  "top_outlets": [
+   {
+    "name": "people.com",
+    "articles": 1655,
+    "fact": "high"
+   },
+   {
+    "name": "dailymail.co.uk",
+    "articles": 919,
+    "fact": "mixed"
+   },
+   {
+    "name": "usmagazine.com",
+    "articles": 667,
+    "fact": null
+   },
+   {
+    "name": "etonline.com",
+    "articles": 639,
+    "fact": null
+   },
+   {
+    "name": "en.wikipedia.org",
+    "articles": 562,
+    "fact": null
+   },
+   {
+    "name": "longroom.com",
+    "articles": 562,
+    "fact": null
+   },
+   {
+    "name": "hollywoodlife.com",
+    "articles": 477,
+    "fact": null
+   },
+   {
+    "name": "hollywoodreporter.com",
+    "articles": 310,
+    "fact": null
+   },
+   {
+    "name": "usatoday.com",
+    "articles": 304,
+    "fact": null
+   },
+   {
+    "name": "variety.com",
+    "articles": 284,
+    "fact": null
+   },
+   {
+    "name": "ew.com",
+    "articles": 243,
+    "fact": null
+   },
+   {
+    "name": "elle.com",
+    "articles": 192,
+    "fact": null
+   },
+   {
+    "name": "billboard.com",
+    "articles": 191,
+    "fact": null
+   },
+   {
+    "name": "msn.com",
+    "articles": 189,
+    "fact": null
+   },
+   {
+    "name": "radaronline.com",
+    "articles": 187,
+    "fact": null
+   },
+   {
+    "name": "today.com",
+    "articles": 180,
+    "fact": null
+   },
+   {
+    "name": "thewrap.com",
+    "articles": 166,
+    "fact": "mixed"
+   },
+   {
+    "name": "inquisitr.com",
+    "articles": 153,
+    "fact": null
+   },
+   {
+    "name": "harpersbazaar.com",
+    "articles": 150,
+    "fact": null
+   },
+   {
+    "name": "bravotv.com",
+    "articles": 149,
+    "fact": null
+   },
+   {
+    "name": "celebrityinsider.org",
+    "articles": 149,
+    "fact": null
+   },
+   {
+    "name": "imdb.com",
+    "articles": 145,
+    "fact": null
+   },
+   {
+    "name": "time.com",
+    "articles": 144,
+    "fact": null
+   },
+   {
+    "name": "vanityfair.com",
+    "articles": 143,
+    "fact": "high"
+   },
+   {
+    "name": "cosmopolitan.com",
+    "articles": 142,
+    "fact": "high"
+   }
+  ],
+  "totals": {
+   "articles": 21575,
+   "outlets": 2531,
+   "claims": 6113,
+   "events": 2274,
+   "multi_outlet_events": 318,
+   "mbfc_rated_outlets": 115
+  },
+  "labels": [
+   {
+    "dataset": "gossipcop_fake",
+    "count": 4679
+   },
+   {
+    "dataset": "gossipcop_real",
+    "count": 16008
+   },
+   {
+    "dataset": "politifact_fake",
+    "count": 416
+   },
+   {
+    "dataset": "politifact_real",
+    "count": 472
+   }
+  ]
  }
 }
