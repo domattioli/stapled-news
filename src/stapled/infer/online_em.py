@@ -411,6 +411,8 @@ class OnlineEM:
         # Robbins-Monro: γ_t = (t+2)**-0.6
         gamma = (t + 2.0) ** (-0.6)
 
+        suffstats_rows = []
+        snapshot_rows = []
         for outlet_id in self.outlet_ids:
             if outlet_id not in batch_stats:
                 continue
@@ -429,24 +431,15 @@ class OnlineEM:
 
             self.n_obs[outlet_id] = (1 - gamma) * self.n_obs[outlet_id] + gamma * stats["n_obs"]
 
-            # Persist to DB
-            self.conn.execute(
-                """INSERT INTO em_suffstats (outlet_id, exp_tp, exp_fp, exp_tn, exp_fn, n_obs)
-                   VALUES (?, ?, ?, ?, ?, ?)
-                   ON CONFLICT(outlet_id) DO UPDATE SET
-                   exp_tp=excluded.exp_tp, exp_fp=excluded.exp_fp,
-                   exp_tn=excluded.exp_tn, exp_fn=excluded.exp_fn, n_obs=excluded.n_obs""",
-                (
-                    outlet_id,
-                    self.exp_tp[outlet_id],
-                    self.exp_fp[outlet_id],
-                    self.exp_tn[outlet_id],
-                    self.exp_fn[outlet_id],
-                    self.n_obs[outlet_id],
-                ),
-            )
+            suffstats_rows.append((
+                outlet_id,
+                self.exp_tp[outlet_id],
+                self.exp_fp[outlet_id],
+                self.exp_tn[outlet_id],
+                self.exp_fn[outlet_id],
+                self.n_obs[outlet_id],
+            ))
 
-            # Compute and store reliability snapshot
             tp = self.exp_tp[outlet_id]
             fp = self.exp_fp[outlet_id]
             tn = self.exp_tn[outlet_id]
@@ -454,13 +447,22 @@ class OnlineEM:
 
             sens = tp / (tp + fn) if (tp + fn) > 0 else 0.5
             spec = tn / (tn + fp) if (tn + fp) > 0 else 0.5
-            reliability = (sens + spec) / 2.0
+            snapshot_rows.append((t, outlet_id, (sens + spec) / 2.0))
 
-            self.conn.execute(
+        if suffstats_rows:
+            self.conn.executemany(
+                """INSERT INTO em_suffstats (outlet_id, exp_tp, exp_fp, exp_tn, exp_fn, n_obs)
+                   VALUES (?, ?, ?, ?, ?, ?)
+                   ON CONFLICT(outlet_id) DO UPDATE SET
+                   exp_tp=excluded.exp_tp, exp_fp=excluded.exp_fp,
+                   exp_tn=excluded.exp_tn, exp_fn=excluded.exp_fn, n_obs=excluded.n_obs""",
+                suffstats_rows,
+            )
+            self.conn.executemany(
                 """INSERT INTO reliability_snapshot (batch, outlet_id, reliability)
                    VALUES (?, ?, ?)
                    ON CONFLICT(batch, outlet_id) DO UPDATE SET reliability=excluded.reliability""",
-                (t, outlet_id, reliability),
+                snapshot_rows,
             )
 
         # Update prior

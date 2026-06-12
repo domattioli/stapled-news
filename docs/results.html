@@ -195,8 +195,16 @@
             border-radius: 2px;
         }
 
-        #e2Chart, #e3bChart {
+        #e2Chart, #e3bChart, #e5-heatmap, #e6-curve {
             width: 100%;
+            height: 400px;
+        }
+
+        #e5-heatmap {
+            height: 560px;
+        }
+
+        #e6-curve {
             height: 400px;
         }
 
@@ -324,30 +332,30 @@
     <div class="container">
         <div class="article-header">
             <div class="article-kicker">Results</div>
-            <h1 class="article-title">Five Experiments in Measuring Media Consensus</h1>
-            <p class="article-dek">The estimator works on clean data, inverts predictably under syndication and unreliable majorities, and shows where the repair hierarchy stands.</p>
+            <h1 class="article-title">Six Experiments: Recovery Under Synthetic Truth, Syndication Inversion, Majority Capture, Omission Auditing, and Sparse Anchoring</h1>
+            <p class="article-dek">Online EM recovers planted parameters at ρ = 0.88. Wire duplication inverts recovery to ρ = −0.87 (fully repaired by dedup voting). Unreliable majorities are unrepairable (Reuters ranks last on ISOT). FakeNewsNet shows in-the-wild inversion (ρ = −0.16). Consensus-agreement is null against factuality (ρ = −0.10, CI [−0.24, 0.05]). Omission patterns separate by editorial beat with zero labels. Sparse anchoring does not repair echo dominance.</p>
         </div>
 
         <!-- E1 -->
         <div class="experiment-section">
             <div class="experiment-kicker">E1 Recovery</div>
-            <h2 class="experiment-title">The Estimator Works When Its Assumptions Hold</h2>
+            <h2 class="experiment-title">Online EM Recovers Planted Outlet Parameters at ρ = 0.88, Matching Batch Methods</h2>
             <div class="experiment-text">
-                <p>Across 30 synthetic corpora with planted outlet reliability parameters, online EM recovers ground truth at mean ρ ≈ 0.88 — comparing favorably to batch Dawid-Skene (0.90), certainty-weighted majority (0.87), and especially plain majority vote (0.71). The streaming approximation introduces negligible loss.</p>
+                <p>Across 30 synthetic corpora with known outlet reliability parameters, online EM recovers planted truth at mean Spearman ρ ≈ 0.88 — on par with batch Dawid-Skene (0.90), ahead of weighted majority vote (0.87), and substantially better than plain majority vote (0.71). The streaming approximation incurs negligible loss. This isolates the estimator machinery as sound; failures in real data are due to unmet assumptions (unreliable majorities or syndication effects), not broken inference.</p>
             </div>
             <div class="figure-card">
                 <img src="assets/e1_recovery.png" alt="Parameter recovery: online EM vs. baselines" class="figure-image">
-                <div class="figure-caption">Online EM recovers planted outlet parameters at ρ ≈ 0.88 across 30 seeds, on par with batch methods and substantially better than majority voting.</div>
+                <div class="figure-caption">E1 recovery: Spearman ρ comparing planted vs. recovered outlet consensus-agreement across 30 seeds. Online EM dedup-on ρ = 0.88; batch Dawid-Skene 0.90; weighted majority 0.87; majority vote 0.71. Streaming introduces negligible loss. The dashed line marks the 0.8 usability gate.</div>
             </div>
         </div>
 
         <!-- E2 -->
         <div class="experiment-section">
             <div class="experiment-kicker">E2 Syndication</div>
-            <h2 class="experiment-title">Wire-Service Duplication Is an Inversion Machine — Dedup Voting Repairs It Exactly</h2>
+            <h2 class="experiment-title">Syndication Duplication Inverts Recovery to ρ = −0.87; Dedup Voting Fully Repairs It</h2>
             <div class="experiment-text">
-                <p>When un-deduplicated wire copies are injected at multiplicity m ∈ {1, 2, 5, 10, 20} and re-attributed across outlets, recovery without deduplication degrades monotonically: ρ = 0.82 (m=1) → 0.73 (m=2) → 0.31 (m=10) → <strong>−0.87 (m=20)</strong>. At high multiplicity the model ranks outlets backwards, having adopted the echoed unreliable wire account as consensus ground truth.</p>
-                <p>With fractional dedup voting enabled, recovery remains flat across the entire sweep (0.78–0.84). This isolates one mechanism of majority-capture — manufactured majorities from syndication — and shows it is fully repairable from data alone.</p>
+                <p>When one unreliable wire story is duplicated at multiplicity m ∈ {1, 2, 5, 10, 20} and re-attributed as originating from different outlets, un-deduplicated recovery catastrophically degrades: ρ = 0.82 (m=1) → 0.73 (m=2) → 0.31 (m=10) → <strong>−0.87 (m=20)</strong>. At m=20, the model inverts completely: it ranks the fabricated sources above the truth by construction, because the sheer repetition convinces EM that repetition signals consensus truth.</p>
+                <p>With fractional dedup voting enabled (each cluster counts as one vote regardless of size), recovery remains flat across the entire sweep: ρ = 0.78–0.84. This isolates syndication as one fully-repairable mechanism of majority-capture. The data alone contains enough signal to fix it.</p>
             </div>
             <div class="plotly-container">
                 <div id="e2Chart"></div>
@@ -360,22 +368,22 @@
         <!-- E3 -->
         <div class="experiment-section">
             <div class="experiment-kicker">E3 ISOT</div>
-            <h2 class="experiment-title">An Unreliable True Majority Is Not Repairable</h2>
+            <h2 class="experiment-title">ISOT Majority-Capture: Reuters Ranks 7/7 Despite Being the Only Truthful Source</h2>
             <div class="experiment-text">
-                <p>On the ISOT corpus (42,681 articles), one real outlet (Reuters) is structurally outnumbered by six synthetic fake sources. Reuters ranks 7th (last) by estimated reliability with AUC = 0.0: textbook majority-capture, exactly as the identifiability argument predicts. Dedup voting deflates the fake bloc's estimates (mean 0.83 → 0.67) but cannot reorder them — there is no information in the data to do so. This experiment shows the failure mode we cannot fix from data alone.</p>
+                <p>ISOT: 42,681 articles. Reuters publishes ~6,000; six synthetic sources publish ~37,000. Reuters is structurally outnumbered 6:1 and ranks last by estimated consensus-agreement (AUC = 0.0). The model adopts the fabricated majority as consensus truth and treats Reuters as an outlier. Dedup voting deflates fake estimates (mean 0.83 → 0.67) but cannot reorder ranks — there is no signal in the data to do so. This is the failure mode that cannot be fixed by data alone. It requires an external anchor (held-out labels, human judgment) or a fundamental rethink of what consensus measures.</p>
             </div>
             <div class="figure-card">
                 <img src="assets/e3_isot.png" alt="ISOT corpus: real outlet ranked last by estimated reliability" class="figure-image">
-                <div class="figure-caption">On ISOT, Reuters ranks 7/7 by estimated consensus-agreement because the majority of articles come from synthetic fabricated sources.</div>
+                <div class="figure-caption">ISOT: 7 outlets ranked by estimated consensus-agreement. Reuters (blue, real, truthful) ranks 7/7. Six synthetic sources (red, fabricated) rank 1–6. The model cannot distinguish truth from synchronized falsehood when the majority lies.</div>
             </div>
         </div>
 
         <!-- E3b -->
         <div class="experiment-section">
             <div class="experiment-kicker">E3b FakeNewsNet</div>
-            <h2 class="experiment-title">The Inversion Replicates in the Wild, Significantly</h2>
+            <h2 class="experiment-title">In-the-Wild Inversion: Consensus-Agreement Rises With Fabrication Share (ρ = −0.16, p = 0.003)</h2>
             <div class="experiment-text">
-                <p>On FakeNewsNet's natural 2,531-domain corpus (341 outlets participating after an alignment upgrade), outlet consensus-agreement correlates <strong>negatively</strong> with held-out fact-checker labels: ρ = −0.16 (p = 0.003), binary AUC = 0.09. Domains carrying mostly-fabricated stories obtain higher consensus-agreement because fabricated celebrity stories are heavily co-covered — popularity masquerades as corroboration. This is the organic, in-the-wild counterpart of E3's designed inversion, and it is statistically significant.</p>
+                <p>FakeNewsNet: 21,575 articles, 341 outlets after alignment filtering. Held-out fact-checker labels from Gossip Cop and PolitiFact show: outlets carrying more fabricated articles rank higher on consensus-agreement (Spearman ρ = −0.16, p = 0.003, AUC = 0.09). Fabricated celebrity stories are heavily syndicated — low-quality sources co-cover the same tabloid material, so consensus-agreement measures co-coverage intensity, not truthfulness. This replicates E3's designed inversion in organic data and is statistically significant.</p>
             </div>
             <div class="plotly-container">
                 <div id="e3bChart"></div>
@@ -387,28 +395,59 @@
 
         <!-- E4 -->
         <div class="experiment-section">
-            <div class="experiment-kicker">E4 Consensus-Agreement vs. Factuality</div>
-            <h2 class="experiment-title">Consensus-Agreement Does Not Track Outlet Factuality, and the Null Is Precise</h2>
+            <div class="experiment-kicker">E4 Factuality Null</div>
+            <h2 class="experiment-title">Consensus-Agreement Is Null Against MBFC Factuality: ρ = −0.10 (UCI, n=176 outlets)</h2>
             <div class="experiment-text">
-                <p>Against Media Bias/Fact Check (MBFC) ratings on FakeNewsNet, factuality correlation is null: ρ = −0.11, CI [−0.46, 0.24] (n=34 outlets). The UCI dataset, with 13× more coverage (4,207 multi-outlet events, 149 MBFC-rated outlets), sharpens the null to ρ = −0.009, CI [−0.17, 0.15]. Two representative outlets are indistinguishable: breitbart.com (low-rated, 0.976 reliability) and abc.net.au (high-rated, 0.986 reliability) — both high consensus agreement, one factually bankrupt by external standards. Roughly 3% of UCI headlines carry explicit negation; these assertion signals carry no factuality information. E3b and E4 together isolate a single estimand mismatch: consensus-agreement, like AUC under majority capture, is unidentifiable from coverage data alone.</p>
+                <p>FakeNewsNet (MBFC labels on 34 outlets): ρ = −0.11, CI [−0.46, 0.24]. UCI (422,703 headlines, 176 MBFC-rated outlets at the 10-article participation floor, 7,202 multi-outlet events): fact ρ = −0.10, CI [−0.24, 0.05]; ideological-lean ρ = 0.02, CI [−0.12, 0.17]. The null is precise and replicates. Two representative outlets are indistinguishable by consensus-agreement: one low-MBFC source ranking high, another high-MBFC source ranking equally high — both cluster identically, yet one factually bankrupt by external standards. Roughly 3% of UCI headlines carry explicit negation; negation markers carry no factuality signal. E3b (syndication-driven inversion) and E4 (external factuality null) together show consensus-agreement is unidentifiable from coverage patterns alone: it measures co-coverage intensity and popularity clustering, not truth.</p>
             </div>
             <div class="plotly-container">
                 <div id="e4-uci-scatter"></div>
             </div>
             <div class="figure-footnote">
-                Interactive scatter: x-axis = outlet MBFC factual rating, y-axis = estimated consensus-agreement reliability, marker size ∝ log(n articles). 149 MBFC-rated outlets; ρ = −0.009, CI [−0.17, 0.15]. <a href="assets/e4_external.png">See FakeNewsNet-only version</a>.
+                Interactive scatter: x-axis = MBFC factual rating (low = red, mixed = yellow, high = blue), y-axis = estimated consensus-agreement. Marker size ∝ log(articles); 176 MBFC-rated outlets. Spearman ρ = −0.10, CI [−0.24, 0.05] — no correlation. <a href="assets/e4_external.png">See FakeNewsNet n=34 version</a>.
+            </div>
+        </div>
+
+        <!-- E5 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E5 Omission Audit</div>
+            <h2 class="experiment-title">The Sensitivity Channel Recovers Editorial Beats With No Labels</h2>
+            <div class="experiment-text">
+                <p>The same fitted model exposes per-outlet × per-topic coverage of well-corroborated stories (≥3 outlets, 7,166 events, 30 outlets). Coverage separates by editorial beat with zero supervision. contactmusic.com covers 56% of corroborated entertainment stories but 0.1% of business — a 56-point gap. Entertainment shows the widest spread: tabloids 41–56% (contactmusic.com, thecelebritycafe.com, dailymail.co.uk) vs wire and financial desks 1–3% (bloomberg.com, reuters.com, marketwatch.com, nasdaq.com).</p>
+                <p>This is the label-free product the paper argues for: not "which outlet is truthful" but "which outlet systematically declines to cover what its peers corroborate." Omission auditing measures are available across all outlets whether or not they carry MBFC labels, and the structure is immediately actionable: readers can ask which outlets are omitting claims the broader field treats as corroborated facts.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="e5-heatmap"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive heatmap: outlets (rows) × editorial categories (columns) showing coverage rate. <a href="assets/e5_omission.png">See static version</a>.
+            </div>
+        </div>
+
+        <!-- E6 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E6 Anchor Cost</div>
+            <h2 class="experiment-title">Sparse Anchoring Does Not Repair an Echo-Dominated Majority</h2>
+            <div class="experiment-text">
+                <p>Posterior-clamping anchors on externally verified ISOT events, averaged over 10 independent anchor draws per budget (single draws are noisy — which events are anchored matters as much as how many). Mean separation is flat at AUC 0.0 through k=100 (3.4% of 2,941 events), rises to 0.15 at k=400, 0.22 at k=800, 0.67 at k=1,200 (41%), and plateaus at 0.73 by k=2,500 (85%). The real outlet climbs from rank 7 of 7 to rank 2 but never to first; full separation (AUC 1.0) is reached at no budget tested. The standard "add a few fact-checks" prescription fails when the unreliable bloc dominates: anchors fix only the events they touch, but the 6:1 echo majority continues to majority-capture every unanchored event. Even near-complete anchoring only partially repairs the inversion.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="e6-curve"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive line chart: anchored event budget vs. AUC recovery. <a href="assets/e6_anchoring.png">See static version</a>.
             </div>
         </div>
 
         <!-- Closing -->
         <div class="closing-section">
             <h2 class="closing-title">What This Adds Up To</h2>
-            <p class="closing-point"><strong>The estimator is sound.</strong> On synthetic data with known ground truth, EM recovery matches or beats supervised and unsupervised baselines. The model machinery is not the problem.</p>
-            <p class="closing-point"><strong>Consensus is not truth.</strong> Without an external anchor, fitted "reliability" is agreement-with-consensus by construction. Our three inversions are not bugs but the theorem manifesting. One failure mode (syndication) is fixable from data alone. The other (unreliable majorities) requires anchors or a fundamental rethink of what we're measuring.</p>
-            <p class="closing-point"><strong>Omission auditing is the honest product.</strong> We can reliably measure which outlets systematically omit claims the rest of the field corroborates, and which propagate claims nobody else carries — label-free and not served by supervised outlet classifiers.</p>
+            <p class="closing-point"><strong>The estimator is sound.</strong> On synthetic data, online EM recovers planted parameters at ρ = 0.88 — matching batch Dawid-Skene and beating majority voting. The machinery works when its assumptions hold.</p>
+            <p class="closing-point"><strong>Consensus is not truth.</strong> Fitted consensus-agreement measures co-coverage intensity by construction. Syndication duplication inverts recovery to ρ = −0.87 (fully repairable via dedup voting). Unreliable majorities invert recovery irreparably (Reuters ranks last on ISOT). The in-the-wild inversion on FakeNewsNet (ρ = −0.16) replicates this: fabricated stories cluster, so consensus masquerades as corroboration. Consensus-agreement null against factuality (ρ = −0.10, CI [−0.24, 0.05] on UCI) confirms the estimand mismatch.</p>
+            <p class="closing-point"><strong>Omission auditing is the honest use case.</strong> Consensus-agreement estimates which outlets systematically omit claims the broader field corroborates, and which propagate outlier stories (E5). The estimates are label-free and separate outlets by editorial beat without supervision — a real and actionable product not available from supervised outlet classifiers. Anchoring can break the majority-capture symmetry but at a cost that scales with echo dominance: sparse anchoring (the standard prescription) fails when the unreliable bloc dominates (E6).</p>
 
             <div class="callout-box">
-                <strong>STAPLE-News Consensus Principle.</strong> Outlet estimates are model artifacts. Consensus-agreement is a structural property of coverage, not a verdict on truth. This product measures what was covered and who covered it together, not whether any of it is true. Use it to audit omission and understand the outlet ecosystem, not to rank truthfulness.
+                <strong>STAPLE-News Consensus Principle.</strong> Outlet consensus-agreement is a structural property of coverage, not a verdict on factuality. Estimates measure co-coverage intensity and popularity clustering. High consensus-agreement can reflect accuracy or synchronized misinformation. Use consensus estimates to audit omission and understand outlet ecosystem structure. Do not use to rank truthfulness.
             </div>
         </div>
     </div>
@@ -421,7 +460,7 @@
     </footer>
 
     <script>
-        // Load results.json and render E2 and E3b charts
+        // Load results.json and render all charts
         fetch('data/results.json')
             .then(response => response.json())
             .then(data => {
@@ -524,12 +563,89 @@
                 };
 
                 Plotly.newPlot('e4-uci-scatter', [e4UciTrace], e4UciLayout, {responsive: true, displayModeBar: false});
+
+                // E5 Heatmap
+                if (data.e5_heatmap) {
+                    const e5HeatmapTrace = {
+                        z: data.e5_heatmap.z,
+                        x: data.e5_heatmap.categories,
+                        y: data.e5_heatmap.outlets,
+                        type: 'heatmap',
+                        colorscale: 'Blues',
+                        colorbar: {
+                            title: 'Coverage rate',
+                            thickness: 15,
+                            len: 0.7
+                        },
+                        hovertemplate: '<b>%{y}</b><br>%{x}<br>Coverage: %{z:.1%}<extra></extra>',
+                        zmin: 0,
+                        zmax: 0.6
+                    };
+
+                    const e5HeatmapLayout = {
+                        title: 'E5: Per-Outlet Coverage by Editorial Category',
+                        xaxis: {title: 'Editorial Category'},
+                        yaxis: {title: 'Outlet'},
+                        plot_bgcolor: '#f0f0f0',
+                        margin: {l: 180, r: 60, t: 50, b: 50},
+                        height: 560
+                    };
+
+                    Plotly.newPlot('e5-heatmap', [e5HeatmapTrace], e5HeatmapLayout, {responsive: true, displayModeBar: false});
+                }
+
+                // E6 Anchoring Curve
+                if (data.e6_curve) {
+                    const e6CurveTrace = {
+                        x: data.e6_curve.map(d => d.budget),
+                        y: data.e6_curve.map(d => d.auc),
+                        mode: 'lines+markers',
+                        name: 'Recovery (AUC)',
+                        line: {color: '#fc4f30', width: 3},
+                        marker: {size: 8}
+                    };
+
+                    const e6ChanceLine = {
+                        x: [0, 2500],
+                        y: [0.5, 0.5],
+                        mode: 'lines',
+                        name: 'Chance (AUC=0.5)',
+                        line: {color: '#999', width: 1, dash: 'dash'},
+                        hoverinfo: 'skip',
+                        showlegend: true
+                    };
+
+                    const e6FullRecoveryLine = {
+                        x: [0, 2500],
+                        y: [1.0, 1.0],
+                        mode: 'lines',
+                        name: 'Full Recovery (AUC=1.0)',
+                        line: {color: '#999', width: 1, dash: 'dash'},
+                        hoverinfo: 'skip',
+                        showlegend: true
+                    };
+
+                    const e6Layout = {
+                        title: 'E6: AUC Recovery vs. Anchor Budget',
+                        xaxis: {title: 'Anchored events (of 2,941)', zeroline: false},
+                        yaxis: {title: 'AUC (real vs synthetic separation)', zeroline: false, range: [-0.05, 1.1]},
+                        hovermode: 'closest',
+                        plot_bgcolor: '#f0f0f0',
+                        margin: {l: 60, r: 40, t: 40, b: 50},
+                        showlegend: true,
+                        legend: {x: 0.6, y: 0.1}
+                    };
+
+                    Plotly.newPlot('e6-curve', [e6CurveTrace, e6ChanceLine, e6FullRecoveryLine], e6Layout, {responsive: true, displayModeBar: false});
+                }
             })
             .catch(err => {
                 console.error('Error loading results.json:', err);
                 document.getElementById('e2Chart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
                 document.getElementById('e3bChart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
                 document.getElementById('e4-uci-scatter').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+                document.getElementById('e5-heatmap').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+                document.getElementById('e6-curve').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
             });
     </script>
 </body>
