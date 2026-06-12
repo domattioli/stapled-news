@@ -168,6 +168,18 @@ at k = 1,500 (51% coverage), and attains the correct ranking (AUC 1.0) only at k
 — 85% of events anchored. Sparse anchoring, the standard prescription, does not repair
 an echo-dominated majority.
 
+**E5 — the omission channel recovers editorial structure with no labels.** The same fitted
+model exposes coverage, not just reliability: for each outlet and each UCI topic category,
+the share of well-corroborated stories (≥ 3 outlets) the outlet carried. Across 7,166
+events and the 30 most active outlets, coverage separates cleanly by editorial beat with
+no supervision. contactmusic.com covers 56% of corroborated entertainment stories but
+0.1% of business — a 56-point omission gap. Entertainment shows the widest spread:
+tabloid and celebrity outlets at 41–56% (contactmusic.com, thecelebritycafe.com,
+dailymail.co.uk) against wire and financial desks at 1–3% (bloomberg.com, reuters.com,
+marketwatch.com, nasdaq.com). This is the label-free product the rest of the paper argues
+for: not "which outlet is truthful" but "which outlet systematically declines to cover
+what its peers corroborate."
+
 ## 4. Discussion
 
 **What the parameters mean.** Without an external anchor, the fitted "reliability" is
