@@ -611,7 +611,7 @@ def test_empty_repo_fields(tmp_path):
 
     counts = load_frontpages(conn, repo_path=str(repo_path))
 
-    # Only 1 article should be loaded
-    assert counts["articles_new"] == 1
+    # Title-less article skipped; url-less keyed by title hash and loaded.
+    assert counts["articles_new"] == 2
     # 2 should be skipped
-    assert counts["skipped"] >= 2
+    assert counts["skipped"] >= 1

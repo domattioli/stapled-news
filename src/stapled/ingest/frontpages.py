@@ -196,8 +196,10 @@ def load_frontpages(
                     text=True,
                     check=False,
                 )
+                # Keep (stem, real filename) pairs — some outlets use
+                # multi-dot names like politik.html.json.
                 files = [
-                    Path(f).name.split(".")[0]
+                    (Path(f).name.split(".")[0], Path(f).name)
                     for f in result.stdout.strip().split("\n")
                     if f and f.endswith(".json")
                 ]
@@ -206,15 +208,15 @@ def load_frontpages(
 
             # Filter by section globs
             matching_files = []
-            for file_stem in files:
+            for file_stem, file_name in files:
                 for glob_pattern in section_globs:
                     if fnmatch(file_stem, glob_pattern):
-                        matching_files.append(file_stem)
+                        matching_files.append(file_name)
                         break
 
             # Process matching files
-            for file_stem in matching_files:
-                file_path = f"docs/snapshots/{outlet_name}/{file_stem}.json"
+            for file_name in matching_files:
+                file_path = f"docs/snapshots/{outlet_name}/{file_name}"
 
                 # Read file from git
                 try:
