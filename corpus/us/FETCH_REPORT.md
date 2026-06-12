@@ -1,6 +1,6 @@
-# US headline fetch — 2026-06-12T22:48:25.565661+00:00
+# US headline fetch — 2026-06-12T23:49:25.314839+00:00
 
-**Total unique headlines: 2292**
+**Total unique headlines: 2317**
 - RSS politico.com: 0 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
