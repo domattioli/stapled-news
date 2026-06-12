@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results — STAPLE-News</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #333;
+        }
+
+        .masthead {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .masthead-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .masthead-row {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .wordmark {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #222;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .kicker {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #fc4f30;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        nav a {
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #fc4f30;
+        }
+
+        nav a.active {
+            color: #222;
+            border-bottom: 2px solid #fc4f30;
+            padding-bottom: 2px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .article-header {
+            max-width: 740px;
+            margin: 60px auto;
+        }
+
+        .article-kicker {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fc4f30;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .article-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #222;
+            margin: 15px 0;
+            line-height: 1.2;
+        }
+
+        .article-dek {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+            margin: 20px 0 0 0;
+            font-style: italic;
+        }
+
+        .article-body {
+            max-width: 740px;
+            margin: 40px auto;
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .article-body p {
+            margin: 0 0 18px 0;
+        }
+
+        .experiment-section {
+            max-width: 740px;
+            margin: 60px auto;
+        }
+
+        .experiment-kicker {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fc4f30;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .experiment-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #222;
+            margin: 0 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .experiment-text {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .experiment-text p {
+            margin: 0 0 15px 0;
+        }
+
+        .figure-card {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 0;
+            margin: 30px 0;
+        }
+
+        .figure-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .figure-caption {
+            font-size: 14px;
+            color: #777;
+            font-style: italic;
+            padding: 15px;
+            line-height: 1.5;
+            border-top: 1px solid #eee;
+        }
+
+        .plotly-container {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 2px;
+        }
+
+        #e2Chart, #e3bChart {
+            width: 100%;
+            height: 400px;
+        }
+
+        .figure-footnote {
+            font-size: 13px;
+            color: #777;
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        .figure-footnote a {
+            color: #fc4f30;
+            text-decoration: underline;
+        }
+
+        .closing-section {
+            max-width: 740px;
+            margin: 60px auto;
+        }
+
+        .closing-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #222;
+            margin: 0 0 25px 0;
+        }
+
+        .closing-point {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 18px;
+            font-style: italic;
+        }
+
+        .closing-point strong {
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        .callout-box {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 20px;
+            margin: 30px 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .callout-box strong {
+            font-weight: 600;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            margin-top: 100px;
+            padding: 40px 0;
+        }
+
+        footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .footer-link {
+            color: #fc4f30;
+        }
+
+        @media (max-width: 760px) {
+            .masthead-row {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            nav {
+                width: 100%;
+                flex-wrap: wrap;
+                padding-top: 10px;
+                border-top: none;
+                gap: 15px;
+            }
+
+            .article-title {
+                font-size: 28px;
+            }
+
+            .article-dek {
+                font-size: 16px;
+            }
+
+            .experiment-title {
+                font-size: 20px;
+            }
+
+            .experiment-text, .article-body {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="masthead">
+        <div class="masthead-content">
+            <div class="masthead-row">
+                <a href="index.html" class="wordmark">STAPLE‑News</a>
+                <div class="kicker">Consensus Lab</div>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="explore.html">Explorer</a>
+                <a href="sources.html">Data & Method</a>
+                <a href="results.html" class="active">Results</a>
+                <a href="paper.html">Paper</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="article-header">
+            <div class="article-kicker">Results</div>
+            <h1 class="article-title">Five Experiments in Measuring Media Consensus</h1>
+            <p class="article-dek">The estimator works on clean data, inverts predictably under syndication and unreliable majorities, and shows where the repair hierarchy stands.</p>
+        </div>
+
+        <!-- E1 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E1 Recovery</div>
+            <h2 class="experiment-title">The Estimator Works When Its Assumptions Hold</h2>
+            <div class="experiment-text">
+                <p>Across 30 synthetic corpora with planted outlet reliability parameters, online EM recovers ground truth at mean ρ ≈ 0.88 — comparing favorably to batch Dawid-Skene (0.90), certainty-weighted majority (0.87), and especially plain majority vote (0.71). The streaming approximation introduces negligible loss.</p>
+            </div>
+            <div class="figure-card">
+                <img src="assets/e1_recovery.png" alt="Parameter recovery: online EM vs. baselines" class="figure-image">
+                <div class="figure-caption">Online EM recovers planted outlet parameters at ρ ≈ 0.88 across 30 seeds, on par with batch methods and substantially better than majority voting.</div>
+            </div>
+        </div>
+
+        <!-- E2 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E2 Syndication</div>
+            <h2 class="experiment-title">Wire-Service Duplication Is an Inversion Machine — Dedup Voting Repairs It Exactly</h2>
+            <div class="experiment-text">
+                <p>When un-deduplicated wire copies are injected at multiplicity m ∈ {1, 2, 5, 10, 20} and re-attributed across outlets, recovery without deduplication degrades monotonically: ρ = 0.82 (m=1) → 0.73 (m=2) → 0.31 (m=10) → <strong>−0.87 (m=20)</strong>. At high multiplicity the model ranks outlets backwards, having adopted the echoed unreliable wire account as consensus ground truth.</p>
+                <p>With fractional dedup voting enabled, recovery remains flat across the entire sweep (0.78–0.84). This isolates one mechanism of majority-capture — manufactured majorities from syndication — and shows it is fully repairable from data alone.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="e2Chart"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive Plotly chart. <a href="assets/e2_syndication.png">See static matplotlib version</a>.
+            </div>
+        </div>
+
+        <!-- E3 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E3 ISOT</div>
+            <h2 class="experiment-title">An Unreliable True Majority Is Not Repairable</h2>
+            <div class="experiment-text">
+                <p>On the ISOT corpus (42,681 articles), one real outlet (Reuters) is structurally outnumbered by six synthetic fake sources. Reuters ranks 7th (last) by estimated reliability with AUC = 0.0: textbook majority-capture, exactly as the identifiability argument predicts. Dedup voting deflates the fake bloc's estimates (mean 0.83 → 0.67) but cannot reorder them — there is no information in the data to do so. This experiment shows the failure mode we cannot fix from data alone.</p>
+            </div>
+            <div class="figure-card">
+                <img src="assets/e3_isot.png" alt="ISOT corpus: real outlet ranked last by estimated reliability" class="figure-image">
+                <div class="figure-caption">On ISOT, Reuters ranks 7/7 by estimated consensus-agreement because the majority of articles come from synthetic fabricated sources.</div>
+            </div>
+        </div>
+
+        <!-- E3b -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E3b FakeNewsNet</div>
+            <h2 class="experiment-title">The Inversion Replicates in the Wild, Significantly</h2>
+            <div class="experiment-text">
+                <p>On FakeNewsNet's natural 2,531-domain corpus (341 outlets participating after an alignment upgrade), outlet consensus-agreement correlates <strong>negatively</strong> with held-out fact-checker labels: ρ = −0.16 (p = 0.003), binary AUC = 0.09. Domains carrying mostly-fabricated stories obtain higher consensus-agreement because fabricated celebrity stories are heavily co-covered — popularity masquerades as corroboration. This is the organic, in-the-wild counterpart of E3's designed inversion, and it is statistically significant.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="e3bChart"></div>
+            </div>
+            <div class="figure-footnote">
+                Interactive scatter: x-axis = share of articles tagged as fabricated, y-axis = consensus-agreement estimate. <a href="assets/e3b_fnn.png">See static version</a>.
+            </div>
+        </div>
+
+        <!-- E4 -->
+        <div class="experiment-section">
+            <div class="experiment-kicker">E4 External</div>
+            <h2 class="experiment-title">External Validity Is Extraction-Limited</h2>
+            <div class="experiment-text">
+                <p>Against Media Bias/Fact Check (MBFC) ratings, factuality correlation is null: ρ = −0.11 with bootstrap CI [−0.46, 0.24] (n=34 outlets). We tested whether claim-matching fidelity was the binding constraint by upgrading from frozen-vocab TF-IDF (cosine ≥ 0.55) to dual word + character-n-gram vectors plus entity-anchored blocking. Multi-outlet event coverage rose 23% (258 → 318 events; outlets scored 167 → 341) and made E3b's inversion reach significance, but manual audit found roughly 40% false merges at the operating threshold and the MBFC correlation remained null. Title-only claims with lexical matching sit below the fidelity this validation axis needs — the "voxelization" bottleneck dominates before the model can speak.</p>
+            </div>
+            <div class="figure-card">
+                <img src="assets/e4_external.png" alt="MBFC external validation: null correlation" class="figure-image">
+                <div class="figure-caption">Against MBFC ratings, factuality correlation is null, bounded by claim-extraction fidelity rather than the model itself.</div>
+            </div>
+        </div>
+
+        <!-- Closing -->
+        <div class="closing-section">
+            <h2 class="closing-title">What This Adds Up To</h2>
+            <p class="closing-point"><strong>The estimator is sound.</strong> On synthetic data with known ground truth, EM recovery matches or beats supervised and unsupervised baselines. The model machinery is not the problem.</p>
+            <p class="closing-point"><strong>Consensus is not truth.</strong> Without an external anchor, fitted "reliability" is agreement-with-consensus by construction. Our three inversions are not bugs but the theorem manifesting. One failure mode (syndication) is fixable from data alone. The other (unreliable majorities) requires anchors or a fundamental rethink of what we're measuring.</p>
+            <p class="closing-point"><strong>Omission auditing is the honest product.</strong> We can reliably measure which outlets systematically omit claims the rest of the field corroborates, and which propagate claims nobody else carries — label-free and not served by supervised outlet classifiers.</p>
+
+            <div class="callout-box">
+                <strong>STAPLE-News Consensus Principle.</strong> Outlet estimates are model artifacts. Consensus-agreement is a structural property of coverage, not a verdict on truth. This product measures what was covered and who covered it together, not whether any of it is true. Use it to audit omission and understand the outlet ecosystem, not to rank truthfulness.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <footer-content>
+            <p>STAPLE‑News — measuring consensus, not truth. Outlet estimates are model artifacts.</p>
+            <p><a href="https://github.com/domattioli/stapled-news" class="footer-link">GitHub</a> · <a href="paper.html" class="footer-link">Paper</a></p>
+        </footer-content>
+    </footer>
+
+    <script>
+        // Load results.json and render E2 and E3b charts
+        fetch('data/results.json')
+            .then(response => response.json())
+            .then(data => {
+                // E2 Chart
+                const e2Dedup = data.e2_curve.dedup_on.map(d => ({m: d.m, rho: d.mean_rho}));
+                const e2NoDedup = data.e2_curve.dedup_off.map(d => ({m: d.m, rho: d.mean_rho}));
+
+                const trace1 = {
+                    x: e2NoDedup.map(d => d.m),
+                    y: e2NoDedup.map(d => d.rho),
+                    name: 'Dedup Off',
+                    mode: 'lines+markers',
+                    line: {color: '#fc4f30', width: 2},
+                    marker: {size: 6}
+                };
+
+                const trace2 = {
+                    x: e2Dedup.map(d => d.m),
+                    y: e2Dedup.map(d => d.rho),
+                    name: 'Dedup On',
+                    mode: 'lines+markers',
+                    line: {color: '#008fd5', width: 2},
+                    marker: {size: 6}
+                };
+
+                const trace3 = {
+                    x: [1, 20],
+                    y: [0, 0],
+                    name: '',
+                    mode: 'lines',
+                    line: {color: '#999', width: 1, dash: 'dash'},
+                    hoverinfo: 'skip',
+                    showlegend: false
+                };
+
+                const layout = {
+                    title: 'Recovery vs. Duplication Multiplicity',
+                    xaxis: {title: 'Multiplicity (m)', zeroline: false},
+                    yaxis: {title: 'Mean Spearman ρ', zeroline: false},
+                    hovermode: 'closest',
+                    plot_bgcolor: '#fafafa',
+                    margin: {l: 60, r: 40, t: 40, b: 50}
+                };
+
+                Plotly.newPlot('e2Chart', [trace1, trace2, trace3], layout, {responsive: true, displayModeBar: false});
+
+                // E3b Scatter
+                const e3bData = data.e3b_scatter;
+                const scatterTrace = {
+                    x: e3bData.map(d => d.fake_share),
+                    y: e3bData.map(d => d.reliability),
+                    text: e3bData.map(d => d.outlet),
+                    mode: 'markers',
+                    marker: {color: '#810f7c', size: 8},
+                    hovertemplate: '<b>%{text}</b><br>Fake Share: %{x:.1%}<br>Consensus-Agreement: %{y:.3f}<extra></extra>'
+                };
+
+                const e3bLayout = {
+                    title: 'Consensus-Agreement vs. Fabrication Share (FakeNewsNet)',
+                    xaxis: {title: 'Share of Articles Fabricated', zeroline: false, tickformat: '.0%'},
+                    yaxis: {title: 'Estimated Consensus-Agreement', zeroline: false},
+                    hovermode: 'closest',
+                    plot_bgcolor: '#fafafa',
+                    margin: {l: 60, r: 40, t: 40, b: 50}
+                };
+
+                Plotly.newPlot('e3bChart', [scatterTrace], e3bLayout, {responsive: true, displayModeBar: false});
+            })
+            .catch(err => {
+                console.error('Error loading results.json:', err);
+                document.getElementById('e2Chart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+                document.getElementById('e3bChart').innerHTML = '<p style="color: #999; padding: 20px;">Unable to load chart data.</p>';
+            });
+    </script>
+</body>
+</html>
