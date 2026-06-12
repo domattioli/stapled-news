@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T21:26:42.610353",
+  "generated_at": "2026-06-12T21:40:44.425896",
   "corpus": {
     "repo": "defgsus/frontpage-archive-2026",
     "since": "2026-05-14",
@@ -15,121 +15,161 @@
       "n_articles": 2,
       "mean_distance": 0.332569,
       "ci_low": 0.246623,
-      "ci_high": 0.418515
+      "ci_high": 0.418515,
+      "lean": "right"
     },
     {
       "outlet": "theguardian.com",
       "n_articles": 3,
       "mean_distance": 0.380165,
       "ci_low": 0.287916,
-      "ci_high": 0.435271
+      "ci_high": 0.435271,
+      "lean": "left"
     },
     {
       "outlet": "npr.org",
       "n_articles": 2,
       "mean_distance": 0.381191,
       "ci_low": 0.237718,
-      "ci_high": 0.524664
+      "ci_high": 0.524664,
+      "lean": "left"
     },
     {
       "outlet": "nbcnews.com",
       "n_articles": 4,
       "mean_distance": 0.389653,
       "ci_low": 0.268291,
-      "ci_high": 0.496261
+      "ci_high": 0.496261,
+      "lean": "left"
     },
     {
       "outlet": "cbsnews.com",
       "n_articles": 6,
       "mean_distance": 0.392611,
       "ci_low": 0.32546,
-      "ci_high": 0.450541
+      "ci_high": 0.450541,
+      "lean": "left"
     },
     {
       "outlet": "breitbart.com",
       "n_articles": 2,
       "mean_distance": 0.394507,
       "ci_low": 0.343081,
-      "ci_high": 0.445932
+      "ci_high": 0.445932,
+      "lean": "right"
     },
     {
       "outlet": "abcnews.go.com",
       "n_articles": 4,
       "mean_distance": 0.40035,
       "ci_low": 0.341385,
-      "ci_high": 0.459773
+      "ci_high": 0.459773,
+      "lean": "left"
     },
     {
       "outlet": "nytimes.com",
       "n_articles": 3,
       "mean_distance": 0.408587,
       "ci_low": 0.332102,
-      "ci_high": 0.517378
+      "ci_high": 0.517378,
+      "lean": "left"
     },
     {
       "outlet": "dailykos.com",
       "n_articles": 2,
       "mean_distance": 0.408743,
       "ci_low": 0.263199,
-      "ci_high": 0.554288
+      "ci_high": 0.554288,
+      "lean": "left"
     },
     {
       "outlet": "huffpost.com",
       "n_articles": 3,
       "mean_distance": 0.416011,
       "ci_low": 0.318045,
-      "ci_high": 0.564658
+      "ci_high": 0.564658,
+      "lean": "left"
     },
     {
       "outlet": "ashingtonexaminer.com",
       "n_articles": 2,
       "mean_distance": 0.432173,
       "ci_low": 0.316753,
-      "ci_high": 0.547593
+      "ci_high": 0.547593,
+      "lean": "right"
     },
     {
       "outlet": "thehill.com",
       "n_articles": 5,
       "mean_distance": 0.447593,
       "ci_low": 0.347203,
-      "ci_high": 0.549499
+      "ci_high": 0.549499,
+      "lean": "center"
     },
     {
       "outlet": "foxnews.com",
       "n_articles": 6,
       "mean_distance": 0.448371,
       "ci_low": 0.384477,
-      "ci_high": 0.498026
+      "ci_high": 0.498026,
+      "lean": "right"
     },
     {
       "outlet": "yahoo.com",
       "n_articles": 11,
       "mean_distance": 0.473162,
       "ci_low": 0.423263,
-      "ci_high": 0.525845
+      "ci_high": 0.525845,
+      "lean": "left"
     },
     {
       "outlet": "cnn.com",
       "n_articles": 2,
       "mean_distance": 0.481671,
       "ci_low": 0.413803,
-      "ci_high": 0.54954
+      "ci_high": 0.54954,
+      "lean": "left"
     },
     {
       "outlet": "wsj.com",
       "n_articles": 4,
       "mean_distance": 0.484264,
       "ci_low": 0.43927,
-      "ci_high": 0.556115
+      "ci_high": 0.556115,
+      "lean": "center"
     },
     {
       "outlet": "politico.com",
       "n_articles": 1,
       "mean_distance": 0.502492,
       "ci_low": 0.502492,
-      "ci_high": 0.502492
+      "ci_high": 0.502492,
+      "lean": "left"
     }
   ],
+  "lean_breakdown": {
+    "groups": {
+      "left": {
+        "n_articles": 41,
+        "mean_distance": 0.423913,
+        "ci_low": 0.393449,
+        "ci_high": 0.455226
+      },
+      "center": {
+        "n_articles": 9,
+        "mean_distance": 0.463891,
+        "ci_low": 0.402914,
+        "ci_high": 0.534351
+      },
+      "right": {
+        "n_articles": 12,
+        "mean_distance": 0.417394,
+        "ci_low": 0.365245,
+        "ci_high": 0.466743
+      }
+    },
+    "unmapped_outlets": []
+  },
   "weekly": {},
   "events": [
     {
