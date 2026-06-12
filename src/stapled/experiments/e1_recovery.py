@@ -287,7 +287,9 @@ def _create_plot(results: list, n_seeds: int, out_path: Path) -> str:
 
     # Create box plot
     data = [by_method[m] for m in methods]
-    bp = ax.boxplot(data, labels=methods, patch_artist=True)
+    bp = ax.boxplot(data, patch_artist=True)
+    ax.set_xticks(range(1, len(methods) + 1))
+    ax.set_xticklabels(methods)
 
     # Styling
     for patch in bp["boxes"]:
