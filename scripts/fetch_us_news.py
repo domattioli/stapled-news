@@ -79,11 +79,16 @@ def fetch_gdelt(days, report):
                 "enddatetime": day_end.strftime("%Y%m%d%H%M%S"),
             })
             url = f"https://api.gdeltproject.org/api/v2/doc/doc?{params}"
-            try:
-                data = json.loads(_get(url).decode("utf-8", "replace"))
-            except Exception as e:  # noqa: BLE001
-                report.append(f"- GDELT day {d} error: {type(e).__name__}: {e}")
-                time.sleep(2)
+            data = None
+            for attempt in range(4):
+                try:
+                    data = json.loads(_get(url).decode("utf-8", "replace"))
+                    break
+                except Exception as e:  # noqa: BLE001
+                    if attempt == 3:
+                        report.append(f"- GDELT day {d} error: {type(e).__name__}: {e}")
+                    time.sleep(10 * (attempt + 1))  # GDELT 429s demand patience
+            if data is None:
                 continue
             for a in data.get("articles", []):
                 u = (a.get("url") or "").split("?")[0]
@@ -92,7 +97,7 @@ def fetch_gdelt(days, report):
                 if u and t and dom and u not in rows:
                     rows[u] = (dom, t, u, a.get("seendate", ""), "gdelt")
                     got_q += 1
-            time.sleep(1.2)  # GDELT rate courtesy
+            time.sleep(6)  # GDELT enforces ~5s between queries
         report.append(f"- GDELT query `{q[:50]}…`: {got_q} new rows")
     return rows
 
