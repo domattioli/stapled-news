@@ -27,11 +27,12 @@ clusters), the factuality correlation is a precise null (ρ = −0.009, CI [−0
 Deduplicated fractional voting repairs the syndication pathway specifically
 (recovery stays at ρ ≈ 0.82–0.84 across 20× duplication) but cannot repair unreliable
 majorities — and neither, cheaply, can anchoring: on ISOT, posterior-clamping anchors on
-externally verified events left rankings inverted at every budget below 50% of events
-(AUC ≤ 0.33 at 1,500 of 2,941) and recovered fully only at 85% coverage. We argue the
-estimand should be named what it is — consensus, truth-calibrated only where anchor
-coverage overwhelms the echo — and position the method as an omission-auditing tool
-rather than a truth detector.
+externally verified events (10-seed averaged) leave the ranking inverted below 100
+anchored events (3.4% of 2,941, AUC 0.0) and lift separation to only AUC 0.73 even at 85%
+coverage, never reaching full recovery. We argue the estimand should be named what it is
+— consensus, truth-calibrated only weakly and at high cost where anchor coverage fights
+the echo — and position the method as an omission-auditing tool rather than a truth
+detector.
 
 ---
 
@@ -160,13 +161,16 @@ E3b and E4 are two faces of one estimand mismatch — on fabrication-heavy corpo
 consensus-agreement *inverts* against factuality; on mainstream coverage it is
 *orthogonal* to it.
 
-**E6 — anchoring breaks the symmetry only when it overwhelms the echo.** On ISOT,
-posterior-clamping anchors derived from externally verified events were applied at
-budgets k ∈ {0, 5, 10, 25, 50, 100, 200, 400, 800, 1,500, 2,500} of 2,941 multi-outlet
-events. Recovery is flat at AUC 0.0 through k = 100, reaches only 0.17 by k = 800, 0.33
-at k = 1,500 (51% coverage), and attains the correct ranking (AUC 1.0) only at k = 2,500
-— 85% of events anchored. Sparse anchoring, the standard prescription, does not repair
-an echo-dominated majority.
+**E6 — anchoring helps only at high cost and never fully.** On ISOT, posterior-clamping
+anchors derived from externally verified events were applied at budgets k ∈ {0, 100, 400,
+800, 1,200, 1,600, 2,000, 2,500} of 2,941 multi-outlet events, each averaged over 10
+independent anchor draws (the per-draw result is noisy: which events are anchored matters
+as much as how many). Mean separation is flat at AUC 0.0 through k = 100 (3.4%), rises to
+0.15 at k = 400, 0.22 at k = 800, 0.67 at k = 1,200 (41%), and plateaus at 0.73 by
+k = 2,500 (85%) — the real outlet climbs from rank 7 of 7 to rank 2 but never to first,
+and full separation (AUC 1.0) is reached at no budget tested. Sparse anchoring, the
+standard prescription, does not repair an echo-dominated majority, and even near-complete
+anchoring only partially does.
 
 **E5 — the omission channel recovers editorial structure with no labels.** The same fitted
 model exposes coverage, not just reliability: for each outlet and each UCI topic category,
@@ -198,15 +202,17 @@ by the supervised outlet-classification line [10, 13].
 repairable from data alone — near-duplicate detection plus fractional voting, the E2
 result — and should be standard in any news application of rater models, given documented
 wire dependence in modern newsrooms [14]. Unreliable majorities are repairable only with
-anchors, and E6 measures what that costs: clamping posteriors on externally verified
-events restored nothing below k = 200 of 2,941 multi-outlet events (AUC 0.0), reached
-AUC 0.33 at k = 1,500 (51%), and recovered the correct ranking only at k = 2,500 (85%
-coverage). The mechanism is plain: anchors fix the events they touch, but a 6:1 echo bloc
-continues to majority-capture every unanchored event, keeping its parameters inflated.
-Anchoring is therefore not the cheap symmetry-breaker the truth-discovery literature
-implicitly assumes [7, 9] — its cost scales with the dominance of the unreliable bloc,
-and is highest exactly where it is needed most. Gold-question budgets calibrated on
-honest-majority crowds [9] do not transfer to adversarial-majority media ecosystems.
+anchors, and E6 measures what that costs (10-seed averaged): clamping posteriors on
+externally verified events restored nothing below k = 100 of 2,941 multi-outlet events
+(AUC 0.0), reached AUC 0.67 only at k = 1,200 (41%), and plateaued at 0.73 by k = 2,500
+(85%) without ever achieving full separation. The mechanism is plain: anchors fix the
+events they touch, but a 6:1 echo bloc continues to majority-capture every unanchored
+event, keeping its parameters inflated. Anchoring is therefore not the cheap
+symmetry-breaker the truth-discovery literature implicitly assumes [7, 9] — its cost
+scales with the dominance of the unreliable bloc, is highest exactly where it is needed
+most, and even at 85% coverage leaves the real outlet at rank 2 of 7. Gold-question
+budgets calibrated on honest-majority crowds [9] do not transfer to adversarial-majority
+media ecosystems.
 Extraction fidelity is the third, mundane, binding constraint: E4 is null not because the
 model is wrong but because lexical claim-matching on short titles starves it of
 corroboration structure — precisely the gap between voxels (free correspondence) and
