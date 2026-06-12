@@ -218,6 +218,11 @@
             height: 500px;
         }
 
+        #panel-composition-bar {
+            width: 100%;
+            height: 100px;
+        }
+
         .us-section {
             border-top: 2px solid #ddd;
             padding-top: 60px;
@@ -352,6 +357,38 @@
             text-align: center;
         }
 
+        .method-box {
+            max-width: 740px;
+            margin: 30px auto;
+            border: 1px solid #ddd;
+            padding: 25px;
+            background: #fff;
+        }
+
+        .method-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #222;
+            margin: 0 0 15px 0;
+        }
+
+        .method-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+        }
+
+        .commentary-kicker {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fc4f30;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
         @media (max-width: 760px) {
             .masthead-row {
                 flex-wrap: wrap;
@@ -406,12 +443,7 @@
                 <div class="kicker">Live US Corpus</div>
             </div>
             <nav>
-                <a href="index.html">Home</a>
-                <a href="explore.html">Explorer</a>
-                <a href="sources.html">Data & Method</a>
-                <a href="results.html">Results</a>
-                <a href="consensus.html" class="active">Consensus Distance</a>
-                <a href="paper.html">Paper</a>
+                <a href="consensus.html" class="active">US Outlet Drift</a>
             </nav>
         </div>
     </div>
@@ -419,8 +451,21 @@
     <div class="container">
         <div class="article-header">
             <div class="article-kicker">Live US Corpus</div>
-            <h1 class="article-title">Which Outlets Drift Farthest From the Stapled Headline</h1>
-            <p class="article-dek">US political coverage from <span id="header-date-range"></span>. Every headline measured against the cross-outlet consensus wording. Distance = character n-gram divergence. <strong>Consensus ≠ truth.</strong> Corpus grows hourly via a CI collector; estimates are early and intervals are wide.</p>
+            <h1 class="article-title">How Far Each Outlet Drifts From the Consensus Headline</h1>
+        </div>
+
+        <div class="method-box">
+            <div class="method-title">The method, in plain English</div>
+            <p class="method-text">When a big political story breaks, every outlet writes its own headline for the same underlying facts. We collect those headlines, group them by story, and average them into a single 'consensus headline' — the wording the field converges on. Then we measure how far each outlet's version sits from that average, word by word. An outlet that phrases stories the way everyone else does scores low; an outlet that reaches for its own framing scores high. That's all 'drift' means here: distance from the pack's wording — not accuracy, and not ideology.</p>
+        </div>
+
+        <div class="article-body" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
+            <div class="commentary-kicker">THE TAKE</div>
+            <p>A few things jump out of the early data, and one of them surprised us. The Daily Caller — not exactly a wire service — currently sits closest to the consensus headline, while Politico, the most establishment outlet on the board, sits farthest. If you came in expecting drift to be a partisanship detector, that's your first clue it isn't one. Drift measures wording, and on the handful of stories every outlet covered, the Caller's headlines read like everyone else's.</p>
+
+            <p>So is the consensus itself secretly leaning? We checked, and the honest answer is: not detectably — but the panel is lopsided. Left-leaning outlets contribute about <span id="left-share-text">64</span> percent of the coverage-weighted mass that builds the consensus, center outlets <span id="center-share-text">16</span> percent, right outlets <span id="right-share-text">20</span> percent. Despite that, the three blocs' average drift is statistically indistinguishable — every confidence interval overlaps every other one. The centroid is built mostly from left-leaning desks' wording, and right-leaning desks match it anyway. Make of that what you will; we read it as headline language being far more standardized than the discourse about media bias suggests.</p>
+
+            <p>The usual caveat, stated plainly rather than buried: this corpus is <span id="n-events-text">6</span> stories old. The collector adds headlines every hour, the intervals will tighten, and some of what you see below will move. That's not a bug in the analysis — that's what early data is supposed to do.</p>
         </div>
 
         <div class="stats-strip" id="stats-strip">
@@ -471,6 +516,10 @@
             <div class="article-kicker" style="margin-bottom: 15px;">PANEL COMPOSITION</div>
             <h2 class="section-title">Is the Consensus Itself Leaning?</h2>
             <div class="plotly-container">
+                <div id="panel-composition-bar"></div>
+            </div>
+            <p class="figure-caption">Share of the coverage-weighted mass each bloc contributes to the consensus.</p>
+            <div class="plotly-container">
                 <div id="us-lean-breakdown"></div>
             </div>
             <p class="figure-caption" style="margin-bottom: 25px;">Mean distance from consensus by outlet lean (AllSides classification). Confidence intervals indicate whether the three groups' means differ meaningfully. All intervals overlap — no detectable lean in the stapled consensus itself.</p>
@@ -498,7 +547,7 @@
     <footer>
         <footer-content>
             <p>STAPLE‑News — measuring consensus, not truth. Outlet estimates are model artifacts.</p>
-            <p><a href="https://github.com/domattioli/stapled-news" class="footer-link">GitHub</a> · <a href="results.html" class="footer-link">Results</a> · <a href="paper.html" class="footer-link">Paper</a></p>
+            <p><a href="https://github.com/domattioli/stapled-news" class="footer-link">GitHub</a></p>
         </footer-content>
     </footer>
 
@@ -648,6 +697,9 @@
                 document.getElementById('stat-outlets').textContent = (corpus.n_outlets || 17).toLocaleString();
                 document.getElementById('stat-events').textContent = (corpus.n_events || 0).toLocaleString();
 
+                // Populate commentary placeholders
+                document.getElementById('n-events-text').textContent = corpus.n_events || 6;
+
                 const generated = new Date(usData.generated_at);
                 document.getElementById('stat-date').textContent = generated.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'});
 
@@ -751,6 +803,18 @@
                     const groupNames = ['left', 'center', 'right'];
                     const groupLabels = ['Left-leaning outlets', 'Center outlets', 'Right-leaning outlets'];
 
+                    // Calculate and update panel composition shares from panel_composition
+                    const panelComp = usData.panel_composition || {};
+                    const totalWeightedShare = (panelComp.left?.weighted_share || 0) + (panelComp.center?.weighted_share || 0) + (panelComp.right?.weighted_share || 0);
+                    if (totalWeightedShare > 0) {
+                        const leftShare = Math.round((panelComp.left?.weighted_share || 0) / totalWeightedShare * 100);
+                        const centerShare = Math.round((panelComp.center?.weighted_share || 0) / totalWeightedShare * 100);
+                        const rightShare = Math.round((panelComp.right?.weighted_share || 0) / totalWeightedShare * 100);
+                        document.getElementById('left-share-text').textContent = leftShare;
+                        document.getElementById('center-share-text').textContent = centerShare;
+                        document.getElementById('right-share-text').textContent = rightShare;
+                    }
+
                     // Extract data for each group
                     const leanCIBars = {
                         x: groupNames.map(g => (groups[g] && groups[g].n_articles) ? `${groups[g].n_articles}` : '0'),
@@ -816,17 +880,93 @@
                     Plotly.newPlot('us-lean-breakdown', [leanCIBars, leanDots], leanLayout, {responsive: true, displayModeBar: false});
                     chartsDrawn.lean = true;
 
-                    // Populate lean prose
+                    // Panel Composition Stacked Bar
+                    const panelCompLeft = panelComp.left?.weighted_share || 0;
+                    const panelCompCenter = panelComp.center?.weighted_share || 0;
+                    const panelCompRight = panelComp.right?.weighted_share || 0;
+                    const totalShare = panelCompLeft + panelCompCenter + panelCompRight;
+
+                    if (totalShare > 0) {
+                        const leftShare = panelCompLeft;
+                        const centerShare = panelCompCenter;
+                        const rightShare = panelCompRight;
+                        const leftPct = (leftShare / totalShare * 100).toFixed(1);
+                        const centerPct = (centerShare / totalShare * 100).toFixed(1);
+                        const rightPct = (rightShare / totalShare * 100).toFixed(1);
+
+                        const panelCompositionTrace = {
+                            x: [totalShare],
+                            y: [''],
+                            type: 'bar',
+                            orientation: 'h',
+                            marker: {
+                                color: '#008fd5',
+                                width: 0
+                            },
+                            showlegend: false,
+                            hovertemplate: 'Left-leaning: ' + leftPct + '%<extra></extra>',
+                            base: 0
+                        };
+
+                        const panelCompositionTrace2 = {
+                            x: [centerShare],
+                            y: [''],
+                            type: 'bar',
+                            orientation: 'h',
+                            marker: {
+                                color: '#8b8b8b',
+                                width: 0
+                            },
+                            showlegend: false,
+                            hovertemplate: 'Center: ' + centerPct + '%<extra></extra>'
+                        };
+
+                        const panelCompositionTrace3 = {
+                            x: [rightShare],
+                            y: [''],
+                            type: 'bar',
+                            orientation: 'h',
+                            marker: {
+                                color: '#fc4f30',
+                                width: 0
+                            },
+                            showlegend: false,
+                            hovertemplate: 'Right-leaning: ' + rightPct + '%<extra></extra>'
+                        };
+
+                        const panelCompositionLayout = {
+                            barmode: 'stack',
+                            xaxis: {
+                                showticklabels: false,
+                                showgrid: false,
+                                zeroline: false
+                            },
+                            yaxis: {
+                                showticklabels: false
+                            },
+                            margin: {l: 0, r: 0, t: 10, b: 10},
+                            plot_bgcolor: '#fff',
+                            paper_bgcolor: '#fff',
+                            showlegend: false,
+                            annotations: [
+                                {x: leftShare / 2, y: 0, text: leftPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
+                                {x: leftShare + centerShare / 2, y: 0, text: centerPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
+                                {x: leftShare + centerShare + rightShare / 2, y: 0, text: rightPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'}
+                            ]
+                        };
+
+                        Plotly.newPlot('panel-composition-bar', [panelCompositionTrace, panelCompositionTrace2, panelCompositionTrace3], panelCompositionLayout, {responsive: true, displayModeBar: false});
+                    }
+
+                    // Populate lean prose (minimal, not duplicating the commentary)
                     const proseDiv = document.getElementById('lean-prose');
                     const leftGroup = groups['left'];
                     const centerGroup = groups['center'];
                     const rightGroup = groups['right'];
 
-                    let proseText = '<strong>Composition by AllSides rating:</strong> ';
+                    let proseText = '';
                     if (leftGroup && centerGroup && rightGroup) {
-                        proseText += `Left-leaning outlets contribute ${leftGroup.n_articles} articles (mean distance ${leftGroup.mean_distance.toFixed(4)}), center outlets ${centerGroup.n_articles} (${centerGroup.mean_distance.toFixed(4)}), and right-leaning outlets ${rightGroup.n_articles} (${rightGroup.mean_distance.toFixed(4)}). `;
-                        proseText += `With all three confidence intervals overlapping, no lean is statistically detectable in the consensus wording itself. The stapled consensus is built from ${leftGroup.n_articles + centerGroup.n_articles + rightGroup.n_articles} qualifying articles across ${ranking.length} outlets. `;
-                        proseText += `When an outlet matches the consensus closely, it matches the panel-majority <em>phrasing</em> on these stories—distance measures wording similarity, not editorial stance. This corpus spans ${(corpus.n_events || 6)} early-stage events; conclusions are tentative pending more data.`;
+                        proseText = `<strong>Chart interpretation:</strong> All three confidence intervals overlap—no lean is statistically detectable in the consensus wording itself. When an outlet's distance clusters with others in the same ideological lean, it simply means it phrases stories the way others in that bloc do. Distance measures wording similarity, not accuracy or editorial stance.`;
                     }
                     proseDiv.innerHTML = proseText;
                 }
