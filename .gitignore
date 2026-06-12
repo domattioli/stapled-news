@@ -226,3 +226,4 @@ stapled.db
 data/raw/
 *.db
 *.db.bak
+/data/
