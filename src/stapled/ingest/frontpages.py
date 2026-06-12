@@ -2,6 +2,7 @@
 
 import re
 import json
+import hashlib
 import sqlite3
 import subprocess
 from typing import Dict, Optional
@@ -18,7 +19,7 @@ OUTLET_SECTIONS = {
     "bild.de": ["politik*", "ausland*"],
     "compact-online.de": ["aktuell", "index"],
     "faz.net": ["politik", "aktuell"],
-    "fr.de": ["politik"],
+    "fr.de": ["politik*"],
     "spiegel.de": ["politik", "ausland"],
     "sueddeutsche.de": ["politik"],
     "welt.de": ["politik"],
@@ -243,9 +244,17 @@ def load_frontpages(
                     url = (article.get("url") or "").strip()
                     teaser = (article.get("teaser") or "").strip()
 
-                    if not title or not url:
+                    if not title:
                         counts["skipped"] += 1
                         continue
+                    if not url:
+                        # Some outlets (compact-online.de) publish teaser blocks
+                        # without links; key them by a stable title hash so they
+                        # still enter the corpus.
+                        url = "frontpage://{}/{}".format(
+                            outlet,
+                            hashlib.sha1(title.encode("utf-8")).hexdigest()[:16],
+                        )
 
                     # Normalize URL
                     norm_url = _normalize_url(url)
