@@ -426,5 +426,80 @@
       "max_asymmetry_outlet": "contactmusic.com"
     },
     "timestamp": "2026-06-12T03:34:25.266972+00:00"
+  },
+  {
+    "experiment": "e6",
+    "git_sha": "0c8043b435e2c650b925d1173fbc72c63bf4927f",
+    "seed": 42,
+    "config_hash": "f59a0ef0a5e728cd37ee548034651cff1017789f00247c6444cf3a4b7c252e2d",
+    "outputs": [
+      "results/e6_anchoring.csv",
+      "results/e6_anchoring.png"
+    ],
+    "metrics": {
+      "auc_by_budget": {
+        "0": 0.0,
+        "25": 0.0,
+        "100": 0.0,
+        "200": 0.16666666666666663,
+        "400": 0.16666666666666663,
+        "800": 0.16666666666666663,
+        "1500": 0.33333333333333337,
+        "2500": 0.33333333333333337
+      },
+      "n_multi_outlet_events": 2941,
+      "min_budget_full_recovery": null
+    },
+    "timestamp": "2026-06-12T03:37:17.403735+00:00"
+  },
+  {
+    "experiment": "e6",
+    "git_sha": "8061177719c7a73a6241358312f7751029c1809d",
+    "seed": 42,
+    "config_hash": "f59a0ef0a5e728cd37ee548034651cff1017789f00247c6444cf3a4b7c252e2d",
+    "outputs": [
+      "results/e6_anchoring.csv",
+      "results/e6_anchoring.png"
+    ],
+    "metrics": {
+      "auc_by_budget": {
+        "0": 0.0,
+        "25": 0.0,
+        "100": 0.0,
+        "200": 0.16666666666666663,
+        "400": 0.0,
+        "800": 0.16666666666666663,
+        "1500": 1.0,
+        "2500": 1.0
+      },
+      "n_multi_outlet_events": 2941,
+      "min_budget_full_recovery": 1500
+    },
+    "timestamp": "2026-06-12T03:39:25.298755+00:00"
+  },
+  {
+    "experiment": "e6",
+    "git_sha": "1d490a007945723ff2187e7e54eb3de5578ba479",
+    "seed": 42,
+    "config_hash": "721a6dc3ece4d017911579a69e46795fa755a944931b6c8b47fe42863b746ce2",
+    "outputs": [
+      "results/e6_anchoring.csv",
+      "results/e6_anchoring.png"
+    ],
+    "metrics": {
+      "auc_by_budget": {
+        "0": 0.0,
+        "100": 0.0,
+        "400": 0.14999999999999997,
+        "800": 0.21666666666666662,
+        "1200": 0.6666666666666667,
+        "1600": 0.6666666666666666,
+        "2000": 0.7,
+        "2500": 0.7333333333333334
+      },
+      "n_multi_outlet_events": 2941,
+      "min_budget_full_recovery": null
+    },
+    "timestamp": "2026-06-12T03:59:14.477024+00:00"
   }
 ]
