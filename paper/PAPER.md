@@ -20,7 +20,11 @@ sweep in which un-deduplicated wire copies drive recovery from ρ = 0.82 to ρ =
 a real-corpus run (ISOT, 42,681 articles) in which the only real outlet ranks last among
 seven (AUC = 0.0); and an in-the-wild replication on FakeNewsNet (2,531 publisher domains)
 where outlets carrying mostly-fabricated stories obtain significantly *higher*
-consensus-agreement (ρ = −0.16, p = 0.003; AUC = 0.09). Deduplicated fractional voting repairs the syndication pathway specifically
+consensus-agreement (ρ = −0.16, p = 0.003; AUC = 0.09). On mainstream coverage the same
+estimand is orthogonal to factuality rather than inverted: across 149 MBFC-rated
+publishers in the UCI News Aggregator corpus (228,257 headlines; ground-truth story
+clusters), the factuality correlation is a precise null (ρ = −0.009, CI [−0.17, 0.15]).
+Deduplicated fractional voting repairs the syndication pathway specifically
 (recovery stays at ρ ≈ 0.82–0.84 across 20× duplication) but cannot repair unreliable
 majorities. We argue the estimand should be named what it is — truth-calibrated consensus
 under anchoring, raw consensus without — and position the method as an omission-auditing
@@ -96,8 +100,11 @@ lightly perturbed variants, dedup voting on/off. E3: full ISOT corpus [15] (42,6
 articles; one real outlet, Reuters, vs. six per-topic synthetic fake sources; labels held
 out). E3b/E4: FakeNewsNet [16] (21,575 title-only articles across 2,531 real publisher
 domains, PolitiFact/GossipCop story labels held out), scored against article labels (E3b)
-and MBFC factuality/bias ratings from the ACL-2020 corpus [13] (E4). All experiments are
-seeded, manifest-logged, and reproducible from one command each.
+and MBFC factuality/bias ratings from the ACL-2020 corpus [13] (E4); E4 is then repeated
+on the UCI News Aggregator corpus [18] (228,257 headlines, 9,364 publisher domains),
+whose story identifiers provide ground-truth event clusters and remove claim alignment
+from the error budget. All experiments are seeded, manifest-logged, and reproducible
+from one command each.
 
 ## 3. Results
 
@@ -129,16 +136,25 @@ mostly-fabricated stories obtain higher consensus-agreement because fabricated c
 stories are heavily co-covered — popularity masquerades as corroboration. This is the
 organic counterpart of E3's designed inversion.
 
-**E4 — external validity is extraction-limited.** Against MBFC ratings, factuality
-correlation is null (ρ = −0.11, bootstrap CI [−0.46, 0.24], n = 34 joined outlets).
-We tested whether claim alignment was the binding constraint by replacing frozen-vocab
-word TF-IDF (cosine ≥ 0.55) with dual word + character-n-gram vectors plus
-entity-anchored blocking: multi-outlet event coverage rose 23% (258 → 318 events;
-outlets scored 167 → 341) and made E3b's inversion significant, but manual audit found
-roughly 40% false merges at the operating threshold (distinct stories united by a shared
-celebrity name) and the MBFC correlation remained null. Title-only claims with lexical
-matching sit below the fidelity this validation axis needs — the "voxelization"
-bottleneck dominates before the model can speak.
+**E4 — consensus-agreement does not track outlet factuality, and the null is precise.**
+Two estimates at increasing statistical power agree. On FakeNewsNet, the MBFC factuality
+correlation is null but imprecise (ρ = −0.11, bootstrap CI [−0.46, 0.24], n = 34 joined
+outlets); replacing frozen-vocab word TF-IDF (cosine ≥ 0.55) with dual word +
+character-n-gram vectors plus entity-anchored blocking raised multi-outlet event coverage
+23% (258 → 318 events; outlets scored 167 → 341) and made E3b's inversion significant,
+but a manual audit found roughly 40% false merges at the operating threshold (distinct
+stories united by a shared celebrity name) and the correlation stayed null. The UCI News
+Aggregator corpus [18] removes the alignment bottleneck entirely — its story identifiers
+supply ground-truth event clusters (228,257 headlines, 9,364 publisher domains, 4,207
+multi-outlet events, 13× FakeNewsNet's coverage) — and the null sharpens rather than
+resolves: ρ = −0.009, CI [−0.17, 0.15], n = 149 joined outlets. MBFC-rated "low" and
+"high" outlets sit interleaved at the top of the consensus-agreement ranking
+(breitbart.com 0.976 beside abc.net.au 0.986). The mechanism is visible in the data:
+only 3% of UCI claims are negations, so mainstream outlets overwhelmingly assert the
+same consensus stories and the assertion channel carries no factuality signal.
+E3b and E4 are two faces of one estimand mismatch — on fabrication-heavy corpora
+consensus-agreement *inverts* against factuality; on mainstream coverage it is
+*orthogonal* to it.
 
 ## 4. Discussion
 
@@ -175,9 +191,11 @@ majorities. The negative results align with Pennycook and Rand's finding that cr
 signals track quality only under conditions [17] — consensus is evidence, not verdict.
 
 **Limitations.** Binary D_ij conflates omission with contradiction; titles understate
-claim content; FakeNewsNet labels are story-level, not outlet-level; MBFC join coverage
-is small; gossip-domain consensus may differ qualitatively from political news; and all
-"reliability" language in outputs is consensus-relative by construction.
+claim content; FakeNewsNet labels are story-level, not outlet-level; the UCI corpus
+predates 2015 and parses 228,340 of 422,937 raw rows (unbalanced quotation marks in
+titles defeat the RFC-4180 record splitter for the remainder — a quantified, not
+hand-waved, ingestion loss); and all "reliability" language in outputs is
+consensus-relative by construction.
 
 ## 5. Conclusions
 
@@ -249,3 +267,6 @@ on Social Media." *Big Data* 8(3), 2020.
 
 [17] G. Pennycook, D. G. Rand. "Fighting Misinformation on Social Media Using
 Crowdsourced Judgments of News Source Quality." *PNAS* 116(7), 2019.
+
+[18] F. Gasparetti. "News Aggregator Data Set." UCI Machine Learning Repository, 2017.
+422,937 headlines with same-story cluster identifiers, collected March–August 2014.

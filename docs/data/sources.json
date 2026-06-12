@@ -40399,5 +40399,160 @@
     "count": 472
    }
   ]
+ },
+ "uci": {
+  "top_outlets": [
+   {
+    "name": "in.reuters.com",
+    "articles": 1615,
+    "fact": null
+   },
+   {
+    "name": "huffingtonpost.com",
+    "articles": 1383,
+    "fact": "high"
+   },
+   {
+    "name": "businessweek.com",
+    "articles": 1329,
+    "fact": null
+   },
+   {
+    "name": "dailymail.co.uk",
+    "articles": 1268,
+    "fact": "mixed"
+   },
+   {
+    "name": "contactmusic.com",
+    "articles": 1237,
+    "fact": null
+   },
+   {
+    "name": "nasdaq.com",
+    "articles": 1184,
+    "fact": null
+   },
+   {
+    "name": "globalpost.com",
+    "articles": 1098,
+    "fact": null
+   },
+   {
+    "name": "examiner.com",
+    "articles": 1095,
+    "fact": null
+   },
+   {
+    "name": "latimes.com",
+    "articles": 1018,
+    "fact": null
+   },
+   {
+    "name": "bizjournals.com",
+    "articles": 1012,
+    "fact": null
+   },
+   {
+    "name": "rttnews.com",
+    "articles": 958,
+    "fact": null
+   },
+   {
+    "name": "washingtonpost.com",
+    "articles": 916,
+    "fact": null
+   },
+   {
+    "name": "thecelebritycafe.com",
+    "articles": 882,
+    "fact": null
+   },
+   {
+    "name": "forbes.com",
+    "articles": 860,
+    "fact": null
+   },
+   {
+    "name": "bloomberg.com",
+    "articles": 838,
+    "fact": null
+   },
+   {
+    "name": "entertainmentwise.com",
+    "articles": 838,
+    "fact": null
+   },
+   {
+    "name": "nydailynews.com",
+    "articles": 823,
+    "fact": null
+   },
+   {
+    "name": "marketwatch.com",
+    "articles": 816,
+    "fact": "high"
+   },
+   {
+    "name": "perezhilton.com",
+    "articles": 796,
+    "fact": null
+   },
+   {
+    "name": "hngn.com",
+    "articles": 764,
+    "fact": null
+   },
+   {
+    "name": "time.com",
+    "articles": 763,
+    "fact": null
+   },
+   {
+    "name": "reuters.com",
+    "articles": 733,
+    "fact": "high"
+   },
+   {
+    "name": "techtimes.com",
+    "articles": 723,
+    "fact": null
+   },
+   {
+    "name": "blogs.wsj.com",
+    "articles": 716,
+    "fact": null
+   },
+   {
+    "name": "timesofindia.indiatimes.com",
+    "articles": 711,
+    "fact": "high"
+   }
+  ],
+  "totals": {
+   "articles": 228257,
+   "outlets": 9364,
+   "events": 4232,
+   "multi_outlet_events": 4207,
+   "mbfc_rated_outlets": 249,
+   "negation_claims": 6885
+  },
+  "categories": [
+   {
+    "category": "b",
+    "count": 62912
+   },
+   {
+    "category": "e",
+    "count": 81551
+   },
+   {
+    "category": "m",
+    "count": 25259
+   },
+   {
+    "category": "t",
+    "count": 58535
+   }
+  ]
  }
 }
