@@ -91,6 +91,12 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         )
         event_ids = [row[0] for row in cursor.fetchall()]
 
+        # Optional seeded subsample to bound EM runtime on large corpora
+        max_events = config.get("max_events")
+        if max_events and len(event_ids) > max_events:
+            rng = np.random.default_rng(seed)
+            event_ids = sorted(rng.choice(event_ids, size=max_events, replace=False).tolist())
+
         # Run EM with dedup_voting=True
         em = OnlineEM(outlet_ids, conn=conn, dedup_voting=True)
 
