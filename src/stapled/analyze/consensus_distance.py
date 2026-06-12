@@ -1,5 +1,6 @@
 """Consensus distance analysis for event headline variance across outlets."""
 
+import re
 import sqlite3
 import numpy as np
 from typing import Dict, List, Optional, Tuple
@@ -544,3 +545,86 @@ def validate_split_half(
         "n_outlets": int(n_outlets),
         "gate_pass": bool(gate_pass),
     }
+
+
+def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List[List[Dict]]:
+    """
+    Per-headline word-level attribution of distance from the event centroid.
+
+    For each member headline, every word gets:
+      weight    — the word's share of the headline's vector mass (Σ a_f², features
+                  attributed to the word; bigram features split between both words,
+                  char_wb n-grams assigned to the word containing them)
+      alignment — the fraction of that mass that overlaps the (uniform) member
+                  centroid (Σ a_f·c_f / Σ a_f²), in [0, ~1]. Low alignment with
+                  high weight marks the words pushing the headline away from
+                  consensus; high alignment marks shared-with-consensus wording.
+
+    Returns one list per member title: [{token, weight, alignment}], tokens in
+    original order, weights normalized per headline to sum to 1.
+    """
+    vec_dict, vectors = build_event_vectors(member_titles)
+    dense = np.asarray(vectors.todense())
+    centroid = dense.mean(axis=0)
+    norm = np.linalg.norm(centroid)
+    if norm > 0:
+        centroid = centroid / norm
+
+    word_vec = vec_dict["word"]
+    char_vec = vec_dict["char"]
+    word_features = word_vec.get_feature_names_out()
+    char_features = char_vec.get_feature_names_out()
+    n_word = len(word_features)
+
+    out = []
+    for i, title in enumerate(member_titles):
+        a = dense[i]
+        tokens = re.findall(r"\w[\w'’-]*", title)
+        lowered = [t.lower() for t in tokens]
+        toward = np.zeros(len(tokens))
+        weight = np.zeros(len(tokens))
+
+        def _attribute(feat_idx, contribution_w, contribution_t):
+            for tok_i in feat_idx:
+                weight[tok_i] += contribution_w
+                toward[tok_i] += contribution_t
+
+        # Word features: unigrams map to matching tokens; bigrams split halfway.
+        for f_idx in np.nonzero(a[:n_word])[0]:
+            feat = word_features[f_idx]
+            a_f = a[f_idx]
+            c_f = centroid[f_idx]
+            parts = feat.split()
+            hits = [j for j, lt in enumerate(lowered) if lt in parts]
+            if not hits:
+                continue
+            share_w = (a_f * a_f) / len(hits)
+            share_t = (a_f * c_f) / len(hits)
+            _attribute(hits, share_w, share_t)
+
+        # Char features: assign to every token containing the n-gram (stripped).
+        for f_idx in np.nonzero(a[n_word:])[0]:
+            feat = char_features[f_idx].strip()
+            if not feat:
+                continue
+            a_f = a[n_word + f_idx]
+            c_f = centroid[n_word + f_idx]
+            hits = [j for j, lt in enumerate(lowered) if feat in lt]
+            if not hits:
+                continue
+            share_w = (a_f * a_f) / len(hits)
+            share_t = (a_f * c_f) / len(hits)
+            _attribute(hits, share_w, share_t)
+
+        total_w = weight.sum()
+        rows = []
+        for j, tok in enumerate(tokens[:max_events_tokens]):
+            w = float(weight[j] / total_w) if total_w > 0 else 0.0
+            align = float(toward[j] / weight[j]) if weight[j] > 0 else 0.0
+            rows.append({
+                "token": tok,
+                "weight": round(w, 4),
+                "alignment": round(min(align, 1.0), 4),
+            })
+        out.append(rows)
+    return out
