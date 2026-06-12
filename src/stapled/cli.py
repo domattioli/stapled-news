@@ -26,6 +26,7 @@ from stapled.ingest.csv_loader import (
 )
 from stapled.ingest.fakenewsnet import load_fakenewsnet, load_external_labels
 from stapled.ingest.uci import load_uci
+from stapled.ingest.frontpages import load_frontpages
 from stapled.ingest.dedup import dedup_articles
 from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
@@ -937,6 +938,39 @@ def _generate_training_report(
 </body>
 </html>"""
     return html
+
+
+@app.command("load-frontpages")
+def load_frontpages_cmd(
+    repo: str = typer.Option("/tmp/fp2026", "--repo", help="Path to frontpage-archive-2026 git clone"),
+    since: Optional[str] = typer.Option(None, "--since", help="ISO-8601 date filter (earliest)"),
+    until: Optional[str] = typer.Option(None, "--until", help="ISO-8601 date filter (latest)"),
+    limit_commits: Optional[int] = typer.Option(None, "--limit-commits", help="Max commits to process"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load frontpage-archive-2026 German news corpus."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        counts = load_frontpages(conn, repo_path=repo, since=since, until=until, limit_commits=limit_commits)
+
+        out.set_data(**counts)
+        rows = [
+            {"metric": "Commits processed", "value": str(counts["commits_processed"])},
+            {"metric": "Articles new", "value": str(counts["articles_new"])},
+            {"metric": "Articles updated", "value": str(counts["articles_updated"])},
+            {"metric": "Title variants", "value": str(counts["title_variant_updates"])},
+            {"metric": "Outlets", "value": str(counts["outlets"])},
+            {"metric": "Skipped", "value": str(counts["skipped"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "Frontpages Load Complete")
+        out.output("load-frontpages", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-frontpages", exit_code=1)
+        raise typer.Exit(code=1)
 
 
 @app.callback()
