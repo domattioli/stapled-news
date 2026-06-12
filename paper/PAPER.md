@@ -19,8 +19,8 @@ relabeling of the latent state and rater parameters, unsupervised inference can 
 sweep in which un-deduplicated wire copies drive recovery from ρ = 0.82 to ρ = −0.87;
 a real-corpus run (ISOT, 42,681 articles) in which the only real outlet ranks last among
 seven (AUC = 0.0); and an in-the-wild replication on FakeNewsNet (2,531 publisher domains)
-where outlets carrying mostly-fabricated stories obtain *higher* consensus-agreement
-(AUC = 0.14). Deduplicated fractional voting repairs the syndication pathway specifically
+where outlets carrying mostly-fabricated stories obtain significantly *higher*
+consensus-agreement (ρ = −0.16, p = 0.003; AUC = 0.09). Deduplicated fractional voting repairs the syndication pathway specifically
 (recovery stays at ρ ≈ 0.82–0.84 across 20× duplication) but cannot repair unreliable
 majorities. We argue the estimand should be named what it is — truth-calibrated consensus
 under anchoring, raw consensus without — and position the method as an omission-auditing
@@ -119,25 +119,32 @@ reliability (AUC = 0.0): textbook majority-capture, exactly as the identifiabili
 argument predicts. Dedup voting deflates the fake bloc's estimates (mean 0.83 → 0.67) but
 cannot reorder them — there is no information in the data to do so [2, 8].
 
-**E3b — inversion replicates in the wild.** On FakeNewsNet's natural 2,531-domain corpus,
-outlet consensus-agreement does not track held-out fact-checker labels (ρ = 0.08, n.s.),
-and binary separation is *inverted* (AUC = 0.14): domains carrying mostly-fabricated
-stories obtain higher consensus-agreement, because fabricated celebrity stories are
-heavily co-covered — popularity masquerades as corroboration.
+**E3b — inversion replicates in the wild, significantly.** On FakeNewsNet's natural
+2,531-domain corpus (341 outlets participating after an alignment upgrade described
+below), outlet consensus-agreement correlates *negatively* with held-out fact-checker
+labels: ρ = −0.16 (p = 0.003), binary separation AUC = 0.09. Domains carrying
+mostly-fabricated stories obtain higher consensus-agreement because fabricated celebrity
+stories are heavily co-covered — popularity masquerades as corroboration. This is the
+organic counterpart of E3's designed inversion.
 
 **E4 — external validity is extraction-limited.** Against MBFC ratings, factuality
-correlation is null (ρ = −0.14, bootstrap CI [−0.50, 0.27], n = 22 joined outlets).
-Diagnosis: title-only claims and lexical clustering yield only 258 multi-outlet events
-across thousands of outlets, so most outlets barely participate in inference — the
-"voxelization" bottleneck dominates before the model can speak. (A character-n-gram +
-entity-anchored alignment upgrade is evaluated in the current revision.)
+correlation is null (ρ = −0.11, bootstrap CI [−0.46, 0.24], n = 34 joined outlets).
+We tested whether claim alignment was the binding constraint by replacing frozen-vocab
+word TF-IDF (cosine ≥ 0.55) with dual word + character-n-gram vectors plus
+entity-anchored blocking: multi-outlet event coverage rose 23% (258 → 318 events;
+outlets scored 167 → 341) and made E3b's inversion significant, but manual audit found
+roughly 40% false merges at the operating threshold (distinct stories united by a shared
+celebrity name) and the MBFC correlation remained null. Title-only claims with lexical
+matching sit below the fidelity this validation axis needs — the "voxelization"
+bottleneck dominates before the model can speak.
 
 ## 4. Discussion
 
 **What the parameters mean.** Without an external anchor, the fitted "reliability" is
 agreement-with-consensus, definitionally — the labeling symmetry of the likelihood admits
 no other reading [2, 8]. Our three inversions are not bugs but the theorem manifesting:
-E2's manufactured majorities, E3's designed unreliable majority, E3b's organic one.
+E2's manufactured majorities, E3's designed unreliable majority, E3b's organic and
+statistically significant one.
 Knowledge-Based Trust faced the same issue and anchored against a knowledge base [7];
 crowdsourcing systems anchor with gold questions [9]. The honest unsupervised deliverable
 is therefore *consensus structure*: which outlets systematically omit claims the rest of
