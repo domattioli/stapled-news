@@ -237,5 +237,44 @@
       "spearman_bias_abs_ci_upper": 0.2752559077556656
     },
     "timestamp": "2026-06-12T00:15:37.348975+00:00"
+  },
+  {
+    "experiment": "e3b",
+    "git_sha": "f110eeafc0bb247303c88dce8bf9cea2c0b3e6cc",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e3b_fnn.csv",
+      "results/e3b_fnn.png"
+    ],
+    "metrics": {
+      "n_outlets_scored": 167,
+      "n_events_used": 258,
+      "spearman_rho": 0.08310662095842174,
+      "spearman_pval": 0.2856305981399806,
+      "auc_mostly_fake": 0.13587962962962963
+    },
+    "timestamp": "2026-06-12T00:18:29.642989+00:00"
+  },
+  {
+    "experiment": "e4",
+    "git_sha": "f110eeafc0bb247303c88dce8bf9cea2c0b3e6cc",
+    "seed": 42,
+    "config_hash": "6876aa727ef7ee652911624c82b19f53dcbff348c948a4d3fcd9a08b3aaf037f",
+    "outputs": [
+      "results/e4_external.csv",
+      "results/e4_external.png"
+    ],
+    "metrics": {
+      "n_outlets_joined": 22,
+      "n_events_used": 258,
+      "spearman_fact": -0.14223056193850384,
+      "spearman_bias_abs": 0.21481443382767113,
+      "spearman_fact_ci_lower": -0.49551277128954535,
+      "spearman_fact_ci_upper": 0.2678288454937478,
+      "spearman_bias_abs_ci_lower": 0.08671099695241201,
+      "spearman_bias_abs_ci_upper": 0.39002249342310036
+    },
+    "timestamp": "2026-06-12T00:18:32.235625+00:00"
   }
 ]
