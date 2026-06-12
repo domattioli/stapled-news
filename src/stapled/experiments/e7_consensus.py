@@ -21,6 +21,8 @@ from stapled.analyze.consensus_distance import (
     validate_planted,
     validate_split_half,
     token_impacts,
+    lean_breakdown,
+    PANEL_LEAN,
 )
 
 
@@ -186,9 +188,11 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                     "mean_distance": round(m["mean_distance"], 6),
                     "ci_low": round(m["ci_low"], 6),
                     "ci_high": round(m["ci_high"], 6),
+                    "lean": PANEL_LEAN.get(m["outlet"]),
                 }
                 for m in outlet_metrics
             ],
+            "lean_breakdown": lean_breakdown(article_rows, seed=seed),
             "weekly": weekly_data,
             "events": [
                 {
