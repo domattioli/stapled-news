@@ -79,11 +79,16 @@ def fetch_gdelt(days, report):
                 "enddatetime": day_end.strftime("%Y%m%d%H%M%S"),
             })
             url = f"https://api.gdeltproject.org/api/v2/doc/doc?{params}"
-            try:
-                data = json.loads(_get(url).decode("utf-8", "replace"))
-            except Exception as e:  # noqa: BLE001
-                report.append(f"- GDELT day {d} error: {type(e).__name__}: {e}")
-                time.sleep(2)
+            data = None
+            for attempt in range(4):
+                try:
+                    data = json.loads(_get(url).decode("utf-8", "replace"))
+                    break
+                except Exception as e:  # noqa: BLE001
+                    if attempt == 3:
+                        report.append(f"- GDELT day {d} error: {type(e).__name__}: {e}")
+                    time.sleep(10 * (attempt + 1))  # GDELT 429s demand patience
+            if data is None:
                 continue
             for a in data.get("articles", []):
                 u = (a.get("url") or "").split("?")[0]
@@ -92,7 +97,7 @@ def fetch_gdelt(days, report):
                 if u and t and dom and u not in rows:
                     rows[u] = (dom, t, u, a.get("seendate", ""), "gdelt")
                     got_q += 1
-            time.sleep(1.2)  # GDELT rate courtesy
+            time.sleep(6)  # GDELT enforces ~5s between queries
         report.append(f"- GDELT query `{q[:50]}…`: {got_q} new rows")
     return rows
 
@@ -138,13 +143,25 @@ def probe_hf(report):
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     report = [f"# US headline fetch — {datetime.now(timezone.utc).isoformat()}", ""]
-    rows = fetch_gdelt(DAYS, report)
+    mode = os.environ.get("FETCH_MODE", "all")
+    rows = {} if mode == "rss" else fetch_gdelt(DAYS, report)
     rss_rows = fetch_rss(report)
     for u, r in rss_rows.items():
         rows.setdefault(u, r)
     probe_hf(report)
 
     out = os.path.join(OUT_DIR, "headlines.csv.gz")
+    # Accumulate across runs: prior corpus rows are kept (URL-keyed).
+    if os.path.exists(out):
+        try:
+            with gzip.open(out, "rt", encoding="utf-8") as f:
+                for prior in csv.DictReader(f):
+                    rows.setdefault(prior["url"], (
+                        prior["domain"], prior["title"], prior["url"],
+                        prior["seendate"], prior["source"],
+                    ))
+        except Exception as e:  # noqa: BLE001
+            report.append(f"- prior-corpus merge failed: {type(e).__name__}")
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow(["domain", "title", "url", "seendate", "source"])

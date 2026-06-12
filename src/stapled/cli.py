@@ -27,6 +27,7 @@ from stapled.ingest.csv_loader import (
 from stapled.ingest.fakenewsnet import load_fakenewsnet, load_external_labels
 from stapled.ingest.uci import load_uci
 from stapled.ingest.frontpages import load_frontpages
+from stapled.ingest.us_headlines import load_us_headlines
 from stapled.ingest.dedup import dedup_articles
 from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
 from stapled.extract.claims import extract_all_unextracted
@@ -970,6 +971,37 @@ def load_frontpages_cmd(
     except Exception as e:
         out.add_error(str(e))
         out.output("load-frontpages", exit_code=1)
+        raise typer.Exit(code=1)
+
+
+@app.command("load-us-headlines")
+def load_us_headlines_cmd(
+    path: str = typer.Option("corpus/us/headlines.csv.gz", "--path", help="Path to CSV or CSV.gz file"),
+    min_outlet_articles: int = typer.Option(20, "--min-outlet-articles", help="Minimum articles per domain"),
+    db: str = typer.Option("./stapled.db", help="Path to database"),
+    json_output: bool = typer.Option(False, "--json", help="JSON output"),
+):
+    """Load US headlines CSV corpus."""
+    out = CLIOutput(json_mode=json_output)
+    try:
+        conn = connect(db)
+        counts = load_us_headlines(conn, path=path, min_outlet_articles=min_outlet_articles)
+
+        out.set_data(**counts)
+        rows = [
+            {"metric": "Rows read", "value": str(counts["rows_read"])},
+            {"metric": "Articles new", "value": str(counts["articles_new"])},
+            {"metric": "Articles existing", "value": str(counts["articles_existing"])},
+            {"metric": "Outlets kept", "value": str(counts["outlets_kept"])},
+            {"metric": "Outlets dropped", "value": str(counts["outlets_dropped"])},
+            {"metric": "Skipped", "value": str(counts["skipped"])},
+        ]
+        out.print_table(rows, ["metric", "value"], "US Headlines Load Complete")
+        out.output("load-us-headlines", exit_code=0)
+
+    except Exception as e:
+        out.add_error(str(e))
+        out.output("load-us-headlines", exit_code=1)
         raise typer.Exit(code=1)
 
 
