@@ -315,5 +315,26 @@
       "spearman_bias_abs_ci_upper": 0.4050270802418091
     },
     "timestamp": "2026-06-12T00:50:51.177976+00:00"
+  },
+  {
+    "experiment": "e4_uci",
+    "git_sha": "c7033c842f0f4dd1f3c940185c5a3295e9d4eec7",
+    "seed": 42,
+    "config_hash": "9a64b556899025c122dcee80b2e9e85cb843e6a65d8481f2f2b5dbbdd26f138e",
+    "outputs": [
+      "results/e4_external.csv",
+      "results/e4_external.png"
+    ],
+    "metrics": {
+      "n_outlets_joined": 149,
+      "n_events_used": 4207,
+      "spearman_fact": -0.00948745970691045,
+      "spearman_bias_abs": -0.08466292345881919,
+      "spearman_fact_ci_lower": -0.16688269867626992,
+      "spearman_fact_ci_upper": 0.14762588975177773,
+      "spearman_bias_abs_ci_lower": -0.22778696258656794,
+      "spearman_bias_abs_ci_upper": 0.07646055793820827
+    },
+    "timestamp": "2026-06-12T01:59:51.023144+00:00"
   }
 ]
