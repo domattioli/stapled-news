@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-12T21:17:09.069820",
+  "generated_at": "2026-06-12T21:26:42.610353",
   "corpus": {
     "repo": "defgsus/frontpage-archive-2026",
     "since": "2026-05-14",
@@ -179,6 +179,2741 @@
       "nearest_outlet": "theguardian.com",
       "farthest_outlet": "huffpost.com",
       "farthest_distance": 0.365331
+    }
+  ],
+  "events_detail": [
+    {
+      "event_id": 12,
+      "consensus_headline": "Trump nominates Jay Clayton as director of national intelligence",
+      "n_outlets": 9,
+      "members": [
+        {
+          "outlet": "nbcnews.com",
+          "distance": 0.1967,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0664,
+              "alignment": 1.0
+            },
+            {
+              "token": "nominates",
+              "weight": 0.1841,
+              "alignment": 0.806
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0649,
+              "alignment": 0.8404
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.104,
+              "alignment": 0.977
+            },
+            {
+              "token": "as",
+              "weight": 0.1114,
+              "alignment": 0.5171
+            },
+            {
+              "token": "director",
+              "weight": 0.1469,
+              "alignment": 0.8119
+            },
+            {
+              "token": "of",
+              "weight": 0.063,
+              "alignment": 0.8216
+            },
+            {
+              "token": "national",
+              "weight": 0.1374,
+              "alignment": 0.9044
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.1219,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "npr.org",
+          "distance": 0.2377,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0487,
+              "alignment": 1.0
+            },
+            {
+              "token": "nominates",
+              "weight": 0.1425,
+              "alignment": 0.9304
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0407,
+              "alignment": 1.0
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.0954,
+              "alignment": 0.9566
+            },
+            {
+              "token": "to",
+              "weight": 0.0947,
+              "alignment": 0.2884
+            },
+            {
+              "token": "serve",
+              "weight": 0.1315,
+              "alignment": 0.172
+            },
+            {
+              "token": "as",
+              "weight": 0.0832,
+              "alignment": 0.4988
+            },
+            {
+              "token": "director",
+              "weight": 0.1165,
+              "alignment": 0.942
+            },
+            {
+              "token": "of",
+              "weight": 0.0386,
+              "alignment": 1.0
+            },
+            {
+              "token": "national",
+              "weight": 0.1073,
+              "alignment": 1.0
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.1011,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "dailycaller.com",
+          "distance": 0.2466,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0547,
+              "alignment": 1.0
+            },
+            {
+              "token": "Nominates",
+              "weight": 0.1576,
+              "alignment": 0.8824
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0477,
+              "alignment": 1.0
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.086,
+              "alignment": 1.0
+            },
+            {
+              "token": "As",
+              "weight": 0.089,
+              "alignment": 0.5176
+            },
+            {
+              "token": "New",
+              "weight": 0.1603,
+              "alignment": 0.173
+            },
+            {
+              "token": "Director",
+              "weight": 0.1308,
+              "alignment": 0.8277
+            },
+            {
+              "token": "Of",
+              "weight": 0.0455,
+              "alignment": 0.9754
+            },
+            {
+              "token": "National",
+              "weight": 0.1184,
+              "alignment": 0.9826
+            },
+            {
+              "token": "Intelligence",
+              "weight": 0.11,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "abcnews.go.com",
+          "distance": 0.3421,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0339,
+              "alignment": 1.0
+            },
+            {
+              "token": "nominates",
+              "weight": 0.114,
+              "alignment": 0.9309
+            },
+            {
+              "token": "US",
+              "weight": 0.1004,
+              "alignment": 0.2553
+            },
+            {
+              "token": "Attorney",
+              "weight": 0.2199,
+              "alignment": 0.2977
+            },
+            {
+              "token": "Jay",
+              "weight": 0.044,
+              "alignment": 0.7729
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.0651,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.0651,
+              "alignment": 0.3565
+            },
+            {
+              "token": "be",
+              "weight": 0.1004,
+              "alignment": 0.2344
+            },
+            {
+              "token": "director",
+              "weight": 0.085,
+              "alignment": 0.9687
+            },
+            {
+              "token": "of",
+              "weight": 0.0288,
+              "alignment": 1.0
+            },
+            {
+              "token": "national",
+              "weight": 0.0758,
+              "alignment": 1.0
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.0675,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "cbsnews.com",
+          "distance": 0.3752,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0628,
+              "alignment": 0.8733
+            },
+            {
+              "token": "taps",
+              "weight": 0.0987,
+              "alignment": 0.157
+            },
+            {
+              "token": "prosecutor",
+              "weight": 0.1321,
+              "alignment": 0.2537
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0497,
+              "alignment": 0.7612
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.0708,
+              "alignment": 1.0
+            },
+            {
+              "token": "as",
+              "weight": 0.0626,
+              "alignment": 0.6145
+            },
+            {
+              "token": "next",
+              "weight": 0.187,
+              "alignment": 0.2512
+            },
+            {
+              "token": "director",
+              "weight": 0.102,
+              "alignment": 0.9558
+            },
+            {
+              "token": "of",
+              "weight": 0.0332,
+              "alignment": 1.0
+            },
+            {
+              "token": "national",
+              "weight": 0.1032,
+              "alignment": 1.0
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.0976,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "nytimes.com",
+          "distance": 0.4205,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0554,
+              "alignment": 0.9882
+            },
+            {
+              "token": "Picks",
+              "weight": 0.0555,
+              "alignment": 0.157
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0372,
+              "alignment": 0.9209
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.08,
+              "alignment": 1.0
+            },
+            {
+              "token": "for",
+              "weight": 0.0954,
+              "alignment": 0.2582
+            },
+            {
+              "token": "Director",
+              "weight": 0.1036,
+              "alignment": 0.9668
+            },
+            {
+              "token": "of",
+              "weight": 0.0262,
+              "alignment": 1.0
+            },
+            {
+              "token": "National",
+              "weight": 0.111,
+              "alignment": 1.0
+            },
+            {
+              "token": "Intelligence",
+              "weight": 0.129,
+              "alignment": 1.0
+            },
+            {
+              "token": "After",
+              "weight": 0.077,
+              "alignment": 0.1869
+            },
+            {
+              "token": "Backlash",
+              "weight": 0.0555,
+              "alignment": 0.157
+            },
+            {
+              "token": "Over",
+              "weight": 0.0719,
+              "alignment": 0.1823
+            },
+            {
+              "token": "Bill",
+              "weight": 0.0555,
+              "alignment": 0.157
+            },
+            {
+              "token": "Pulte",
+              "weight": 0.0467,
+              "alignment": 0.1672
+            }
+          ]
+        },
+        {
+          "outlet": "wsj.com",
+          "distance": 0.4349,
+          "tokens": [
+            {
+              "token": "President",
+              "weight": 0.0441,
+              "alignment": 0.2377
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0325,
+              "alignment": 1.0
+            },
+            {
+              "token": "said",
+              "weight": 0.0321,
+              "alignment": 0.157
+            },
+            {
+              "token": "he",
+              "weight": 0.0321,
+              "alignment": 0.157
+            },
+            {
+              "token": "would",
+              "weight": 0.0321,
+              "alignment": 0.157
+            },
+            {
+              "token": "nominate",
+              "weight": 0.0689,
+              "alignment": 0.8347
+            },
+            {
+              "token": "Jay",
+              "weight": 0.018,
+              "alignment": 1.0
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.0301,
+              "alignment": 1.0
+            },
+            {
+              "token": "the",
+              "weight": 0.0469,
+              "alignment": 0.157
+            },
+            {
+              "token": "former",
+              "weight": 0.1042,
+              "alignment": 0.3649
+            },
+            {
+              "token": "chairman",
+              "weight": 0.1149,
+              "alignment": 0.3943
+            },
+            {
+              "token": "of",
+              "weight": 0.0235,
+              "alignment": 0.846
+            },
+            {
+              "token": "the",
+              "weight": 0.0469,
+              "alignment": 0.157
+            },
+            {
+              "token": "SEC",
+              "weight": 0.0341,
+              "alignment": 0.4226
+            },
+            {
+              "token": "to",
+              "weight": 0.0267,
+              "alignment": 0.476
+            },
+            {
+              "token": "be",
+              "weight": 0.0383,
+              "alignment": 0.3667
+            },
+            {
+              "token": "the",
+              "weight": 0.0469,
+              "alignment": 0.157
+            },
+            {
+              "token": "next",
+              "weight": 0.0711,
+              "alignment": 0.4055
+            },
+            {
+              "token": "director",
+              "weight": 0.0435,
+              "alignment": 1.0
+            },
+            {
+              "token": "of",
+              "weight": 0.0235,
+              "alignment": 0.846
+            },
+            {
+              "token": "national",
+              "weight": 0.0415,
+              "alignment": 1.0
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.048,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "thehill.com",
+          "distance": 0.459,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0549,
+              "alignment": 1.0
+            },
+            {
+              "token": "nominates",
+              "weight": 0.1996,
+              "alignment": 0.7411
+            },
+            {
+              "token": "ex-SEC",
+              "weight": 0.0427,
+              "alignment": 0.307
+            },
+            {
+              "token": "Chair",
+              "weight": 0.2433,
+              "alignment": 0.2438
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0549,
+              "alignment": 0.7855
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.0895,
+              "alignment": 1.0
+            },
+            {
+              "token": "as",
+              "weight": 0.0608,
+              "alignment": 0.7275
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.1608,
+              "alignment": 0.9634
+            },
+            {
+              "token": "chief",
+              "weight": 0.0933,
+              "alignment": 0.1787
+            }
+          ]
+        },
+        {
+          "outlet": "foxnews.com",
+          "distance": 0.4661,
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0237,
+              "alignment": 1.0
+            },
+            {
+              "token": "nominates",
+              "weight": 0.0681,
+              "alignment": 1.0
+            },
+            {
+              "token": "Jay",
+              "weight": 0.0214,
+              "alignment": 1.0
+            },
+            {
+              "token": "Clayton",
+              "weight": 0.043,
+              "alignment": 1.0
+            },
+            {
+              "token": "former",
+              "weight": 0.1388,
+              "alignment": 0.3106
+            },
+            {
+              "token": "SEC",
+              "weight": 0.0752,
+              "alignment": 0.3214
+            },
+            {
+              "token": "chairman",
+              "weight": 0.1483,
+              "alignment": 0.3417
+            },
+            {
+              "token": "current",
+              "weight": 0.0838,
+              "alignment": 0.1836
+            },
+            {
+              "token": "US",
+              "weight": 0.0716,
+              "alignment": 0.301
+            },
+            {
+              "token": "Attorney",
+              "weight": 0.1503,
+              "alignment": 0.3528
+            },
+            {
+              "token": "as",
+              "weight": 0.0457,
+              "alignment": 0.6086
+            },
+            {
+              "token": "intelligence",
+              "weight": 0.0753,
+              "alignment": 1.0
+            },
+            {
+              "token": "director",
+              "weight": 0.055,
+              "alignment": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 60,
+      "consensus_headline": "Federal judge indefinitely blocks Trump\u2019s \u2018anti-weaponization\u2019 fund",
+      "n_outlets": 8,
+      "members": [
+        {
+          "outlet": "nbcnews.com",
+          "distance": 0.3694,
+          "tokens": [
+            {
+              "token": "Federal",
+              "weight": 0.1259,
+              "alignment": 0.8165
+            },
+            {
+              "token": "judge",
+              "weight": 0.0852,
+              "alignment": 0.9088
+            },
+            {
+              "token": "indefinitely",
+              "weight": 0.352,
+              "alignment": 0.4031
+            },
+            {
+              "token": "blocks",
+              "weight": 0.1829,
+              "alignment": 0.6332
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.0621,
+              "alignment": 1.0
+            },
+            {
+              "token": "anti-weaponization\u2019",
+              "weight": 0.126,
+              "alignment": 1.0
+            },
+            {
+              "token": "fund",
+              "weight": 0.0658,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "thehill.com",
+          "distance": 0.3874,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0481,
+              "alignment": 1.0
+            },
+            {
+              "token": "indefinitely",
+              "weight": 0.2926,
+              "alignment": 0.4421
+            },
+            {
+              "token": "blocks",
+              "weight": 0.1171,
+              "alignment": 0.7802
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0883,
+              "alignment": 0.8015
+            },
+            {
+              "token": "8216",
+              "weight": 0.1597,
+              "alignment": 0.216
+            },
+            {
+              "token": "anti-weaponization",
+              "weight": 0.0811,
+              "alignment": 1.0
+            },
+            {
+              "token": "8217",
+              "weight": 0.1545,
+              "alignment": 0.2869
+            },
+            {
+              "token": "fund",
+              "weight": 0.0586,
+              "alignment": 0.8265
+            }
+          ]
+        },
+        {
+          "outlet": "dailycaller.com",
+          "distance": 0.4185,
+          "tokens": [
+            {
+              "token": "Federal",
+              "weight": 0.136,
+              "alignment": 0.7648
+            },
+            {
+              "token": "Judge",
+              "weight": 0.0635,
+              "alignment": 1.0
+            },
+            {
+              "token": "Rejects",
+              "weight": 0.0806,
+              "alignment": 0.2067
+            },
+            {
+              "token": "Restraining",
+              "weight": 0.1199,
+              "alignment": 0.2794
+            },
+            {
+              "token": "Order",
+              "weight": 0.0893,
+              "alignment": 0.2382
+            },
+            {
+              "token": "Against",
+              "weight": 0.0806,
+              "alignment": 0.2067
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0739,
+              "alignment": 0.7385
+            },
+            {
+              "token": "8217",
+              "weight": 0.1205,
+              "alignment": 0.3143
+            },
+            {
+              "token": "s",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "Anti-Weaponization",
+              "weight": 0.1855,
+              "alignment": 1.0
+            },
+            {
+              "token": "Fund",
+              "weight": 0.05,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "theguardian.com",
+          "distance": 0.4353,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0545,
+              "alignment": 1.0
+            },
+            {
+              "token": "extends",
+              "weight": 0.2368,
+              "alignment": 0.3575
+            },
+            {
+              "token": "block",
+              "weight": 0.1217,
+              "alignment": 0.6062
+            },
+            {
+              "token": "on",
+              "weight": 0.1076,
+              "alignment": 0.4085
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.0754,
+              "alignment": 0.9128
+            },
+            {
+              "token": "1",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "8bn",
+              "weight": 0.1897,
+              "alignment": 0.2067
+            },
+            {
+              "token": "anti-weaponization\u2019",
+              "weight": 0.1607,
+              "alignment": 1.0
+            },
+            {
+              "token": "fund",
+              "weight": 0.0536,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "breitbart.com",
+          "distance": 0.4459,
+          "tokens": [
+            {
+              "token": "Federal",
+              "weight": 0.069,
+              "alignment": 1.0
+            },
+            {
+              "token": "Judge",
+              "weight": 0.0323,
+              "alignment": 1.0
+            },
+            {
+              "token": "Extends",
+              "weight": 0.1299,
+              "alignment": 0.4988
+            },
+            {
+              "token": "Block",
+              "weight": 0.0605,
+              "alignment": 0.9442
+            },
+            {
+              "token": "on",
+              "weight": 0.0373,
+              "alignment": 0.6761
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0518,
+              "alignment": 1.0
+            },
+            {
+              "token": "Administration",
+              "weight": 0.0863,
+              "alignment": 0.532
+            },
+            {
+              "token": "039",
+              "weight": 0.0725,
+              "alignment": 0.2643
+            },
+            {
+              "token": "s",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "039",
+              "weight": 0.0725,
+              "alignment": 0.2643
+            },
+            {
+              "token": "Anti-Weaponization",
+              "weight": 0.0777,
+              "alignment": 1.0
+            },
+            {
+              "token": "Fund",
+              "weight": 0.0291,
+              "alignment": 1.0
+            },
+            {
+              "token": "039",
+              "weight": 0.0725,
+              "alignment": 0.2643
+            },
+            {
+              "token": "for",
+              "weight": 0.0465,
+              "alignment": 0.2067
+            },
+            {
+              "token": "Citizens",
+              "weight": 0.0634,
+              "alignment": 0.2672
+            },
+            {
+              "token": "Biden",
+              "weight": 0.0582,
+              "alignment": 0.2335
+            },
+            {
+              "token": "Targeted",
+              "weight": 0.0404,
+              "alignment": 0.2373
+            }
+          ]
+        },
+        {
+          "outlet": "foxnews.com",
+          "distance": 0.4805,
+          "tokens": [
+            {
+              "token": "Clinton",
+              "weight": 0.0598,
+              "alignment": 0.3775
+            },
+            {
+              "token": "judge",
+              "weight": 0.0584,
+              "alignment": 0.9936
+            },
+            {
+              "token": "warns",
+              "weight": 0.0541,
+              "alignment": 0.2346
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0852,
+              "alignment": 0.7441
+            },
+            {
+              "token": "DOJ",
+              "weight": 0.0731,
+              "alignment": 0.3456
+            },
+            {
+              "token": "not",
+              "weight": 0.0415,
+              "alignment": 0.2067
+            },
+            {
+              "token": "to",
+              "weight": 0.0422,
+              "alignment": 0.4767
+            },
+            {
+              "token": "apos",
+              "weight": 0.0626,
+              "alignment": 0.2431
+            },
+            {
+              "token": "play",
+              "weight": 0.0506,
+              "alignment": 0.2625
+            },
+            {
+              "token": "possum",
+              "weight": 0.038,
+              "alignment": 0.2067
+            },
+            {
+              "token": "apos",
+              "weight": 0.0626,
+              "alignment": 0.2431
+            },
+            {
+              "token": "on",
+              "weight": 0.0427,
+              "alignment": 0.4554
+            },
+            {
+              "token": "1",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "2B",
+              "weight": 0.0519,
+              "alignment": 0.2067
+            },
+            {
+              "token": "Anti-Weaponization",
+              "weight": 0.2316,
+              "alignment": 0.9239
+            },
+            {
+              "token": "Fund",
+              "weight": 0.0456,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "cbsnews.com",
+          "distance": 0.4865,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0536,
+              "alignment": 1.0
+            },
+            {
+              "token": "continues",
+              "weight": 0.0876,
+              "alignment": 0.2964
+            },
+            {
+              "token": "to",
+              "weight": 0.0784,
+              "alignment": 0.4677
+            },
+            {
+              "token": "block",
+              "weight": 0.1141,
+              "alignment": 0.6423
+            },
+            {
+              "token": "DOJ",
+              "weight": 0.0932,
+              "alignment": 0.341
+            },
+            {
+              "token": "039",
+              "weight": 0.0709,
+              "alignment": 0.3851
+            },
+            {
+              "token": "s",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "1",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "8",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "billion",
+              "weight": 0.0849,
+              "alignment": 0.3087
+            },
+            {
+              "token": "quot",
+              "weight": 0.1088,
+              "alignment": 0.2067
+            },
+            {
+              "token": "anti-weaponization",
+              "weight": 0.1501,
+              "alignment": 1.0
+            },
+            {
+              "token": "quot",
+              "weight": 0.1088,
+              "alignment": 0.2067
+            },
+            {
+              "token": "fund",
+              "weight": 0.0496,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "huffpost.com",
+          "distance": 0.5647,
+          "tokens": [
+            {
+              "token": "Federal",
+              "weight": 0.1714,
+              "alignment": 0.6521
+            },
+            {
+              "token": "Judge",
+              "weight": 0.0731,
+              "alignment": 0.9518
+            },
+            {
+              "token": "Blocks",
+              "weight": 0.171,
+              "alignment": 0.6096
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.1326,
+              "alignment": 0.6466
+            },
+            {
+              "token": "Plan",
+              "weight": 0.1133,
+              "alignment": 0.2309
+            },
+            {
+              "token": "To",
+              "weight": 0.0923,
+              "alignment": 0.4008
+            },
+            {
+              "token": "Compensate",
+              "weight": 0.1078,
+              "alignment": 0.2429
+            },
+            {
+              "token": "Jan",
+              "weight": 0.0792,
+              "alignment": 0.2067
+            },
+            {
+              "token": "6",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "Rioters",
+              "weight": 0.0594,
+              "alignment": 0.2067
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 26,
+      "consensus_headline": "Sen . Bill Cassidy loses Louisiana GOP primary to Trump - backed Letlow and Fleming",
+      "n_outlets": 7,
+      "members": [
+        {
+          "outlet": "foxnews.com",
+          "distance": 0.423,
+          "tokens": [
+            {
+              "token": "Sen",
+              "weight": 0.0273,
+              "alignment": 1.0
+            },
+            {
+              "token": "Bill",
+              "weight": 0.0556,
+              "alignment": 0.957
+            },
+            {
+              "token": "Cassidy",
+              "weight": 0.0611,
+              "alignment": 1.0
+            },
+            {
+              "token": "loses",
+              "weight": 0.1181,
+              "alignment": 0.4902
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.0711,
+              "alignment": 1.0
+            },
+            {
+              "token": "GOP",
+              "weight": 0.0596,
+              "alignment": 0.6787
+            },
+            {
+              "token": "primary",
+              "weight": 0.0892,
+              "alignment": 0.8712
+            },
+            {
+              "token": "to",
+              "weight": 0.0539,
+              "alignment": 0.5326
+            },
+            {
+              "token": "Trump",
+              "weight": 0.077,
+              "alignment": 0.7573
+            },
+            {
+              "token": "backed",
+              "weight": 0.1073,
+              "alignment": 0.6455
+            },
+            {
+              "token": "Letlow",
+              "weight": 0.1474,
+              "alignment": 0.4342
+            },
+            {
+              "token": "and",
+              "weight": 0.0628,
+              "alignment": 0.2332
+            },
+            {
+              "token": "Fleming",
+              "weight": 0.0695,
+              "alignment": 0.3131
+            }
+          ]
+        },
+        {
+          "outlet": "cbsnews.com",
+          "distance": 0.4263,
+          "tokens": [
+            {
+              "token": "GOP",
+              "weight": 0.0369,
+              "alignment": 0.9154
+            },
+            {
+              "token": "Sen",
+              "weight": 0.031,
+              "alignment": 1.0
+            },
+            {
+              "token": "Bill",
+              "weight": 0.046,
+              "alignment": 1.0
+            },
+            {
+              "token": "Cassidy",
+              "weight": 0.0566,
+              "alignment": 1.0
+            },
+            {
+              "token": "fights",
+              "weight": 0.0591,
+              "alignment": 0.2998
+            },
+            {
+              "token": "to",
+              "weight": 0.0405,
+              "alignment": 0.5226
+            },
+            {
+              "token": "hold",
+              "weight": 0.047,
+              "alignment": 0.2332
+            },
+            {
+              "token": "onto",
+              "weight": 0.0551,
+              "alignment": 0.3202
+            },
+            {
+              "token": "seat",
+              "weight": 0.0613,
+              "alignment": 0.3305
+            },
+            {
+              "token": "in",
+              "weight": 0.0338,
+              "alignment": 0.6943
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.0608,
+              "alignment": 1.0
+            },
+            {
+              "token": "primary",
+              "weight": 0.0762,
+              "alignment": 0.9551
+            },
+            {
+              "token": "against",
+              "weight": 0.052,
+              "alignment": 0.3338
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0656,
+              "alignment": 0.8241
+            },
+            {
+              "token": "backed",
+              "weight": 0.0897,
+              "alignment": 0.7383
+            },
+            {
+              "token": "challenger",
+              "weight": 0.1883,
+              "alignment": 0.4787
+            }
+          ]
+        },
+        {
+          "outlet": "yahoo.com",
+          "distance": 0.4338,
+          "tokens": [
+            {
+              "token": "Sen",
+              "weight": 0.0413,
+              "alignment": 0.7911
+            },
+            {
+              "token": "Cassidy",
+              "weight": 0.0788,
+              "alignment": 0.8903
+            },
+            {
+              "token": "battles",
+              "weight": 0.0874,
+              "alignment": 0.2848
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0793,
+              "alignment": 0.7268
+            },
+            {
+              "token": "backed",
+              "weight": 0.1008,
+              "alignment": 0.6757
+            },
+            {
+              "token": "challenger",
+              "weight": 0.2024,
+              "alignment": 0.4539
+            },
+            {
+              "token": "in",
+              "weight": 0.0578,
+              "alignment": 0.61
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.0756,
+              "alignment": 1.0
+            },
+            {
+              "token": "Republican",
+              "weight": 0.2049,
+              "alignment": 0.4519
+            },
+            {
+              "token": "primary",
+              "weight": 0.0716,
+              "alignment": 0.9857
+            }
+          ]
+        },
+        {
+          "outlet": "nbcnews.com",
+          "distance": 0.4831,
+          "tokens": [
+            {
+              "token": "Julia",
+              "weight": 0.0426,
+              "alignment": 0.2332
+            },
+            {
+              "token": "Letlow",
+              "weight": 0.1591,
+              "alignment": 0.424
+            },
+            {
+              "token": "advances",
+              "weight": 0.0608,
+              "alignment": 0.2778
+            },
+            {
+              "token": "to",
+              "weight": 0.0513,
+              "alignment": 0.5504
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.0694,
+              "alignment": 1.0
+            },
+            {
+              "token": "Senate",
+              "weight": 0.1124,
+              "alignment": 0.7064
+            },
+            {
+              "token": "GOP",
+              "weight": 0.0634,
+              "alignment": 0.6244
+            },
+            {
+              "token": "runoff",
+              "weight": 0.1582,
+              "alignment": 0.4399
+            },
+            {
+              "token": "as",
+              "weight": 0.0589,
+              "alignment": 0.3566
+            },
+            {
+              "token": "Sen",
+              "weight": 0.0405,
+              "alignment": 0.7929
+            },
+            {
+              "token": "Bill",
+              "weight": 0.058,
+              "alignment": 0.938
+            },
+            {
+              "token": "Cassidy",
+              "weight": 0.0798,
+              "alignment": 1.0
+            },
+            {
+              "token": "trails",
+              "weight": 0.0457,
+              "alignment": 0.2913
+            }
+          ]
+        },
+        {
+          "outlet": "ashingtonexaminer.com",
+          "distance": 0.5476,
+          "tokens": [
+            {
+              "token": "Cassidy",
+              "weight": 0.0801,
+              "alignment": 1.0
+            },
+            {
+              "token": "loses",
+              "weight": 0.139,
+              "alignment": 0.4615
+            },
+            {
+              "token": "shot",
+              "weight": 0.0539,
+              "alignment": 0.2332
+            },
+            {
+              "token": "at",
+              "weight": 0.0583,
+              "alignment": 0.2478
+            },
+            {
+              "token": "reelection",
+              "weight": 0.0676,
+              "alignment": 0.3156
+            },
+            {
+              "token": "as",
+              "weight": 0.0588,
+              "alignment": 0.3566
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.079,
+              "alignment": 1.0
+            },
+            {
+              "token": "Senate",
+              "weight": 0.121,
+              "alignment": 0.6659
+            },
+            {
+              "token": "race",
+              "weight": 0.0628,
+              "alignment": 0.271
+            },
+            {
+              "token": "heads",
+              "weight": 0.0628,
+              "alignment": 0.2833
+            },
+            {
+              "token": "to",
+              "weight": 0.0518,
+              "alignment": 0.5551
+            },
+            {
+              "token": "runoff",
+              "weight": 0.1648,
+              "alignment": 0.4312
+            }
+          ]
+        },
+        {
+          "outlet": "cnn.com",
+          "distance": 0.5495,
+          "tokens": [
+            {
+              "token": "This",
+              "weight": 0.0255,
+              "alignment": 0.2332
+            },
+            {
+              "token": "Republican",
+              "weight": 0.2137,
+              "alignment": 0.43
+            },
+            {
+              "token": "says",
+              "weight": 0.0311,
+              "alignment": 0.2332
+            },
+            {
+              "token": "he",
+              "weight": 0.0539,
+              "alignment": 0.2527
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0671,
+              "alignment": 0.7727
+            },
+            {
+              "token": "ally",
+              "weight": 0.0364,
+              "alignment": 0.2926
+            },
+            {
+              "token": "He",
+              "weight": 0.0539,
+              "alignment": 0.2527
+            },
+            {
+              "token": "getting",
+              "weight": 0.0612,
+              "alignment": 0.3958
+            },
+            {
+              "token": "in",
+              "weight": 0.0432,
+              "alignment": 0.4692
+            },
+            {
+              "token": "the",
+              "weight": 0.038,
+              "alignment": 0.2608
+            },
+            {
+              "token": "president",
+              "weight": 0.0493,
+              "alignment": 0.4082
+            },
+            {
+              "token": "way",
+              "weight": 0.0311,
+              "alignment": 0.2332
+            },
+            {
+              "token": "in",
+              "weight": 0.0432,
+              "alignment": 0.4692
+            },
+            {
+              "token": "a",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "key",
+              "weight": 0.0311,
+              "alignment": 0.2332
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.0623,
+              "alignment": 1.0
+            },
+            {
+              "token": "Senate",
+              "weight": 0.0894,
+              "alignment": 0.7886
+            },
+            {
+              "token": "primary",
+              "weight": 0.0694,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "dailykos.com",
+          "distance": 0.5543,
+          "tokens": [
+            {
+              "token": "Ragin",
+              "weight": 0.0647,
+              "alignment": 0.3867
+            },
+            {
+              "token": "Cajuns",
+              "weight": 0.0551,
+              "alignment": 0.2854
+            },
+            {
+              "token": "Louisiana",
+              "weight": 0.0972,
+              "alignment": 1.0
+            },
+            {
+              "token": "GOP",
+              "weight": 0.0653,
+              "alignment": 0.7146
+            },
+            {
+              "token": "Sen",
+              "weight": 0.0419,
+              "alignment": 1.0
+            },
+            {
+              "token": "Bill",
+              "weight": 0.0771,
+              "alignment": 0.8089
+            },
+            {
+              "token": "Cassidy",
+              "weight": 0.0928,
+              "alignment": 0.9979
+            },
+            {
+              "token": "Defeated",
+              "weight": 0.0771,
+              "alignment": 0.3416
+            },
+            {
+              "token": "in",
+              "weight": 0.0499,
+              "alignment": 0.5445
+            },
+            {
+              "token": "Primary",
+              "weight": 0.1214,
+              "alignment": 0.7947
+            },
+            {
+              "token": "Five",
+              "weight": 0.0613,
+              "alignment": 0.2652
+            },
+            {
+              "token": "Bad",
+              "weight": 0.056,
+              "alignment": 0.3027
+            },
+            {
+              "token": "Amendments",
+              "weight": 0.0756,
+              "alignment": 0.3099
+            },
+            {
+              "token": "Rejected",
+              "weight": 0.0647,
+              "alignment": 0.366
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 18,
+      "consensus_headline": "Graham Platner seeks Democratic Senate nomination in Maine , and more primary races to watch today",
+      "n_outlets": 6,
+      "members": [
+        {
+          "outlet": "cbsnews.com",
+          "distance": 0.2502,
+          "tokens": [
+            {
+              "token": "Graham",
+              "weight": 0.0357,
+              "alignment": 1.0
+            },
+            {
+              "token": "Platner",
+              "weight": 0.0416,
+              "alignment": 1.0
+            },
+            {
+              "token": "seeks",
+              "weight": 0.0912,
+              "alignment": 0.5182
+            },
+            {
+              "token": "Democratic",
+              "weight": 0.1199,
+              "alignment": 0.8515
+            },
+            {
+              "token": "Senate",
+              "weight": 0.0592,
+              "alignment": 1.0
+            },
+            {
+              "token": "nomination",
+              "weight": 0.1061,
+              "alignment": 0.8753
+            },
+            {
+              "token": "in",
+              "weight": 0.0328,
+              "alignment": 0.7077
+            },
+            {
+              "token": "Maine",
+              "weight": 0.043,
+              "alignment": 1.0
+            },
+            {
+              "token": "and",
+              "weight": 0.0551,
+              "alignment": 0.6243
+            },
+            {
+              "token": "more",
+              "weight": 0.0771,
+              "alignment": 0.5076
+            },
+            {
+              "token": "primary",
+              "weight": 0.0995,
+              "alignment": 0.6741
+            },
+            {
+              "token": "races",
+              "weight": 0.0587,
+              "alignment": 0.2968
+            },
+            {
+              "token": "to",
+              "weight": 0.0362,
+              "alignment": 0.7218
+            },
+            {
+              "token": "watch",
+              "weight": 0.065,
+              "alignment": 0.7963
+            },
+            {
+              "token": "today",
+              "weight": 0.0789,
+              "alignment": 0.5956
+            }
+          ]
+        },
+        {
+          "outlet": "abcnews.go.com",
+          "distance": 0.3407,
+          "tokens": [
+            {
+              "token": "What",
+              "weight": 0.0309,
+              "alignment": 0.2548
+            },
+            {
+              "token": "to",
+              "weight": 0.0512,
+              "alignment": 0.5357
+            },
+            {
+              "token": "watch",
+              "weight": 0.0713,
+              "alignment": 0.7043
+            },
+            {
+              "token": "in",
+              "weight": 0.051,
+              "alignment": 0.4468
+            },
+            {
+              "token": "Tuesday's",
+              "weight": 0.0068,
+              "alignment": 0.719
+            },
+            {
+              "token": "primaries",
+              "weight": 0.1587,
+              "alignment": 0.5777
+            },
+            {
+              "token": "as",
+              "weight": 0.0556,
+              "alignment": 0.4205
+            },
+            {
+              "token": "Graham",
+              "weight": 0.0536,
+              "alignment": 1.0
+            },
+            {
+              "token": "Platner",
+              "weight": 0.0497,
+              "alignment": 1.0
+            },
+            {
+              "token": "tries",
+              "weight": 0.081,
+              "alignment": 0.3602
+            },
+            {
+              "token": "to",
+              "weight": 0.0512,
+              "alignment": 0.5357
+            },
+            {
+              "token": "clinch",
+              "weight": 0.0608,
+              "alignment": 0.3444
+            },
+            {
+              "token": "Senate",
+              "weight": 0.0685,
+              "alignment": 0.9649
+            },
+            {
+              "token": "nomination",
+              "weight": 0.1254,
+              "alignment": 0.8183
+            },
+            {
+              "token": "in",
+              "weight": 0.051,
+              "alignment": 0.4468
+            },
+            {
+              "token": "Maine",
+              "weight": 0.0333,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "yahoo.com",
+          "distance": 0.3651,
+          "tokens": [
+            {
+              "token": "Platner",
+              "weight": 0.0481,
+              "alignment": 1.0
+            },
+            {
+              "token": "seeks",
+              "weight": 0.1166,
+              "alignment": 0.4626
+            },
+            {
+              "token": "Maine",
+              "weight": 0.0619,
+              "alignment": 0.8123
+            },
+            {
+              "token": "Senate",
+              "weight": 0.0817,
+              "alignment": 0.8399
+            },
+            {
+              "token": "nomination",
+              "weight": 0.1346,
+              "alignment": 0.7439
+            },
+            {
+              "token": "and",
+              "weight": 0.0718,
+              "alignment": 0.5527
+            },
+            {
+              "token": "more",
+              "weight": 0.1019,
+              "alignment": 0.4533
+            },
+            {
+              "token": "primaries",
+              "weight": 0.1527,
+              "alignment": 0.6229
+            },
+            {
+              "token": "to",
+              "weight": 0.0479,
+              "alignment": 0.6385
+            },
+            {
+              "token": "watch",
+              "weight": 0.083,
+              "alignment": 0.7028
+            },
+            {
+              "token": "today",
+              "weight": 0.0998,
+              "alignment": 0.5287
+            }
+          ]
+        },
+        {
+          "outlet": "theguardian.com",
+          "distance": 0.4173,
+          "tokens": [
+            {
+              "token": "Graham",
+              "weight": 0.0714,
+              "alignment": 1.0
+            },
+            {
+              "token": "Platner",
+              "weight": 0.0886,
+              "alignment": 1.0
+            },
+            {
+              "token": "wins",
+              "weight": 0.124,
+              "alignment": 0.3063
+            },
+            {
+              "token": "Maine",
+              "weight": 0.0869,
+              "alignment": 0.7364
+            },
+            {
+              "token": "Democratic",
+              "weight": 0.2285,
+              "alignment": 0.63
+            },
+            {
+              "token": "Senate",
+              "weight": 0.1242,
+              "alignment": 0.7154
+            },
+            {
+              "token": "primary",
+              "weight": 0.1922,
+              "alignment": 0.5098
+            },
+            {
+              "token": "video",
+              "weight": 0.0842,
+              "alignment": 0.3002
+            }
+          ]
+        },
+        {
+          "outlet": "wsj.com",
+          "distance": 0.4436,
+          "tokens": [
+            {
+              "token": "Democrats",
+              "weight": 0.1329,
+              "alignment": 0.8312
+            },
+            {
+              "token": "in",
+              "weight": 0.0182,
+              "alignment": 0.7868
+            },
+            {
+              "token": "Maine",
+              "weight": 0.0404,
+              "alignment": 1.0
+            },
+            {
+              "token": "set",
+              "weight": 0.0288,
+              "alignment": 0.3401
+            },
+            {
+              "token": "aside",
+              "weight": 0.0533,
+              "alignment": 0.3831
+            },
+            {
+              "token": "the",
+              "weight": 0.0244,
+              "alignment": 0.2548
+            },
+            {
+              "token": "controversies",
+              "weight": 0.0496,
+              "alignment": 0.5293
+            },
+            {
+              "token": "surrounding",
+              "weight": 0.0501,
+              "alignment": 0.4445
+            },
+            {
+              "token": "political",
+              "weight": 0.0299,
+              "alignment": 0.3402
+            },
+            {
+              "token": "newcomer",
+              "weight": 0.0349,
+              "alignment": 0.3948
+            },
+            {
+              "token": "Graham",
+              "weight": 0.0567,
+              "alignment": 1.0
+            },
+            {
+              "token": "Platner",
+              "weight": 0.0518,
+              "alignment": 1.0
+            },
+            {
+              "token": "and",
+              "weight": 0.0459,
+              "alignment": 0.6001
+            },
+            {
+              "token": "selected",
+              "weight": 0.0288,
+              "alignment": 0.3401
+            },
+            {
+              "token": "him",
+              "weight": 0.0244,
+              "alignment": 0.2548
+            },
+            {
+              "token": "as",
+              "weight": 0.0394,
+              "alignment": 0.4052
+            },
+            {
+              "token": "their",
+              "weight": 0.0244,
+              "alignment": 0.2548
+            },
+            {
+              "token": "nominee",
+              "weight": 0.0696,
+              "alignment": 0.6664
+            },
+            {
+              "token": "to",
+              "weight": 0.0288,
+              "alignment": 0.8286
+            },
+            {
+              "token": "challenge",
+              "weight": 0.0283,
+              "alignment": 0.3012
+            },
+            {
+              "token": "GOP",
+              "weight": 0.0244,
+              "alignment": 0.2548
+            },
+            {
+              "token": "Sen",
+              "weight": 0.035,
+              "alignment": 0.4787
+            },
+            {
+              "token": "Susan",
+              "weight": 0.0271,
+              "alignment": 0.2952
+            },
+            {
+              "token": "Collins",
+              "weight": 0.0529,
+              "alignment": 0.4417
+            }
+          ]
+        },
+        {
+          "outlet": "politico.com",
+          "distance": 0.5025,
+          "tokens": [
+            {
+              "token": "Some",
+              "weight": 0.0783,
+              "alignment": 0.2883
+            },
+            {
+              "token": "Maine",
+              "weight": 0.0974,
+              "alignment": 0.7549
+            },
+            {
+              "token": "Democrats",
+              "weight": 0.2815,
+              "alignment": 0.5708
+            },
+            {
+              "token": "are",
+              "weight": 0.0959,
+              "alignment": 0.2849
+            },
+            {
+              "token": "wavering",
+              "weight": 0.1497,
+              "alignment": 0.36
+            },
+            {
+              "token": "on",
+              "weight": 0.0934,
+              "alignment": 0.2898
+            },
+            {
+              "token": "Graham",
+              "weight": 0.118,
+              "alignment": 0.8433
+            },
+            {
+              "token": "Platner",
+              "weight": 0.0858,
+              "alignment": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 32,
+      "consensus_headline": "Senate Parliamentarian Rejects Trump Ballroom Funding",
+      "n_outlets": 6,
+      "members": [
+        {
+          "outlet": "dailykos.com",
+          "distance": 0.2632,
+          "tokens": [
+            {
+              "token": "Senate",
+              "weight": 0.0809,
+              "alignment": 1.0
+            },
+            {
+              "token": "Parliamentarian",
+              "weight": 0.2714,
+              "alignment": 0.9048
+            },
+            {
+              "token": "Rejects",
+              "weight": 0.2065,
+              "alignment": 0.2707
+            },
+            {
+              "token": "Trump",
+              "weight": 0.1668,
+              "alignment": 0.6735
+            },
+            {
+              "token": "Ballroom",
+              "weight": 0.1273,
+              "alignment": 1.0
+            },
+            {
+              "token": "Funding",
+              "weight": 0.1471,
+              "alignment": 0.8922
+            }
+          ]
+        },
+        {
+          "outlet": "foxnews.com",
+          "distance": 0.2998,
+          "tokens": [
+            {
+              "token": "Senate",
+              "weight": 0.0465,
+              "alignment": 1.0
+            },
+            {
+              "token": "parliamentarian",
+              "weight": 0.1577,
+              "alignment": 1.0
+            },
+            {
+              "token": "strikes",
+              "weight": 0.0793,
+              "alignment": 0.3061
+            },
+            {
+              "token": "1B",
+              "weight": 0.0733,
+              "alignment": 0.2378
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0836,
+              "alignment": 0.9384
+            },
+            {
+              "token": "ballroom",
+              "weight": 0.0777,
+              "alignment": 1.0
+            },
+            {
+              "token": "security",
+              "weight": 0.2109,
+              "alignment": 0.485
+            },
+            {
+              "token": "funds",
+              "weight": 0.0867,
+              "alignment": 0.4617
+            },
+            {
+              "token": "from",
+              "weight": 0.0765,
+              "alignment": 0.2736
+            },
+            {
+              "token": "bill",
+              "weight": 0.1078,
+              "alignment": 0.4521
+            }
+          ]
+        },
+        {
+          "outlet": "ashingtonexaminer.com",
+          "distance": 0.3168,
+          "tokens": [
+            {
+              "token": "Senate",
+              "weight": 0.0552,
+              "alignment": 1.0
+            },
+            {
+              "token": "parliamentarian",
+              "weight": 0.186,
+              "alignment": 1.0
+            },
+            {
+              "token": "deals",
+              "weight": 0.103,
+              "alignment": 0.2665
+            },
+            {
+              "token": "setback",
+              "weight": 0.0993,
+              "alignment": 0.2821
+            },
+            {
+              "token": "to",
+              "weight": 0.0942,
+              "alignment": 0.2378
+            },
+            {
+              "token": "ballroom",
+              "weight": 0.1014,
+              "alignment": 1.0
+            },
+            {
+              "token": "security",
+              "weight": 0.2503,
+              "alignment": 0.4437
+            },
+            {
+              "token": "funding",
+              "weight": 0.1107,
+              "alignment": 0.9649
+            }
+          ]
+        },
+        {
+          "outlet": "breitbart.com",
+          "distance": 0.3431,
+          "tokens": [
+            {
+              "token": "Senate",
+              "weight": 0.0556,
+              "alignment": 1.0
+            },
+            {
+              "token": "Parliamentarian",
+              "weight": 0.1923,
+              "alignment": 1.0
+            },
+            {
+              "token": "Nixes",
+              "weight": 0.1641,
+              "alignment": 0.4687
+            },
+            {
+              "token": "White",
+              "weight": 0.0597,
+              "alignment": 0.2904
+            },
+            {
+              "token": "House",
+              "weight": 0.0568,
+              "alignment": 0.2808
+            },
+            {
+              "token": "Ballroom",
+              "weight": 0.0913,
+              "alignment": 1.0
+            },
+            {
+              "token": "Funding",
+              "weight": 0.1156,
+              "alignment": 0.9994
+            },
+            {
+              "token": "as",
+              "weight": 0.0553,
+              "alignment": 0.2378
+            },
+            {
+              "token": "GOP",
+              "weight": 0.0553,
+              "alignment": 0.2378
+            },
+            {
+              "token": "Plans",
+              "weight": 0.0573,
+              "alignment": 0.2698
+            },
+            {
+              "token": "Legislative",
+              "weight": 0.0553,
+              "alignment": 0.2378
+            },
+            {
+              "token": "Fix",
+              "weight": 0.0414,
+              "alignment": 0.2378
+            }
+          ]
+        },
+        {
+          "outlet": "yahoo.com",
+          "distance": 0.3431,
+          "tokens": [
+            {
+              "token": "Senate",
+              "weight": 0.0537,
+              "alignment": 1.0
+            },
+            {
+              "token": "parliamentarian",
+              "weight": 0.179,
+              "alignment": 1.0
+            },
+            {
+              "token": "nixes",
+              "weight": 0.1686,
+              "alignment": 0.4613
+            },
+            {
+              "token": "Trump",
+              "weight": 0.1007,
+              "alignment": 0.8737
+            },
+            {
+              "token": "ballroom",
+              "weight": 0.0974,
+              "alignment": 1.0
+            },
+            {
+              "token": "fund",
+              "weight": 0.1017,
+              "alignment": 0.4423
+            },
+            {
+              "token": "in",
+              "weight": 0.0859,
+              "alignment": 0.2378
+            },
+            {
+              "token": "budget",
+              "weight": 0.0859,
+              "alignment": 0.2378
+            },
+            {
+              "token": "bill",
+              "weight": 0.1269,
+              "alignment": 0.4198
+            }
+          ]
+        },
+        {
+          "outlet": "cnn.com",
+          "distance": 0.4138,
+          "tokens": [
+            {
+              "token": "Senate",
+              "weight": 0.1008,
+              "alignment": 1.0
+            },
+            {
+              "token": "referee",
+              "weight": 0.0846,
+              "alignment": 0.2779
+            },
+            {
+              "token": "rules",
+              "weight": 0.0762,
+              "alignment": 0.2997
+            },
+            {
+              "token": "against",
+              "weight": 0.067,
+              "alignment": 0.2378
+            },
+            {
+              "token": "some",
+              "weight": 0.0696,
+              "alignment": 0.2742
+            },
+            {
+              "token": "Trump",
+              "weight": 0.145,
+              "alignment": 0.7449
+            },
+            {
+              "token": "ballroom",
+              "weight": 0.1263,
+              "alignment": 1.0
+            },
+            {
+              "token": "funding",
+              "weight": 0.1781,
+              "alignment": 0.8144
+            },
+            {
+              "token": "Democrats",
+              "weight": 0.1022,
+              "alignment": 0.2999
+            },
+            {
+              "token": "say",
+              "weight": 0.0502,
+              "alignment": 0.2378
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 117,
+      "consensus_headline": "US judge refuses to block Trump\u2019s White House UFC birthday event",
+      "n_outlets": 5,
+      "members": [
+        {
+          "outlet": "theguardian.com",
+          "distance": 0.2879,
+          "tokens": [
+            {
+              "token": "US",
+              "weight": 0.0601,
+              "alignment": 0.2794
+            },
+            {
+              "token": "judge",
+              "weight": 0.0668,
+              "alignment": 1.0
+            },
+            {
+              "token": "refuses",
+              "weight": 0.1535,
+              "alignment": 0.6986
+            },
+            {
+              "token": "to",
+              "weight": 0.0433,
+              "alignment": 1.0
+            },
+            {
+              "token": "block",
+              "weight": 0.1157,
+              "alignment": 0.748
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.073,
+              "alignment": 1.0
+            },
+            {
+              "token": "White",
+              "weight": 0.0783,
+              "alignment": 0.9542
+            },
+            {
+              "token": "House",
+              "weight": 0.0502,
+              "alignment": 1.0
+            },
+            {
+              "token": "UFC",
+              "weight": 0.0545,
+              "alignment": 0.9046
+            },
+            {
+              "token": "birthday",
+              "weight": 0.1879,
+              "alignment": 0.5283
+            },
+            {
+              "token": "event",
+              "weight": 0.1167,
+              "alignment": 0.5724
+            }
+          ]
+        },
+        {
+          "outlet": "nytimes.com",
+          "distance": 0.2879,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0539,
+              "alignment": 1.0
+            },
+            {
+              "token": "Declines",
+              "weight": 0.0654,
+              "alignment": 0.3251
+            },
+            {
+              "token": "to",
+              "weight": 0.0508,
+              "alignment": 0.68
+            },
+            {
+              "token": "Halt",
+              "weight": 0.0601,
+              "alignment": 0.2794
+            },
+            {
+              "token": "UFC",
+              "weight": 0.0446,
+              "alignment": 1.0
+            },
+            {
+              "token": "Fight",
+              "weight": 0.0985,
+              "alignment": 0.8808
+            },
+            {
+              "token": "at",
+              "weight": 0.0541,
+              "alignment": 0.7005
+            },
+            {
+              "token": "the",
+              "weight": 0.0812,
+              "alignment": 0.6045
+            },
+            {
+              "token": "White",
+              "weight": 0.0521,
+              "alignment": 1.0
+            },
+            {
+              "token": "House",
+              "weight": 0.0573,
+              "alignment": 1.0
+            },
+            {
+              "token": "on",
+              "weight": 0.0752,
+              "alignment": 0.2794
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.0949,
+              "alignment": 0.8958
+            },
+            {
+              "token": "Birthday",
+              "weight": 0.2118,
+              "alignment": 0.5064
+            }
+          ]
+        },
+        {
+          "outlet": "thehill.com",
+          "distance": 0.2942,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0825,
+              "alignment": 1.0
+            },
+            {
+              "token": "refuses",
+              "weight": 0.2684,
+              "alignment": 0.5233
+            },
+            {
+              "token": "to",
+              "weight": 0.078,
+              "alignment": 0.7406
+            },
+            {
+              "token": "block",
+              "weight": 0.1688,
+              "alignment": 0.645
+            },
+            {
+              "token": "White",
+              "weight": 0.1035,
+              "alignment": 0.9027
+            },
+            {
+              "token": "House",
+              "weight": 0.0888,
+              "alignment": 1.0
+            },
+            {
+              "token": "UFC",
+              "weight": 0.0778,
+              "alignment": 0.879
+            },
+            {
+              "token": "fight",
+              "weight": 0.1323,
+              "alignment": 0.7758
+            }
+          ]
+        },
+        {
+          "outlet": "huffpost.com",
+          "distance": 0.318,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0856,
+              "alignment": 0.9946
+            },
+            {
+              "token": "OKs",
+              "weight": 0.0984,
+              "alignment": 0.2794
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.1688,
+              "alignment": 0.6731
+            },
+            {
+              "token": "UFC",
+              "weight": 0.0856,
+              "alignment": 0.7636
+            },
+            {
+              "token": "Fight",
+              "weight": 0.1587,
+              "alignment": 0.7051
+            },
+            {
+              "token": "Taking",
+              "weight": 0.0787,
+              "alignment": 0.2794
+            },
+            {
+              "token": "Place",
+              "weight": 0.0787,
+              "alignment": 0.2794
+            },
+            {
+              "token": "At",
+              "weight": 0.0851,
+              "alignment": 0.5398
+            },
+            {
+              "token": "White",
+              "weight": 0.09,
+              "alignment": 1.0
+            },
+            {
+              "token": "House",
+              "weight": 0.0704,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "cbsnews.com",
+          "distance": 0.3497,
+          "tokens": [
+            {
+              "token": "Judge",
+              "weight": 0.0728,
+              "alignment": 1.0
+            },
+            {
+              "token": "rejects",
+              "weight": 0.0821,
+              "alignment": 0.3226
+            },
+            {
+              "token": "bid",
+              "weight": 0.0821,
+              "alignment": 0.3193
+            },
+            {
+              "token": "to",
+              "weight": 0.0548,
+              "alignment": 0.7881
+            },
+            {
+              "token": "block",
+              "weight": 0.134,
+              "alignment": 0.7241
+            },
+            {
+              "token": "UFC",
+              "weight": 0.0686,
+              "alignment": 0.7663
+            },
+            {
+              "token": "event",
+              "weight": 0.1925,
+              "alignment": 0.4539
+            },
+            {
+              "token": "at",
+              "weight": 0.0701,
+              "alignment": 0.6244
+            },
+            {
+              "token": "the",
+              "weight": 0.114,
+              "alignment": 0.519
+            },
+            {
+              "token": "White",
+              "weight": 0.0705,
+              "alignment": 1.0
+            },
+            {
+              "token": "House",
+              "weight": 0.0584,
+              "alignment": 1.0
+            }
+          ]
+        }
+      ]
     }
   ],
   "validation": {

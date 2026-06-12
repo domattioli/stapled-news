@@ -20,6 +20,7 @@ from stapled.analyze.consensus_distance import (
     weekly_series,
     validate_planted,
     validate_split_half,
+    token_impacts,
 )
 
 
@@ -200,6 +201,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 }
                 for e in top_events
             ],
+            "events_detail": _build_events_detail(article_rows, top_events),
             "validation": {
                 "v1_planted": {
                     "copier_mean": round(v1_validation["copier_mean"], 6),
@@ -280,3 +282,45 @@ def _create_chart(outlet_metrics: list, out_path: Path) -> Path:
     plt.close(fig)
 
     return png_path
+
+
+def _build_events_detail(article_rows, top_events, max_events=12):
+    """Per-event member headlines with word-level distance attribution.
+
+    For each of the top events: the member outlets' headlines, each word tagged
+    with its weight (share of the headline's vector mass) and alignment (overlap
+    with the event centroid). The site colors low-alignment, high-weight words as
+    the ones pushing a headline away from the stapled consensus.
+    """
+    by_event = {}
+    for row in article_rows:
+        by_event.setdefault(row["event_id"], []).append(row)
+
+    detail = []
+    for e in top_events[:max_events]:
+        members = by_event.get(e["event_id"], [])
+        if len(members) < 2:
+            continue
+        # One row per outlet: keep that outlet's closest-to-consensus headline.
+        best = {}
+        for m in members:
+            cur = best.get(m["outlet"])
+            if cur is None or m["distance"] < cur["distance"]:
+                best[m["outlet"]] = m
+        members = sorted(best.values(), key=lambda m: m["distance"])
+        titles = [m["title"] for m in members]
+        impacts = token_impacts(titles)
+        detail.append({
+            "event_id": e["event_id"],
+            "consensus_headline": e["consensus_headline"],
+            "n_outlets": e["n_outlets"],
+            "members": [
+                {
+                    "outlet": m["outlet"],
+                    "distance": round(m["distance"], 4),
+                    "tokens": toks,
+                }
+                for m, toks in zip(members, impacts)
+            ],
+        })
+    return detail
