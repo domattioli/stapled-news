@@ -89,8 +89,8 @@ def online_convergence(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
         )
 
     ax2.set_xlabel('Batch', fontsize=11)
-    ax2.set_ylabel('Reliability', fontsize=11)
-    ax2.set_title('Outlet Reliability Trajectory', fontsize=13, fontweight='bold')
+    ax2.set_ylabel('Consensus-Agreement', fontsize=11)
+    ax2.set_title('Outlet Consensus-Agreement Trajectory', fontsize=13, fontweight='bold')
     ax2.legend(loc='best', fontsize=9)
     ax2.grid(True, alpha=0.3)
     ax2.set_ylim([0, 1])
@@ -160,14 +160,14 @@ def reliability_trajectory(conn: sqlite3.Connection, out_dir: str) -> Optional[s
                 color=color, linewidth=2, markersize=4)
 
     ax.set_xlabel('Batch', fontsize=11)
-    ax.set_ylabel('Reliability', fontsize=11)
-    ax.set_title('Outlet Reliability Trajectory', fontsize=13, fontweight='bold')
+    ax.set_ylabel('Consensus-Agreement', fontsize=11)
+    ax.set_title('Outlet Consensus-Agreement Trajectory', fontsize=13, fontweight='bold')
     ax.legend(loc='best', fontsize=9)
     ax.grid(True, alpha=0.3)
     ax.set_ylim([0, 1])
 
     plt.tight_layout()
-    fig.text(0.1, 0.01, "Reliability score per outlet across training batches; convergence = stable lines", fontsize=9, color='#555555', style='italic')
+    fig.text(0.1, 0.01, "Consensus-agreement score per outlet across training batches; convergence = stable lines", fontsize=9, color='#555555', style='italic')
 
     # Create assets directory
     assets_dir = out_path / "assets"
@@ -295,7 +295,7 @@ def _generate_html(ll_trace, reliability_by_outlet) -> str:
         </div>
 
         <div class="chart">
-            <h2>Reliability Trajectory by Outlet</h2>
+            <h2>Consensus-Agreement Trajectory by Outlet</h2>
             <div class="legend" id="reliabilityLegend"></div>
             <canvas id="reliabilityChart" style="height: 400px;"></canvas>
         </div>

@@ -873,10 +873,10 @@ def _generate_training_report(
     if trajectory_path:
         chart_section += f"""
         <div class="chart-section">
-            <h2>Outlet Reliability Trajectory</h2>
+            <h2>Outlet Consensus-Agreement Trajectory</h2>
             <figure>
-                <img src="{trajectory_path}" alt="Reliability trajectory" style="max-width:100%;">
-                <figcaption>Per-outlet reliability estimate after each training batch — stable lines indicate converged parameters.</figcaption>
+                <img src="{trajectory_path}" alt="Consensus-agreement trajectory" style="max-width:100%;">
+                <figcaption>Per-outlet consensus-agreement estimate after each training batch — stable lines indicate converged parameters.</figcaption>
             </figure>
         </div>
         """
@@ -885,7 +885,7 @@ def _generate_training_report(
         <p style="background:#fff3cd;border-left:4px solid #ffc107;padding:12px 16px;margin:16px 0;font-size:0.9em;">
         Note: This model measures consensus among outlets, not objective truth.
         Outlets dominating coverage may outrank factual but minority voices.
-        Treat reliability scores as a starting point for investigation, not final verdicts.</p>
+        Treat consensus-agreement scores as a starting point for investigation, not final verdicts.</p>
         """
 
     html = f"""<!DOCTYPE html>
