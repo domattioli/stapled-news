@@ -203,63 +203,55 @@ def _compute_coverage_matrix(conn, outlet_ids, outlet_info, event_ids, min_outle
                           ("uci_b", "uci_t", "uci_e", "uci_m"))
     article_labels = {row[0]: row[1] for row in cursor.fetchall()}
 
-    # For each event, compute its category (majority label of its articles)
-    event_categories = {}
-    for event_id in event_ids:
-        cursor = conn.execute(
-            """
-            SELECT a.id FROM article a
-            JOIN claim c ON c.article_id = a.id
-            WHERE c.event_id = ?
-            """,
-            (event_id,),
-        )
-        article_ids = [row[0] for row in cursor.fetchall()]
+    # Stage the audit event set in a temp table so coverage is a single grouped scan
+    # rather than O(outlets × categories) per-cell queries (the prior approach issued
+    # ~44k queries on the full UCI corpus and did not complete).
+    conn.execute("DROP TABLE IF EXISTS _audit_ev")
+    conn.execute("CREATE TEMP TABLE _audit_ev (event_id INTEGER PRIMARY KEY)")
+    conn.executemany("INSERT OR IGNORE INTO _audit_ev (event_id) VALUES (?)",
+                     [(e,) for e in event_ids])
 
-        # Count category votes for this event's articles
-        category_votes = defaultdict(int)
-        for article_id in article_ids:
-            if article_id in article_labels:
-                category_votes[article_labels[article_id]] += 1
+    # Event category = majority article-label among the event's claims (one pass)
+    category_votes = defaultdict(lambda: defaultdict(int))
+    for event_id, article_id in conn.execute(
+        "SELECT c.event_id, c.article_id FROM claim c "
+        "JOIN _audit_ev e ON e.event_id = c.event_id"
+    ):
+        label = article_labels.get(article_id)
+        if label:
+            category_votes[event_id][label] += 1
+    event_categories = {
+        ev: max(votes, key=votes.get) for ev, votes in category_votes.items() if votes
+    }
 
-        # Majority category
-        if category_votes:
-            majority_category = max(category_votes, key=category_votes.get)
-            event_categories[event_id] = majority_category
+    # Denominator: well-corroborated events per category
+    cat_events = defaultdict(set)
+    for ev, cat in event_categories.items():
+        cat_events[cat].add(ev)
 
-    # For each (outlet, category), count coverage
+    # Coverage numerator: distinct (outlet, event) pairs, one pass
+    covered = defaultdict(lambda: defaultdict(set))
+    outlet_set = set(outlet_ids)
+    for outlet_id, event_id in conn.execute(
+        "SELECT DISTINCT a.outlet_id, c.event_id FROM claim c "
+        "JOIN article a ON c.article_id = a.id "
+        "JOIN _audit_ev e ON e.event_id = c.event_id"
+    ):
+        cat = event_categories.get(event_id)
+        if cat and outlet_id in outlet_set:
+            covered[outlet_id][cat].add(event_id)
+
+    conn.execute("DROP TABLE IF EXISTS _audit_ev")
+
     coverage_matrix = {}
-
     for outlet_id in outlet_ids:
         for category in CATEGORY_KEYS:
-            # Events in this category (restrict to well-corroborated)
-            events_in_cat = [e for e in event_ids if event_categories.get(e) == category]
-
-            if not events_in_cat:
-                coverage_matrix[(outlet_id, category)] = {
-                    "coverage_rate": 0.0,
-                    "events_covered": 0,
-                    "events_in_category": 0,
-                }
-                continue
-
-            # How many of these events did this outlet cover?
-            cursor = conn.execute(
-                f"""
-                SELECT COUNT(DISTINCT c.event_id) FROM claim c
-                JOIN article a ON c.article_id = a.id
-                WHERE a.outlet_id = ? AND c.event_id IN ({','.join('?' * len(events_in_cat))})
-                """,
-                [outlet_id] + events_in_cat,
-            )
-            events_covered = cursor.fetchone()[0]
-
-            coverage_rate = events_covered / len(events_in_cat) if events_in_cat else 0.0
-
+            denom = len(cat_events.get(category, ()))
+            cov = len(covered.get(outlet_id, {}).get(category, ()))
             coverage_matrix[(outlet_id, category)] = {
-                "coverage_rate": coverage_rate,
-                "events_covered": events_covered,
-                "events_in_category": len(events_in_cat),
+                "coverage_rate": cov / denom if denom else 0.0,
+                "events_covered": cov,
+                "events_in_category": denom,
             }
 
     return coverage_matrix
@@ -272,19 +264,23 @@ def _compute_outlet_activity(conn, outlet_ids, outlet_info, event_ids):
     Returns:
         {outlet_id → {total_articles}}
     """
-    activity = {}
+    activity = {o: {"total_articles": 0} for o in outlet_ids}
 
-    for outlet_id in outlet_ids:
-        cursor = conn.execute(
-            f"""
-            SELECT COUNT(a.id) FROM article a
-            JOIN claim c ON c.article_id = a.id
-            WHERE a.outlet_id = ? AND c.event_id IN ({','.join('?' * len(event_ids))})
-            """,
-            [outlet_id] + event_ids,
-        )
-        total_articles = cursor.fetchone()[0]
-        activity[outlet_id] = {"total_articles": total_articles}
+    # Single grouped scan over the audit event set (temp table avoids a huge IN list
+    # and the prior per-outlet query loop).
+    conn.execute("DROP TABLE IF EXISTS _audit_ev2")
+    conn.execute("CREATE TEMP TABLE _audit_ev2 (event_id INTEGER PRIMARY KEY)")
+    conn.executemany("INSERT OR IGNORE INTO _audit_ev2 (event_id) VALUES (?)",
+                     [(e,) for e in event_ids])
+    for outlet_id, n in conn.execute(
+        "SELECT a.outlet_id, COUNT(a.id) FROM article a "
+        "JOIN claim c ON c.article_id = a.id "
+        "JOIN _audit_ev2 e ON e.event_id = c.event_id "
+        "GROUP BY a.outlet_id"
+    ):
+        if outlet_id in activity:
+            activity[outlet_id]["total_articles"] = n
+    conn.execute("DROP TABLE IF EXISTS _audit_ev2")
 
     return activity
 
