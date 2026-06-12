@@ -1,0 +1,38 @@
+name: Fetch US news corpus
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Days of GDELT history"
+        default: "30"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: development
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Fetch headlines
+        env:
+          FETCH_DAYS: ${{ github.event.inputs.days }}
+        run: python scripts/fetch_us_news.py
+
+      - name: Commit corpus
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add corpus/us/
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "chore: fetch US political headline corpus"
+          git push origin development
