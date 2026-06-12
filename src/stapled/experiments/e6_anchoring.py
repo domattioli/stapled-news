@@ -94,10 +94,13 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         n_multi_outlet_events = len(multi_outlet_events)
 
         # Run experiment for each budget
-        rng = np.random.default_rng(seed)
         results = []
 
         for budget_k in budgets:
+            # Per-budget RNG so each anchor sample is reproducible and independent of
+            # the budget list ordering (a shared RNG advanced cumulatively made the
+            # k=2500 result depend on which smaller budgets preceded it).
+            rng = np.random.default_rng([seed, budget_k])
             # Fresh temp copy for each budget
             with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp2:
                 budget_db_path = tmp2.name
