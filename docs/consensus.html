@@ -209,7 +209,8 @@
         #chart-weekly,
         #us-ranking,
         #us-weekly,
-        #us-lean-breakdown {
+        #us-lean-breakdown,
+        #lean-axis-plot {
             width: 100%;
             height: 400px;
         }
@@ -221,6 +222,72 @@
         #panel-composition-bar {
             width: 100%;
             height: 100px;
+        }
+
+        #lean-axis-plot {
+            height: 260px;
+        }
+
+        .lean-juxtaposition {
+            margin: 30px 0;
+        }
+
+        .lean-juxtaposition-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .lean-juxtaposition-label {
+            min-width: 200px;
+            font-weight: 600;
+        }
+
+        .lean-juxtaposition-bar {
+            flex: 1;
+            height: 30px;
+            display: flex;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+
+        .lean-juxtaposition-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .lean-juxtaposition-marker-track {
+            position: relative;
+            height: 12px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .lean-juxtaposition-marker {
+            position: absolute;
+            top: -9px;
+            width: 30px;
+            height: 30px;
+            background: #008fd5;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transform: translateX(-50%);
+        }
+
+        .lean-juxtaposition-caption {
+            font-size: 13px;
+            color: #777;
+            font-style: italic;
+            margin-top: 12px;
         }
 
         .us-section {
@@ -513,7 +580,7 @@
             <div class="commentary-kicker">THE TAKE</div>
             <p>The first thing the data shows is who hugs the consensus: regional chain papers. <span id="top-outlet-text">ocregister.com</span> currently sits closest to the stapled headline (drift <span id="top-dist-text">0.04</span>), and the rest of the nearest tier looks the same — outlets that run the wire headline nearly verbatim. That is syndication made visible, not editorial virtue. At the other end sits <span id="bottom-outlet-text">axios.com</span> (drift <span id="bottom-dist-text">0.71</span>), whose house style rewrites every headline it touches. If you came in expecting drift to be a partisanship detector, this is your first clue it isn't one: the extremes of the board are about <em>how outlets write</em>, not what they believe.</p>
 
-            <p>So is the consensus itself secretly leaning? We checked, and the honest answer is: not detectably — but the panel is lopsided. Left-leaning outlets contribute about <span id="left-share-text">64</span> percent of the coverage-weighted mass that builds the consensus, center outlets <span id="center-share-text">16</span> percent, right outlets <span id="right-share-text">20</span> percent. Despite that, the three blocs' average drift is statistically indistinguishable — every confidence interval overlaps every other one. The centroid is built mostly from left-leaning desks' wording, and right-leaning desks match it anyway. Make of that what you will; we read it as headline language being far more standardized than the discourse about media bias suggests.</p>
+            <p>So is the consensus itself secretly leaning? We checked. The three blocs' average distance from consensus is statistically indistinguishable — every confidence interval overlaps. But distance is not direction. When we measure where the consensus wording sits between left-camp and right-camp language centroids, it sits left of the midpoint. Left-leaning outlets contribute about <span id="left-share-text">64</span> percent of the coverage-weighted mass that builds the consensus, center outlets <span id="center-share-text">16</span> percent, right outlets <span id="right-share-text">20</span> percent. The leftward lean is mostly mechanical from that composition: the average of a left-heavy room leans left. Make of that what you will; we read it as headline language being far more standardized than the discourse about media bias suggests, and the lean itself reflecting the panel, not hidden editorial drift.</p>
 
             <p>The usual caveat, stated plainly rather than buried: this corpus is <span id="n-events-text">23</span> stories deep. The collector adds headlines every hour, the intervals will tighten, and some of what you see below will move. That's not a bug in the analysis — that's what early data is supposed to do.</p>
         </div>
@@ -574,6 +641,41 @@
             </div>
             <p class="figure-caption" style="margin-bottom: 25px;">Mean distance from consensus by outlet lean (AllSides classification). Confidence intervals indicate whether the three groups' means differ meaningfully. All intervals overlap — no detectable lean in the stapled consensus itself.</p>
             <div id="lean-prose" style="max-width: 740px; margin: 0 auto; font-size: 16px; line-height: 1.7; color: #333;"></div>
+        </div>
+
+        <!-- Lean Axis Section -->
+        <div class="section">
+            <div class="article-kicker" style="margin-bottom: 15px;">DOES THE CONSENSUS LEAN?</div>
+            <h2 class="section-title">The Direction of the Consensus, Not Just Its Distance</h2>
+            <div class="article-body" style="margin-bottom: 30px;">
+                <p>The earlier ranking measured <em>distance</em> — how far each outlet's wording sits from consensus — and found the lean buckets equidistant. But distance is not direction. To test direction, for the <span id="n-events-lean-text">8</span> stories that had both left-rated and right-rated outlets, we build a left-camp wording centroid and a right-camp wording centroid and locate the consensus headline between them. The finding, stated plainly: the consensus sits at position <span id="mean-position-text">0.30</span> on a 0=left-camp to 1=right-camp axis (95% CI <span id="ci-low-text">0.21</span>–<span id="ci-high-text">0.39</span>), i.e. LEFT of the 0.5 midpoint, and the interval excludes 0.5.</p>
+            </div>
+            <div class="plotly-container">
+                <div id="lean-axis-plot"></div>
+            </div>
+            <p class="figure-caption">Position of each story's consensus headline on a left-camp to right-camp axis (gray dots; jitter is deterministic). The mean position (blue dot) with 95% CI bar. Dashed reference line at 0.5 marks the midpoint between camps.</p>
+
+            <div class="lean-juxtaposition">
+                <div class="lean-juxtaposition-row">
+                    <div class="lean-juxtaposition-label">Who's in the panel (coverage-weighted)</div>
+                    <div class="lean-juxtaposition-bar" id="panel-composition-viz">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="lean-juxtaposition-row">
+                    <div class="lean-juxtaposition-label">Where the consensus wording sits</div>
+                    <div style="flex: 1;">
+                        <div class="lean-juxtaposition-marker-track" id="lean-position-track">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="lean-juxtaposition-caption" style="max-width: 740px; margin: 0 auto;">A panel that is <span id="left-pct-juxtapose-text">72</span>% left-leaning produces a consensus whose wording sits left of center. That is the panel composition showing through — the consensus is an average, and the average of a left-heavy room leans left.</div>
+            </div>
+
+            <div class="article-body" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                <p style="font-size: 15px; color: #666;"><strong>Caveat.</strong> Only <span id="n-events-scored-caveat-text">8</span> stories had both camps present (regional chain papers, which dominate the corpus, are unrated by AllSides and excluded from this axis); camp separation averages <span id="mean-sep-text">1.01</span>, so there genuinely is a distinguishable left-vs-right way to phrase these stories; this measures wording direction, not factual slant, and the leftward position is largely mechanical from composition rather than evidence of hidden editorial bias. As the corpus grows and more two-camp stories accrue, this estimate will firm up.</p>
+            </div>
         </div>
 
         <!-- Headline Diff Explorer -->
@@ -725,11 +827,12 @@
         }
 
         // Responsive resize handler
-        let chartsDrawn = {hero: false, ranking: false, weekly: false, lean: false};
+        let chartsDrawn = {hero: false, ranking: false, weekly: false, lean: false, leanAxis: false};
         window.addEventListener('resize', function() {
             if (chartsDrawn.hero) Plotly.Plots.resize('hero-swarm');
             if (chartsDrawn.ranking) Plotly.Plots.resize('us-ranking');
             if (chartsDrawn.lean) Plotly.Plots.resize('us-lean-breakdown');
+            if (chartsDrawn.leanAxis) Plotly.Plots.resize('lean-axis-plot');
             if (chartsDrawn.weekly) Plotly.Plots.resize('us-weekly');
         });
 
@@ -1094,13 +1197,184 @@
                         const rightGroup = groups['right'];
                         let proseText = '';
                         if (leftGroup && centerGroup && rightGroup) {
-                            proseText = `<strong>Chart interpretation:</strong> All three confidence intervals overlap—no lean is statistically detectable in the consensus wording itself. When an outlet's distance clusters with others in the same ideological lean, it simply means it phrases stories the way others in that bloc do. Distance measures wording similarity, not accuracy or editorial stance.`;
+                            proseText = `<strong>Chart interpretation:</strong> All three confidence intervals overlap—the three blocs' average distance from consensus is statistically indistinguishable. However, <em>distance is not direction.</em> The consensus wording itself, while equally far from all three camps on average, sits directionally left of the ideological midpoint. That leftward position reflects the panel composition: 72% left-leaning coverage-weighted mass naturally produces a consensus that averages toward left-camp language. When an outlet's distance clusters with others in the same ideological lean, it simply means it phrases stories the way others in that bloc do. Distance measures wording similarity, not accuracy or editorial stance.`;
                         }
                         proseDiv.innerHTML = proseText;
                     }
                 }
             } catch (err) {
                 console.error('Composition section failed:', err);
+            }
+        }
+
+        function renderLeanAxis(usData) {
+            try {
+                const consensusLean = usData.consensus_lean || {};
+                if (!consensusLean.per_event || consensusLean.per_event.length === 0) return;
+
+                const perEvent = consensusLean.per_event;
+                const meanPosition = consensusLean.mean_position || 0;
+                const ciLow = consensusLean.ci_low || 0;
+                const ciHigh = consensusLean.ci_high || 1;
+                const meanSeparation = consensusLean.mean_separation || 1;
+                const nEventsScored = consensusLean.n_events_scored || 0;
+
+                // Populate text interpolations
+                setText('n-events-lean-text', nEventsScored);
+                setText('mean-position-text', meanPosition.toFixed(2));
+                setText('ci-low-text', ciLow.toFixed(2));
+                setText('ci-high-text', ciHigh.toFixed(2));
+                setText('n-events-scored-caveat-text', nEventsScored);
+                setText('mean-sep-text', meanSeparation.toFixed(2));
+
+                // Panel composition for juxtaposition
+                const panelComp = usData.panel_composition || {};
+                const totalShare = (panelComp.left?.weighted_share || 0) + (panelComp.center?.weighted_share || 0) + (panelComp.right?.weighted_share || 0);
+                if (totalShare > 0) {
+                    const leftShare = panelComp.left?.weighted_share || 0;
+                    const centerShare = panelComp.center?.weighted_share || 0;
+                    const rightShare = panelComp.right?.weighted_share || 0;
+                    const leftPct = Math.round(leftShare / totalShare * 100);
+                    const centerPct = Math.round(centerShare / totalShare * 100);
+                    const rightPct = Math.round(rightShare / totalShare * 100);
+
+                    setText('left-pct-juxtapose-text', leftPct);
+
+                    // Build panel composition bar
+                    const panelViz = document.getElementById('panel-composition-viz');
+                    if (panelViz) {
+                        panelViz.innerHTML = '';
+                        if (leftShare > 0) {
+                            const seg = document.createElement('div');
+                            seg.className = 'lean-juxtaposition-segment';
+                            seg.style.backgroundColor = '#008fd5';
+                            seg.style.flex = leftShare.toString();
+                            seg.textContent = leftPct + '%';
+                            panelViz.appendChild(seg);
+                        }
+                        if (centerShare > 0) {
+                            const seg = document.createElement('div');
+                            seg.className = 'lean-juxtaposition-segment';
+                            seg.style.backgroundColor = '#8b8b8b';
+                            seg.style.flex = centerShare.toString();
+                            seg.textContent = centerPct + '%';
+                            panelViz.appendChild(seg);
+                        }
+                        if (rightShare > 0) {
+                            const seg = document.createElement('div');
+                            seg.className = 'lean-juxtaposition-segment';
+                            seg.style.backgroundColor = '#fc4f30';
+                            seg.style.flex = rightShare.toString();
+                            seg.textContent = rightPct + '%';
+                            panelViz.appendChild(seg);
+                        }
+                    }
+                }
+
+                // Build lean axis plot
+                // Jittered gray dots for each event
+                const dotTraces = {
+                    x: perEvent.map((e, i) => e.position),
+                    y: perEvent.map((e, i) => (i * 0.618) % 1 - 0.5),  // Deterministic jitter
+                    type: 'scatter',
+                    mode: 'markers',
+                    marker: {
+                        size: 8,
+                        color: '#999',
+                        opacity: 0.6
+                    },
+                    hovertemplate: '<b>%{customdata[0]}</b><br>' +
+                        'Position: %{x:.3f}<br>' +
+                        'Separation: %{customdata[1]:.3f}<br>' +
+                        'L%{customdata[2]}/R%{customdata[3]}<extra></extra>',
+                    customdata: perEvent.map(e => [
+                        e.consensus_headline,
+                        e.separation,
+                        e.n_left,
+                        e.n_right
+                    ]),
+                    showlegend: false
+                };
+
+                // Blue mean dot with CI bar
+                const meanTrace = {
+                    x: [meanPosition],
+                    y: [0],
+                    type: 'scatter',
+                    mode: 'markers',
+                    marker: {
+                        size: 14,
+                        color: '#008fd5'
+                    },
+                    hovertemplate: 'Mean position: %{x:.3f}<br>95% CI: [' + ciLow.toFixed(3) + '–' + ciHigh.toFixed(3) + ']<extra></extra>',
+                    showlegend: false
+                };
+
+                const leanAxisLayout = {
+                    title: '',
+                    xaxis: {
+                        title: '',
+                        zeroline: false,
+                        gridcolor: '#f0f0f0',
+                        showgrid: true,
+                        tickvals: [0, 0.5, 1],
+                        ticktext: ['Left camp\'s wording', 'Midpoint', 'Right camp\'s wording'],
+                        range: [-0.05, 1.05]
+                    },
+                    yaxis: {
+                        visible: false
+                    },
+                    plot_bgcolor: '#fff',
+                    paper_bgcolor: '#fff',
+                    margin: {l: 40, r: 40, t: 20, b: 100},
+                    hovermode: 'closest',
+                    shapes: [
+                        // CI bar behind mean
+                        {
+                            type: 'rect',
+                            x0: ciLow,
+                            x1: ciHigh,
+                            y0: -0.15,
+                            y1: 0.15,
+                            fillcolor: '#e8e8e8',
+                            line: {width: 0}
+                        },
+                        // Midpoint dashed line
+                        {
+                            type: 'line',
+                            x0: 0.5,
+                            x1: 0.5,
+                            y0: -0.3,
+                            y1: 0.3,
+                            line: {color: '#ddd', width: 2, dash: 'dash'}
+                        }
+                    ],
+                    annotations: [
+                        {
+                            x: 0.5,
+                            y: -0.35,
+                            text: 'midpoint',
+                            showarrow: false,
+                            font: {size: 10, color: '#aaa'},
+                            xanchor: 'center'
+                        }
+                    ]
+                };
+
+                Plotly.newPlot('lean-axis-plot', [dotTraces, meanTrace], leanAxisLayout, {responsive: true, displayModeBar: false});
+                chartsDrawn.leanAxis = true;
+
+                // Build lean position marker on juxtaposition track
+                const trackDiv = document.getElementById('lean-position-track');
+                if (trackDiv) {
+                    trackDiv.innerHTML = '';
+                    const marker = document.createElement('div');
+                    marker.className = 'lean-juxtaposition-marker';
+                    marker.style.left = (meanPosition * 100) + '%';
+                    trackDiv.appendChild(marker);
+                }
+            } catch (err) {
+                console.error('Lean axis section failed:', err);
             }
         }
 
@@ -1355,6 +1629,7 @@
                 renderHero(usData);
                 renderRanking(usData);
                 renderComposition(usData);
+                renderLeanAxis(usData);
                 renderWeekly(usData);
                 renderExplorer(usData);
                 renderValidation(usData);

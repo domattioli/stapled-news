@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T00:19:50.454859",
+  "generated_at": "2026-06-13T02:53:30.859700",
   "corpus": {
     "repo": "defgsus/frontpage-archive-2026",
     "since": "2026-05-14",
@@ -462,6 +462,79 @@
       "articles": 20,
       "weighted_share": 0.1438
     }
+  },
+  "consensus_lean": {
+    "per_event": [
+      {
+        "event_id": 5,
+        "position": 0.2146,
+        "separation": 0.9693,
+        "n_left": 13,
+        "n_right": 4,
+        "consensus_headline": "Sen . Cassidy battles Trump - backed challenger in Louisiana Republican primary"
+      },
+      {
+        "event_id": 6,
+        "position": 0.068,
+        "separation": 1.1647,
+        "n_left": 19,
+        "n_right": 1,
+        "consensus_headline": "Lawsuit aims to block UFC event at White House on Trump\u2019s birthday"
+      },
+      {
+        "event_id": 10,
+        "position": 0.4365,
+        "separation": 0.7926,
+        "n_left": 4,
+        "n_right": 3,
+        "consensus_headline": "Senate parliamentarian deals blow to $1 billion security proposal for White House"
+      },
+      {
+        "event_id": 23,
+        "position": 0.2711,
+        "separation": 0.8065,
+        "n_left": 8,
+        "n_right": 2,
+        "consensus_headline": "Trump nominates Jay Clayton as director of national intelligence"
+      },
+      {
+        "event_id": 30,
+        "position": 0.1463,
+        "separation": 1.2348,
+        "n_left": 10,
+        "n_right": 1,
+        "consensus_headline": "Graham Platner seeks Democratic Senate nomination in Maine , and more primary races to watch today"
+      },
+      {
+        "event_id": 103,
+        "position": 0.3339,
+        "separation": 1.2237,
+        "n_left": 3,
+        "n_right": 1,
+        "consensus_headline": "With two Dan Sullivans in Alaska\u2019s Senate race, Republicans cry foul"
+      },
+      {
+        "event_id": 123,
+        "position": 0.4927,
+        "separation": 0.9197,
+        "n_left": 5,
+        "n_right": 4,
+        "consensus_headline": "Federal judge indefinitely blocks Trump\u2019s \u2018anti-weaponization\u2019 fund"
+      },
+      {
+        "event_id": 151,
+        "position": 0.4035,
+        "separation": 0.9838,
+        "n_left": 3,
+        "n_right": 2,
+        "consensus_headline": "DOJ approves Paramount Skydance\u2019s acquisition of Warner Bros. Discovery"
+      }
+    ],
+    "n_events_scored": 8,
+    "mean_position": 0.2958,
+    "ci_low": 0.2065,
+    "ci_high": 0.3881,
+    "mean_separation": 1.0119
   },
   "weekly": {},
   "events": [
