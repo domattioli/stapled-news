@@ -725,3 +725,90 @@ def panel_composition(article_rows: List[Dict]) -> Dict:
         }
         for g in ("left", "center", "right")
     }
+
+
+def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int = 1000) -> Dict:
+    """
+    Signed left<->right position of each consensus headline, not just its distance.
+
+    For every event that has at least one left-rated and one right-rated member
+    (AllSides buckets), build a left-camp wording centroid L and a right-camp
+    centroid R from those members, plus the full consensus centroid C. Project C
+    onto the L->R axis:  t = (C - L)·(R - L) / ||R - L||^2.
+      t = 0   -> consensus phrased like the left camp
+      t = 0.5 -> exactly between the camps
+      t = 1   -> phrased like the right camp
+    separation = ||R - L|| says how distinguishable the two camps' wording even is
+    on that story (small -> there is barely a "left way" vs "right way" to write it).
+
+    The consensus centroid C is composition-weighted, so a left-heavy panel pulls
+    t below 0.5 mechanically; the report pairs t with the panel composition so the
+    reader can separate "the panel leans" from "the wording leans".
+    """
+    cur = conn.execute(
+        """
+        SELECT c.event_id FROM claim c JOIN article a ON c.article_id = a.id
+        WHERE c.event_id IS NOT NULL
+        GROUP BY c.event_id HAVING COUNT(DISTINCT a.outlet_id) >= ?
+        ORDER BY c.event_id
+        """,
+        (min_outlets,),
+    )
+    event_ids = [r[0] for r in cur.fetchall()]
+
+    per_event = []
+    for eid in event_ids:
+        members = conn.execute(
+            """
+            SELECT DISTINCT o.name, a.title FROM claim c
+            JOIN article a ON c.article_id = a.id
+            JOIN outlet o ON a.outlet_id = o.id
+            WHERE c.event_id = ? ORDER BY a.id
+            """,
+            (eid,),
+        ).fetchall()
+        leans = [PANEL_LEAN.get(o) for o, _ in members]
+        if leans.count("left") < 1 or leans.count("right") < 1:
+            continue
+        titles = [t or "" for _, t in members]
+        _, vecs = build_event_vectors(titles)
+        dense = np.asarray(vecs.todense())
+
+        def _centroid(mask):
+            sub = dense[mask]
+            v = sub.mean(axis=0)
+            n = np.linalg.norm(v)
+            return v / n if n > 0 else v
+
+        Lmask = np.array([le == "left" for le in leans])
+        Rmask = np.array([le == "right" for le in leans])
+        L = _centroid(Lmask)
+        R = _centroid(Rmask)
+        C = _centroid(np.ones(len(leans), dtype=bool))
+        axis = R - L
+        sep = float(np.linalg.norm(axis))
+        if sep < 1e-9:
+            continue
+        t = float(np.dot(C - L, axis) / np.dot(axis, axis))
+        # consensus headline = full-centroid nearest member
+        dists = [1.0 - float(np.dot(dense[i] / (np.linalg.norm(dense[i]) or 1), C))
+                 for i in range(len(titles))]
+        per_event.append({
+            "event_id": eid,
+            "position": round(t, 4),
+            "separation": round(sep, 4),
+            "n_left": int(Lmask.sum()),
+            "n_right": int(Rmask.sum()),
+            "consensus_headline": titles[int(np.argmin(dists))],
+        })
+
+    out = {"per_event": per_event, "n_events_scored": len(per_event)}
+    if per_event:
+        ts = np.array([e["position"] for e in per_event])
+        rng = np.random.default_rng(seed)
+        boots = [rng.choice(ts, size=len(ts), replace=True).mean() for _ in range(n_boot)]
+        out["mean_position"] = round(float(ts.mean()), 4)
+        out["ci_low"] = round(float(np.quantile(boots, 0.025)), 4)
+        out["ci_high"] = round(float(np.quantile(boots, 0.975)), 4)
+        out["mean_separation"] = round(float(np.mean([e["separation"] for e in per_event])), 4)
+    return out
