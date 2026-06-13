@@ -323,6 +323,70 @@
             line-height: 1.5;
         }
 
+        .tldr {
+            font-size: 15px;
+            line-height: 1.55;
+            color: #333;
+            background: #f0f6fa;
+            border-left: 3px solid #008fd5;
+            padding: 12px 16px;
+            margin: 0 0 20px 0;
+            max-width: 740px;
+        }
+
+        .tldr b {
+            color: #008fd5;
+            letter-spacing: 0.5px;
+        }
+
+        .toc {
+            max-width: 740px;
+            margin: 30px auto 10px auto;
+            padding: 22px 26px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .toc-title {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+            columns: 2;
+            column-gap: 40px;
+        }
+
+        @media (max-width: 600px) { .toc ol { columns: 1; } }
+
+        .toc li {
+            margin-bottom: 9px;
+            font-size: 15px;
+            line-height: 1.4;
+            break-inside: avoid;
+        }
+
+        .toc a {
+            color: #008fd5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .toc a:hover { text-decoration: underline; }
+
+        .toc .toc-note {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            font-weight: 400;
+        }
+
         .story-table {
             width: 100%;
             border-collapse: collapse;
@@ -559,24 +623,39 @@
             <p class="article-dek" style="font-size:16px; color:#666;"><strong>What is STAPLE?</strong> It comes from medical imaging (Warfield et al., 2004). When several radiologists trace the same tumor and disagree, STAPLE — Simultaneous Truth and Performance Level Estimation — builds the best-estimate outline with no answer key. The trick is that it is <em>not</em> a simple majority vote. It starts with a rough vote, scores how reliable each radiologist is against that draft, then redraws the outline weighting the careful tracers more than the sloppy ones — and repeats until the estimate and the reliability scores stop moving. Each rater gets two numbers: <em>sensitivity</em> (do they catch what is really there?) and <em>specificity</em> (do they avoid marking what isn't?). We run the same loop on news: outlets are the radiologists, a breaking story is the tumor, headlines are the tracings. STAPLE learns which outlets phrase stories like the reliable consensus, builds the consensus headline, and measures how far each outlet drifts from it.</p>
         </div>
 
+        <nav class="toc" aria-label="Table of contents">
+            <div class="toc-title">In this piece</div>
+            <ol>
+                <li><a href="#sec-overview">Every headline, one dot</a><span class="toc-note">the dataset at a glance</span></li>
+                <li><a href="#sec-method">The method, in plain English</a><span class="toc-note">what "drift" measures</span></li>
+                <li><a href="#sec-take">The take</a><span class="toc-note">who hugs consensus, who strays</span></li>
+                <li><a href="#sec-ranking">Outlet ranking</a><span class="toc-note">closest to farthest</span></li>
+                <li><a href="#sec-panel">Is the consensus leaning?</a><span class="toc-note">distance by camp</span></li>
+                <li><a href="#sec-direction">The direction of the consensus</a><span class="toc-note">left vs right wording</span></li>
+                <li><a href="#sec-explorer">Headline diff explorer</a><span class="toc-note">word-by-word</span></li>
+                <li><a href="#sec-validation">Validation</a><span class="toc-note">does the method work</span></li>
+            </ol>
+        </nav>
+
         <!-- Hero Section: Beeswarm + Stats -->
-        <div class="section" style="margin-top: 40px; margin-bottom: 40px;">
+        <div class="section" id="sec-overview" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="article-kicker" style="margin-bottom: 15px;">EVERY HEADLINE, ONE DOT</div>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Here is the whole dataset at a glance: every political headline, placed by how far its wording drifts from the pack.</p>
             <div class="plotly-container">
                 <div id="hero-swarm"></div>
             </div>
-            <p class="figure-caption">Each dot is one headline. Position reflects distance from the stapled consensus headline. Blue dots: left-rated outlets; gray: center; red: right (AllSides classification).</p>
+            <p class="figure-caption">Every dot is one headline. The further right it sits, the more its wording strays from how the pack phrased the same story. Dot color is the outlet's political lean.</p>
             <div class="hero-stats-strip" id="hero-stats">
                 <!-- Populated by JS -->
             </div>
         </div>
 
-        <div class="method-box">
+        <div class="method-box" id="sec-method">
             <div class="method-title">The method, in plain English</div>
             <p class="method-text">When a big political story breaks, every outlet writes its own headline for the same underlying facts. We collect those headlines, group them by story, and average them into a single 'consensus headline' — the wording the field converges on. Then we measure how far each outlet's version sits from that average, word by word. An outlet that phrases stories the way everyone else does scores low; an outlet that reaches for its own framing scores high. That's all 'drift' means here: distance from the pack's wording — not accuracy, and not ideology.</p>
         </div>
 
-        <div class="article-body" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
+        <div class="article-body" id="sec-take" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
             <div class="commentary-kicker">THE TAKE</div>
             <p>The first thing the data shows is who hugs the consensus: regional chain papers. <span id="top-outlet-text">ocregister.com</span> currently sits closest to the stapled headline (drift <span id="top-dist-text">0.04</span>), and the rest of the nearest tier looks the same — outlets that run the wire headline nearly verbatim. That is syndication made visible, not editorial virtue. At the other end sits <span id="bottom-outlet-text">axios.com</span> (drift <span id="bottom-dist-text">0.71</span>), whose house style rewrites every headline it touches. If you came in expecting drift to be a partisanship detector, this is your first clue it isn't one: the extremes of the board are about <em>how outlets write</em>, not what they believe.</p>
 
@@ -609,51 +688,55 @@
         </div>
 
         <!-- Chart 1: Outlet Ranking (FiveThirtyEight style) -->
-        <div class="section">
+        <div class="section" id="sec-ranking">
             <h2 class="section-title">Outlet Ranking</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Which outlets write headlines like everyone else, and which write their own way. It turns out the nearest are local papers running the wire copy.</p>
             <div class="plotly-container">
                 <div id="us-ranking"></div>
             </div>
-            <p class="figure-caption">Mean distance from consensus (with 95% confidence intervals). Outlets sorted left to right, closest to farthest.</p>
+            <p class="figure-caption">How differently each outlet tends to word the same stories. Left = writes like everyone else; right = goes its own way. The bar is the range we are confident the true value falls in.</p>
         </div>
 
         <!-- Chart 2: Weekly Trajectory (conditional) -->
         <div id="weekly-section" style="display:none;">
             <div class="section">
                 <h2 class="section-title">Weekly Trajectory</h2>
+                <p class="tldr"><b>TL;DR</b> &nbsp;Does an outlet keep the same headline style from week to week, or wander?</p>
                 <div class="plotly-container">
                     <div id="us-weekly"></div>
                 </div>
-                <p class="figure-caption">Mean distance per outlet across rolling weeks. Shows stability and drift in outlet positioning.</p>
+                <p class="figure-caption">Each line is one outlet's wording-distance week to week. A flat line means its style holds steady.</p>
             </div>
         </div>
 
         <!-- Panel Composition: Lean Breakdown -->
-        <div class="section">
+        <div class="section" id="sec-panel">
             <div class="article-kicker" style="margin-bottom: 15px;">PANEL COMPOSITION</div>
             <h2 class="section-title">Is the Consensus Itself Leaning?</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Most outlets in our sample lean left. Does that tilt the consensus everyone is measured against? On pure distance, no camp strays more than another.</p>
             <div class="plotly-container">
                 <div id="panel-composition-bar"></div>
             </div>
-            <p class="figure-caption">Share of the coverage-weighted mass each bloc contributes to the consensus.</p>
+            <p class="figure-caption">How much of the consensus is built from left-, center-, and right-leaning outlets. Most of it comes from the left.</p>
             <div class="plotly-container">
                 <div id="us-lean-breakdown"></div>
             </div>
-            <p class="figure-caption" style="margin-bottom: 25px;">Mean distance from consensus by outlet lean (AllSides classification). Confidence intervals indicate whether the three groups' means differ meaningfully. All intervals overlap — no detectable lean in the stapled consensus itself.</p>
+            <p class="figure-caption" style="margin-bottom: 25px;">How far each political camp sits from the consensus. The three bars overlap, so no camp wanders further than the others — but that is about distance, not which side the wording sounds like (see the next section).</p>
             <div id="lean-prose" style="max-width: 740px; margin: 0 auto; font-size: 16px; line-height: 1.7; color: #333;"></div>
         </div>
 
         <!-- Lean Axis Section -->
-        <div class="section">
+        <div class="section" id="sec-direction">
             <div class="article-kicker" style="margin-bottom: 15px;">DOES THE CONSENSUS LEAN?</div>
             <h2 class="section-title">The Direction of the Consensus, Not Just Its Distance</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Distance treats left and right the same. This asks a sharper question: which side's wording does the consensus actually sound like? Answer: a bit left of center — because the room is mostly left.</p>
             <div class="article-body" style="margin-bottom: 30px;">
                 <p>The earlier ranking measured <em>distance</em> — how far each outlet's wording sits from consensus — and found the lean buckets equidistant. But distance is not direction. To test direction, for the <span id="n-events-lean-text">8</span> stories that had both left-rated and right-rated outlets, we build a left-camp wording centroid and a right-camp wording centroid and locate the consensus headline between them. The finding, stated plainly: the consensus sits at position <span id="mean-position-text">0.30</span> on a 0=left-camp to 1=right-camp axis (95% CI <span id="ci-low-text">0.21</span>–<span id="ci-high-text">0.39</span>), i.e. LEFT of the 0.5 midpoint, and the interval excludes 0.5.</p>
             </div>
             <div class="plotly-container">
                 <div id="lean-axis-plot"></div>
             </div>
-            <p class="figure-caption">Position of each story's consensus headline on a left-camp to right-camp axis (gray dots; jitter is deterministic). The mean position (blue dot) with 95% CI bar. Dashed reference line at 0.5 marks the midpoint between camps.</p>
+            <p class="figure-caption">Where each story's consensus headline lands between how the left wrote it (0) and how the right wrote it (1). 0.5 is dead center. The blue dot is the average — it sits left of center.</p>
 
             <div class="lean-juxtaposition">
                 <div class="lean-juxtaposition-row">
@@ -679,17 +762,19 @@
         </div>
 
         <!-- Headline Diff Explorer -->
-        <div class="section">
+        <div class="section" id="sec-explorer">
             <h2 class="section-title">The Headline Diff Explorer</h2>
-            <p class="figure-caption" style="margin-bottom: 25px;">Green words match the stapled consensus wording; red words pull the headline away. Color richness tracks each word's share of the effect.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Read the agreed-on headline, then watch what each outlet changed. The highlighted words are the ones that moved it off consensus.</p>
+            <p class="figure-caption" style="margin-bottom: 25px;">Read the consensus headline, then each outlet's version. Green words echo the consensus; red words break from it; brighter means a bigger effect on the score.</p>
             <div id="explorer-container">
                 <!-- Populated by JS -->
             </div>
         </div>
 
         <!-- Validation -->
-        <div class="section">
+        <div class="section" id="sec-validation">
             <h2 class="section-title">Validation</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Two sanity checks that the method measures what we claim — one passes now, one needs a bigger corpus.</p>
             <div class="validation-cards" id="validation-cards">
                 <!-- Populated by JS -->
             </div>
