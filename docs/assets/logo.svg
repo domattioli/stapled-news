@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="360" height="80" role="img" aria-label="STAPLE-News">
+  <!-- staple mark: a fastener clamping two stacked headlines -->
+  <g fill="none" stroke="#fc4f30" stroke-width="7" stroke-linecap="round">
+    <path d="M14 54 V26 a4 4 0 0 1 4-4 H50 a4 4 0 0 1 4 4 V54"/>
+  </g>
+  <g fill="#222">
+    <rect x="22" y="40" width="40" height="6" rx="3" opacity="0.85"/>
+    <rect x="22" y="52" width="28" height="6" rx="3" opacity="0.5"/>
+  </g>
+  <text x="78" y="50" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="700" fill="#222" letter-spacing="-0.5">STAPLE</text>
+  <text x="78" y="68" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fc4f30" letter-spacing="4">NEWS · CONSENSUS LAB</text>
+</svg>
