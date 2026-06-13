@@ -856,3 +856,32 @@ def panel_spectrum(article_rows: List[Dict]) -> Dict:
             sum(LEAN_ORDINAL[c] * weight_by[c] for c in cats) / total, 4
         ),
     }
+
+
+def regional_impact(article_rows: List[Dict]) -> Dict:
+    """Footprint of AllSides-unrated outlets (mostly regional chains) on the
+    corpus: their share of analyzed articles, their mean drift vs rated national
+    outlets, and how many events they form the majority of. Unrated outlets carry
+    no political-lean placement, so the directional analysis cannot see them even
+    though they shape the consensus."""
+    rated = [r for r in article_rows if PANEL_LEAN5.get(r["outlet"])]
+    unrated = [r for r in article_rows if not PANEL_LEAN5.get(r["outlet"])]
+    n = len(article_rows) or 1
+    by_event = defaultdict(set)
+    for r in article_rows:
+        by_event[r["event_id"]].add(r["outlet"])
+    unrated_majority = sum(
+        1 for outs in by_event.values()
+        if sum(1 for o in outs if not PANEL_LEAN5.get(o)) > len(outs) / 2
+    )
+    mean = lambda xs: round(float(np.mean([x["distance"] for x in xs])), 4) if xs else None
+    return {
+        "n_total": len(article_rows),
+        "n_unrated": len(unrated),
+        "pct_unrated": round(100.0 * len(unrated) / n, 1),
+        "n_unrated_outlets": len(set(r["outlet"] for r in unrated)),
+        "mean_drift_rated": mean(rated),
+        "mean_drift_unrated": mean(unrated),
+        "events_total": len(by_event),
+        "events_unrated_majority": unrated_majority,
+    }

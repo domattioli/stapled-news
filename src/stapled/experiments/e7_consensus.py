@@ -25,6 +25,7 @@ from stapled.analyze.consensus_distance import (
     panel_composition,
     panel_spectrum,
     consensus_lean_axis,
+    regional_impact,
     PANEL_LEAN,
     PANEL_LEAN5,
 )
@@ -201,6 +202,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
             "panel_composition": panel_composition(article_rows),
             "panel_spectrum": panel_spectrum(article_rows),
             "syndication": _syndication_stats(article_rows),
+            "regional_impact": regional_impact(article_rows),
             "consensus_lean": consensus_lean_axis(conn, min_outlets=min_outlets, seed=seed),
             "weekly": weekly_data,
             "events": [
@@ -307,6 +309,43 @@ def _create_chart(outlet_metrics: list, out_path: Path) -> Path:
     return png_path
 
 
+FAMOUS_OUTLETS = {
+    "nytimes.com", "washingtonpost.com", "cnn.com", "foxnews.com", "nbcnews.com",
+    "abcnews.go.com", "cbsnews.com", "npr.org", "politico.com", "reuters.com",
+    "apnews.com", "wsj.com", "usatoday.com", "thehill.com", "axios.com",
+    "msnbc.com", "breitbart.com", "huffpost.com", "newsmax.com", "theguardian.com",
+    "nypost.com", "bloomberg.com", "thedailybeast.com", "nationalreview.com",
+}
+
+
+def _curate_members(members, target=10):
+    """Pick a legible, representative slate of ~8-10 outlets per event: famous
+    national outlets first, spread across the AllSides lean spectrum where
+    available, plus 1-2 less-famous (often regional, unrated) outlets so the
+    syndication-heavy long tail stays visible. Falls back to distance order when
+    an event has fewer members than the target."""
+    if len(members) <= target:
+        return members
+    famous = [m for m in members if m["outlet"] in FAMOUS_OUTLETS]
+    other = [m for m in members if m["outlet"] not in FAMOUS_OUTLETS]
+    picked, seen_lean = [], {}
+    # First pass over famous: cap per lean bucket so one camp cannot fill the slate.
+    for m in famous:
+        lean = PANEL_LEAN5.get(m["outlet"], "unrated")
+        if seen_lean.get(lean, 0) < 3:
+            picked.append(m)
+            seen_lean[lean] = seen_lean.get(lean, 0) + 1
+    # Reserve 2 slots for less-famous outlets (regional / unrated long tail).
+    n_other = min(2, len(other), max(0, target - len(picked)))
+    picked = picked[: target - n_other] + other[:n_other]
+    # Backfill from remaining famous if short.
+    if len(picked) < target:
+        for m in famous:
+            if m not in picked and len(picked) < target:
+                picked.append(m)
+    return sorted(picked, key=lambda m: m["distance"])
+
+
 def _build_events_detail(article_rows, top_events, max_events=12):
     """Per-event member headlines with word-level distance attribution.
 
@@ -331,6 +370,7 @@ def _build_events_detail(article_rows, top_events, max_events=12):
             if cur is None or m["distance"] < cur["distance"]:
                 best[m["outlet"]] = m
         members = sorted(best.values(), key=lambda m: m["distance"])
+        members = _curate_members(members, target=10)
         titles = [m["title"] for m in members]
         impacts = token_impacts(titles)
         detail.append({
@@ -341,6 +381,7 @@ def _build_events_detail(article_rows, top_events, max_events=12):
                 {
                     "outlet": m["outlet"],
                     "distance": round(m["distance"], 4),
+                    "lean5": PANEL_LEAN5.get(m["outlet"]),
                     "tokens": toks,
                 }
                 for m, toks in zip(members, impacts)
