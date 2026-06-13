@@ -209,7 +209,6 @@
         #chart-weekly,
         #us-ranking,
         #us-weekly,
-        #us-lean-breakdown,
         #lean-axis-plot {
             width: 100%;
             height: 400px;
@@ -968,11 +967,10 @@
         }
 
         // Responsive resize handler
-        let chartsDrawn = {hero: false, ranking: false, weekly: false, lean: false, leanAxis: false};
+        let chartsDrawn = {hero: false, ranking: false, weekly: false, leanAxis: false};
         window.addEventListener('resize', function() {
             if (chartsDrawn.hero) Plotly.Plots.resize('hero-swarm');
             if (chartsDrawn.ranking) Plotly.Plots.resize('us-ranking');
-            if (chartsDrawn.lean) Plotly.Plots.resize('us-lean-breakdown');
             if (chartsDrawn.leanAxis) Plotly.Plots.resize('lean-axis-plot');
             if (chartsDrawn.weekly) Plotly.Plots.resize('us-weekly');
         });
@@ -1231,33 +1229,6 @@
                         setText('right-share-text', rightShare);
                     }
 
-                    const leanCIBars = {
-                        x: groupNames.map(g => (groups[g] && groups[g].n_articles) ? `${groups[g].n_articles}` : '0'),
-                        y: groupNames.map(g => {
-                            if (groups[g]) return groupLabels[groupNames.indexOf(g)] + ' (' + groups[g].n_articles + ' articles)';
-                            return groupLabels[groupNames.indexOf(g)];
-                        }),
-                        base: groupNames.map(g => groups[g] ? groups[g].ci_low : 0),
-                        type: 'bar',
-                        orientation: 'h',
-                        marker: {color: '#e0e0e0'},
-                        hoverinfo: 'skip',
-                        showlegend: false
-                    };
-
-                    const leanDots = {
-                        x: groupNames.map(g => groups[g] ? groups[g].mean_distance : 0),
-                        y: groupNames.map(g => {
-                            if (groups[g]) return groupLabels[groupNames.indexOf(g)] + ' (' + groups[g].n_articles + ' articles)';
-                            return groupLabels[groupNames.indexOf(g)];
-                        }),
-                        type: 'scatter',
-                        mode: 'markers',
-                        marker: {size: 12, color: ['#008fd5', '#8b8b8b', '#fc4f30']},
-                        hovertemplate: '<b>%{y}</b><br>Mean: %{x:.4f}<br>CI: [' +
-                            groupNames.map(g => groups[g] ? groups[g].ci_low.toFixed(4) + '–' + groups[g].ci_high.toFixed(4) : 'N/A').join('] [') + ']<extra></extra>',
-                        showlegend: false
-                    };
 
 
                     // Panel spectrum (5-bucket)
@@ -1442,8 +1413,8 @@
                         zeroline: false,
                         gridcolor: '#f0f0f0',
                         showgrid: true,
-                        tickvals: [0, 0.5, 1],
-                        ticktext: ['phrased like LEFT camp', 'Midpoint', 'phrased like RIGHT camp'],
+                        tickvals: [0, 1],
+                        ticktext: ['phrased like the LEFT camp', 'phrased like the RIGHT camp'],
                         range: [-0.05, 1.05]
                     },
                     yaxis: {
@@ -1451,7 +1422,7 @@
                     },
                     plot_bgcolor: '#fff',
                     paper_bgcolor: '#fff',
-                    margin: {l: 40, r: 40, t: 20, b: 100},
+                    margin: {l: 40, r: 40, t: 20, b: 80},
                     hovermode: 'closest',
                     shapes: [
                         // CI bar behind mean
@@ -1532,6 +1503,12 @@
                     ciSpan.style.left = (ciLow * 100) + '%';
                     ciSpan.style.right = (100 - ciHigh * 100) + '%';
                     trackDiv.appendChild(ciSpan);
+
+                    // Midpoint tick (0.5 position)
+                    const midpointTick = document.createElement('div');
+                    midpointTick.className = 'midpoint-tick';
+                    midpointTick.style.left = '50%';
+                    trackDiv.appendChild(midpointTick);
 
                     // Mean marker dot
                     const marker = document.createElement('div');
