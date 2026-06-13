@@ -219,11 +219,6 @@
             height: 500px;
         }
 
-        #panel-composition-bar {
-            width: 100%;
-            height: 100px;
-        }
-
         #lean-axis-plot {
             height: 260px;
         }
@@ -269,6 +264,22 @@
             background: #f0f0f0;
             border: 1px solid #ddd;
             margin-top: 10px;
+        }
+
+        .midpoint-tick {
+            position: absolute;
+            top: -3px;
+            width: 1px;
+            height: 18px;
+            background: #ddd;
+        }
+
+        .lean-ci-span {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: rgba(0, 143, 213, 0.15);
+            border: 1px solid rgba(0, 143, 213, 0.3);
         }
 
         .lean-juxtaposition-marker {
@@ -606,7 +617,7 @@
     <div class="masthead">
         <div class="masthead-content">
             <div class="masthead-row">
-                <a href="index.html" class="wordmark">STAPLE‑News</a>
+                <a href="consensus.html"><img src="assets/logo.svg" alt="STAPLE-News" style="height:46px;width:auto;"></a>
                 <div class="kicker">Live US Corpus</div>
             </div>
             <nav>
@@ -626,6 +637,7 @@
         <nav class="toc" aria-label="Table of contents">
             <div class="toc-title">In this piece</div>
             <ol>
+                <li><a href="#sec-motivation">Why this exists</a><span class="toc-note">what we measure</span></li>
                 <li><a href="#sec-overview">Every headline, one dot</a><span class="toc-note">the dataset at a glance</span></li>
                 <li><a href="#sec-method">The method, in plain English</a><span class="toc-note">what "drift" measures</span></li>
                 <li><a href="#sec-take">The take</a><span class="toc-note">who hugs consensus, who strays</span></li>
@@ -636,6 +648,25 @@
                 <li><a href="#sec-validation">Validation</a><span class="toc-note">does the method work</span></li>
             </ol>
         </nav>
+
+        <!-- Motivation Section -->
+        <div class="section" id="sec-motivation" style="margin-top: 40px; margin-bottom: 40px;">
+            <div class="article-kicker" style="margin-bottom: 15px;">WHY THIS EXISTS</div>
+            <h2 class="section-title">Measuring the Wording That Outlets Converge On</h2>
+            <div class="article-body">
+                <p>Media bias debate is loud. Usually it turns on which stories outlets choose to cover, or which side they take when they do cover them. This project measures something narrower—and checkable. We collect headlines from the same breaking news story across multiple outlets, find the exact wording they converge on, and measure how far each outlet's version drifts from that consensus wording. That drift is a standalone metric: it tells you whether an outlet phrases stories the way everyone else does, not whether it's true or whether it leans left or right.</p>
+                <p>A large share of apparent agreement is just wire syndication. When a story hits the wire, dozens of outlets run the headline verbatim. Before we measure consensus, we collapse those byte-identical copies to a single vote—otherwise syndication would manufacture a false consensus signal. The rest is honest wording distance from the pack. That's all this measures: a wording lens, not a truth or stance detector.</p>
+            </div>
+
+            <!-- Syndication Callout -->
+            <div class="validation-card" style="max-width: 740px; margin: 30px auto; background: #fafafa; border-left: 3px solid #8b8b8b;">
+                <div class="card-title" style="font-size: 16px;">The Same Sentence, Many Mastheads</div>
+                <p style="font-size: 14px; color: #666; margin: 12px 0 0 0;">These wire stories were collapsed to a single vote so they cannot manufacture a false consensus.</p>
+                <div id="syndication-list" style="margin-top: 15px; font-size: 14px; color: #333;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
 
         <!-- Hero Section: Beeswarm + Stats -->
         <div class="section" id="sec-overview" style="margin-top: 40px; margin-bottom: 40px;">
@@ -709,20 +740,37 @@
             </div>
         </div>
 
-        <!-- Panel Composition: Lean Breakdown -->
+        <!-- Panel Composition: Spectrum -->
         <div class="section" id="sec-panel">
             <div class="article-kicker" style="margin-bottom: 15px;">PANEL COMPOSITION</div>
             <h2 class="section-title">Is the Consensus Itself Leaning?</h2>
             <p class="tldr"><b>TL;DR</b> &nbsp;Most outlets in our sample lean left. Does that tilt the consensus everyone is measured against? On pure distance, no camp strays more than another.</p>
-            <div class="plotly-container">
-                <div id="panel-composition-bar"></div>
+
+            <!-- Panel Spectrum -->
+            <div id="panel-spectrum-container" style="max-width: 740px; margin: 30px auto;">
+                <div id="panel-spectrum-viz" style="display: flex; height: 40px; border: 1px solid #eee; margin-bottom: 15px; border-radius: 2px; overflow: hidden;">
+                    <!-- Populated by JS -->
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-bottom: 25px;">
+                    <span>Left</span>
+                    <span>Right</span>
+                </div>
+                <div style="position: relative; height: 30px; margin-bottom: 8px;">
+                    <div id="cog-marker" style="position: absolute; top: 8px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #222; transform: translateX(-6px);"></div>
+                </div>
+                <div style="font-size: 12px; color: #666; text-align: center;">panel center of gravity</div>
             </div>
-            <p class="figure-caption">How much of the consensus is built from left-, center-, and right-leaning outlets. Most of it comes from the left.</p>
-            <div class="plotly-container">
-                <div id="us-lean-breakdown"></div>
+
+            <p class="figure-caption" style="max-width: 740px; margin: 0 auto 25px;">Most of the panel sits left-of-center. The triangle marks the weighted middle of all outlets by coverage.</p>
+
+            <!-- Distance is a Tie: Compact Callout with Direction Arrow -->
+            <div class="validation-card" style="max-width: 740px; margin: 30px auto; background: #f5f5f5; border-left: 3px solid #fc4f30;">
+                <div style="font-size: 15px; color: #333; line-height: 1.6;">
+                    <strong>Distance is a tie.</strong> Left, center, and right camps sit equidistant from consensus—the confidence intervals completely overlap. This dead end is the story's pivot: <em>distance cannot tell the camps apart, but direction can.</em> <a href="#sec-direction" style="color: #008fd5; text-decoration: none; font-weight: 600;">See the direction section below →</a>
+                </div>
             </div>
-            <p class="figure-caption" style="margin-bottom: 25px;">How far each political camp sits from the consensus. The three bars overlap, so no camp wanders further than the others — but that is about distance, not which side the wording sounds like (see the next section).</p>
-            <div id="lean-prose" style="max-width: 740px; margin: 0 auto; font-size: 16px; line-height: 1.7; color: #333;"></div>
+
+            <div id="lean-prose" style="max-width: 740px; margin: 30px auto; font-size: 16px; line-height: 1.7; color: #333;"></div>
         </div>
 
         <!-- Lean Axis Section -->
@@ -736,7 +784,7 @@
             <div class="plotly-container">
                 <div id="lean-axis-plot"></div>
             </div>
-            <p class="figure-caption">Where each story's consensus headline lands between how the left wrote it (0) and how the right wrote it (1). 0.5 is dead center. The blue dot is the average — it sits left of center.</p>
+            <p class="figure-caption">Where each story's consensus headline lands between how the left wrote it (0) and how the right wrote it (1). Dot size encodes separation—bigger means the camps phrased it more differently. Larger dots show stories where left and right used notably different language; smaller dots are closer to parity. The blue dot is the average position (left of center). Text callouts show the stories that landed furthest left and furthest right.</p>
 
             <div class="lean-juxtaposition">
                 <div class="lean-juxtaposition-row">
@@ -748,8 +796,16 @@
                 <div class="lean-juxtaposition-row">
                     <div class="lean-juxtaposition-label">Where the consensus wording sits</div>
                     <div style="flex: 1;">
-                        <div class="lean-juxtaposition-marker-track" id="lean-position-track">
-                            <!-- Populated by JS -->
+                        <div class="lean-juxtaposition-marker-track" id="lean-position-track" style="position: relative; margin-bottom: 35px;">
+                            <!-- Populated by JS: CI span + midpoint tick + marker dot -->
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #999; margin-bottom: 15px;">
+                            <span><strong>0</strong> · left camp's wording</span>
+                            <span><strong>0.5</strong> · even</span>
+                            <span><strong>1</strong> · right camp's wording</span>
+                        </div>
+                        <div style="font-size: 13px; color: #666; text-align: center; margin-top: 8px;" id="consensus-position-value">
+                            <!-- Populated by JS: mean position + CI range -->
                         </div>
                     </div>
                 </div>
@@ -922,6 +978,25 @@
         });
 
         // === RENDER FUNCTIONS (independent, wrapped in own try/catch) ===
+
+        function renderSyndication(usData) {
+            try {
+                const syndication = usData.syndication || {};
+                const topSyndicated = syndication.top_syndicated || [];
+                const container = document.getElementById('syndication-list');
+                if (container && topSyndicated.length > 0) {
+                    container.innerHTML = '';
+                    for (const item of topSyndicated) {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '10px';
+                        div.innerHTML = `<strong>${item.outlets}×</strong> — ${item.headline}`;
+                        container.appendChild(div);
+                    }
+                }
+            } catch (err) {
+                console.error('Syndication section failed:', err);
+            }
+        }
 
         function renderTake(usData) {
             try {
@@ -1184,94 +1259,54 @@
                         showlegend: false
                     };
 
-                    const ranking = usData.ranking || [];
-                    const overallMeanDist = ranking.reduce((sum, r) => sum + r.mean_distance, 0) / ranking.length;
 
-                    const leanLayout = {
-                        title: '',
-                        xaxis: {
-                            title: 'Mean Distance from Consensus',
-                            zeroline: false,
-                            gridcolor: '#f0f0f0',
-                            showgrid: true
-                        },
-                        yaxis: {title: ''},
-                        plot_bgcolor: '#fff',
-                        paper_bgcolor: '#fff',
-                        margin: {l: 220, r: 60, t: 40, b: 50},
-                        showlegend: false,
-                        hovermode: 'closest',
-                        shapes: [{
-                            type: 'line',
-                            x0: overallMeanDist,
-                            x1: overallMeanDist,
-                            y0: -0.5,
-                            y1: 2.5,
-                            line: {color: '#999', width: 1, dash: 'dash'}
-                        }]
-                    };
-
-                    Plotly.newPlot('us-lean-breakdown', [leanCIBars, leanDots], leanLayout, {responsive: true, displayModeBar: false});
-                    chartsDrawn.lean = true;
-
-                    // Panel composition bar
-                    const panelCompLeft = panelComp.left?.weighted_share || 0;
-                    const panelCompCenter = panelComp.center?.weighted_share || 0;
-                    const panelCompRight = panelComp.right?.weighted_share || 0;
-                    const totalShare = panelCompLeft + panelCompCenter + panelCompRight;
-
-                    if (totalShare > 0) {
-                        const leftPct = (panelCompLeft / totalShare * 100).toFixed(1);
-                        const centerPct = (panelCompCenter / totalShare * 100).toFixed(1);
-                        const rightPct = (panelCompRight / totalShare * 100).toFixed(1);
-
-                        const traces = [
-                            {
-                                x: [panelCompLeft],
-                                y: [''],
-                                type: 'bar',
-                                orientation: 'h',
-                                marker: {color: '#008fd5', width: 0},
-                                showlegend: false,
-                                hovertemplate: 'Left-leaning: ' + leftPct + '%<extra></extra>',
-                                base: 0
-                            },
-                            {
-                                x: [panelCompCenter],
-                                y: [''],
-                                type: 'bar',
-                                orientation: 'h',
-                                marker: {color: '#8b8b8b', width: 0},
-                                showlegend: false,
-                                hovertemplate: 'Center: ' + centerPct + '%<extra></extra>'
-                            },
-                            {
-                                x: [panelCompRight],
-                                y: [''],
-                                type: 'bar',
-                                orientation: 'h',
-                                marker: {color: '#fc4f30', width: 0},
-                                showlegend: false,
-                                hovertemplate: 'Right-leaning: ' + rightPct + '%<extra></extra>'
-                            }
-                        ];
-
-                        const panelCompositionLayout = {
-                            barmode: 'stack',
-                            xaxis: {showticklabels: false, showgrid: false, zeroline: false},
-                            yaxis: {showticklabels: false},
-                            margin: {l: 0, r: 0, t: 10, b: 10},
-                            plot_bgcolor: '#fff',
-                            paper_bgcolor: '#fff',
-                            showlegend: false,
-                            annotations: [
-                                {x: panelCompLeft / 2, y: 0, text: leftPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
-                                {x: panelCompLeft + panelCompCenter / 2, y: 0, text: centerPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'},
-                                {x: panelCompLeft + panelCompCenter + panelCompRight / 2, y: 0, text: rightPct + '%', showarrow: false, font: {size: 12, color: 'white'}, xanchor: 'center', yanchor: 'middle'}
-                            ]
+                    // Panel spectrum (5-bucket)
+                    const panelSpectrum = usData.panel_spectrum || {};
+                    if (panelSpectrum.by_category) {
+                        const byCategory = panelSpectrum.by_category;
+                        const categoryOrder = ['left', 'lean-left', 'center', 'lean-right', 'right'];
+                        const categoryLabels = {
+                            'left': 'Left',
+                            'lean-left': 'Lean Left',
+                            'center': 'Center',
+                            'lean-right': 'Lean Right',
+                            'right': 'Right'
                         };
+                        const colorRamp = ['#2166ac', '#67a9cf', '#b8b8b8', '#ef8a62', '#b2182b'];
 
-                        Plotly.newPlot('panel-composition-bar', traces, panelCompositionLayout, {responsive: true, displayModeBar: false});
+                        const spectrumViz = document.getElementById('panel-spectrum-viz');
+                        if (spectrumViz) {
+                            spectrumViz.innerHTML = '';
+                            let xPos = 0;
+                            for (let i = 0; i < categoryOrder.length; i++) {
+                                const cat = categoryOrder[i];
+                                const data = byCategory[cat];
+                                if (data && data.weighted_share > 0) {
+                                    const seg = document.createElement('div');
+                                    seg.style.flex = data.weighted_share.toString();
+                                    seg.style.backgroundColor = colorRamp[i];
+                                    seg.style.display = 'flex';
+                                    seg.style.alignItems = 'center';
+                                    seg.style.justifyContent = 'center';
+                                    seg.style.color = 'white';
+                                    seg.style.fontSize = '11px';
+                                    seg.style.fontWeight = '600';
+                                    const pct = Math.round(data.weighted_share * 100);
+                                    if (pct >= 4) {
+                                        seg.textContent = pct + '%';
+                                    }
+                                    spectrumViz.appendChild(seg);
+                                }
+                            }
+                        }
+
+                        // Center of gravity marker
+                        const meanOrdinal = panelSpectrum.mean_ordinal || 0;  // -2 to +2, negative is left
+                        const cogPct = ((meanOrdinal + 2) / 4) * 100;  // map to 0-100%
+                        const cogMarker = document.getElementById('cog-marker');
+                        if (cogMarker) {
+                            cogMarker.style.left = cogPct + '%';
+                        }
                     }
 
                     // Lean prose
@@ -1357,26 +1392,27 @@
                 }
 
                 // Build lean axis plot
-                // Jittered gray dots for each event
+                // Jittered gray dots for each event, sized by separation
+                const maxSeparation = Math.max(...perEvent.map(e => e.separation || 0), 1);
                 const dotTraces = {
                     x: perEvent.map((e, i) => e.position),
                     y: perEvent.map((e, i) => (i * 0.618) % 1 - 0.5),  // Deterministic jitter
                     type: 'scatter',
                     mode: 'markers',
                     marker: {
-                        size: 8,
+                        size: perEvent.map(e => 4 + (e.separation || 0) / maxSeparation * 10),  // Size encodes separation
                         color: '#999',
                         opacity: 0.6
                     },
                     hovertemplate: '<b>%{customdata[0]}</b><br>' +
                         'Position: %{x:.3f}<br>' +
                         'Separation: %{customdata[1]:.3f}<br>' +
-                        'L%{customdata[2]}/R%{customdata[3]}<extra></extra>',
+                        'L: %{customdata[2]} vs R: %{customdata[3]}<extra></extra>',
                     customdata: perEvent.map(e => [
                         e.consensus_headline,
-                        e.separation,
-                        e.n_left,
-                        e.n_right
+                        e.separation || 0,
+                        e.n_left || 0,
+                        e.n_right || 0
                     ]),
                     showlegend: false
                 };
@@ -1395,6 +1431,10 @@
                     showlegend: false
                 };
 
+                // Find extremes for annotations
+                const leftmost = perEvent.reduce((min, e) => e.position < min.position ? e : min, perEvent[0]);
+                const rightmost = perEvent.reduce((max, e) => e.position > max.position ? e : max, perEvent[0]);
+
                 const leanAxisLayout = {
                     title: '',
                     xaxis: {
@@ -1403,7 +1443,7 @@
                         gridcolor: '#f0f0f0',
                         showgrid: true,
                         tickvals: [0, 0.5, 1],
-                        ticktext: ['Left camp\'s wording', 'Midpoint', 'Right camp\'s wording'],
+                        ticktext: ['phrased like LEFT camp', 'Midpoint', 'phrased like RIGHT camp'],
                         range: [-0.05, 1.05]
                     },
                     yaxis: {
@@ -1446,6 +1486,38 @@
                     ]
                 };
 
+                // Add extremes annotations if data allows
+                if (leftmost && leftmost.consensus_headline) {
+                    const headline = leftmost.consensus_headline.substring(0, 50);
+                    leanAxisLayout.annotations.push({
+                        x: leftmost.position,
+                        y: 0.5,
+                        text: headline + '...',
+                        showarrow: true,
+                        arrowhead: 2,
+                        arrowsize: 1,
+                        arrowcolor: '#999',
+                        font: {size: 9, color: '#666'},
+                        xanchor: 'right',
+                        yanchor: 'bottom'
+                    });
+                }
+                if (rightmost && rightmost.consensus_headline && rightmost.position !== leftmost.position) {
+                    const headline = rightmost.consensus_headline.substring(0, 50);
+                    leanAxisLayout.annotations.push({
+                        x: rightmost.position,
+                        y: 0.5,
+                        text: headline + '...',
+                        showarrow: true,
+                        arrowhead: 2,
+                        arrowsize: 1,
+                        arrowcolor: '#999',
+                        font: {size: 9, color: '#666'},
+                        xanchor: 'left',
+                        yanchor: 'bottom'
+                    });
+                }
+
                 Plotly.newPlot('lean-axis-plot', [dotTraces, meanTrace], leanAxisLayout, {responsive: true, displayModeBar: false});
                 chartsDrawn.leanAxis = true;
 
@@ -1453,10 +1525,25 @@
                 const trackDiv = document.getElementById('lean-position-track');
                 if (trackDiv) {
                     trackDiv.innerHTML = '';
+
+                    // CI span background
+                    const ciSpan = document.createElement('div');
+                    ciSpan.className = 'lean-ci-span';
+                    ciSpan.style.left = (ciLow * 100) + '%';
+                    ciSpan.style.right = (100 - ciHigh * 100) + '%';
+                    trackDiv.appendChild(ciSpan);
+
+                    // Mean marker dot
                     const marker = document.createElement('div');
                     marker.className = 'lean-juxtaposition-marker';
                     marker.style.left = (meanPosition * 100) + '%';
                     trackDiv.appendChild(marker);
+                }
+
+                // Consensus position value
+                const posValueDiv = document.getElementById('consensus-position-value');
+                if (posValueDiv) {
+                    posValueDiv.innerHTML = `<strong>${meanPosition.toFixed(2)}</strong> (95% CI ${ciLow.toFixed(2)}–${ciHigh.toFixed(2)})`;
                 }
             } catch (err) {
                 console.error('Lean axis section failed:', err);
@@ -1709,6 +1796,7 @@
 
                 // Call render functions independently
                 renderHeader(corpus);
+                renderSyndication(usData);
                 renderTake(usData);
                 renderStats(corpus, usData);
                 renderHero(usData);
