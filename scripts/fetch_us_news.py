@@ -131,6 +131,56 @@ def fetch_rss(report):
     return rows
 
 
+GOOGLE_NEWS_FEEDS = [
+    # Topic + query feeds; each item carries a <source url=...> publisher tag,
+    # so one feed yields many outlets covering the same stories.
+    "https://news.google.com/rss/headlines/section/topic/POLITICS?hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=congress&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=white+house&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=senate&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=supreme+court&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=election&hl=en-US&gl=US&ceid=US:en",
+]
+
+
+def fetch_google_news(report):
+    rows = {}
+    item_re = re.compile(r"<item>(.*?)</item>", re.S)
+    title_re = re.compile(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", re.S)
+    link_re = re.compile(r"<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>", re.S)
+    source_re = re.compile(r'<source url="([^"]+)"[^>]*>([^<]*)</source>')
+    now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    for feed in GOOGLE_NEWS_FEEDS:
+        try:
+            xml = _get(feed).decode("utf-8", "replace")
+        except Exception as e:  # noqa: BLE001
+            report.append(f"- GoogleNews {feed[:60]}: FAILED {type(e).__name__}")
+            continue
+        n = 0
+        for item in item_re.findall(xml):
+            t = title_re.search(item)
+            li = link_re.search(item)
+            src = source_re.search(item)
+            if not t or not li or not src:
+                continue
+            # Google News titles end with " - Publisher"; strip that suffix.
+            title = re.sub(r"\s+", " ", t.group(1)).strip()
+            pub = src.group(2).strip()
+            if title.endswith(" - " + pub):
+                title = title[: -(len(pub) + 3)].strip()
+            dom = src.group(1).lower()
+            dom = re.sub(r"^https?://", "", dom).split("/")[0]
+            if dom.startswith("www."):
+                dom = dom[4:]
+            url = li.group(1).strip()
+            if title and url and dom and url not in rows:
+                rows[url] = (dom, title, url, now, "gnews")
+                n += 1
+        report.append(f"- GoogleNews {feed[55:90]}: {n} items")
+        time.sleep(1)
+    return rows
+
+
 def probe_hf(report):
     try:
         data = json.loads(_get(
@@ -149,6 +199,9 @@ def main():
     rows = {} if mode == "rss" else fetch_gdelt(DAYS, report)
     rss_rows = fetch_rss(report)
     for u, r in rss_rows.items():
+        rows.setdefault(u, r)
+    gn_rows = fetch_google_news(report)
+    for u, r in gn_rows.items():
         rows.setdefault(u, r)
     probe_hf(report)
 
