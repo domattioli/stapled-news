@@ -23,8 +23,10 @@ from stapled.analyze.consensus_distance import (
     token_impacts,
     lean_breakdown,
     panel_composition,
+    panel_spectrum,
     consensus_lean_axis,
     PANEL_LEAN,
+    PANEL_LEAN5,
 )
 
 
@@ -191,11 +193,14 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                     "ci_low": round(m["ci_low"], 6),
                     "ci_high": round(m["ci_high"], 6),
                     "lean": PANEL_LEAN.get(m["outlet"]),
+                    "lean5": PANEL_LEAN5.get(m["outlet"]),
                 }
                 for m in outlet_metrics
             ],
             "lean_breakdown": lean_breakdown(article_rows, seed=seed),
             "panel_composition": panel_composition(article_rows),
+            "panel_spectrum": panel_spectrum(article_rows),
+            "syndication": _syndication_stats(article_rows),
             "consensus_lean": consensus_lean_axis(conn, min_outlets=min_outlets, seed=seed),
             "weekly": weekly_data,
             "events": [
@@ -342,3 +347,25 @@ def _build_events_detail(article_rows, top_events, max_events=12):
             ],
         })
     return detail
+
+
+def _syndication_stats(article_rows):
+    """How much of the analyzed corpus is verbatim-syndicated wire copy that the
+    consensus centroid now collapses to one effective vote."""
+    import re as _re
+    groups = {}
+    for r in article_rows:
+        key = (r["event_id"], _re.sub(r"\\s+", " ", (r["title"] or "").strip().lower()))
+        groups.setdefault(key, []).append(r["outlet"])
+    total = len(article_rows)
+    collapsed = sum(len(v) - 1 for v in groups.values() if len(v) > 1)
+    top = sorted(
+        ({"headline": k[1], "outlets": len(set(v))} for k, v in groups.items() if len(set(v)) > 1),
+        key=lambda x: -x["outlets"],
+    )[:6]
+    return {
+        "total_articles": total,
+        "syndicated_copies_collapsed": collapsed,
+        "pct_syndicated": round(100.0 * collapsed / total, 1) if total else 0.0,
+        "top_syndicated": top,
+    }

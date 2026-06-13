@@ -127,13 +127,22 @@ def compute_distances(
         # Vectorize all titles for this event
         vectorizer_dict, vectors = build_event_vectors(titles)
 
-        # Compute weighted centroid
+        # Syndication weighting: collapse exact-duplicate headlines (case/space
+        # normalized) so one AP wire story carried verbatim by N outlets counts
+        # as a single vote in the consensus, not N. Per-article distances below
+        # are still scored individually.
+        norm_titles = [re.sub(r"\s+", " ", (t or "").strip().lower()) for t in titles]
+        dup_counts = {}
+        for nt in norm_titles:
+            dup_counts[nt] = dup_counts.get(nt, 0) + 1
+        synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
+
         if weights:
-            w = np.array([weights.get(aid, 1.0) for aid in article_ids])
-            w = w / w.sum()  # Normalize weights
-            centroid = vectors.T.dot(w)  # (n_features,)
+            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * synd_w
         else:
-            centroid = np.asarray(vectors.mean(axis=0)).flatten()
+            w = synd_w
+        w = w / w.sum()
+        centroid = vectors.T.dot(w)
 
         # L2 normalize centroid
         centroid_norm = np.linalg.norm(centroid)
@@ -639,24 +648,32 @@ def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List
     return out
 
 
-# Panel lean assignments from AllSides public media-bias ratings (allsides.com,
-# retrieved 2026-06). Three buckets: lean-left+left -> "left", lean-right+right
-# -> "right". Static because the Baly/MBFC corpus lacks most mainstream majors.
-PANEL_LEAN = {
-    "cnn.com": "left", "huffpost.com": "left", "salon.com": "left",
+# AllSides media-bias ratings (allsides.com, retrieved 2026-06), five-point scale.
+# LEAN5 keeps the granular rating; PANEL_LEAN collapses to three buckets for the
+# coverage / distance breakdowns; LEAN_ORDINAL maps to -2..+2 for the spectrum.
+PANEL_LEAN5 = {
+    "huffpost.com": "left", "msnbc.com": "left", "salon.com": "left",
     "motherjones.com": "left", "dailykos.com": "left", "rawstory.com": "left",
-    "thedailybeast.com": "left", "msnbc.com": "left", "theguardian.com": "left",
-    "nytimes.com": "left", "washingtonpost.com": "left", "npr.org": "left",
-    "abcnews.go.com": "left", "cbsnews.com": "left", "nbcnews.com": "left",
-    "politico.com": "left", "axios.com": "left", "yahoo.com": "left",
+    "thedailybeast.com": "left", "alternet.org": "left", "vox.com": "left",
+    "cnn.com": "lean-left", "nytimes.com": "lean-left", "washingtonpost.com": "lean-left",
+    "npr.org": "lean-left", "abcnews.go.com": "lean-left", "cbsnews.com": "lean-left",
+    "nbcnews.com": "lean-left", "politico.com": "lean-left", "theguardian.com": "lean-left",
+    "axios.com": "lean-left", "yahoo.com": "lean-left", "time.com": "lean-left",
+    "theatlantic.com": "lean-left", "bloomberg.com": "lean-left", "usatoday.com": "lean-left",
     "thehill.com": "center", "reuters.com": "center", "apnews.com": "center",
-    "usatoday.com": "center", "wsj.com": "center",
-    "foxnews.com": "right", "washingtontimes.com": "right",
-    "washingtonexaminer.com": "right", "nationalreview.com": "right",
-    "dailycaller.com": "right", "breitbart.com": "right", "newsmax.com": "right",
-    # Alias for rows ingested before the domain lstrip fix mangled the name.
-    "ashingtonexaminer.com": "right",
+    "wsj.com": "center", "newsweek.com": "center", "forbes.com": "center",
+    "csmonitor.com": "center", "marketwatch.com": "center", "realclearpolitics.com": "center",
+    "washingtonexaminer.com": "lean-right", "nationalreview.com": "lean-right",
+    "thedispatch.com": "lean-right", "washingtontimes.com": "lean-right",
+    "nypost.com": "lean-right", "justthenews.com": "lean-right",
+    "foxnews.com": "right", "breitbart.com": "right", "newsmax.com": "right",
+    "dailycaller.com": "right", "thefederalist.com": "right", "dailywire.com": "right",
+    "theblaze.com": "right", "oann.com": "right",
 }
+LEAN_ORDINAL = {"left": -2, "lean-left": -1, "center": 0, "lean-right": 1, "right": 2}
+_THREE = {"left": "left", "lean-left": "left", "center": "center",
+          "lean-right": "right", "right": "right"}
+PANEL_LEAN = {dom: _THREE[v] for dom, v in PANEL_LEAN5.items()}
 
 
 def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000) -> Dict:
@@ -812,3 +829,30 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         out["ci_high"] = round(float(np.quantile(boots, 0.975)), 4)
         out["mean_separation"] = round(float(np.mean([e["separation"] for e in per_event])), 4)
     return out
+
+
+def panel_spectrum(article_rows: List[Dict]) -> Dict:
+    """Five-point AllSides spectrum of the panel: per-category outlet count,
+    article count, and coverage-weighted share. Finer than the 3-bucket
+    composition so the site can render a true left->right spectrum."""
+    cats = ["left", "lean-left", "center", "lean-right", "right"]
+    outlets_by = {c: set() for c in cats}
+    weight_by = {c: 0.0 for c in cats}
+    for r in article_rows:
+        c = PANEL_LEAN5.get(r["outlet"])
+        if not c:
+            continue
+        outlets_by[c].add(r["outlet"])
+        weight_by[c] += float(r.get("event_outlets", 1))
+    total = sum(weight_by.values()) or 1.0
+    return {
+        "categories": cats,
+        "by_category": {
+            c: {"outlets": len(outlets_by[c]),
+                "weighted_share": round(weight_by[c] / total, 4)}
+            for c in cats
+        },
+        "mean_ordinal": round(
+            sum(LEAN_ORDINAL[c] * weight_by[c] for c in cats) / total, 4
+        ),
+    }
