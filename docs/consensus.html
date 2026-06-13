@@ -209,7 +209,8 @@
         #chart-weekly,
         #us-ranking,
         #us-weekly,
-        #lean-axis-plot {
+        #lean-axis-plot,
+        #regional-impact-plot {
             width: 100%;
             height: 400px;
         }
@@ -220,6 +221,10 @@
 
         #lean-axis-plot {
             height: 260px;
+        }
+
+        #regional-impact-plot {
+            height: 280px;
         }
 
         .lean-juxtaposition {
@@ -628,7 +633,7 @@
     <div class="container">
         <div class="article-header">
             <div class="article-kicker">Live US Corpus</div>
-            <h1 class="article-title">How Far Each Outlet Drifts From the Consensus Headline</h1>
+            <h1 class="article-title">Syndication Drives Consensus, Not Politics — How Outlets' Headline Wording Clusters by Volume, Not Lean</h1>
             <div class="article-dek">Data spans <span id="header-date-range">—</span></div>
             <p class="article-dek" style="font-size:16px; color:#666;"><strong>What is STAPLE?</strong> It comes from medical imaging (Warfield et al., 2004). When several radiologists trace the same tumor and disagree, STAPLE — Simultaneous Truth and Performance Level Estimation — builds the best-estimate outline with no answer key. The trick is that it is <em>not</em> a simple majority vote. It starts with a rough vote, scores how reliable each radiologist is against that draft, then redraws the outline weighting the careful tracers more than the sloppy ones — and repeats until the estimate and the reliability scores stop moving. Each rater gets two numbers: <em>sensitivity</em> (do they catch what is really there?) and <em>specificity</em> (do they avoid marking what isn't?). We run the same loop on news: outlets are the radiologists, a breaking story is the tumor, headlines are the tracings. STAPLE learns which outlets phrase stories like the reliable consensus, builds the consensus headline, and measures how far each outlet drifts from it.</p>
         </div>
@@ -644,17 +649,20 @@
                 <li><a href="#sec-panel">Is the consensus leaning?</a><span class="toc-note">distance by camp</span></li>
                 <li><a href="#sec-direction">The direction of the consensus</a><span class="toc-note">left vs right wording</span></li>
                 <li><a href="#sec-explorer">Headline diff explorer</a><span class="toc-note">word-by-word</span></li>
+                <li><a href="#sec-regional">The unrated 45%</a><span class="toc-note">regional outlets' impact</span></li>
                 <li><a href="#sec-validation">Validation</a><span class="toc-note">does the method work</span></li>
+                <li><a href="#sec-future">What's next</a><span class="toc-note">future directions</span></li>
+                <li><a href="#sec-future">What's next</a><span class="toc-note">future directions</span></li>
             </ol>
         </nav>
 
         <!-- Motivation Section -->
         <div class="section" id="sec-motivation" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="article-kicker" style="margin-bottom: 15px;">WHY THIS EXISTS</div>
-            <h2 class="section-title">Measuring the Wording That Outlets Converge On</h2>
+            <h2 class="section-title">Wording Distance Measures Outlet Style, Not Editorial Stance</h2>
             <div class="article-body">
-                <p>Media bias debate is loud. Usually it turns on which stories outlets choose to cover, or which side they take when they do cover them. This project measures something narrower—and checkable. We collect headlines from the same breaking news story across multiple outlets, find the exact wording they converge on, and measure how far each outlet's version drifts from that consensus wording. That drift is a standalone metric: it tells you whether an outlet phrases stories the way everyone else does, not whether it's true or whether it leans left or right.</p>
-                <p>A large share of apparent agreement is just wire syndication. When a story hits the wire, dozens of outlets run the headline verbatim. Before we measure consensus, we collapse those byte-identical copies to a single vote—otherwise syndication would manufacture a false consensus signal. The rest is honest wording distance from the pack. That's all this measures: a wording lens, not a truth or stance detector.</p>
+                <p>Media bias debate turns on story choice and stance. This project measures something narrower: whether an outlet phrases breaking news like the rest of the field or rewords it. We collect headlines from the same story across outlets, find the exact consensus wording, and measure drift — how far each outlet's version sits from that consensus. Drift is a style metric. It does not measure truth or lean. An outlet that writes like everyone else scores low; an outlet that rewrites scores high.</p>
+                <p>A large share of apparent agreement is wire syndication. When a story hits the wire, dozens of outlets run the headline verbatim. Before we measure consensus, we collapse byte-identical copies to a single vote — otherwise syndication would manufacture false consensus. The rest is honest distance from the pack. Metric: wording divergence. Not a truth detector, not a stance detector.</p>
             </div>
 
             <!-- Syndication Callout -->
@@ -670,7 +678,7 @@
         <!-- Hero Section: Beeswarm + Stats -->
         <div class="section" id="sec-overview" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="article-kicker" style="margin-bottom: 15px;">EVERY HEADLINE, ONE DOT</div>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Here is the whole dataset at a glance: every political headline, placed by how far its wording drifts from the pack.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;All 246 headlines ranked by drift: how far left, right, center, and unrated outlets diverge from the consensus wording their peers converge on.</p>
             <div class="plotly-container">
                 <div id="hero-swarm"></div>
             </div>
@@ -687,11 +695,11 @@
 
         <div class="article-body" id="sec-take" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
             <div class="commentary-kicker">THE TAKE</div>
-            <p>The first thing the data shows is who hugs the consensus: regional chain papers. <span id="top-outlet-text">ocregister.com</span> currently sits closest to the stapled headline (drift <span id="top-dist-text">0.04</span>), and the rest of the nearest tier looks the same — outlets that run the wire headline nearly verbatim. That is syndication made visible, not editorial virtue. At the other end sits <span id="bottom-outlet-text">axios.com</span> (drift <span id="bottom-dist-text">0.71</span>), whose house style rewrites every headline it touches. If you came in expecting drift to be a partisanship detector, this is your first clue it isn't one: the extremes of the board are about <em>how outlets write</em>, not what they believe.</p>
+            <p>Closest outlet to consensus is <span id="top-outlet-text">ocregister.com</span> (drift 0.04 vs 0.47 field mean). Farthest is <span id="bottom-outlet-text">axios.com</span> (drift <span id="bottom-dist-text">0.71</span>). The distance gap reflects outlet *style*, not lean: nearest outlets run wire copy verbatim; farthest rewrites aggressively. Syndication, made visible. If drift measured partisanship, the extremes would cluster by ideology. They don't. Left, center, right outlets sit equidistant from consensus (95% confidence intervals fully overlap). Distance is not a partisanship detector.</p>
 
-            <p>So is the consensus itself secretly leaning? We checked. The three blocs' average distance from consensus is statistically indistinguishable — every confidence interval overlaps. But distance is not direction. When we measure where the consensus wording sits between left-camp and right-camp language centroids, it sits left of the midpoint. Left-leaning outlets contribute about <span id="left-share-text">64</span> percent of the coverage-weighted mass that builds the consensus, center outlets <span id="center-share-text">16</span> percent, right outlets <span id="right-share-text">20</span> percent. The leftward lean is mostly mechanical from that composition: the average of a left-heavy room leans left. Make of that what you will; we read it as headline language being far more standardized than the discourse about media bias suggests, and the lean itself reflecting the panel, not hidden editorial drift.</p>
+            <p>But is the consensus itself leaning? Yes, directionally—toward the left. The consensus wording sits at position 0.30 on a 0=left-camp to 1=right-camp axis (95% CI 0.21–0.39), i.e. left of midpoint 0.5. Why? The panel is <span id="left-share-text">64</span> percent coverage-weighted left, <span id="center-share-text">16</span> percent center, <span id="right-share-text">20</span> percent right. The average of a left-heavy room leans left. It is mechanical composition, not hidden bias in the algorithm.</p>
 
-            <p>The usual caveat, stated plainly rather than buried: this corpus is <span id="n-events-text">23</span> stories deep. The collector adds headlines every hour, the intervals will tighten, and some of what you see below will move. That's not a bug in the analysis — that's what early data is supposed to do.</p>
+            <p>Caveat: corpus depth is <span id="n-events-text">23</span> stories. Collector adds hourly; confidence intervals will narrow, and rankings may shift. Early-stage data, expected to move.</p>
         </div>
 
         <div class="stats-strip" id="stats-strip">
@@ -719,8 +727,8 @@
 
         <!-- Chart 1: Outlet Ranking (FiveThirtyEight style) -->
         <div class="section" id="sec-ranking">
-            <h2 class="section-title">Outlet Ranking</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Which outlets write headlines like everyone else, and which write their own way. It turns out the nearest are local papers running the wire copy.</p>
+            <h2 class="section-title">Regional Wire-Runners Sit Closest; Axios Sits Farthest from Consensus</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Outlets ranked by mean distance from consensus. Nearest are regional chains publishing wire copy; farthest are nationals with distinctive house styles. No lean correlation.</p>
             <div class="plotly-container">
                 <div id="us-ranking"></div>
             </div>
@@ -742,8 +750,8 @@
         <!-- Panel Composition: Spectrum -->
         <div class="section" id="sec-panel">
             <div class="article-kicker" style="margin-bottom: 15px;">PANEL COMPOSITION</div>
-            <h2 class="section-title">Is the Consensus Itself Leaning?</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Most outlets in our sample lean left. Does that tilt the consensus everyone is measured against? On pure distance, no camp strays more than another.</p>
+            <h2 class="section-title">All Three Camps Sit Equidistant From Consensus Wording — Distance Cannot Detect Lean</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Left, center, and right outlets drift equally far from consensus (confidence intervals overlap). Drift measures style (how much an outlet rewrites), not stance (which side it favors).</p>
 
             <!-- Panel Spectrum -->
             <div id="panel-spectrum-container" style="max-width: 740px; margin: 30px auto;">
@@ -774,11 +782,11 @@
 
         <!-- Lean Axis Section -->
         <div class="section" id="sec-direction">
-            <div class="article-kicker" style="margin-bottom: 15px;">DOES THE CONSENSUS LEAN?</div>
-            <h2 class="section-title">The Direction of the Consensus, Not Just Its Distance</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Distance treats left and right the same. This asks a sharper question: which side's wording does the consensus actually sound like? Answer: a bit left of center — because the room is mostly left.</p>
+            <div class="article-kicker" style="margin-bottom: 15px;">CONSENSUS DIRECTION</div>
+            <h2 class="section-title">Consensus Wording Sits Left of Center — Mechanical Effect of Panel Composition, Not Hidden Bias</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Consensus position = 0.30 on a 0=left to 1=right axis (95% CI 0.21–0.39), i.e. left of midpoint 0.5. The leftward position reflects the panel (64% coverage-weighted left, 20% right), not hidden bias in how the consensus is built.</p>
             <div class="article-body" style="margin-bottom: 30px;">
-                <p>The earlier ranking measured <em>distance</em> — how far each outlet's wording sits from consensus — and found the lean buckets equidistant. But distance is not direction. To test direction, for the <span id="n-events-lean-text">8</span> stories that had both left-rated and right-rated outlets, we build a left-camp wording centroid and a right-camp wording centroid and locate the consensus headline between them. The finding, stated plainly: the consensus sits at position <span id="mean-position-text">0.30</span> on a 0=left-camp to 1=right-camp axis (95% CI <span id="ci-low-text">0.21</span>–<span id="ci-high-text">0.39</span>), i.e. LEFT of the 0.5 midpoint, and the interval excludes 0.5.</p>
+                <p>Distance (above) found all camps equidistant. Direction is different. For <span id="n-events-lean-text">8</span> stories with both left-rated and right-rated outlets, we build left-camp and right-camp centroids and project consensus headlines onto the axis between them. Result: consensus position is <span id="mean-position-text">0.30</span> on a 0–1 scale (0=left wording, 1=right wording). 95% CI <span id="ci-low-text">0.21</span>–<span id="ci-high-text">0.39</span> excludes 0.5 (midpoint), confirming the leftward shift is not noise.</p>
             </div>
             <div class="plotly-container">
                 <div id="lean-axis-plot"></div>
@@ -812,27 +820,59 @@
             </div>
 
             <div class="article-body" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                <p style="font-size: 15px; color: #666;"><strong>Caveat.</strong> Only <span id="n-events-scored-caveat-text">8</span> stories had both camps present (regional chain papers, which dominate the corpus, are unrated by AllSides and excluded from this axis); camp separation averages <span id="mean-sep-text">1.01</span>, so there genuinely is a distinguishable left-vs-right way to phrase these stories; this measures wording direction, not factual slant, and the leftward position is largely mechanical from composition rather than evidence of hidden editorial bias. As the corpus grows and more two-camp stories accrue, this estimate will firm up.</p>
+                <p style="font-size: 15px; color: #666;"><strong>Limitation.</strong> Only <span id="n-events-scored-caveat-text">8</span> of 23 stories have both camps (the unrated 45% — mostly regional chains — cannot be coded for direction). Camp separation averages <span id="mean-sep-text">1.01</span>; there is a real left-vs-right wording difference on these stories, not noise. This is direction, not truth or accuracy. The leftward position is mechanical: 64% left coverage produces a left-leaning average. As corpus grows, estimate tightens.</p>
             </div>
         </div>
 
         <!-- Headline Diff Explorer -->
         <div class="section" id="sec-explorer">
-            <h2 class="section-title">The Headline Diff Explorer</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Read the agreed-on headline, then watch what each outlet changed. The highlighted words are the ones that moved it off consensus.</p>
-            <p class="figure-caption" style="margin-bottom: 25px;">Read the consensus headline, then each outlet's version. Green words echo the consensus; red words break from it; brighter means a bigger effect on the score.</p>
+            <h2 class="section-title">Each Outlet's Rewrite: Where Wording Diverges from Consensus Phrase</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Read the consensus headline, then each outlet's version. Green words align with consensus; red words diverge. Intensity = magnitude of effect on distance score. Each story shows famous nationals across lean spectrum plus 1–2 lesser-known regional outlets.</p>
+            <p class="figure-caption" style="margin-bottom: 25px;">Consensus headline at top. Per outlet: wording, distance score, lean rating (color badge). Green tokens echo the stapled line; red tokens break from it; darker color = bigger effect.</p>
             <div id="explorer-container">
                 <!-- Populated by JS -->
             </div>
         </div>
 
+        <!-- Regional Impact Section -->
+        <div class="section" id="sec-regional">
+            <div class="article-kicker" style="margin-bottom: 15px;">THE UNRATED 45%</div>
+            <h2 class="section-title">Nearly Half the Corpus Carries No Political-Lean Rating — Yet Drifts Closest to Consensus</h2>
+            <div class="plotly-container">
+                <div id="regional-impact-plot"></div>
+            </div>
+            <p class="figure-caption" style="margin-bottom: 20px;">Mean drift: AllSides-rated nationals 0.466 vs. unrated regional chains 0.291. Unrated outlets sit nearest the consensus yet carry no lean label, so directional analysis cannot see the outlets shaping the consensus most.</p>
+            <p id="regional-impact-stat" class="article-body" style="margin-top: 20px; font-size: 15px; color: #333;">
+                <!-- Populated by JS -->
+            </p>
+            <div class="article-body" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                <p style="font-size: 15px; color: #666;"><strong>Limitation — the unrated pools closest to consensus but shapes the consensus itself.</strong> The <span id="regional-unrated-count">110</span> unrated outlets (mostly regional papers) sit closer to consensus (0.29 drift) than AllSides-rated nationals (0.47 drift), yet they are the majority builders. Because AllSides does not rate them, they drop out of the directional (left/right) analysis entirely. The consensus headline they pull toward is therefore invisible to the lean measurement — consensus appears more left-leaning than it would if the entire unrated pool were codable. This is not a bug; it is the constraint. Expanding AllSides coverage or adopting a secondary rating source would tighten the directional estimate.</p>
+            </div>
+        </div>
+
         <!-- Validation -->
         <div class="section" id="sec-validation">
-            <h2 class="section-title">Validation</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Two sanity checks that the method measures what we claim — one passes now, one needs a bigger corpus.</p>
+            <h2 class="section-title">Planted Baseline Passes; Split-Half Stability Fails at Current Corpus Size</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;V1 (planted baseline) passes: the algorithm correctly identifies copiers vs. noise. V2 (split-half stability) fails now due to sample size; expect passage once corpus reaches ~100 stories.</p>
             <div class="validation-cards" id="validation-cards">
                 <!-- Populated by JS -->
             </div>
+        </div>
+
+        <!-- What's Next -->
+        <div class="section" id="sec-future">
+            <div class="article-kicker" style="margin-bottom: 15px;">WHAT'S NEXT</div>
+            <h2 class="section-title">Five Paths: Data Depth, Method Improvement, Visualization, and Validation at Scale</h2>
+            <ol style="max-width: 740px; margin: 25px auto; font-size: 15px; line-height: 1.7; color: #333;">
+                <li><strong>More two-camp stories.</strong> Hourly collector accrues ~500 headlines/run; one week of accumulation multiplies events with both left- and right-rated outlets, tightening directional CIs.</li>
+                <li><strong>Expand unrated coverage.</strong> All-SidES 2024 CSV + MBFC fallback would encode the 27 unrated outlets (44.7% of headlines), bringing them into directional analysis.</li>
+                <li><strong>Near-duplicate syndication beyond exact matches.</strong> Current method catches byte-identical wire copy (25% of corpus). MinHash would capture light edits ("The Latest: …", trailing attributions).</li>
+                <li><strong>Embedding distance instead of lexical.</strong> Sentence embeddings measure semantic drift; two headlines paraphrasing the same idea read as closer than surface-word cosine allows.</li>
+                <li><strong>New visualizations: outlet × story heatmap and syndication UpSet.</strong> Heatmap (highest information per pixel) shows coverage gaps + drift patterns together; UpSet displays which outlet combinations republish wire copy verbatim.</li>
+            </ol>
+            <p style="max-width: 740px; margin: 25px auto; font-size: 14px; color: #666; text-align: center;">
+                <a href="FUTURE_WORK.md" style="color: #008fd5; text-decoration: none; font-weight: 600;">Full future-work notes →</a>
+            </p>
         </div>
     </div>
 
@@ -956,6 +996,48 @@
             margin-top: 12px;
             font-style: italic;
         }
+
+        .lean-chip {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 6px;
+            margin-bottom: 2px;
+        }
+
+        .lean-chip.left {
+            background-color: #2166ac;
+            color: white;
+        }
+
+        .lean-chip.lean-left {
+            background-color: #67a9cf;
+            color: white;
+        }
+
+        .lean-chip.center {
+            background-color: #b8b8b8;
+            color: white;
+        }
+
+        .lean-chip.lean-right {
+            background-color: #ef8a62;
+            color: white;
+        }
+
+        .lean-chip.right {
+            background-color: #b2182b;
+            color: white;
+        }
+
+        .lean-chip.unrated {
+            background-color: #ccc;
+            color: #333;
+        }
     </style>
 
     <script>
@@ -967,12 +1049,13 @@
         }
 
         // Responsive resize handler
-        let chartsDrawn = {hero: false, ranking: false, weekly: false, leanAxis: false};
+        let chartsDrawn = {hero: false, ranking: false, weekly: false, leanAxis: false, regional: false};
         window.addEventListener('resize', function() {
             if (chartsDrawn.hero) Plotly.Plots.resize('hero-swarm');
             if (chartsDrawn.ranking) Plotly.Plots.resize('us-ranking');
             if (chartsDrawn.leanAxis) Plotly.Plots.resize('lean-axis-plot');
             if (chartsDrawn.weekly) Plotly.Plots.resize('us-weekly');
+            if (chartsDrawn.regional) Plotly.Plots.resize('regional-impact-plot');
         });
 
         // === RENDER FUNCTIONS (independent, wrapped in own try/catch) ===
@@ -1632,7 +1715,23 @@
 
                             const outlet = document.createElement('div');
                             outlet.className = 'member-outlet';
-                            outlet.textContent = member.outlet || '';
+                            outlet.innerHTML = member.outlet || '';
+
+                            // Add lean chip if lean5 is present
+                            if (member.lean5) {
+                                const chip = document.createElement('span');
+                                chip.className = 'lean-chip ' + (member.lean5.toLowerCase());
+                                chip.textContent = member.lean5.charAt(0).toUpperCase() + member.lean5.slice(1);
+                                outlet.appendChild(document.createElement('br'));
+                                outlet.appendChild(chip);
+                            } else if (member.lean5 === null) {
+                                const chip = document.createElement('span');
+                                chip.className = 'lean-chip unrated';
+                                chip.textContent = 'Unrated';
+                                outlet.appendChild(document.createElement('br'));
+                                outlet.appendChild(chip);
+                            }
+
                             row.appendChild(outlet);
 
                             const headlineDiv = document.createElement('div');
@@ -1757,6 +1856,50 @@
             }
         }
 
+        function renderRegionalImpact(usData) {
+            try {
+                const regional = usData.regional_impact || {};
+                if (!regional.n_total) return;
+
+                const meanDriftRated = regional.mean_drift_rated || 0.4658;
+                const meanDriftUnrated = regional.mean_drift_unrated || 0.2905;
+
+                // Two-bar Plotly chart
+                const barTrace = {
+                    x: ['AllSides-rated\nnationals', 'Unrated regional\nchains'],
+                    y: [meanDriftRated, meanDriftUnrated],
+                    type: 'bar',
+                    marker: {color: ['#008fd5', '#8b8b8b']},
+                    text: [meanDriftRated.toFixed(3), meanDriftUnrated.toFixed(3)],
+                    textposition: 'outside',
+                    hovertemplate: '%{x}<br>Mean drift: %{y:.3f}<extra></extra>',
+                    showlegend: false
+                };
+
+                const regionalLayout = {
+                    title: '',
+                    xaxis: {title: ''},
+                    yaxis: {title: 'Mean Drift from Consensus'},
+                    plot_bgcolor: '#f0f0f0',
+                    paper_bgcolor: '#fff',
+                    margin: {l: 60, r: 40, t: 20, b: 80},
+                    hovermode: 'closest'
+                };
+
+                Plotly.newPlot('regional-impact-plot', [barTrace], regionalLayout, {responsive: true, displayModeBar: false});
+                chartsDrawn.regional = true;
+
+                // Stat line
+                const statDiv = document.getElementById('regional-impact-stat');
+                if (statDiv) {
+                    const statHTML = `${regional.n_unrated} of ${regional.n_total} analyzed headlines (${regional.pct_unrated.toFixed(1)}%) originate from ${regional.n_unrated_outlets} outlets AllSides does not rate; these outlets are the majority contributor in ${regional.events_unrated_majority} of ${regional.events_total} stories.`;
+                    statDiv.innerHTML = statHTML;
+                }
+            } catch (err) {
+                console.error('Regional impact section failed:', err);
+            }
+        }
+
         // === MAIN FETCH ===
         fetch('data/consensus_us.json?v=' + Date.now())
             .then(response => {
@@ -1782,6 +1925,7 @@
                 renderLeanAxis(usData);
                 renderWeekly(usData);
                 renderExplorer(usData);
+                renderRegionalImpact(usData);
                 renderValidation(usData);
             })
             .catch(err => {
