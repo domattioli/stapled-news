@@ -251,5 +251,28 @@
       "bottom_outlet": "axios.com"
     },
     "timestamp": "2026-06-13T03:30:42.327843+00:00"
+  },
+  {
+    "experiment": "e7_us",
+    "git_sha": "d8b1f8b2210b599d8e1775e0c5035c1e6aafca2f",
+    "seed": 42,
+    "config_hash": "2285e01d7ff6af795f43a263d376b1e0debddf9e8b940fd5fef0cb661a5fa5c4",
+    "outputs": [
+      "results_us/e7_consensus_distance.csv",
+      "results_us/e7_outlet_distance.csv",
+      "results_us/e7_consensus.png",
+      "results_us/consensus.json"
+    ],
+    "metrics": {
+      "n_events": 23,
+      "n_articles": 246,
+      "n_outlets_ranked": 48,
+      "v1_gate": true,
+      "v2_rho": 0.0,
+      "v2_gate": false,
+      "top_outlet": "sun-sentinel.com",
+      "bottom_outlet": "axios.com"
+    },
+    "timestamp": "2026-06-13T04:57:15.870162+00:00"
   }
 ]
