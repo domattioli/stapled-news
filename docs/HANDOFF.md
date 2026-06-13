@@ -1,6 +1,6 @@
 # Session Handoff — STAPLE-News US Consensus Distance
 
-**Date:** 2026-06-13 | **Branch:** development (auto-deploys to main via PR → Pages)
+**Date:** 2026-06-13 (rev. after PR #27) | **Branch:** development (auto-deploys to main via PR → Pages)
 **Live:** https://domattioli.github.io/stapled-news/ (single tab: US Outlet Drift)
 
 ## What this is
@@ -21,6 +21,15 @@ voice, driven by `docs/data/consensus_us.json`.
   **44.7% of articles are from 27 AllSides-unrated regional outlets** that drift 0.29 vs
   0.47 for rated nationals.
 - **Validation:** V1 planted gate passes; V2 split-half ρ below 0.6 — corpus too small.
+
+## Latest shipped (PR #27)
+- dom-write voice applied to all site prose (skill installed at .claude/skills/dom-write).
+- Regional-paper impact viz: 44.7% of analyzed articles from 27 AllSides-unrated outlets,
+  drift 0.29 vs 0.47 for rated nationals; majority of outlets in 13 of 23 stories.
+- Diff explorer curated to 8-10 outlets/story (famous nationals across the lean spectrum +
+  1-2 regional) with AllSides lean chips.
+- On-page enumerated future-work section linking docs/FUTURE_WORK.md.
+- GitHub Pages deployments pruned to the single live one (38 historical records deleted).
 
 ## How to refresh the numbers (4 commands)
 ```
