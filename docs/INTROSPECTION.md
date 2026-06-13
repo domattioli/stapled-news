@@ -35,7 +35,8 @@ introspect skill is not vendored in this repo.
   would stop the repeated false prompts.
 
 ## Metrics (qualitative)
-- ~26 PRs merged to main this arc; each deploy verified green before reporting.
+- 27 PRs merged to main this arc; each deploy verified green before reporting.
+- Deployments pruned to one live record at session end (per operator request).
 - Corpus grew 62 → 246 analysis articles via adding Google News publisher-tagged feeds.
 - Zero shipped regressions after the strict-stub gate was adopted.
 
