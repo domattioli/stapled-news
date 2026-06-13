@@ -510,11 +510,11 @@
 
         <div class="article-body" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
             <div class="commentary-kicker">THE TAKE</div>
-            <p>A few things jump out of the early data, and one of them surprised us. The Daily Caller — not exactly a wire service — currently sits closest to the consensus headline, while Politico, the most establishment outlet on the board, sits farthest. If you came in expecting drift to be a partisanship detector, that's your first clue it isn't one. Drift measures wording, and on the handful of stories every outlet covered, the Caller's headlines read like everyone else's.</p>
+            <p>The first thing the data shows is who hugs the consensus: regional chain papers. <span id="top-outlet-text">ocregister.com</span> currently sits closest to the stapled headline (drift <span id="top-dist-text">0.04</span>), and the rest of the nearest tier looks the same — outlets that run the wire headline nearly verbatim. That is syndication made visible, not editorial virtue. At the other end sits <span id="bottom-outlet-text">axios.com</span> (drift <span id="bottom-dist-text">0.71</span>), whose house style rewrites every headline it touches. If you came in expecting drift to be a partisanship detector, this is your first clue it isn't one: the extremes of the board are about <em>how outlets write</em>, not what they believe.</p>
 
             <p>So is the consensus itself secretly leaning? We checked, and the honest answer is: not detectably — but the panel is lopsided. Left-leaning outlets contribute about <span id="left-share-text">64</span> percent of the coverage-weighted mass that builds the consensus, center outlets <span id="center-share-text">16</span> percent, right outlets <span id="right-share-text">20</span> percent. Despite that, the three blocs' average drift is statistically indistinguishable — every confidence interval overlaps every other one. The centroid is built mostly from left-leaning desks' wording, and right-leaning desks match it anyway. Make of that what you will; we read it as headline language being far more standardized than the discourse about media bias suggests.</p>
 
-            <p>The usual caveat, stated plainly rather than buried: this corpus is <span id="n-events-text">6</span> stories old. The collector adds headlines every hour, the intervals will tighten, and some of what you see below will move. That's not a bug in the analysis — that's what early data is supposed to do.</p>
+            <p>The usual caveat, stated plainly rather than buried: this corpus is <span id="n-events-text">23</span> stories deep. The collector adds headlines every hour, the intervals will tighten, and some of what you see below will move. That's not a bug in the analysis — that's what early data is supposed to do.</p>
         </div>
 
         <div class="stats-strip" id="stats-strip">
@@ -733,6 +733,24 @@
         });
 
         // === RENDER FUNCTIONS (independent, wrapped in own try/catch) ===
+
+        function renderTake(usData) {
+            try {
+                const r = usData.ranking || [];
+                if (r.length >= 2) {
+                    setText('top-outlet-text', r[0].outlet);
+                    setText('top-dist-text', r[0].mean_distance.toFixed(2));
+                    setText('bottom-outlet-text', r[r.length-1].outlet);
+                    setText('bottom-dist-text', r[r.length-1].mean_distance.toFixed(2));
+                }
+                if (usData.panel_composition) {
+                    setText('left-share-text', Math.round(usData.panel_composition.left.weighted_share*100));
+                    setText('center-share-text', Math.round(usData.panel_composition.center.weighted_share*100));
+                    setText('right-share-text', Math.round(usData.panel_composition.right.weighted_share*100));
+                }
+                if (usData.corpus && usData.corpus.n_events) setText('n-events-text', usData.corpus.n_events);
+            } catch (err) { console.error('section take failed:', err); }
+        }
 
         function renderHeader(corpus) {
             try {
@@ -1331,6 +1349,7 @@
 
                 // Call render functions independently
                 renderHeader(corpus);
+                renderTake(usData);
                 renderStats(corpus, usData);
                 renderHero(usData);
                 renderRanking(usData);
