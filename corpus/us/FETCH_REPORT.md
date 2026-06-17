@@ -1,14 +1,14 @@
-# US headline fetch — 2026-06-17T19:58:38.753009+00:00
+# US headline fetch — 2026-06-17T20:59:34.149751+00:00
 
-**Total unique headlines: 8650**
+**Total unique headlines: 8756**
 - RSS politico.com: 30 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
 - RSS foxnews.com: 25 items
 - RSS cnn.com: 14 items
 - RSS nytimes.com: 45 items
-- RSS washingtonpost.com: 8 items
-- RSS abcnews.go.com: 25 items
+- RSS washingtonpost.com: 10 items
+- RSS abcnews.go.com: FAILED HTTPError
 - RSS cbsnews.com: 30 items
 - RSS nbcnews.com: 25 items
 - RSS axios.com: FAILED HTTPError
@@ -26,10 +26,10 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 44 items
-- GoogleNews gl=US&ceid=US:en: 98 items
+- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 47 items
+- GoogleNews gl=US&ceid=US:en: 99 items
 - GoogleNews US&gl=US&ceid=US:en: 99 items
-- GoogleNews =US&ceid=US:en: 97 items
-- GoogleNews n-US&gl=US&ceid=US:en: 102 items
-- GoogleNews gl=US&ceid=US:en: 96 items
-- HF probe: palewire datasets visible: []
+- GoogleNews =US&ceid=US:en: 98 items
+- GoogleNews n-US&gl=US&ceid=US:en: 99 items
+- GoogleNews gl=US&ceid=US:en: 94 items
+- HF probe failed: HTTPError: HTTP Error 429: Too Many Requests
