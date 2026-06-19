@@ -1,6 +1,6 @@
-# US headline fetch — 2026-06-19T21:42:27.392665+00:00
+# US headline fetch — 2026-06-19T22:35:36.282360+00:00
 
-**Total unique headlines: 11358**
+**Total unique headlines: 11409**
 - RSS politico.com: 30 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
@@ -26,7 +26,7 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 41 items
+- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 40 items
 - GoogleNews gl=US&ceid=US:en: 100 items
 - GoogleNews US&gl=US&ceid=US:en: 99 items
 - GoogleNews =US&ceid=US:en: 98 items
