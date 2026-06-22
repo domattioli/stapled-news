@@ -1,6 +1,6 @@
-# US headline fetch — 2026-06-22T18:37:28.117554+00:00
+# US headline fetch — 2026-06-22T18:38:31.146432+00:00
 
-**Total unique headlines: 13495**
+**Total unique headlines: 13497**
 - RSS politico.com: 0 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
@@ -14,7 +14,7 @@
 - RSS axios.com: FAILED HTTPError
 - RSS newsmax.com: FAILED TimeoutError
 - RSS breitbart.com: 50 items
-- RSS huffpost.com: 28 items
+- RSS huffpost.com: 32 items
 - RSS theguardian.com: 17 items
 - RSS apnews.com: 0 items
 - RSS reuters.com: FAILED HTTPError
