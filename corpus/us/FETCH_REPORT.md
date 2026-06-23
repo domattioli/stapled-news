@@ -1,20 +1,20 @@
-# US headline fetch — 2026-06-23T18:58:52.018639+00:00
+# US headline fetch — 2026-06-23T19:57:16.184727+00:00
 
-**Total unique headlines: 15041**
+**Total unique headlines: 15149**
 - RSS politico.com: 0 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
 - RSS foxnews.com: 25 items
 - RSS cnn.com: 14 items
-- RSS nytimes.com: 20 items
-- RSS washingtonpost.com: 2 items
+- RSS nytimes.com: 21 items
+- RSS washingtonpost.com: 3 items
 - RSS abcnews.go.com: 25 items
 - RSS cbsnews.com: 30 items
 - RSS nbcnews.com: 25 items
 - RSS axios.com: FAILED HTTPError
 - RSS newsmax.com: FAILED TimeoutError
 - RSS breitbart.com: 50 items
-- RSS huffpost.com: 45 items
+- RSS huffpost.com: 47 items
 - RSS theguardian.com: 17 items
 - RSS apnews.com: 0 items
 - RSS reuters.com: FAILED HTTPError
@@ -26,9 +26,9 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 53 items
+- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 49 items
 - GoogleNews gl=US&ceid=US:en: 100 items
-- GoogleNews US&gl=US&ceid=US:en: 99 items
+- GoogleNews US&gl=US&ceid=US:en: 98 items
 - GoogleNews =US&ceid=US:en: 96 items
 - GoogleNews n-US&gl=US&ceid=US:en: 98 items
 - GoogleNews gl=US&ceid=US:en: 99 items
