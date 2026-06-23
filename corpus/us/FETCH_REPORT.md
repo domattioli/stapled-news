@@ -1,6 +1,6 @@
-# US headline fetch — 2026-06-23T09:27:45.325333+00:00
+# US headline fetch — 2026-06-23T11:24:59.382033+00:00
 
-**Total unique headlines: 14238**
+**Total unique headlines: 14385**
 - RSS politico.com: 0 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
@@ -14,7 +14,7 @@
 - RSS axios.com: FAILED HTTPError
 - RSS newsmax.com: FAILED TimeoutError
 - RSS breitbart.com: 50 items
-- RSS huffpost.com: 27 items
+- RSS huffpost.com: 34 items
 - RSS theguardian.com: 17 items
 - RSS apnews.com: 0 items
 - RSS reuters.com: FAILED HTTPError
@@ -26,10 +26,10 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews https://news.google.com/rss/headlines/section/topic/POLITICS: FAILED HTTPError
-- GoogleNews https://news.google.com/rss/search?q=congress&hl=en-US&gl=US: FAILED HTTPError
-- GoogleNews https://news.google.com/rss/search?q=white+house&hl=en-US&gl: FAILED HTTPError
-- GoogleNews https://news.google.com/rss/search?q=senate&hl=en-US&gl=US&c: FAILED HTTPError
-- GoogleNews https://news.google.com/rss/search?q=supreme+court&hl=en-US&: FAILED HTTPError
-- GoogleNews https://news.google.com/rss/search?q=election&hl=en-US&gl=US: FAILED HTTPError
+- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 43 items
+- GoogleNews gl=US&ceid=US:en: 100 items
+- GoogleNews US&gl=US&ceid=US:en: 100 items
+- GoogleNews =US&ceid=US:en: 96 items
+- GoogleNews n-US&gl=US&ceid=US:en: 100 items
+- GoogleNews gl=US&ceid=US:en: 97 items
 - HF probe: palewire datasets visible: []
