@@ -1,6 +1,6 @@
-# US headline fetch — 2026-06-27T23:37:33.818361+00:00
+# US headline fetch — 2026-06-28T01:23:41.109096+00:00
 
-**Total unique headlines: 20418**
+**Total unique headlines: 20472**
 - RSS politico.com: 30 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
@@ -26,10 +26,10 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 46 items
+- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 47 items
 - GoogleNews gl=US&ceid=US:en: 100 items
 - GoogleNews US&gl=US&ceid=US:en: 98 items
 - GoogleNews =US&ceid=US:en: 100 items
-- GoogleNews n-US&gl=US&ceid=US:en: 99 items
-- GoogleNews gl=US&ceid=US:en: 92 items
+- GoogleNews n-US&gl=US&ceid=US:en: 103 items
+- GoogleNews gl=US&ceid=US:en: 90 items
 - HF probe: palewire datasets visible: []
