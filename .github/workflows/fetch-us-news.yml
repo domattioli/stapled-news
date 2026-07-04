@@ -10,7 +10,10 @@ on:
         description: "all | rss"
         default: "all"
   schedule:
-    - cron: "17 * * * *"
+    # Once daily at 08:17 UTC (was hourly "17 * * * *"). Public repo → $0
+    # Actions cost either way, but hourly runs spammed the thread with 24
+    # bot-commit notifications/day. Daily keeps the corpus fresh with 1/day.
+    - cron: "17 8 * * *"
 
 permissions:
   contents: write
