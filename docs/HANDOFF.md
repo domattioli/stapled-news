@@ -10,9 +10,11 @@ headline, measure each outlet's wording "drift" from it. One page, FiveThirtyEig
 voice, driven by `docs/data/consensus_us.json`.
 
 ## Current state (as of this handoff)
-- **Corpus:** `corpus/us/headlines.csv.gz`, ~2,900 headlines, 684 domains, accreting hourly
-  via `.github/workflows/fetch-us-news.yml` (GDELT throttles from runner IPs; RSS + Google
-  News publisher-tagged feeds are the working sources; runs in `mode=rss` on cron).
+- **Corpus:** `corpus/us/headlines.csv.gz`, ~2,900 headlines, 684 domains. Accretes hourly
+  on the `development` branch via `.github/workflows/fetch-us-news.yml` (GDELT throttles from
+  runner IPs; RSS + Google News publisher-tagged feeds are the working sources; runs in
+  `mode=rss` on cron). The published site (main/GitHub Pages) reflects the last promotion
+  to main and does not auto-update; see operator queue item DQ-4 for promotion cadence decisions.
 - **Analysis set:** 246 articles across 23 stories with ≥5 outlets, 48 outlets ranked.
 - **Key results:** drift ranking led by regional wire-runners (ocregister/sun-sentinel
   ~0.05), Axios farthest (~0.71); distance equal across lean camps but direction sits left
