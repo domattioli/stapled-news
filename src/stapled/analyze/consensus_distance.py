@@ -874,7 +874,8 @@ def regional_impact(article_rows: List[Dict]) -> Dict:
         1 for outs in by_event.values()
         if sum(1 for o in outs if not PANEL_LEAN5.get(o)) > len(outs) / 2
     )
-    mean = lambda xs: round(float(np.mean([x["distance"] for x in xs])), 4) if xs else None
+    def mean(xs):
+        return round(float(np.mean([x["distance"] for x in xs])), 4) if xs else None
     return {
         "n_total": len(article_rows),
         "n_unrated": len(unrated),
