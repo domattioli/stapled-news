@@ -1,6 +1,6 @@
-# US headline fetch — 2026-07-04T11:47:20.890404+00:00
+# US headline fetch — 2026-07-04T12:41:48.831764+00:00
 
-**Total unique headlines: 27451**
+**Total unique headlines: 27460**
 - RSS politico.com: 0 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
@@ -26,10 +26,10 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 45 items
-- GoogleNews gl=US&ceid=US:en: 98 items
-- GoogleNews US&gl=US&ceid=US:en: 99 items
-- GoogleNews =US&ceid=US:en: 98 items
-- GoogleNews n-US&gl=US&ceid=US:en: 98 items
-- GoogleNews gl=US&ceid=US:en: 96 items
+- GoogleNews https://news.google.com/rss/headlines/section/topic/POLITICS: FAILED HTTPError
+- GoogleNews https://news.google.com/rss/search?q=congress&hl=en-US&gl=US: FAILED HTTPError
+- GoogleNews https://news.google.com/rss/search?q=white+house&hl=en-US&gl: FAILED HTTPError
+- GoogleNews https://news.google.com/rss/search?q=senate&hl=en-US&gl=US&c: FAILED HTTPError
+- GoogleNews https://news.google.com/rss/search?q=supreme+court&hl=en-US&: FAILED HTTPError
+- GoogleNews https://news.google.com/rss/search?q=election&hl=en-US&gl=US: FAILED HTTPError
 - HF probe: palewire datasets visible: []
