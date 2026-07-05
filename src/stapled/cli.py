@@ -447,13 +447,24 @@ def align_cmd(
 def realign_embed_cmd(
     db: str = typer.Option("./stapled.db", help="Path to database"),
     threshold: float = typer.Option(0.5, "--threshold", help="Similarity threshold"),
+    max_block_size: int = typer.Option(
+        0,
+        "--max-block-size",
+        help="Skip non-discriminative entity blocks larger than this (0 = no cap). "
+        "Keeps candidate-pair generation tractable on large corpora.",
+    ),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
     """Realign claims into events using enhanced TF-IDF + entity boosting."""
     out = CLIOutput(json_mode=json_output)
     try:
         conn = connect(db)
-        stats = realign_all(conn, similarity_threshold=threshold, entity_mode="boost")
+        stats = realign_all(
+            conn,
+            similarity_threshold=threshold,
+            entity_mode="boost",
+            max_block_size=max_block_size,
+        )
 
         out.set_data(**stats)
         rows = [

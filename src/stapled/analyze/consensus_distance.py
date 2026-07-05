@@ -59,10 +59,30 @@ def build_event_vectors(titles: List[str]) -> Tuple[Dict, csr_matrix]:
     return (vectorizer_dict, combined)
 
 
+def _lean_bucket_weights(outlet_names: List[str]) -> np.ndarray:
+    """
+    Per-article weights so each ideological bucket present among an event's
+    outlets (left / center / right / unrated, via PANEL_LEAN) contributes
+    equal total weight to that event's centroid — controlling for a panel
+    that happens to include more outlets or articles from one camp than
+    another (e.g. a corpus with more left-rated than right-rated outlets)
+    mechanically defining "consensus" as that camp's wording. Within a
+    bucket, articles split that bucket's share evenly; the caller combines
+    this with syndication weight for wire-copy dedup.
+    """
+    buckets = [PANEL_LEAN.get(o, "unrated") for o in outlet_names]
+    bucket_n: Dict[str, int] = {}
+    for b in buckets:
+        bucket_n[b] = bucket_n.get(b, 0) + 1
+    share = 1.0 / len(bucket_n)
+    return np.array([share / bucket_n[b] for b in buckets])
+
+
 def compute_distances(
     conn: sqlite3.Connection,
     min_outlets: int = 5,
     weights: Optional[Dict[int, float]] = None,
+    lean_balanced: bool = True,
 ) -> Dict:
     """
     Compute consensus distance for all events with >= min_outlets.
@@ -78,6 +98,11 @@ def compute_distances(
         conn: SQLite connection
         min_outlets: Minimum distinct outlets per event
         weights: Dict {article_id -> weight} for centroid (default 1.0 for all)
+        lean_balanced: if True (default), weight each event's centroid so every
+            present ideological bucket (left/center/right/unrated) contributes
+            equally, instead of one-article-one-vote. Controls for corpus-level
+            panel skew (see _lean_bucket_weights); set False to reproduce the
+            raw per-article-weighted centroid.
 
     Returns:
         {
@@ -136,11 +161,12 @@ def compute_distances(
         for nt in norm_titles:
             dup_counts[nt] = dup_counts.get(nt, 0) + 1
         synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
+        lean_w = _lean_bucket_weights(outlet_names) if lean_balanced else 1.0
 
         if weights:
-            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * synd_w
+            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * synd_w * lean_w
         else:
-            w = synd_w
+            w = synd_w * lean_w
         w = w / w.sum()
         centroid = vectors.T.dot(w)
 
@@ -263,6 +289,7 @@ def aggregate_outlets(
 def weekly_series(
     conn: sqlite3.Connection,
     article_rows: List[Dict],
+    min_week_articles: int = 3,
 ) -> Dict[str, List[Dict]]:
     """
     Compute weekly time series of mean distance per outlet.
@@ -270,6 +297,9 @@ def weekly_series(
     Args:
         conn: SQLite connection (for joining first_seen timestamps)
         article_rows: Output "articles" from compute_distances
+        min_week_articles: drop individual weeks with fewer than this many
+            articles for that outlet — a "mean" over 1-2 articles is noise,
+            not a trend point, and reads as a misleading spike in a chart.
 
     Returns:
         {outlet: [{week (ISO), mean_distance, n_articles}, ...], ...}
@@ -340,6 +370,8 @@ def weekly_series(
         weekly_list = []
         for week in sorted(weeks_data.keys()):
             distances = np.array(weeks_data[week])
+            if len(distances) < min_week_articles:
+                continue
             weekly_list.append({
                 "week": week,
                 "mean_distance": float(distances.mean()),
@@ -682,8 +714,12 @@ def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000)
 
     Answers "is the consensus itself leaning?": if the centroid sat nearer one
     bloc's wording, that bloc's mean distance would be systematically lower.
-    Composition context included — the centroid is the consensus of THIS panel,
-    so bucket sizes matter as much as bucket means.
+    Distances here come from compute_distances' bucket-balanced centroid, so a
+    corpus with more left-rated than right-rated outlets does not by itself
+    make one bucket look closer — remaining differences reflect wording, not
+    panel size. Composition context (panel_composition) is reported alongside
+    since it is worth knowing what the panel looks like even though it no
+    longer drives the centroid.
     """
     rng = np.random.default_rng(seed)
     groups: Dict[str, List[float]] = {"left": [], "center": [], "right": []}
@@ -750,17 +786,20 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
 
     For every event that has at least one left-rated and one right-rated member
     (AllSides buckets), build a left-camp wording centroid L and a right-camp
-    centroid R from those members, plus the full consensus centroid C. Project C
-    onto the L->R axis:  t = (C - L)·(R - L) / ||R - L||^2.
+    centroid R from those members, plus a bucket-balanced consensus centroid C
+    (see _lean_bucket_weights: left/center/right/unrated each contribute equal
+    weight, rather than whichever bucket has more outlets covering the story).
+    Project C onto the L->R axis:  t = (C - L)·(R - L) / ||R - L||^2.
       t = 0   -> consensus phrased like the left camp
       t = 0.5 -> exactly between the camps
       t = 1   -> phrased like the right camp
     separation = ||R - L|| says how distinguishable the two camps' wording even is
     on that story (small -> there is barely a "left way" vs "right way" to write it).
 
-    The consensus centroid C is composition-weighted, so a left-heavy panel pulls
-    t below 0.5 mechanically; the report pairs t with the panel composition so the
-    reader can separate "the panel leans" from "the wording leans".
+    Because C is bucket-balanced, t reflects wording differences between camps,
+    not how many outlets from each camp happened to cover the story — the panel's
+    raw composition (see panel_composition/panel_spectrum) no longer mechanically
+    determines the result.
     """
     cur = conn.execute(
         """
@@ -801,7 +840,11 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         Rmask = np.array([le == "right" for le in leans])
         L = _centroid(Lmask)
         R = _centroid(Rmask)
-        C = _centroid(np.ones(len(leans), dtype=bool))
+        outlet_names = [o for o, _ in members]
+        lean_w = _lean_bucket_weights(outlet_names)
+        C_vec = dense.T.dot(lean_w)
+        C_norm = np.linalg.norm(C_vec)
+        C = C_vec / C_norm if C_norm > 0 else C_vec
         axis = R - L
         sep = float(np.linalg.norm(axis))
         if sep < 1e-9:

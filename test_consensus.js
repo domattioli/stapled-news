@@ -30,7 +30,8 @@ global.document = {
             classList: { add: () => {} }
         };
     },
-    createElement: createElement
+    createElement: createElement,
+    createTextNode: (text) => ({ textContent: text, nodeType: 3 })
 };
 
 // Mock Plotly
