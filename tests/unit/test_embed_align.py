@@ -300,5 +300,68 @@ def test_empty_database(test_db):
     assert stats["multi_outlet_events"] == 0
 
 
+def test_max_block_size_still_merges_via_rare_word_fallback(test_db):
+    """A mega-entity block is skipped for candidate generation, but claims that
+    share it should still merge via the shared rare-word fallback as long as
+    they also share distinctive vocabulary (mirrors real near-duplicate wire
+    copy about a common actor)."""
+    # Many decoy claims share "trump" but are otherwise about unrelated topics,
+    # to simulate a block that would be skipped once oversized.
+    decoys = [
+        {
+            "name": f"decoy_outlet_{i}",
+            "claims": [
+                {
+                    "actor": "Trump",
+                    "action": "discusses",
+                    "object": f"unrelated topic {i}",
+                    "title": f"Trump discusses unrelated topic {i}",
+                }
+            ],
+        }
+        for i in range(6)
+    ]
+    target = [
+        {
+            "name": "outlet_target_a",
+            "claims": [
+                {
+                    "actor": "Trump",
+                    "action": "signs",
+                    "object": "birthright citizenship order",
+                    "title": "Trump signs birthright citizenship order",
+                },
+            ],
+        },
+        {
+            "name": "outlet_target_b",
+            "claims": [
+                {
+                    "actor": "Trump",
+                    "action": "signs",
+                    "object": "birthright citizenship order",
+                    "title": "Trump signs birthright citizenship executive order",
+                },
+            ],
+        },
+    ]
+
+    outlet_map, claim_ids = _setup_test_data(test_db, decoys + target)
+    target_ids = claim_ids[-2:]
+
+    # Cap smaller than the "trump" block size (6 decoys + 2 targets = 8 > 3)
+    # so the entity block is skipped and only rare-word blocking applies.
+    stats = realign_all(
+        test_db, similarity_threshold=0.3, entity_mode="boost", max_block_size=3
+    )
+
+    cursor = test_db.execute(
+        "SELECT DISTINCT event_id FROM claim WHERE id IN (?, ?)", tuple(target_ids)
+    )
+    events = cursor.fetchall()
+    assert len(events) == 1, "Claims sharing distinctive vocabulary should still merge"
+    assert stats["claims_total"] == 8
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

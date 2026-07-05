@@ -48,6 +48,7 @@ def realign_all(
     conn: sqlite3.Connection,
     similarity_threshold: float = 0.5,
     entity_mode: str = "boost",
+    max_block_size: int = 0,
 ) -> Dict[str, int]:
     """
     Realign all claims into events using combined TF-IDF (word + char n-grams)
@@ -57,6 +58,9 @@ def realign_all(
         conn: SQLite connection
         similarity_threshold: Cosine similarity threshold for merging
         entity_mode: "boost" (default) to boost similarity when entities overlap
+        max_block_size: skip entity blocks with more than this many claims for
+            candidate generation (0 = no cap). Mega-entities are non-discriminative
+            and otherwise make blocking near-quadratic on large corpora.
 
     Returns:
         Dict with keys: claims_total, clusters_multi, events_created, claims_in_multi, multi_outlet_events
@@ -142,33 +146,55 @@ def realign_all(
     # Get document frequencies for rare-word fallback
     vocab_df = np.asarray(word_matrix.astype(bool).sum(axis=0)).flatten()
 
+    # First pass: build the entity inverted index so block sizes are known.
     for idx, entities in enumerate(claim_entities):
-        if entities:
-            for entity_token in entities:
-                entity_to_claims[entity_token].add(idx)
-        else:
-            # Fallback: rare words in this claim
-            word_indices = word_matrix[idx].nonzero()[1]
-            for word_idx in word_indices:
-                if vocab_df[word_idx] <= rare_threshold:
-                    # Map index back to term (approximate: just use the index)
-                    rare_word_to_claims[word_idx].add(idx)
+        for entity_token in entities:
+            entity_to_claims[entity_token].add(idx)
+
+    # Non-discriminative "mega-entity" blocks (e.g. "trump" spanning thousands of
+    # claims) blow up candidate-pair generation to near-quadratic without adding
+    # signal — two claims sharing only such an entity are rarely the same story.
+    # When max_block_size > 0, treat those entities as stop-blocks: skip them for
+    # blocking and let the shared rare-word fallback carry claims that had no
+    # discriminative entity. Entity overlap is still used for boost/guard scoring
+    # below, so this only prunes candidate generation, not merge quality.
+    oversized_entities = (
+        {e for e, members in entity_to_claims.items() if len(members) > max_block_size}
+        if max_block_size > 0
+        else set()
+    )
+
+    # Second pass: index rare words for claims with no discriminative entity
+    # (none at all, or only oversized ones) so they still get blocking candidates.
+    for idx, entities in enumerate(claim_entities):
+        if any(e not in oversized_entities for e in entities):
+            continue
+        word_indices = word_matrix[idx].nonzero()[1]
+        for word_idx in word_indices:
+            if vocab_df[word_idx] <= rare_threshold:
+                rare_word_to_claims[word_idx].add(idx)
+
+    def _rare_word_candidates(idx):
+        cands = set()
+        word_indices = word_matrix[idx].nonzero()[1]
+        for word_idx in word_indices:
+            if vocab_df[word_idx] <= rare_threshold:
+                cands.update(rare_word_to_claims[word_idx])
+        return cands
 
     # 5. Generate candidate pairs via blocking
     candidate_pairs = set()
     for idx in range(len(claim_ids)):
         candidates = set()
 
-        if claim_entities[idx]:
-            # Block on shared entity tokens
-            for entity_token in claim_entities[idx]:
+        discriminative = [e for e in claim_entities[idx] if e not in oversized_entities]
+        if discriminative:
+            # Block on shared discriminative entity tokens
+            for entity_token in discriminative:
                 candidates.update(entity_to_claims[entity_token])
         else:
-            # Fallback: rare words
-            word_indices = word_matrix[idx].nonzero()[1]
-            for word_idx in word_indices:
-                if vocab_df[word_idx] <= rare_threshold:
-                    candidates.update(rare_word_to_claims[word_idx])
+            # No entities (or all were non-discriminative): rare-word fallback
+            candidates.update(_rare_word_candidates(idx))
 
         candidates.discard(idx)
         for j in candidates:
