@@ -103,3 +103,15 @@ def test_align_incremental_second_batch(tmp_path):
     # Check vocab still has same size
     vocab_count = conn.execute("SELECT COUNT(*) FROM tfidf_vocab").fetchone()[0]
     assert vocab_count > 0
+
+
+def test_align_incremental_empty_claims(tmp_path):
+    """Test with no claims (edge case)."""
+    db_path = tmp_path / "test.db"
+    conn = connect(str(db_path))
+
+    result = align_incremental(conn, [])
+
+    assert result["events_created"] == 0
+    assert result["claims_aligned"] == 0
+    assert result["claims_unaligned"] == 0

@@ -93,7 +93,7 @@ console.log('\n=== EXECUTION ===\n');
     if (errors.length === 0) {
         console.log('✓ PASS: Zero uncaught errors');
         console.log('✓ PASS: All sections rendered with independent try/catch');
-        console.log('✓ PASS: setText helper prevented getElementById('header-date-range') TypeError');
+        console.log('✓ PASS: setText helper prevented getElementById("header-date-range") TypeError');
     } else {
         console.log(`✗ FAIL: ${errors.length} error(s) logged:`);
         errors.forEach(e => console.log(`  - ${e}`));
