@@ -7305,23 +7305,127 @@
   },
   "events": [
     {
-      "event_id": 3,
-      "n_outlets": 396,
-      "consensus_headline": "Trump pivots to Congress for birthright citizenship overhaul after Supreme Court rejection",
+      "event_id": 2,
+      "n_outlets": 519,
+      "consensus_headline": "Video: Larry David Says Trump&#8217;s UFC Fight at White House Left Him &#039;Embarrassed to Be an American&#039;",
+      "nearest_outlet": "breitbart.com",
+      "farthest_outlet": "nationalreview.com",
+      "farthest_distance": 0.953334
+    },
+    {
+      "event_id": 4,
+      "n_outlets": 78,
+      "consensus_headline": "Supreme Court reinstates murder conviction in case of Etan Patz",
+      "nearest_outlet": "1011now.com",
+      "farthest_outlet": "wdbj7.com",
+      "farthest_distance": 0.818741
+    },
+    {
+      "event_id": 41,
+      "n_outlets": 54,
+      "consensus_headline": "Republican Tom Kean Jr. reveals depression diagnosis after his four-month absence from Congress",
+      "nearest_outlet": "apnews.com",
+      "farthest_outlet": "motherjones.com",
+      "farthest_distance": 0.871039
+    },
+    {
+      "event_id": 103,
+      "n_outlets": 33,
+      "consensus_headline": "Supreme Court clears way for Trump administration to revive restrictive policy for asylum seekers",
+      "nearest_outlet": "apnews.com",
+      "farthest_outlet": "baltimoresun.com",
+      "farthest_distance": 0.73508
+    },
+    {
+      "event_id": 146,
+      "n_outlets": 28,
+      "consensus_headline": "Supreme Court declines to hear Carter Page\u2019s lawsuit against former FBI officials",
       "nearest_outlet": "washingtonexaminer.com",
-      "farthest_outlet": "dailypress.senate.gov",
-      "farthest_distance": 0.9552
+      "farthest_outlet": "scotusblog.com",
+      "farthest_distance": 0.793366
     },
     {
-      "event_id": 104,
+      "event_id": 110,
       "n_outlets": 24,
-      "consensus_headline": "Keiko Fujimori declared winner of Peru presidential election",
-      "nearest_outlet": "staradvertiser.com",
-      "farthest_outlet": "gazettextra.com",
-      "farthest_distance": 0.739843
+      "consensus_headline": "Supreme Court allows Alabama to use congressional map favoring Republicans in this year's elections",
+      "nearest_outlet": "apnews.com",
+      "farthest_outlet": "wbrc.com",
+      "farthest_distance": 0.806602
     },
     {
-      "event_id": 135,
+      "event_id": 94,
+      "n_outlets": 22,
+      "consensus_headline": "Texas urges Supreme Court to reject effort to halt app store age verification law",
+      "nearest_outlet": "washingtonexaminer.com",
+      "farthest_outlet": "texastribune.org",
+      "farthest_distance": 0.871824
+    },
+    {
+      "event_id": 3,
+      "n_outlets": 21,
+      "consensus_headline": "Ohio Supreme Court denies murder conviction appeal from \u201cThe Crash \u201dsubject Mackenzie Shirilla",
+      "nearest_outlet": "yahoo.com",
+      "farthest_outlet": "ohiocapitaljournal.com",
+      "farthest_distance": 0.843888
+    },
+    {
+      "event_id": 48,
+      "n_outlets": 21,
+      "consensus_headline": "Trump\u2019s firing power faces twin Supreme Court tests, but one agency may get special treatment",
+      "nearest_outlet": "foxnews.com",
+      "farthest_outlet": "courthousenews.com",
+      "farthest_distance": 0.788546
+    },
+    {
+      "event_id": 283,
+      "n_outlets": 21,
+      "consensus_headline": "John Bolton Pleads Guilty In Classified Documents Case",
+      "nearest_outlet": "dailycaller.com",
+      "farthest_outlet": "motherjones.com",
+      "farthest_distance": 0.716796
+    },
+    {
+      "event_id": 535,
+      "n_outlets": 21,
+      "consensus_headline": "Lawyers urge judge to block Trump order that would create eligible voter list , limit mail ballots",
+      "nearest_outlet": "baltimoresun.com",
+      "farthest_outlet": "baltimoresun.com",
+      "farthest_distance": 0.0
+    },
+    {
+      "event_id": 391,
+      "n_outlets": 19,
+      "consensus_headline": "Norman Rockwell sketches of White House visitors go on display",
+      "nearest_outlet": "apnews.com",
+      "farthest_outlet": "kttc.com",
+      "farthest_distance": 0.765204
+    },
+    {
+      "event_id": 21,
+      "n_outlets": 18,
+      "consensus_headline": "Treasury Secretary Bessent confirms limited steps toward a $250 bill featuring Donald Trump",
+      "nearest_outlet": "clickorlando.com",
+      "farthest_outlet": "11alive.com",
+      "farthest_distance": 0.296491
+    },
+    {
+      "event_id": 219,
+      "n_outlets": 18,
+      "consensus_headline": "Supreme Court sides with government in green card deportee case",
+      "nearest_outlet": "deseret.com",
+      "farthest_outlet": "actionnews5.com",
+      "farthest_distance": 0.057366
+    },
+    {
+      "event_id": 39,
+      "n_outlets": 17,
+      "consensus_headline": "Supreme Court upholds state laws banning transgender girls and women from school athletic teams",
+      "nearest_outlet": "apnews.com",
+      "farthest_outlet": "axios.com",
+      "farthest_distance": 0.621082
+    },
+    {
+      "event_id": 419,
       "n_outlets": 16,
       "consensus_headline": "Nancy Pelosi to create a new institute at UC Berkeley after retiring from Congress",
       "nearest_outlet": "washingtonexaminer.com",
@@ -7329,23 +7433,39 @@
       "farthest_distance": 0.740005
     },
     {
-      "event_id": 1,
-      "n_outlets": 15,
-      "consensus_headline": "NPR retracts story reporting Justice Alito is retiring from Supreme Court",
-      "nearest_outlet": "washingtonpost.com",
-      "farthest_outlet": "timesofisrael.com",
-      "farthest_distance": 0.717608
+      "event_id": 496,
+      "n_outlets": 16,
+      "consensus_headline": "Senate Ethics panel dismisses Luna complaint against Gallego",
+      "nearest_outlet": "thehill.com",
+      "farthest_outlet": "newsfromthestates.com",
+      "farthest_distance": 0.818321
     },
     {
-      "event_id": 36,
+      "event_id": 14,
       "n_outlets": 15,
-      "consensus_headline": "McConnell was found 'unconscious' in home last month as condition remains unknown",
-      "nearest_outlet": "foxnews.com",
-      "farthest_outlet": "spectrumnews1.com",
-      "farthest_distance": 0.781343
+      "consensus_headline": "Georgia Senate Approves Bill Preserving QR Code Ballots Through 2028",
+      "nearest_outlet": "breitbart.com",
+      "farthest_outlet": "11alive.com",
+      "farthest_distance": 0.780119
     },
     {
-      "event_id": 122,
+      "event_id": 17,
+      "n_outlets": 15,
+      "consensus_headline": "The FBI is directing hundreds of analysts to its probe of Georgia\u2019s 2020 presidential election",
+      "nearest_outlet": "apnews.com",
+      "farthest_outlet": "ms.now",
+      "farthest_distance": 0.773661
+    },
+    {
+      "event_id": 133,
+      "n_outlets": 15,
+      "consensus_headline": "US Congress rejects short-term FISA extension as expiration looms",
+      "nearest_outlet": "reuters.com",
+      "farthest_outlet": "cbsnews.com",
+      "farthest_distance": 0.676428
+    },
+    {
+      "event_id": 378,
       "n_outlets": 15,
       "consensus_headline": "How the White House Rose Garden and its plantings have changed over the past century",
       "nearest_outlet": "apnews.com",
@@ -7353,1003 +7473,2745 @@
       "farthest_distance": 0.496224
     },
     {
-      "event_id": 153,
-      "n_outlets": 14,
-      "consensus_headline": "Senate Ethics Panel Tosses Out Complaint Against Eric Swalwell&#8217;s Buddy Ruben Gallego",
-      "nearest_outlet": "dailycaller.com",
-      "farthest_outlet": "axios.com",
-      "farthest_distance": 0.696343
-    },
-    {
-      "event_id": 2,
+      "event_id": 113,
       "n_outlets": 13,
-      "consensus_headline": "The FBI is directing hundreds of analysts to its probe of Georgia\u2019s 2020 presidential election",
-      "nearest_outlet": "apnews.com",
-      "farthest_outlet": "nbcnews.com",
-      "farthest_distance": 0.704192
+      "consensus_headline": "Brass bands in Beijing make way for sticker shock at home as Trump returns to escalating inflation",
+      "nearest_outlet": "abcnews.com",
+      "farthest_outlet": "journalgazette.net",
+      "farthest_distance": 0.131864
     },
     {
-      "event_id": 661,
+      "event_id": 115,
       "n_outlets": 13,
-      "consensus_headline": "John Bolton Pleads Guilty In Classified Documents Case",
-      "nearest_outlet": "dailycaller.com",
-      "farthest_outlet": "motherjones.com",
-      "farthest_distance": 0.664288
-    },
-    {
-      "event_id": 37,
-      "n_outlets": 12,
-      "consensus_headline": "Election worker says federal officers confronted her at polls over social media post criticizing ICE",
-      "nearest_outlet": "abcnews.com",
-      "farthest_outlet": "democracydocket.com",
-      "farthest_distance": 0.516237
-    },
-    {
-      "event_id": 121,
-      "n_outlets": 12,
-      "consensus_headline": "Harvard Professor With Polarizing Alien Theories To Lead New White House UFO Council",
-      "nearest_outlet": "huffpost.com",
-      "farthest_outlet": "ynetnews.com",
-      "farthest_distance": 0.532285
-    },
-    {
-      "event_id": 646,
-      "n_outlets": 12,
-      "consensus_headline": "Comer issues 2 subpoenas to billionaire Leon Black",
-      "nearest_outlet": "thehill.com",
-      "farthest_outlet": "theguardian.com",
-      "farthest_distance": 0.628361
-    },
-    {
-      "event_id": 207,
-      "n_outlets": 11,
-      "consensus_headline": "Pete Hegseth labels protesters \u2018ingrates\u2019 after relentless attempts to disrupt his event",
-      "nearest_outlet": "independent.co.uk",
-      "farthest_outlet": "breitbart.com",
-      "farthest_distance": 0.769835
-    },
-    {
-      "event_id": 459,
-      "n_outlets": 10,
-      "consensus_headline": "Buttigieg targeted in false report, police say",
-      "nearest_outlet": "thehill.com",
-      "farthest_outlet": "npr.org",
-      "farthest_distance": 0.656554
-    },
-    {
-      "event_id": 47,
-      "n_outlets": 9,
-      "consensus_headline": "Trump got the Senate candidates he wanted. How much will he spend to help them?",
-      "nearest_outlet": "abcnews.com",
-      "farthest_outlet": "abcnews.com",
-      "farthest_distance": 0.0
-    },
-    {
-      "event_id": 48,
-      "n_outlets": 9,
-      "consensus_headline": "Trump takes 1st flight on Air Force One gifted by Qatar, but retrofitted using taxpayer dollars",
-      "nearest_outlet": "abcnews.com",
-      "farthest_outlet": "huffpost.com",
-      "farthest_distance": 0.692245
-    },
-    {
-      "event_id": 49,
-      "n_outlets": 9,
-      "consensus_headline": "Police Departments Across the U.S. Gear Up to Thwart &#039;Teen Takeovers&#039; Before Fourth of July Celebrations",
-      "nearest_outlet": "breitbart.com",
-      "farthest_outlet": "cbsnews.com",
-      "farthest_distance": 0.729286
-    },
-    {
-      "event_id": 101,
-      "n_outlets": 9,
-      "consensus_headline": "Donald Trump nominates ex-state trooper Lance Schroyer as ICE director",
-      "nearest_outlet": "aljazeera.com",
-      "farthest_outlet": "thehill.com",
-      "farthest_distance": 0.548717
-    },
-    {
-      "event_id": 130,
-      "n_outlets": 9,
-      "consensus_headline": "Norman Rockwell people-watched in the West Wing lobby. Now those sketches are on public display",
-      "nearest_outlet": "apnews.com",
-      "farthest_outlet": "kttc.com",
-      "farthest_distance": 0.737408
-    },
-    {
-      "event_id": 59,
-      "n_outlets": 8,
-      "consensus_headline": "Democratic governors press US Postal Service to drop plan tied to Trump\u2019s election order",
-      "nearest_outlet": "apnews.com",
-      "farthest_outlet": "spectrumlocalnews.com",
-      "farthest_distance": 0.34911
-    },
-    {
-      "event_id": 108,
-      "n_outlets": 8,
-      "consensus_headline": "A Larger Socialist Coalition Is Bound to Form in Congress, Whether We Like It or Not",
-      "nearest_outlet": "nationalreview.com",
-      "farthest_outlet": "insidernj.com",
-      "farthest_distance": 0.76821
-    },
-    {
-      "event_id": 142,
-      "n_outlets": 8,
-      "consensus_headline": "Senate Democrats push $25 minimum wage plan",
-      "nearest_outlet": "usatoday.com",
-      "farthest_outlet": "washingtonpost.com",
-      "farthest_distance": 0.521608
-    },
-    {
-      "event_id": 166,
-      "n_outlets": 8,
-      "consensus_headline": "Congress weighs role of private equity in soaring youth sports costs in US",
-      "nearest_outlet": "baltimoresun.com",
-      "farthest_outlet": "cnbc.com",
-      "farthest_distance": 0.240008
-    },
-    {
-      "event_id": 13,
-      "n_outlets": 7,
-      "consensus_headline": "Mass protests in Germany fail to stop far-right AfD congress",
-      "nearest_outlet": "yahoo.com",
-      "farthest_outlet": "abcnews.com",
-      "farthest_distance": 0.714813
-    },
-    {
-      "event_id": 98,
-      "n_outlets": 7,
-      "consensus_headline": "Andy Burnham distanced himself from UK Prime Minister Starmer, but may be stuck with his policies",
-      "nearest_outlet": "apnews.com",
-      "farthest_outlet": "bbc.com",
-      "farthest_distance": 0.651915
+      "consensus_headline": "Cambodian Supreme Court upholds incitement conviction of opposition politician",
+      "nearest_outlet": "pbs.org",
+      "farthest_outlet": "clickorlando.com",
+      "farthest_distance": 0.303444
     },
     {
       "event_id": 125,
-      "n_outlets": 7,
-      "consensus_headline": "Bill Maher Defies White House Pushback to Claim Mark Twain Prize at the Kennedy Center",
-      "nearest_outlet": "hollywoodreporter.com",
-      "farthest_outlet": "nytimes.com",
-      "farthest_distance": 0.626483
+      "n_outlets": 13,
+      "consensus_headline": "Election worker says federal officers confronted her at polls over social media post criticizing ICE",
+      "nearest_outlet": "abcnews.com",
+      "farthest_outlet": "democracydocket.com",
+      "farthest_distance": 0.494583
     },
     {
-      "event_id": 544,
-      "n_outlets": 7,
-      "consensus_headline": "U.S. Declines to Renew Trade Pact with Mexico and Canada",
-      "nearest_outlet": "breitbart.com",
-      "farthest_outlet": "theglobeandmail.com",
-      "farthest_distance": 0.489503
+      "event_id": 294,
+      "n_outlets": 13,
+      "consensus_headline": "Supreme Court strikes down limit on party campaign spending in coordination with candidates",
+      "nearest_outlet": "foxnews.com",
+      "farthest_outlet": "washingtonpost.com",
+      "farthest_distance": 0.683588
     },
     {
-      "event_id": 871,
-      "n_outlets": 7,
-      "consensus_headline": "Trump&#8217;s religious liberty report calls for building &#8216;bridges&#8217; between church and state",
-      "nearest_outlet": "thehill.com",
-      "farthest_outlet": "ewtnnews.com",
-      "farthest_distance": 0.644289
+      "event_id": 372,
+      "n_outlets": 13,
+      "consensus_headline": "Harvard Professor With Polarizing Alien Theories To Lead New White House UFO Council",
+      "nearest_outlet": "huffpost.com",
+      "farthest_outlet": "nbcnews.com",
+      "farthest_distance": 0.566066
     },
     {
-      "event_id": 44,
-      "n_outlets": 6,
-      "consensus_headline": "Serbia\u2019s populist President Vucic says he will resign within weeks as election nears",
+      "event_id": 415,
+      "n_outlets": 13,
+      "consensus_headline": "Trump celebrates 80th birthday with an Iran deal and UFC cage fights at the White House",
       "nearest_outlet": "apnews.com",
-      "farthest_outlet": "bloomberg.com",
-      "farthest_distance": 0.317364
+      "farthest_outlet": "ft.com",
+      "farthest_distance": 0.649841
     },
     {
-      "event_id": 613,
-      "n_outlets": 6,
-      "consensus_headline": "Democrat Josh Turek leading by 4 points in Iowa Senate race polling",
+      "event_id": 199,
+      "n_outlets": 12,
+      "consensus_headline": "Pingree, Charles set to clash to succeed Mills as Maine governor",
       "nearest_outlet": "thehill.com",
-      "farthest_outlet": "desmoinesregister.com",
-      "farthest_distance": 0.55627
+      "farthest_outlet": "pressherald.com",
+      "farthest_distance": 0.78505
+    },
+    {
+      "event_id": 218,
+      "n_outlets": 12,
+      "consensus_headline": "Supreme Court blocks suit over prison guards\u2019 forced shave",
+      "nearest_outlet": "actionnews5.com",
+      "farthest_outlet": "actionnews5.com",
+      "farthest_distance": 0.0
+    },
+    {
+      "event_id": 572,
+      "n_outlets": 12,
+      "consensus_headline": "Ariana Grande Slams Trump White House Use of Her Music to Promote ICE Deportations: &#8216;Barbaric, Inhumane, Heinous Nonsense&#8217;",
+      "nearest_outlet": "breitbart.com",
+      "farthest_outlet": "ksby.com",
+      "farthest_distance": 0.67862
     }
   ],
   "events_detail": [
     {
-      "event_id": 3,
-      "consensus_headline": "Trump pivots to Congress for birthright citizenship overhaul after Supreme Court rejection",
-      "n_outlets": 396,
+      "event_id": 2,
+      "consensus_headline": "Video: Larry David Says Trump&#8217;s UFC Fight at White House Left Him &#039;Embarrassed to Be an American&#039;",
+      "n_outlets": 519,
       "members": [
         {
-          "outlet": "thehill.com",
-          "distance": 0.6357,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "Trump",
-              "weight": 0.0504,
-              "alignment": 1.0
-            },
-            {
-              "token": "says",
-              "weight": 0.0418,
-              "alignment": 0.243
-            },
-            {
-              "token": "Supreme",
-              "weight": 0.0488,
-              "alignment": 1.0
-            },
-            {
-              "token": "Court",
-              "weight": 0.036,
-              "alignment": 1.0
-            },
-            {
-              "token": "loss",
-              "weight": 0.0857,
-              "alignment": 0.4876
-            },
-            {
-              "token": "on",
-              "weight": 0.0501,
-              "alignment": 0.4941
-            },
-            {
-              "token": "birthright",
-              "weight": 0.0651,
-              "alignment": 1.0
-            },
-            {
-              "token": "citizenship",
-              "weight": 0.071,
-              "alignment": 1.0
-            },
-            {
-              "token": "8216",
-              "weight": 0.0418,
-              "alignment": 0.243
-            },
-            {
-              "token": "too",
-              "weight": 0.0466,
-              "alignment": 0.3308
-            },
-            {
-              "token": "bad",
-              "weight": 0.0418,
-              "alignment": 0.243
-            },
-            {
-              "token": "8217",
-              "weight": 0.0418,
-              "alignment": 0.243
-            },
-            {
-              "token": "calls",
-              "weight": 0.1025,
-              "alignment": 0.4781
-            },
-            {
-              "token": "on",
-              "weight": 0.0501,
-              "alignment": 0.4941
-            },
-            {
-              "token": "Congress",
-              "weight": 0.1656,
-              "alignment": 0.5181
-            },
-            {
-              "token": "to",
-              "weight": 0.0296,
-              "alignment": 0.7038
-            },
-            {
-              "token": "act",
-              "weight": 0.0313,
-              "alignment": 0.243
-            }
-          ]
-        },
-        {
-          "outlet": "foxnews.com",
-          "distance": 0.6419,
+          "outlet": "breitbart.com",
+          "distance": 0.6815,
           "lean5": "right",
           "tokens": [
             {
-              "token": "White",
-              "weight": 0.0938,
-              "alignment": 0.3242
+              "token": "Video",
+              "weight": 0.0309,
+              "alignment": 0.3928
             },
             {
-              "token": "House",
-              "weight": 0.0822,
-              "alignment": 0.243
+              "token": "Larry",
+              "weight": 0.0494,
+              "alignment": 0.3744
             },
             {
-              "token": "blasts",
-              "weight": 0.0929,
-              "alignment": 0.2707
+              "token": "David",
+              "weight": 0.0313,
+              "alignment": 0.2895
             },
             {
-              "token": "the",
-              "weight": 0.1209,
-              "alignment": 0.4448
+              "token": "Says",
+              "weight": 0.0388,
+              "alignment": 0.3382
             },
             {
-              "token": "Supreme",
-              "weight": 0.0865,
-              "alignment": 1.0
+              "token": "Trump",
+              "weight": 0.0562,
+              "alignment": 0.9404
             },
             {
-              "token": "Court's",
-              "weight": 0.039,
-              "alignment": 1.0
+              "token": "8217",
+              "weight": 0.0485,
+              "alignment": 0.5413
             },
             {
-              "token": "asinine'",
+              "token": "s",
               "weight": 0.0,
               "alignment": 0.0
             },
             {
-              "token": "birthright",
-              "weight": 0.1478,
-              "alignment": 0.9861
+              "token": "UFC",
+              "weight": 0.0524,
+              "alignment": 0.8189
             },
             {
-              "token": "citizenship",
-              "weight": 0.1282,
+              "token": "Fight",
+              "weight": 0.1001,
+              "alignment": 0.7094
+            },
+            {
+              "token": "at",
+              "weight": 0.0388,
+              "alignment": 0.3539
+            },
+            {
+              "token": "White",
+              "weight": 0.0481,
               "alignment": 1.0
             },
             {
-              "token": "ruling",
-              "weight": 0.2088,
-              "alignment": 0.4571
+              "token": "House",
+              "weight": 0.0474,
+              "alignment": 1.0
+            },
+            {
+              "token": "Left",
+              "weight": 0.0388,
+              "alignment": 0.3488
+            },
+            {
+              "token": "Him",
+              "weight": 0.0287,
+              "alignment": 0.2895
+            },
+            {
+              "token": "039",
+              "weight": 0.0381,
+              "alignment": 0.2895
+            },
+            {
+              "token": "Embarrassed",
+              "weight": 0.0483,
+              "alignment": 0.4054
+            },
+            {
+              "token": "to",
+              "weight": 0.0329,
+              "alignment": 0.7549
+            },
+            {
+              "token": "Be",
+              "weight": 0.0313,
+              "alignment": 0.2895
+            },
+            {
+              "token": "an",
+              "weight": 0.0377,
+              "alignment": 0.3694
+            },
+            {
+              "token": "American",
+              "weight": 0.1639,
+              "alignment": 0.5833
+            },
+            {
+              "token": "039",
+              "weight": 0.0381,
+              "alignment": 0.2895
             }
           ]
         },
         {
-          "outlet": "usatoday.com",
-          "distance": 0.6582,
+          "outlet": "wsj.com",
+          "distance": 0.6867,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Pierre",
+              "weight": 0.0189,
+              "alignment": 0.416
+            },
+            {
+              "token": "Yared",
+              "weight": 0.0187,
+              "alignment": 0.4426
+            },
+            {
+              "token": "the",
+              "weight": 0.0382,
+              "alignment": 0.6404
+            },
+            {
+              "token": "acting",
+              "weight": 0.0466,
+              "alignment": 0.5627
+            },
+            {
+              "token": "head",
+              "weight": 0.018,
+              "alignment": 0.3717
+            },
+            {
+              "token": "of",
+              "weight": 0.0208,
+              "alignment": 0.2895
+            },
+            {
+              "token": "the",
+              "weight": 0.0382,
+              "alignment": 0.6404
+            },
+            {
+              "token": "White",
+              "weight": 0.0291,
+              "alignment": 1.0
+            },
+            {
+              "token": "House",
+              "weight": 0.0323,
+              "alignment": 1.0
+            },
+            {
+              "token": "Council",
+              "weight": 0.0263,
+              "alignment": 0.5229
+            },
+            {
+              "token": "of",
+              "weight": 0.0208,
+              "alignment": 0.2895
+            },
+            {
+              "token": "Economic",
+              "weight": 0.0267,
+              "alignment": 0.4575
+            },
+            {
+              "token": "Advisers",
+              "weight": 0.0317,
+              "alignment": 0.5502
+            },
+            {
+              "token": "is",
+              "weight": 0.0217,
+              "alignment": 0.5441
+            },
+            {
+              "token": "stepping",
+              "weight": 0.0383,
+              "alignment": 0.5716
+            },
+            {
+              "token": "down",
+              "weight": 0.0148,
+              "alignment": 0.2895
+            },
+            {
+              "token": "President",
+              "weight": 0.0551,
+              "alignment": 0.4825
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0517,
+              "alignment": 1.0
+            },
+            {
+              "token": "said",
+              "weight": 0.0216,
+              "alignment": 0.3729
+            },
+            {
+              "token": "as",
+              "weight": 0.0135,
+              "alignment": 0.2895
+            },
+            {
+              "token": "the",
+              "weight": 0.0382,
+              "alignment": 0.6404
+            },
+            {
+              "token": "president",
+              "weight": 0.0551,
+              "alignment": 0.4825
+            },
+            {
+              "token": "x2019",
+              "weight": 0.0148,
+              "alignment": 0.2895
+            },
+            {
+              "token": "s",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "nominee",
+              "weight": 0.0161,
+              "alignment": 0.2895
+            },
+            {
+              "token": "to",
+              "weight": 0.0195,
+              "alignment": 0.9434
+            },
+            {
+              "token": "hold",
+              "weight": 0.0165,
+              "alignment": 0.4355
+            },
+            {
+              "token": "the",
+              "weight": 0.0382,
+              "alignment": 0.6404
+            },
+            {
+              "token": "role",
+              "weight": 0.0189,
+              "alignment": 0.4
+            },
+            {
+              "token": "permanently",
+              "weight": 0.0489,
+              "alignment": 0.5648
+            },
+            {
+              "token": "nears",
+              "weight": 0.0189,
+              "alignment": 0.3286
+            },
+            {
+              "token": "likely",
+              "weight": 0.0349,
+              "alignment": 0.4464
+            },
+            {
+              "token": "confirmation",
+              "weight": 0.0226,
+              "alignment": 0.3956
+            },
+            {
+              "token": "by",
+              "weight": 0.0135,
+              "alignment": 0.2895
+            },
+            {
+              "token": "the",
+              "weight": 0.0382,
+              "alignment": 0.6404
+            },
+            {
+              "token": "Senate",
+              "weight": 0.0226,
+              "alignment": 0.5715
+            }
+          ]
+        },
+        {
+          "outlet": "finance.yahoo.com",
+          "distance": 0.6973,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "The",
+              "weight": 0.0398,
+              "alignment": 0.9767
+            },
+            {
+              "token": "Supreme",
+              "weight": 0.1107,
+              "alignment": 0.6638
+            },
+            {
+              "token": "Court",
+              "weight": 0.0767,
+              "alignment": 0.6956
+            },
+            {
+              "token": "and",
+              "weight": 0.0494,
+              "alignment": 0.3562
+            },
+            {
+              "token": "the",
+              "weight": 0.0398,
+              "alignment": 0.9767
+            },
+            {
+              "token": "White",
+              "weight": 0.0325,
+              "alignment": 1.0
+            },
+            {
+              "token": "House",
+              "weight": 0.0418,
+              "alignment": 1.0
+            },
+            {
+              "token": "Just",
+              "weight": 0.0287,
+              "alignment": 0.2895
+            },
+            {
+              "token": "Changed",
+              "weight": 0.0443,
+              "alignment": 0.4463
+            },
+            {
+              "token": "Everything",
+              "weight": 0.0559,
+              "alignment": 0.6081
+            },
+            {
+              "token": "for",
+              "weight": 0.0263,
+              "alignment": 0.2895
+            },
+            {
+              "token": "Freight",
+              "weight": 0.0689,
+              "alignment": 0.4878
+            },
+            {
+              "token": "Brokers",
+              "weight": 0.044,
+              "alignment": 0.3384
+            },
+            {
+              "token": "NVOCCs",
+              "weight": 0.0263,
+              "alignment": 0.2895
+            },
+            {
+              "token": "Customs",
+              "weight": 0.0366,
+              "alignment": 0.4006
+            },
+            {
+              "token": "Brokers",
+              "weight": 0.044,
+              "alignment": 0.3384
+            },
+            {
+              "token": "Freight",
+              "weight": 0.0689,
+              "alignment": 0.4878
+            },
+            {
+              "token": "Forwarders",
+              "weight": 0.0306,
+              "alignment": 0.3598
+            },
+            {
+              "token": "and",
+              "weight": 0.0494,
+              "alignment": 0.3562
+            },
+            {
+              "token": "Warehouse",
+              "weight": 0.059,
+              "alignment": 0.8125
+            },
+            {
+              "token": "Operators",
+              "weight": 0.0265,
+              "alignment": 0.3991
+            }
+          ]
+        },
+        {
+          "outlet": "nytimes.com",
+          "distance": 0.7201,
           "lean5": "lean-left",
           "tokens": [
             {
               "token": "Trump",
-              "weight": 0.063,
-              "alignment": 0.9
+              "weight": 0.0901,
+              "alignment": 0.7722
             },
             {
-              "token": "calls",
-              "weight": 0.1298,
-              "alignment": 0.4344
+              "token": "spent",
+              "weight": 0.0839,
+              "alignment": 0.3732
+            },
+            {
+              "token": "thousands",
+              "weight": 0.079,
+              "alignment": 0.5643
             },
             {
               "token": "on",
-              "weight": 0.0478,
-              "alignment": 0.6414
+              "weight": 0.0534,
+              "alignment": 0.3274
             },
             {
-              "token": "Congress",
-              "weight": 0.1869,
-              "alignment": 0.4947
+              "token": "TKO",
+              "weight": 0.0442,
+              "alignment": 0.2895
             },
             {
-              "token": "to",
-              "weight": 0.0522,
-              "alignment": 0.6137
+              "token": "stock",
+              "weight": 0.06,
+              "alignment": 0.3737
             },
             {
-              "token": "end",
-              "weight": 0.0712,
-              "alignment": 0.243
+              "token": "while",
+              "weight": 0.0643,
+              "alignment": 0.4391
             },
             {
-              "token": "birthright",
-              "weight": 0.0827,
+              "token": "promoting",
+              "weight": 0.1009,
+              "alignment": 0.4963
+            },
+            {
+              "token": "White",
+              "weight": 0.0668,
+              "alignment": 0.9981
+            },
+            {
+              "token": "House",
+              "weight": 0.0587,
               "alignment": 1.0
             },
             {
-              "token": "citizenship",
-              "weight": 0.0852,
-              "alignment": 1.0
+              "token": "UFC",
+              "weight": 0.0686,
+              "alignment": 0.6991
             },
             {
-              "token": "after",
-              "weight": 0.0775,
-              "alignment": 0.2669
+              "token": "event",
+              "weight": 0.1117,
+              "alignment": 0.4031
             },
             {
-              "token": "Supreme",
-              "weight": 0.0618,
-              "alignment": 1.0
+              "token": "The",
+              "weight": 0.0575,
+              "alignment": 0.9858
             },
             {
-              "token": "Court",
-              "weight": 0.0462,
-              "alignment": 1.0
-            },
-            {
-              "token": "loss",
-              "weight": 0.0957,
-              "alignment": 0.4619
+              "token": "Athletic",
+              "weight": 0.0609,
+              "alignment": 0.4304
             }
           ]
         },
         {
-          "outlet": "ms.now",
-          "distance": 0.6614,
-          "lean5": null,
+          "outlet": "huffpost.com",
+          "distance": 0.7302,
+          "lean5": "left",
           "tokens": [
             {
-              "token": "Read",
-              "weight": 0.0678,
-              "alignment": 0.2598
+              "token": "Marco",
+              "weight": 0.0357,
+              "alignment": 0.3023
             },
             {
-              "token": "the",
-              "weight": 0.1143,
-              "alignment": 0.4409
+              "token": "Rubio",
+              "weight": 0.0454,
+              "alignment": 0.2895
             },
             {
-              "token": "Supreme",
-              "weight": 0.0799,
-              "alignment": 1.0
-            },
-            {
-              "token": "Court",
-              "weight": 0.0669,
-              "alignment": 0.9995
-            },
-            {
-              "token": "ruling",
-              "weight": 0.2043,
+              "token": "Bizarrely",
+              "weight": 0.0874,
               "alignment": 0.4402
             },
             {
-              "token": "on",
-              "weight": 0.1031,
-              "alignment": 0.4473
+              "token": "Claims",
+              "weight": 0.0665,
+              "alignment": 0.3233
             },
             {
               "token": "Trump\u2019s",
-              "weight": 0.0371,
+              "weight": 0.038,
               "alignment": 1.0
             },
             {
-              "token": "birthright",
-              "weight": 0.1381,
-              "alignment": 0.9783
-            },
-            {
-              "token": "citizenship",
-              "weight": 0.1161,
+              "token": "White",
+              "weight": 0.0687,
               "alignment": 1.0
             },
             {
-              "token": "order",
-              "weight": 0.0724,
-              "alignment": 0.2689
+              "token": "House",
+              "weight": 0.0544,
+              "alignment": 1.0
+            },
+            {
+              "token": "UFC",
+              "weight": 0.0607,
+              "alignment": 0.7828
+            },
+            {
+              "token": "Fight",
+              "weight": 0.1173,
+              "alignment": 0.638
+            },
+            {
+              "token": "Is",
+              "weight": 0.0622,
+              "alignment": 0.4244
+            },
+            {
+              "token": "A",
+              "weight": 0.0016,
+              "alignment": 0.5729
+            },
+            {
+              "token": "Gift",
+              "weight": 0.0535,
+              "alignment": 0.3304
+            },
+            {
+              "token": "To",
+              "weight": 0.0434,
+              "alignment": 0.6514
+            },
+            {
+              "token": "The",
+              "weight": 0.055,
+              "alignment": 1.0
+            },
+            {
+              "token": "American",
+              "weight": 0.2044,
+              "alignment": 0.5129
+            },
+            {
+              "token": "People\u2019",
+              "weight": 0.0058,
+              "alignment": 0.8108
             }
           ]
         },
         {
           "outlet": "nationalreview.com",
-          "distance": 0.6965,
+          "distance": 0.7499,
           "lean5": "lean-right",
           "tokens": [
             {
-              "token": "Supreme",
-              "weight": 0.0676,
-              "alignment": 1.0
+              "token": "Another",
+              "weight": 0.0497,
+              "alignment": 0.4526
             },
             {
-              "token": "Court",
-              "weight": 0.0611,
-              "alignment": 1.0
+              "token": "8216",
+              "weight": 0.0682,
+              "alignment": 0.3197
             },
             {
-              "token": "Upholds",
-              "weight": 0.2239,
-              "alignment": 0.4821
+              "token": "Elephants",
+              "weight": 0.069,
+              "alignment": 0.3546
             },
             {
-              "token": "Birthright",
-              "weight": 0.1083,
-              "alignment": 1.0
+              "token": "Are",
+              "weight": 0.0677,
+              "alignment": 0.3551
             },
             {
-              "token": "Citizenship",
-              "weight": 0.1189,
-              "alignment": 1.0
+              "token": "Persons",
+              "weight": 0.0832,
+              "alignment": 0.4452
             },
             {
-              "token": "in",
-              "weight": 0.0842,
-              "alignment": 0.243
+              "token": "8217",
+              "weight": 0.0767,
+              "alignment": 0.435
             },
             {
-              "token": "Major",
-              "weight": 0.0842,
-              "alignment": 0.243
+              "token": "Lawsuit",
+              "weight": 0.0702,
+              "alignment": 0.3445
             },
             {
-              "token": "Blow",
-              "weight": 0.0937,
-              "alignment": 0.2682
+              "token": "Goes",
+              "weight": 0.0556,
+              "alignment": 0.2895
             },
             {
               "token": "to",
-              "weight": 0.0719,
-              "alignment": 0.5049
+              "weight": 0.0514,
+              "alignment": 0.6362
             },
             {
-              "token": "Trump",
-              "weight": 0.0861,
-              "alignment": 0.7873
-            }
-          ]
-        },
-        {
-          "outlet": "huffpost.com",
-          "distance": 0.7082,
-          "lean5": "left",
-          "tokens": [
+              "token": "a",
+              "weight": 0.0015,
+              "alignment": 0.5851
+            },
+            {
+              "token": "State",
+              "weight": 0.0835,
+              "alignment": 0.4354
+            },
             {
               "token": "Supreme",
-              "weight": 0.0711,
-              "alignment": 1.0
+              "weight": 0.1975,
+              "alignment": 0.5116
             },
             {
               "token": "Court",
-              "weight": 0.0594,
-              "alignment": 1.0
-            },
-            {
-              "token": "Upholds",
-              "weight": 0.219,
-              "alignment": 0.49
-            },
-            {
-              "token": "Birthright",
-              "weight": 0.1108,
-              "alignment": 1.0
-            },
-            {
-              "token": "Denies",
-              "weight": 0.1001,
-              "alignment": 0.243
-            },
-            {
-              "token": "Trump's",
-              "weight": 0.0426,
-              "alignment": 0.9857
-            },
-            {
-              "token": "Bid",
-              "weight": 0.1041,
-              "alignment": 0.2685
-            },
-            {
-              "token": "To",
-              "weight": 0.069,
-              "alignment": 0.5155
-            },
-            {
-              "token": "Rewrite",
-              "weight": 0.1131,
-              "alignment": 0.3154
-            },
-            {
-              "token": "Citizenship",
-              "weight": 0.1109,
-              "alignment": 1.0
+              "weight": 0.1259,
+              "alignment": 0.5577
             }
           ]
         }
       ]
     },
     {
-      "event_id": 104,
-      "consensus_headline": "Keiko Fujimori declared winner of Peru presidential election",
-      "n_outlets": 24,
+      "event_id": 4,
+      "consensus_headline": "Supreme Court reinstates murder conviction in case of Etan Patz",
+      "n_outlets": 78,
       "members": [
         {
-          "outlet": "staradvertiser.com",
-          "distance": 0.2319,
+          "outlet": "1011now.com",
+          "distance": 0.2699,
           "lean5": null,
           "tokens": [
             {
-              "token": "Keiko",
-              "weight": 0.074,
+              "token": "Supreme",
+              "weight": 0.0867,
               "alignment": 1.0
             },
             {
-              "token": "Fujimori",
-              "weight": 0.1201,
+              "token": "Court",
+              "weight": 0.0799,
               "alignment": 1.0
             },
             {
-              "token": "declared",
-              "weight": 0.1186,
+              "token": "reinstates",
+              "weight": 0.1779,
+              "alignment": 0.8993
+            },
+            {
+              "token": "murder",
+              "weight": 0.1022,
+              "alignment": 0.9602
+            },
+            {
+              "token": "conviction",
+              "weight": 0.1333,
               "alignment": 1.0
             },
             {
-              "token": "winner",
-              "weight": 0.094,
-              "alignment": 1.0
+              "token": "in",
+              "weight": 0.0581,
+              "alignment": 0.7803
+            },
+            {
+              "token": "case",
+              "weight": 0.137,
+              "alignment": 0.6138
             },
             {
               "token": "of",
-              "weight": 0.065,
-              "alignment": 0.9704
+              "weight": 0.0908,
+              "alignment": 0.6205
             },
             {
-              "token": "Peru",
-              "weight": 0.0956,
-              "alignment": 0.9509
+              "token": "Etan",
+              "weight": 0.0741,
+              "alignment": 0.9904
             },
             {
-              "token": "presidential",
-              "weight": 0.254,
-              "alignment": 0.7687
-            },
-            {
-              "token": "election",
-              "weight": 0.1789,
-              "alignment": 0.7205
+              "token": "Patz",
+              "weight": 0.06,
+              "alignment": 1.0
             }
           ]
         },
         {
-          "outlet": "reuters.com",
-          "distance": 0.2753,
-          "lean5": "center",
+          "outlet": "theguardian.com",
+          "distance": 0.2995,
+          "lean5": "lean-left",
           "tokens": [
             {
-              "token": "Keiko",
-              "weight": 0.0783,
+              "token": "US",
+              "weight": 0.1,
+              "alignment": 0.2582
+            },
+            {
+              "token": "supreme",
+              "weight": 0.1093,
+              "alignment": 0.9376
+            },
+            {
+              "token": "court",
+              "weight": 0.0695,
               "alignment": 1.0
             },
             {
-              "token": "Fujimori",
-              "weight": 0.1286,
+              "token": "reinstates",
+              "weight": 0.1621,
+              "alignment": 0.9465
+            },
+            {
+              "token": "murder",
+              "weight": 0.0883,
               "alignment": 1.0
             },
             {
-              "token": "declared",
-              "weight": 0.1268,
+              "token": "conviction",
+              "weight": 0.1207,
               "alignment": 1.0
             },
             {
-              "token": "winner",
-              "weight": 0.0988,
-              "alignment": 1.0
+              "token": "in",
+              "weight": 0.0451,
+              "alignment": 0.8913
+            },
+            {
+              "token": "case",
+              "weight": 0.1166,
+              "alignment": 0.6695
             },
             {
               "token": "of",
-              "weight": 0.0615,
+              "weight": 0.0731,
+              "alignment": 0.6935
+            },
+            {
+              "token": "Etan",
+              "weight": 0.0626,
               "alignment": 1.0
             },
             {
-              "token": "Peru",
-              "weight": 0.0969,
-              "alignment": 0.9517
-            },
-            {
-              "token": "presidential",
-              "weight": 0.2773,
-              "alignment": 0.7437
-            },
-            {
-              "token": "race",
-              "weight": 0.1319,
-              "alignment": 0.3114
+              "token": "Patz",
+              "weight": 0.0528,
+              "alignment": 1.0
             }
           ]
         },
         {
           "outlet": "foxnews.com",
-          "distance": 0.3258,
+          "distance": 0.3094,
           "lean5": "right",
           "tokens": [
             {
-              "token": "Conservative",
-              "weight": 0.0661,
-              "alignment": 0.3284
-            },
-            {
-              "token": "Keiko",
-              "weight": 0.0752,
+              "token": "Supreme",
+              "weight": 0.0848,
               "alignment": 1.0
             },
             {
-              "token": "Fujimori",
-              "weight": 0.103,
+              "token": "Court",
+              "weight": 0.0777,
               "alignment": 1.0
             },
             {
-              "token": "officially",
-              "weight": 0.1,
-              "alignment": 0.38
+              "token": "reinstates",
+              "weight": 0.1952,
+              "alignment": 0.8039
             },
             {
-              "token": "declared",
-              "weight": 0.1015,
-              "alignment": 1.0
+              "token": "conviction",
+              "weight": 0.1515,
+              "alignment": 0.9376
             },
             {
-              "token": "winner",
-              "weight": 0.0671,
-              "alignment": 1.0
+              "token": "in",
+              "weight": 0.0559,
+              "alignment": 0.7858
             },
             {
-              "token": "of",
-              "weight": 0.0392,
-              "alignment": 1.0
+              "token": "1979",
+              "weight": 0.1817,
+              "alignment": 0.463
             },
             {
-              "token": "Peru's",
-              "weight": 0.0196,
-              "alignment": 1.0
+              "token": "Etan",
+              "weight": 0.0797,
+              "alignment": 0.9111
             },
             {
-              "token": "presidential",
-              "weight": 0.2067,
-              "alignment": 0.8743
+              "token": "Patz",
+              "weight": 0.0835,
+              "alignment": 0.8871
             },
             {
-              "token": "runoff",
-              "weight": 0.0887,
-              "alignment": 0.3323
-            },
-            {
-              "token": "election",
-              "weight": 0.1329,
-              "alignment": 0.8439
+              "token": "murder",
+              "weight": 0.09,
+              "alignment": 0.9634
             }
           ]
         },
         {
-          "outlet": "cnn.com",
-          "distance": 0.4346,
-          "lean5": "lean-left",
+          "outlet": "nypost.com",
+          "distance": 0.3918,
+          "lean5": "lean-right",
           "tokens": [
             {
-              "token": "Keiko",
-              "weight": 0.0879,
+              "token": "Supreme",
+              "weight": 0.0709,
               "alignment": 1.0
             },
             {
-              "token": "Fujimori",
-              "weight": 0.1472,
+              "token": "Court",
+              "weight": 0.0569,
               "alignment": 1.0
             },
             {
-              "token": "declared",
-              "weight": 0.1447,
+              "token": "reinstates",
+              "weight": 0.1445,
+              "alignment": 0.9887
+            },
+            {
+              "token": "murder",
+              "weight": 0.0711,
               "alignment": 1.0
             },
             {
-              "token": "winner",
-              "weight": 0.1095,
+              "token": "conviction",
+              "weight": 0.1071,
               "alignment": 1.0
+            },
+            {
+              "token": "in",
+              "weight": 0.0327,
+              "alignment": 0.7954
+            },
+            {
+              "token": "infamous",
+              "weight": 0.0816,
+              "alignment": 0.2984
+            },
+            {
+              "token": "case",
+              "weight": 0.0971,
+              "alignment": 0.6739
             },
             {
               "token": "of",
-              "weight": 0.1061,
-              "alignment": 0.6562
+              "weight": 0.0497,
+              "alignment": 0.8351
             },
             {
-              "token": "razor-edge",
-              "weight": 0.0143,
-              "alignment": 0.6504
+              "token": "Etan",
+              "weight": 0.0481,
+              "alignment": 1.0
             },
             {
-              "token": "Peru",
-              "weight": 0.1705,
-              "alignment": 0.6122
+              "token": "Patz",
+              "weight": 0.048,
+              "alignment": 0.947
             },
             {
-              "token": "election",
-              "weight": 0.2197,
-              "alignment": 0.7273
+              "token": "missing",
+              "weight": 0.0724,
+              "alignment": 0.2764
+            },
+            {
+              "token": "NYC",
+              "weight": 0.0685,
+              "alignment": 0.2366
+            },
+            {
+              "token": "boy",
+              "weight": 0.0514,
+              "alignment": 0.2366
+            }
+          ]
+        },
+        {
+          "outlet": "reuters.com",
+          "distance": 0.4637,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0925,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0932,
+              "alignment": 0.8843
+            },
+            {
+              "token": "restores",
+              "weight": 0.1074,
+              "alignment": 0.2842
+            },
+            {
+              "token": "2017",
+              "weight": 0.1013,
+              "alignment": 0.2366
+            },
+            {
+              "token": "conviction",
+              "weight": 0.1542,
+              "alignment": 0.9593
+            },
+            {
+              "token": "in",
+              "weight": 0.0459,
+              "alignment": 0.968
+            },
+            {
+              "token": "1979",
+              "weight": 0.1709,
+              "alignment": 0.4773
+            },
+            {
+              "token": "Etan",
+              "weight": 0.0704,
+              "alignment": 0.9963
+            },
+            {
+              "token": "Patz",
+              "weight": 0.0752,
+              "alignment": 0.9537
+            },
+            {
+              "token": "murder",
+              "weight": 0.089,
+              "alignment": 0.9993
             }
           ]
         }
       ]
     },
     {
-      "event_id": 135,
-      "consensus_headline": "Nancy Pelosi to create a new institute at UC Berkeley after retiring from Congress",
-      "n_outlets": 16,
+      "event_id": 41,
+      "consensus_headline": "Republican Tom Kean Jr. reveals depression diagnosis after his four-month absence from Congress",
+      "n_outlets": 54,
       "members": [
         {
-          "outlet": "washingtonpost.com",
-          "distance": 0.3718,
-          "lean5": "lean-left",
+          "outlet": "apnews.com",
+          "distance": 0.3801,
+          "lean5": "center",
           "tokens": [
             {
-              "token": "Nancy",
-              "weight": 0.0762,
+              "token": "Republican",
+              "weight": 0.0683,
+              "alignment": 0.3698
+            },
+            {
+              "token": "Tom",
+              "weight": 0.0411,
               "alignment": 1.0
             },
             {
-              "token": "Pelosi",
-              "weight": 0.0864,
+              "token": "Kean",
+              "weight": 0.0353,
+              "alignment": 1.0
+            },
+            {
+              "token": "Jr",
+              "weight": 0.0454,
+              "alignment": 0.6678
+            },
+            {
+              "token": "reveals",
+              "weight": 0.081,
+              "alignment": 0.9546
+            },
+            {
+              "token": "depression",
+              "weight": 0.1047,
+              "alignment": 1.0
+            },
+            {
+              "token": "diagnosis",
+              "weight": 0.1291,
+              "alignment": 0.7375
+            },
+            {
+              "token": "after",
+              "weight": 0.0947,
+              "alignment": 0.6393
+            },
+            {
+              "token": "his",
+              "weight": 0.1153,
+              "alignment": 0.4334
+            },
+            {
+              "token": "four-month",
+              "weight": 0.1134,
+              "alignment": 0.653
+            },
+            {
+              "token": "absence",
+              "weight": 0.0704,
+              "alignment": 1.0
+            },
+            {
+              "token": "from",
+              "weight": 0.0406,
+              "alignment": 1.0
+            },
+            {
+              "token": "Congress",
+              "weight": 0.0608,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "news3lv.com",
+          "distance": 0.3848,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Rep",
+              "weight": 0.0476,
+              "alignment": 0.6707
+            },
+            {
+              "token": "Tom",
+              "weight": 0.0408,
+              "alignment": 1.0
+            },
+            {
+              "token": "Kean",
+              "weight": 0.0453,
+              "alignment": 1.0
+            },
+            {
+              "token": "Jr",
+              "weight": 0.0626,
+              "alignment": 0.5628
+            },
+            {
+              "token": "reveals",
+              "weight": 0.1024,
+              "alignment": 0.8366
+            },
+            {
+              "token": "depression",
+              "weight": 0.1293,
+              "alignment": 0.9425
+            },
+            {
+              "token": "diagnosis",
+              "weight": 0.1591,
+              "alignment": 0.6634
+            },
+            {
+              "token": "after",
+              "weight": 0.1502,
+              "alignment": 0.5006
+            },
+            {
+              "token": "4-month",
+              "weight": 0.045,
+              "alignment": 0.8266
+            },
+            {
+              "token": "absence",
+              "weight": 0.0901,
+              "alignment": 1.0
+            },
+            {
+              "token": "from",
+              "weight": 0.0526,
+              "alignment": 1.0
+            },
+            {
+              "token": "Congress",
+              "weight": 0.075,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "breitbart.com",
+          "distance": 0.4708,
+          "lean5": "right",
+          "tokens": [
+            {
+              "token": "Tom",
+              "weight": 0.0285,
+              "alignment": 1.0
+            },
+            {
+              "token": "Kean",
+              "weight": 0.0513,
+              "alignment": 1.0
+            },
+            {
+              "token": "Reveals",
+              "weight": 0.1077,
+              "alignment": 0.8218
+            },
+            {
+              "token": "Depression",
+              "weight": 0.1539,
+              "alignment": 0.8225
+            },
+            {
+              "token": "Treatment",
+              "weight": 0.1119,
+              "alignment": 0.2623
+            },
+            {
+              "token": "After",
+              "weight": 0.1615,
+              "alignment": 0.4679
+            },
+            {
+              "token": "Four-Month",
+              "weight": 0.1552,
+              "alignment": 0.5594
+            },
+            {
+              "token": "Absence",
+              "weight": 0.0945,
+              "alignment": 1.0
+            },
+            {
+              "token": "from",
+              "weight": 0.0544,
+              "alignment": 1.0
+            },
+            {
+              "token": "Congress",
+              "weight": 0.081,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "cbsnews.com",
+          "distance": 0.5049,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Rep",
+              "weight": 0.0345,
+              "alignment": 0.8267
+            },
+            {
+              "token": "Tom",
+              "weight": 0.0316,
+              "alignment": 1.0
+            },
+            {
+              "token": "Kean",
+              "weight": 0.0402,
+              "alignment": 1.0
+            },
+            {
+              "token": "reveals",
+              "weight": 0.0946,
+              "alignment": 0.8964
+            },
+            {
+              "token": "depression",
+              "weight": 0.1302,
+              "alignment": 0.9646
+            },
+            {
+              "token": "diagnosis",
+              "weight": 0.1606,
+              "alignment": 0.6523
+            },
+            {
+              "token": "as",
+              "weight": 0.0688,
+              "alignment": 0.2365
+            },
+            {
+              "token": "reason",
+              "weight": 0.0802,
+              "alignment": 0.2964
+            },
+            {
+              "token": "for",
+              "weight": 0.091,
+              "alignment": 0.2608
+            },
+            {
+              "token": "months-long",
+              "weight": 0.0455,
+              "alignment": 0.8007
+            },
+            {
+              "token": "absence",
+              "weight": 0.0972,
+              "alignment": 0.9591
+            },
+            {
+              "token": "from",
+              "weight": 0.0445,
+              "alignment": 1.0
+            },
+            {
+              "token": "Congress",
+              "weight": 0.0811,
+              "alignment": 1.0
+            }
+          ]
+        },
+        {
+          "outlet": "nypost.com",
+          "distance": 0.6232,
+          "lean5": "lean-right",
+          "tokens": [
+            {
+              "token": "Mysteriously",
+              "weight": 0.0716,
+              "alignment": 0.3727
+            },
+            {
+              "token": "missing",
+              "weight": 0.0932,
+              "alignment": 0.3754
+            },
+            {
+              "token": "NJ",
+              "weight": 0.0551,
+              "alignment": 0.2365
+            },
+            {
+              "token": "Rep",
+              "weight": 0.0618,
+              "alignment": 0.6433
+            },
+            {
+              "token": "Tom",
+              "weight": 0.0524,
+              "alignment": 1.0
+            },
+            {
+              "token": "Kean",
+              "weight": 0.0642,
+              "alignment": 1.0
+            },
+            {
+              "token": "Jr",
+              "weight": 0.0431,
+              "alignment": 0.6265
+            },
+            {
+              "token": "to",
+              "weight": 0.0848,
+              "alignment": 0.2766
+            },
+            {
+              "token": "make",
+              "weight": 0.0672,
+              "alignment": 0.2727
+            },
+            {
+              "token": "long-awaited",
+              "weight": 0.0574,
+              "alignment": 0.431
+            },
+            {
+              "token": "return",
+              "weight": 0.0717,
+              "alignment": 0.2919
+            },
+            {
+              "token": "to",
+              "weight": 0.0848,
+              "alignment": 0.2766
+            },
+            {
+              "token": "Congress",
+              "weight": 0.1927,
+              "alignment": 0.8201
+            }
+          ]
+        },
+        {
+          "outlet": "huffpost.com",
+          "distance": 0.8165,
+          "lean5": "left",
+          "tokens": [
+            {
+              "token": "Tom",
+              "weight": 0.0525,
+              "alignment": 1.0
+            },
+            {
+              "token": "Kean",
+              "weight": 0.0969,
+              "alignment": 0.8029
+            },
+            {
+              "token": "Finally",
+              "weight": 0.1212,
+              "alignment": 0.273
+            },
+            {
+              "token": "Explains",
+              "weight": 0.0995,
+              "alignment": 0.2365
+            },
+            {
+              "token": "His",
+              "weight": 0.1924,
+              "alignment": 0.3529
+            },
+            {
+              "token": "Absence",
+              "weight": 0.1972,
+              "alignment": 0.6967
+            },
+            {
+              "token": "From",
+              "weight": 0.1215,
+              "alignment": 0.691
+            },
+            {
+              "token": "Washington",
+              "weight": 0.1189,
+              "alignment": 0.349
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 103,
+      "consensus_headline": "Supreme Court clears way for Trump administration to revive restrictive policy for asylum seekers",
+      "n_outlets": 33,
+      "members": [
+        {
+          "outlet": "apnews.com",
+          "distance": 0.4443,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0462,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0431,
+              "alignment": 1.0
+            },
+            {
+              "token": "clears",
+              "weight": 0.0746,
+              "alignment": 0.8622
+            },
+            {
+              "token": "way",
+              "weight": 0.0474,
+              "alignment": 0.8777
+            },
+            {
+              "token": "for",
+              "weight": 0.0788,
+              "alignment": 0.6454
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0405,
+              "alignment": 1.0
+            },
+            {
+              "token": "administration",
+              "weight": 0.0863,
               "alignment": 1.0
             },
             {
               "token": "to",
-              "weight": 0.0778,
-              "alignment": 0.6284
+              "weight": 0.0425,
+              "alignment": 0.8823
             },
             {
-              "token": "establish",
-              "weight": 0.1014,
-              "alignment": 0.2687
+              "token": "revive",
+              "weight": 0.0767,
+              "alignment": 0.8708
             },
             {
-              "token": "new",
-              "weight": 0.1342,
-              "alignment": 0.4521
+              "token": "restrictive",
+              "weight": 0.1219,
+              "alignment": 0.8148
             },
             {
-              "token": "democracy",
-              "weight": 0.1568,
-              "alignment": 0.9372
+              "token": "policy",
+              "weight": 0.0589,
+              "alignment": 0.9182
             },
             {
-              "token": "institute",
-              "weight": 0.1479,
-              "alignment": 0.9982
+              "token": "for",
+              "weight": 0.0788,
+              "alignment": 0.6454
             },
             {
-              "token": "at",
-              "weight": 0.0569,
-              "alignment": 0.8337
+              "token": "asylum",
+              "weight": 0.0799,
+              "alignment": 0.7055
             },
             {
-              "token": "UC",
-              "weight": 0.0485,
-              "alignment": 0.9779
+              "token": "seekers",
+              "weight": 0.1246,
+              "alignment": 0.4206
+            }
+          ]
+        },
+        {
+          "outlet": "ms.now",
+          "distance": 0.4506,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0467,
+              "alignment": 1.0
             },
             {
-              "token": "Berkeley",
-              "weight": 0.1138,
+              "token": "Court",
+              "weight": 0.0527,
+              "alignment": 0.9996
+            },
+            {
+              "token": "sides",
+              "weight": 0.1213,
+              "alignment": 0.4128
+            },
+            {
+              "token": "6-3",
+              "weight": 0.0286,
+              "alignment": 0.4128
+            },
+            {
+              "token": "with",
+              "weight": 0.107,
+              "alignment": 0.4128
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0533,
+              "alignment": 0.991
+            },
+            {
+              "token": "administration",
+              "weight": 0.1103,
+              "alignment": 1.0
+            },
+            {
+              "token": "on",
+              "weight": 0.0697,
+              "alignment": 0.4316
+            },
+            {
+              "token": "immigration",
+              "weight": 0.132,
+              "alignment": 0.7805
+            },
+            {
+              "token": "asylum",
+              "weight": 0.0906,
+              "alignment": 0.6709
+            },
+            {
+              "token": "border",
+              "weight": 0.1356,
+              "alignment": 0.4128
+            },
+            {
+              "token": "policy",
+              "weight": 0.0521,
+              "alignment": 0.9934
+            }
+          ]
+        },
+        {
+          "outlet": "washingtonpost.com",
+          "distance": 0.4531,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.056,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0539,
+              "alignment": 1.0
+            },
+            {
+              "token": "clears",
+              "weight": 0.0908,
+              "alignment": 0.7927
+            },
+            {
+              "token": "way",
+              "weight": 0.064,
+              "alignment": 0.7786
+            },
+            {
+              "token": "for",
+              "weight": 0.064,
+              "alignment": 0.9425
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0527,
+              "alignment": 1.0
+            },
+            {
+              "token": "administration",
+              "weight": 0.1131,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.0551,
+              "alignment": 0.7756
+            },
+            {
+              "token": "revive",
+              "weight": 0.0945,
+              "alignment": 0.7845
+            },
+            {
+              "token": "restrictive",
+              "weight": 0.1478,
+              "alignment": 0.7449
+            },
+            {
+              "token": "immigration",
+              "weight": 0.1474,
+              "alignment": 0.7476
+            },
+            {
+              "token": "policy",
+              "weight": 0.0608,
+              "alignment": 0.9258
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 146,
+      "consensus_headline": "Supreme Court declines to hear Carter Page\u2019s lawsuit against former FBI officials",
+      "n_outlets": 28,
+      "members": [
+        {
+          "outlet": "washingtonexaminer.com",
+          "distance": 0.3444,
+          "lean5": "lean-right",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0602,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0512,
+              "alignment": 1.0
+            },
+            {
+              "token": "declines",
+              "weight": 0.136,
+              "alignment": 0.8697
+            },
+            {
+              "token": "to",
+              "weight": 0.0577,
+              "alignment": 0.7119
+            },
+            {
+              "token": "hear",
+              "weight": 0.0775,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Carter",
+              "weight": 0.0978,
+              "alignment": 0.9475
+            },
+            {
+              "token": "Page\u2019s",
+              "weight": 0.0255,
+              "alignment": 1.0
+            },
+            {
+              "token": "lawsuit",
+              "weight": 0.0976,
+              "alignment": 1.0
+            },
+            {
+              "token": "against",
+              "weight": 0.1319,
+              "alignment": 0.7978
+            },
+            {
+              "token": "former",
+              "weight": 0.0831,
+              "alignment": 0.2944
+            },
+            {
+              "token": "FBI",
+              "weight": 0.1235,
+              "alignment": 0.3706
+            },
+            {
+              "token": "officials",
+              "weight": 0.0581,
+              "alignment": 0.2373
+            }
+          ]
+        },
+        {
+          "outlet": "nytimes.com",
+          "distance": 0.3728,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0496,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0478,
+              "alignment": 1.0
+            },
+            {
+              "token": "Declines",
+              "weight": 0.1102,
+              "alignment": 0.9332
+            },
+            {
+              "token": "to",
+              "weight": 0.0618,
+              "alignment": 0.7258
+            },
+            {
+              "token": "Revive",
+              "weight": 0.1638,
+              "alignment": 0.4429
+            },
+            {
+              "token": "Carter",
+              "weight": 0.0764,
+              "alignment": 1.0
+            },
+            {
+              "token": "Page",
+              "weight": 0.0609,
+              "alignment": 1.0
+            },
+            {
+              "token": "Lawsuit",
+              "weight": 0.0782,
+              "alignment": 1.0
+            },
+            {
+              "token": "Against",
+              "weight": 0.1079,
+              "alignment": 0.8876
+            },
+            {
+              "token": "James",
+              "weight": 0.1466,
+              "alignment": 0.4961
+            },
+            {
+              "token": "Comey",
+              "weight": 0.0967,
+              "alignment": 0.7153
+            }
+          ]
+        },
+        {
+          "outlet": "foxnews.com",
+          "distance": 0.393,
+          "lean5": "right",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0525,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0366,
+              "alignment": 1.0
+            },
+            {
+              "token": "declines",
+              "weight": 0.0957,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.062,
+              "alignment": 0.5583
+            },
+            {
+              "token": "revive",
+              "weight": 0.1315,
+              "alignment": 0.4977
+            },
+            {
+              "token": "Carter",
+              "weight": 0.0618,
+              "alignment": 1.0
+            },
+            {
+              "token": "Page",
+              "weight": 0.0471,
+              "alignment": 1.0
+            },
+            {
+              "token": "lawsuit",
+              "weight": 0.0672,
+              "alignment": 1.0
+            },
+            {
+              "token": "over",
+              "weight": 0.1026,
+              "alignment": 0.5779
+            },
+            {
+              "token": "FBI",
+              "weight": 0.0874,
+              "alignment": 0.4387
+            },
+            {
+              "token": "surveillance",
+              "weight": 0.0663,
+              "alignment": 0.3286
+            },
+            {
+              "token": "tied",
+              "weight": 0.0561,
+              "alignment": 0.282
+            },
+            {
+              "token": "to",
+              "weight": 0.062,
+              "alignment": 0.5583
+            },
+            {
+              "token": "Trump-Russia",
+              "weight": 0.0,
+              "alignment": 0.0
+            },
+            {
+              "token": "probe",
+              "weight": 0.0712,
+              "alignment": 0.3254
+            }
+          ]
+        },
+        {
+          "outlet": "thehill.com",
+          "distance": 0.5405,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0603,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0492,
+              "alignment": 1.0
+            },
+            {
+              "token": "declines",
+              "weight": 0.1382,
+              "alignment": 0.8152
+            },
+            {
+              "token": "bid",
+              "weight": 0.0655,
+              "alignment": 0.2373
+            },
+            {
+              "token": "from",
+              "weight": 0.0655,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Carter",
+              "weight": 0.0852,
+              "alignment": 0.9896
+            },
+            {
+              "token": "Page",
+              "weight": 0.0749,
+              "alignment": 0.8011
+            },
+            {
+              "token": "to",
+              "weight": 0.0594,
+              "alignment": 0.6085
+            },
+            {
+              "token": "continue",
+              "weight": 0.0696,
+              "alignment": 0.2781
+            },
+            {
+              "token": "suit",
+              "weight": 0.0865,
+              "alignment": 0.4971
+            },
+            {
+              "token": "against",
+              "weight": 0.1325,
+              "alignment": 0.748
+            },
+            {
+              "token": "Comey",
+              "weight": 0.1131,
+              "alignment": 0.637
+            }
+          ]
+        },
+        {
+          "outlet": "upi.com",
+          "distance": 0.5708,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0579,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0651,
+              "alignment": 1.0
+            },
+            {
+              "token": "will",
+              "weight": 0.0913,
+              "alignment": 0.2578
+            },
+            {
+              "token": "not",
+              "weight": 0.082,
+              "alignment": 0.2373
+            },
+            {
+              "token": "take",
+              "weight": 0.082,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Carter",
+              "weight": 0.096,
+              "alignment": 0.966
+            },
+            {
+              "token": "Page's",
+              "weight": 0.0335,
+              "alignment": 0.9418
+            },
+            {
+              "token": "lawsuit",
+              "weight": 0.0962,
+              "alignment": 1.0
+            },
+            {
+              "token": "against",
+              "weight": 0.1231,
+              "alignment": 0.8638
+            },
+            {
+              "token": "James",
+              "weight": 0.1618,
+              "alignment": 0.4837
+            },
+            {
+              "token": "Comey",
+              "weight": 0.1111,
+              "alignment": 0.6874
+            }
+          ]
+        },
+        {
+          "outlet": "huffpost.com",
+          "distance": 0.6611,
+          "lean5": "left",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0887,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0694,
+              "alignment": 1.0
+            },
+            {
+              "token": "OKs",
+              "weight": 0.0483,
+              "alignment": 0.2373
+            },
+            {
+              "token": "ExxonMobil",
+              "weight": 0.0483,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Lawsuit",
+              "weight": 0.1246,
+              "alignment": 0.9112
+            },
+            {
+              "token": "Over",
+              "weight": 0.1391,
+              "alignment": 0.3779
+            },
+            {
+              "token": "Cuban",
+              "weight": 0.0483,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Property",
+              "weight": 0.0891,
+              "alignment": 0.3443
+            },
+            {
+              "token": "Seized",
+              "weight": 0.0632,
+              "alignment": 0.275
+            },
+            {
+              "token": "By",
+              "weight": 0.0483,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Fidel",
+              "weight": 0.0604,
+              "alignment": 0.2373
+            },
+            {
+              "token": "Castro's",
+              "weight": 0.0192,
+              "alignment": 0.5847
+            },
+            {
+              "token": "Government",
+              "weight": 0.1531,
+              "alignment": 0.339
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 110,
+      "consensus_headline": "Supreme Court allows Alabama to use congressional map favoring Republicans in this year's elections",
+      "n_outlets": 24,
+      "members": [
+        {
+          "outlet": "apnews.com",
+          "distance": 0.3116,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.029,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0336,
+              "alignment": 1.0
+            },
+            {
+              "token": "allows",
+              "weight": 0.0831,
+              "alignment": 0.4342
+            },
+            {
+              "token": "Alabama",
+              "weight": 0.0477,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.0503,
+              "alignment": 0.425
+            },
+            {
+              "token": "use",
+              "weight": 0.0587,
+              "alignment": 0.425
+            },
+            {
+              "token": "congressional",
+              "weight": 0.1412,
+              "alignment": 0.452
+            },
+            {
+              "token": "map",
+              "weight": 0.0578,
+              "alignment": 0.4367
+            },
+            {
+              "token": "favoring",
+              "weight": 0.1038,
+              "alignment": 0.425
+            },
+            {
+              "token": "Republicans",
+              "weight": 0.125,
+              "alignment": 0.4311
+            },
+            {
+              "token": "in",
+              "weight": 0.0461,
+              "alignment": 0.425
+            },
+            {
+              "token": "this",
+              "weight": 0.0777,
+              "alignment": 0.425
+            },
+            {
+              "token": "year's",
+              "weight": 0.0422,
+              "alignment": 0.425
+            },
+            {
+              "token": "elections",
+              "weight": 0.1037,
+              "alignment": 0.475
+            }
+          ]
+        },
+        {
+          "outlet": "abcnews.go.com",
+          "distance": 0.4999,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0769,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0757,
+              "alignment": 1.0
+            },
+            {
+              "token": "rejects",
+              "weight": 0.1364,
+              "alignment": 0.8576
+            },
+            {
+              "token": "Alabama",
+              "weight": 0.0972,
+              "alignment": 1.0
+            },
+            {
+              "token": "request",
+              "weight": 0.1381,
+              "alignment": 0.8527
+            },
+            {
+              "token": "for",
+              "weight": 0.0899,
+              "alignment": 0.85
+            },
+            {
+              "token": "nitrogen",
+              "weight": 0.1523,
+              "alignment": 0.85
+            },
+            {
+              "token": "gas",
+              "weight": 0.0899,
+              "alignment": 0.85
+            },
+            {
+              "token": "execution",
+              "weight": 0.1436,
+              "alignment": 0.867
+            }
+          ]
+        },
+        {
+          "outlet": "wsfa.com",
+          "distance": 0.4999,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0769,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0757,
+              "alignment": 1.0
+            },
+            {
+              "token": "rejects",
+              "weight": 0.1364,
+              "alignment": 0.8576
+            },
+            {
+              "token": "Alabama",
+              "weight": 0.0972,
+              "alignment": 1.0
+            },
+            {
+              "token": "request",
+              "weight": 0.1381,
+              "alignment": 0.8527
+            },
+            {
+              "token": "for",
+              "weight": 0.0899,
+              "alignment": 0.85
+            },
+            {
+              "token": "nitrogen",
+              "weight": 0.1523,
+              "alignment": 0.85
+            },
+            {
+              "token": "gas",
+              "weight": 0.0899,
+              "alignment": 0.85
+            },
+            {
+              "token": "execution",
+              "weight": 0.1436,
+              "alignment": 0.867
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 94,
+      "consensus_headline": "Texas urges Supreme Court to reject effort to halt app store age verification law",
+      "n_outlets": 22,
+      "members": [
+        {
+          "outlet": "washingtonexaminer.com",
+          "distance": 0.1458,
+          "lean5": "lean-right",
+          "tokens": [
+            {
+              "token": "Texas",
+              "weight": 0.1232,
+              "alignment": 0.8058
+            },
+            {
+              "token": "urges",
+              "weight": 0.0526,
+              "alignment": 0.4081
+            },
+            {
+              "token": "Supreme",
+              "weight": 0.1793,
+              "alignment": 0.8302
+            },
+            {
+              "token": "Court",
+              "weight": 0.1263,
+              "alignment": 0.8149
+            },
+            {
+              "token": "to",
+              "weight": 0.0631,
+              "alignment": 0.5321
+            },
+            {
+              "token": "reject",
+              "weight": 0.0401,
+              "alignment": 0.3248
+            },
+            {
+              "token": "effort",
+              "weight": 0.066,
+              "alignment": 0.4382
+            },
+            {
+              "token": "to",
+              "weight": 0.0631,
+              "alignment": 0.5321
+            },
+            {
+              "token": "halt",
+              "weight": 0.0533,
+              "alignment": 0.3956
+            },
+            {
+              "token": "app",
+              "weight": 0.0437,
+              "alignment": 0.3248
+            },
+            {
+              "token": "store",
+              "weight": 0.0691,
+              "alignment": 0.4321
+            },
+            {
+              "token": "age",
+              "weight": 0.0437,
+              "alignment": 0.3248
+            },
+            {
+              "token": "verification",
+              "weight": 0.0437,
+              "alignment": 0.3248
+            },
+            {
+              "token": "law",
+              "weight": 0.0328,
+              "alignment": 0.3248
+            }
+          ]
+        },
+        {
+          "outlet": "telegraphherald.com",
+          "distance": 0.5335,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0442,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.039,
+              "alignment": 1.0
+            },
+            {
+              "token": "sides",
+              "weight": 0.0545,
+              "alignment": 1.0
+            },
+            {
+              "token": "with",
+              "weight": 0.0495,
+              "alignment": 1.0
+            },
+            {
+              "token": "Texas",
+              "weight": 0.0446,
+              "alignment": 1.0
+            },
+            {
+              "token": "man",
+              "weight": 0.0588,
+              "alignment": 0.6722
+            },
+            {
+              "token": "who",
+              "weight": 0.046,
+              "alignment": 0.8962
+            },
+            {
+              "token": "says",
+              "weight": 0.0821,
+              "alignment": 0.6527
+            },
+            {
+              "token": "it\u2019s",
+              "weight": 0.0339,
+              "alignment": 0.6481
+            },
+            {
+              "token": "not",
+              "weight": 0.0697,
+              "alignment": 0.6491
+            },
+            {
+              "token": "a",
+              "weight": 0.0004,
+              "alignment": 1.0
+            },
+            {
+              "token": "crime",
+              "weight": 0.083,
+              "alignment": 0.6704
+            },
+            {
+              "token": "for",
+              "weight": 0.0592,
+              "alignment": 0.6816
+            },
+            {
+              "token": "marijuana",
+              "weight": 0.0966,
+              "alignment": 0.9992
+            },
+            {
+              "token": "users",
+              "weight": 0.0762,
+              "alignment": 0.7467
+            },
+            {
+              "token": "to",
+              "weight": 0.0316,
+              "alignment": 1.0
+            },
+            {
+              "token": "have",
+              "weight": 0.0716,
+              "alignment": 0.6801
+            },
+            {
+              "token": "guns",
+              "weight": 0.0592,
+              "alignment": 0.7118
+            }
+          ]
+        },
+        {
+          "outlet": "apnews.com",
+          "distance": 0.5338,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0439,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0388,
+              "alignment": 1.0
+            },
+            {
+              "token": "sides",
+              "weight": 0.0542,
+              "alignment": 1.0
+            },
+            {
+              "token": "with",
+              "weight": 0.0493,
+              "alignment": 1.0
+            },
+            {
+              "token": "a",
+              "weight": 0.0011,
+              "alignment": 0.8002
+            },
+            {
+              "token": "Texas",
+              "weight": 0.045,
+              "alignment": 1.0
+            },
+            {
+              "token": "man",
+              "weight": 0.0592,
+              "alignment": 0.6706
+            },
+            {
+              "token": "who",
+              "weight": 0.0459,
+              "alignment": 0.8973
+            },
+            {
+              "token": "says",
+              "weight": 0.0824,
+              "alignment": 0.6522
+            },
+            {
+              "token": "it\u2019s",
+              "weight": 0.0335,
+              "alignment": 0.6512
+            },
+            {
+              "token": "not",
+              "weight": 0.0695,
+              "alignment": 0.6502
+            },
+            {
+              "token": "a",
+              "weight": 0.0011,
+              "alignment": 0.8002
+            },
+            {
+              "token": "crime",
+              "weight": 0.0825,
+              "alignment": 0.6721
+            },
+            {
+              "token": "for",
+              "weight": 0.059,
+              "alignment": 0.6828
+            },
+            {
+              "token": "marijuana",
+              "weight": 0.0966,
+              "alignment": 0.9984
+            },
+            {
+              "token": "users",
+              "weight": 0.0758,
+              "alignment": 0.7483
+            },
+            {
+              "token": "to",
+              "weight": 0.0315,
+              "alignment": 1.0
+            },
+            {
+              "token": "have",
+              "weight": 0.0719,
+              "alignment": 0.6793
+            },
+            {
+              "token": "guns",
+              "weight": 0.0589,
+              "alignment": 0.7135
+            }
+          ]
+        },
+        {
+          "outlet": "theguardian.com",
+          "distance": 0.6081,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0782,
+              "alignment": 1.0
+            },
+            {
+              "token": "court",
+              "weight": 0.062,
+              "alignment": 1.0
+            },
+            {
+              "token": "sides",
+              "weight": 0.088,
+              "alignment": 0.8436
+            },
+            {
+              "token": "with",
+              "weight": 0.0733,
+              "alignment": 0.8336
+            },
+            {
+              "token": "Texas",
+              "weight": 0.0736,
+              "alignment": 1.0
+            },
+            {
+              "token": "marijuana",
+              "weight": 0.1742,
+              "alignment": 0.7179
+            },
+            {
+              "token": "user",
+              "weight": 0.0912,
+              "alignment": 0.4852
+            },
+            {
+              "token": "who",
+              "weight": 0.0739,
+              "alignment": 0.6263
+            },
+            {
+              "token": "wants",
+              "weight": 0.0592,
+              "alignment": 0.3359
+            },
+            {
+              "token": "to",
+              "weight": 0.048,
+              "alignment": 0.8083
+            },
+            {
+              "token": "legally",
+              "weight": 0.0592,
+              "alignment": 0.3359
+            },
+            {
+              "token": "own",
+              "weight": 0.0581,
+              "alignment": 0.3248
+            },
+            {
+              "token": "a",
+              "weight": 0.0011,
+              "alignment": 0.9198
+            },
+            {
+              "token": "gun",
+              "weight": 0.0601,
+              "alignment": 0.4464
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 3,
+      "consensus_headline": "Ohio Supreme Court denies murder conviction appeal from \u201cThe Crash \u201dsubject Mackenzie Shirilla",
+      "n_outlets": 21,
+      "members": [
+        {
+          "outlet": "yahoo.com",
+          "distance": 0.2107,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Ohio",
+              "weight": 0.0525,
+              "alignment": 0.9758
+            },
+            {
+              "token": "Supreme",
+              "weight": 0.1303,
+              "alignment": 0.6888
+            },
+            {
+              "token": "Court",
+              "weight": 0.0823,
+              "alignment": 0.8835
+            },
+            {
+              "token": "denies",
+              "weight": 0.0722,
+              "alignment": 0.4001
+            },
+            {
+              "token": "murder",
+              "weight": 0.1317,
+              "alignment": 0.6286
+            },
+            {
+              "token": "conviction",
+              "weight": 0.0796,
+              "alignment": 0.4231
+            },
+            {
+              "token": "appeal",
+              "weight": 0.0961,
+              "alignment": 0.8635
+            },
+            {
+              "token": "from",
+              "weight": 0.0662,
+              "alignment": 0.3278
+            },
+            {
+              "token": "The",
+              "weight": 0.0368,
+              "alignment": 0.8936
+            },
+            {
+              "token": "Crash",
+              "weight": 0.0417,
+              "alignment": 1.0
+            },
+            {
+              "token": "subject",
+              "weight": 0.0742,
+              "alignment": 1.0
+            },
+            {
+              "token": "Mackenzie",
+              "weight": 0.0733,
+              "alignment": 1.0
+            },
+            {
+              "token": "Shirilla",
+              "weight": 0.0631,
               "alignment": 1.0
             }
           ]
         },
         {
           "outlet": "thehill.com",
-          "distance": 0.3754,
+          "distance": 0.2654,
           "lean5": "center",
           "tokens": [
             {
-              "token": "Pelosi",
-              "weight": 0.0832,
+              "token": "The",
+              "weight": 0.0226,
               "alignment": 1.0
             },
             {
-              "token": "to",
-              "weight": 0.078,
-              "alignment": 0.6291
-            },
-            {
-              "token": "teach",
-              "weight": 0.1109,
-              "alignment": 0.309
-            },
-            {
-              "token": "at",
-              "weight": 0.0793,
-              "alignment": 0.5599
-            },
-            {
-              "token": "new",
-              "weight": 0.1369,
-              "alignment": 0.449
-            },
-            {
-              "token": "UC",
-              "weight": 0.0624,
-              "alignment": 0.7342
-            },
-            {
-              "token": "Berkeley",
-              "weight": 0.1466,
-              "alignment": 0.9255
-            },
-            {
-              "token": "democracy",
-              "weight": 0.1641,
-              "alignment": 0.9323
-            },
-            {
-              "token": "institute",
-              "weight": 0.1384,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "huffpost.com",
-          "distance": 0.3804,
-          "lean5": "left",
-          "tokens": [
-            {
-              "token": "Nancy",
-              "weight": 0.0782,
+              "token": "Crash",
+              "weight": 0.0516,
               "alignment": 1.0
             },
             {
-              "token": "Pelosi",
-              "weight": 0.088,
+              "token": "subject",
+              "weight": 0.1195,
+              "alignment": 0.9226
+            },
+            {
+              "token": "Mackenzie",
+              "weight": 0.1029,
               "alignment": 1.0
             },
             {
-              "token": "To",
-              "weight": 0.0728,
-              "alignment": 0.6492
+              "token": "Shirilla",
+              "weight": 0.1045,
+              "alignment": 1.0
             },
             {
-              "token": "Launch",
-              "weight": 0.0997,
-              "alignment": 0.2949
+              "token": "loses",
+              "weight": 0.0622,
+              "alignment": 0.3821
             },
             {
-              "token": "Institute",
-              "weight": 0.1726,
-              "alignment": 0.8509
+              "token": "bid",
+              "weight": 0.0586,
+              "alignment": 0.3278
             },
             {
               "token": "for",
-              "weight": 0.09,
-              "alignment": 0.2687
-            },
-            {
-              "token": "Democracy",
-              "weight": 0.1727,
-              "alignment": 0.8552
-            },
-            {
-              "token": "At",
-              "weight": 0.061,
-              "alignment": 0.7285
-            },
-            {
-              "token": "UC",
-              "weight": 0.0457,
-              "alignment": 1.0
-            },
-            {
-              "token": "Berkeley",
-              "weight": 0.1192,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "latimes.com",
-          "distance": 0.4501,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Nancy",
-              "weight": 0.0767,
-              "alignment": 1.0
-            },
-            {
-              "token": "Pelosi\u2019s",
-              "weight": 0.1184,
-              "alignment": 0.9912
-            },
-            {
-              "token": "next",
-              "weight": 0.1009,
-              "alignment": 0.3024
-            },
-            {
-              "token": "challenge",
-              "weight": 0.0758,
-              "alignment": 0.2687
-            },
-            {
-              "token": "Building",
-              "weight": 0.0779,
-              "alignment": 0.292
+              "weight": 0.0586,
+              "alignment": 0.3278
             },
             {
               "token": "a",
@@ -8357,1803 +10219,812 @@
               "alignment": 0.0
             },
             {
-              "token": "nonpartisan",
-              "weight": 0.0758,
-              "alignment": 0.2687
+              "token": "new",
+              "weight": 0.0586,
+              "alignment": 0.3278
             },
             {
-              "token": "democracy",
-              "weight": 0.1446,
-              "alignment": 0.9894
+              "token": "murder",
+              "weight": 0.1659,
+              "alignment": 0.5673
             },
             {
-              "token": "institute",
-              "weight": 0.1357,
-              "alignment": 1.0
+              "token": "trial",
+              "weight": 0.0622,
+              "alignment": 0.3821
             },
             {
-              "token": "at",
-              "weight": 0.046,
-              "alignment": 0.9405
+              "token": "in",
+              "weight": 0.0586,
+              "alignment": 0.3278
             },
             {
-              "token": "UC",
-              "weight": 0.0397,
-              "alignment": 1.0
-            },
-            {
-              "token": "Berkeley",
-              "weight": 0.1087,
-              "alignment": 1.0
+              "token": "Ohio",
+              "weight": 0.0743,
+              "alignment": 0.7984
             }
           ]
         },
         {
-          "outlet": "nypost.com",
-          "distance": 0.5456,
-          "lean5": "lean-right",
+          "outlet": "foxnews.com",
+          "distance": 0.3323,
+          "lean5": "right",
           "tokens": [
             {
-              "token": "Nancy",
-              "weight": 0.2339,
-              "alignment": 0.8237
+              "token": "Mackenzie",
+              "weight": 0.1356,
+              "alignment": 1.0
             },
             {
-              "token": "Pelosi\u2019s",
-              "weight": 0.4511,
-              "alignment": 0.5801
+              "token": "Shirilla's",
+              "weight": 0.0893,
+              "alignment": 1.0
             },
             {
-              "token": "post-Congress",
-              "weight": 0.0,
-              "alignment": 0.0
+              "token": "appeal",
+              "weight": 0.1581,
+              "alignment": 0.7118
             },
             {
-              "token": "job",
-              "weight": 0.1515,
-              "alignment": 0.2687
+              "token": "rejected",
+              "weight": 0.0637,
+              "alignment": 0.5043
             },
             {
-              "token": "revealed",
-              "weight": 0.1515,
-              "alignment": 0.2687
+              "token": "by",
+              "weight": 0.0484,
+              "alignment": 0.3278
             },
             {
-              "token": "Liberation\u2019",
-              "weight": 0.0119,
-              "alignment": 0.9116
+              "token": "court",
+              "weight": 0.1256,
+              "alignment": 0.7342
+            },
+            {
+              "token": "after",
+              "weight": 0.056,
+              "alignment": 0.3946
+            },
+            {
+              "token": "The",
+              "weight": 0.0372,
+              "alignment": 0.9613
+            },
+            {
+              "token": "Crash'",
+              "weight": 0.0485,
+              "alignment": 1.0
+            },
+            {
+              "token": "revives",
+              "weight": 0.0656,
+              "alignment": 0.3849
+            },
+            {
+              "token": "Hell",
+              "weight": 0.0501,
+              "alignment": 0.3528
+            },
+            {
+              "token": "on",
+              "weight": 0.0721,
+              "alignment": 0.3631
+            },
+            {
+              "token": "Wheels\u2019",
+              "weight": 0.0017,
+              "alignment": 1.0
+            },
+            {
+              "token": "case",
+              "weight": 0.0484,
+              "alignment": 0.3278
+            }
+          ]
+        },
+        {
+          "outlet": "nbc4i.com",
+          "distance": 0.4342,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Ohio",
+              "weight": 0.0597,
+              "alignment": 0.9291
+            },
+            {
+              "token": "Supreme",
+              "weight": 0.1517,
+              "alignment": 0.6352
+            },
+            {
+              "token": "Court",
+              "weight": 0.0878,
+              "alignment": 0.8769
+            },
+            {
+              "token": "declines",
+              "weight": 0.0723,
+              "alignment": 0.3951
+            },
+            {
+              "token": "to",
+              "weight": 0.0633,
+              "alignment": 0.3278
+            },
+            {
+              "token": "hear",
+              "weight": 0.0646,
+              "alignment": 0.3512
+            },
+            {
+              "token": "appeal",
+              "weight": 0.1047,
+              "alignment": 0.8354
+            },
+            {
+              "token": "of",
+              "weight": 0.0633,
+              "alignment": 0.3278
+            },
+            {
+              "token": "The",
+              "weight": 0.0399,
+              "alignment": 0.9158
+            },
+            {
+              "token": "Crash\u2019",
+              "weight": 0.0261,
+              "alignment": 1.0
+            },
+            {
+              "token": "subject",
+              "weight": 0.1081,
+              "alignment": 0.9664
+            },
+            {
+              "token": "Mackenzie",
+              "weight": 0.0852,
+              "alignment": 1.0
+            },
+            {
+              "token": "Shirilla",
+              "weight": 0.0733,
+              "alignment": 1.0
             }
           ]
         }
       ]
     },
     {
-      "event_id": 1,
-      "consensus_headline": "NPR retracts story reporting Justice Alito is retiring from Supreme Court",
-      "n_outlets": 15,
+      "event_id": 48,
+      "consensus_headline": "Trump\u2019s firing power faces twin Supreme Court tests, but one agency may get special treatment",
+      "n_outlets": 21,
       "members": [
         {
-          "outlet": "washingtonpost.com",
-          "distance": 0.3679,
-          "lean5": "lean-left",
+          "outlet": "foxnews.com",
+          "distance": 0.3569,
+          "lean5": "right",
           "tokens": [
             {
-              "token": "NPR",
-              "weight": 0.0446,
-              "alignment": 0.8512
+              "token": "Trump\u2019s",
+              "weight": 0.124,
+              "alignment": 0.8232
             },
             {
-              "token": "retracts",
-              "weight": 0.116,
-              "alignment": 0.7876
+              "token": "firing",
+              "weight": 0.1546,
+              "alignment": 0.7178
             },
             {
-              "token": "story",
-              "weight": 0.0733,
-              "alignment": 0.8314
+              "token": "power",
+              "weight": 0.0653,
+              "alignment": 1.0
             },
             {
-              "token": "reporting",
-              "weight": 0.1274,
-              "alignment": 0.5652
+              "token": "faces",
+              "weight": 0.0414,
+              "alignment": 0.3541
             },
             {
-              "token": "Justice",
-              "weight": 0.1064,
-              "alignment": 0.8094
-            },
-            {
-              "token": "Alito",
-              "weight": 0.0591,
-              "alignment": 0.9524
-            },
-            {
-              "token": "is",
-              "weight": 0.0689,
-              "alignment": 0.4659
-            },
-            {
-              "token": "retiring",
-              "weight": 0.1131,
-              "alignment": 0.782
-            },
-            {
-              "token": "from",
-              "weight": 0.0647,
-              "alignment": 0.303
+              "token": "twin",
+              "weight": 0.0414,
+              "alignment": 0.3541
             },
             {
               "token": "Supreme",
-              "weight": 0.1364,
-              "alignment": 0.6327
+              "weight": 0.0814,
+              "alignment": 1.0
             },
             {
               "token": "Court",
-              "weight": 0.0901,
-              "alignment": 0.6361
+              "weight": 0.067,
+              "alignment": 1.0
+            },
+            {
+              "token": "tests",
+              "weight": 0.0904,
+              "alignment": 0.54
+            },
+            {
+              "token": "but",
+              "weight": 0.0414,
+              "alignment": 0.3541
+            },
+            {
+              "token": "one",
+              "weight": 0.0496,
+              "alignment": 0.4055
+            },
+            {
+              "token": "agency",
+              "weight": 0.0414,
+              "alignment": 0.3541
+            },
+            {
+              "token": "may",
+              "weight": 0.0414,
+              "alignment": 0.3541
+            },
+            {
+              "token": "get",
+              "weight": 0.0414,
+              "alignment": 0.3541
+            },
+            {
+              "token": "special",
+              "weight": 0.0467,
+              "alignment": 0.4286
+            },
+            {
+              "token": "treatment",
+              "weight": 0.0726,
+              "alignment": 0.7071
             }
           ]
         },
         {
           "outlet": "thehill.com",
-          "distance": 0.4304,
+          "distance": 0.5641,
           "lean5": "center",
           "tokens": [
             {
-              "token": "NPR",
-              "weight": 0.0736,
-              "alignment": 0.6742
-            },
-            {
-              "token": "reporter",
-              "weight": 0.1509,
-              "alignment": 0.5201
-            },
-            {
-              "token": "explains",
-              "weight": 0.0955,
-              "alignment": 0.303
-            },
-            {
-              "token": "retracted",
-              "weight": 0.1825,
-              "alignment": 0.7245
-            },
-            {
-              "token": "story",
-              "weight": 0.0946,
-              "alignment": 0.8431
-            },
-            {
-              "token": "on",
-              "weight": 0.0889,
-              "alignment": 0.5277
-            },
-            {
-              "token": "Alito",
-              "weight": 0.0634,
+              "token": "Supreme",
+              "weight": 0.079,
               "alignment": 1.0
             },
             {
-              "token": "8217",
-              "weight": 0.0666,
-              "alignment": 0.8489
+              "token": "Court\u2019s",
+              "weight": 0.0417,
+              "alignment": 1.0
             },
             {
-              "token": "s",
-              "weight": 0.0,
-              "alignment": 0.0
+              "token": "expansion",
+              "weight": 0.0896,
+              "alignment": 0.382
             },
             {
-              "token": "retirement",
-              "weight": 0.184,
-              "alignment": 0.7295
+              "token": "of",
+              "weight": 0.0928,
+              "alignment": 0.5181
+            },
+            {
+              "token": "Trump\u2019s",
+              "weight": 0.119,
+              "alignment": 0.8406
+            },
+            {
+              "token": "firing",
+              "weight": 0.1673,
+              "alignment": 0.6948
+            },
+            {
+              "token": "power",
+              "weight": 0.0763,
+              "alignment": 1.0
+            },
+            {
+              "token": "heads",
+              "weight": 0.0733,
+              "alignment": 0.3883
+            },
+            {
+              "token": "for",
+              "weight": 0.0655,
+              "alignment": 0.3541
+            },
+            {
+              "token": "new",
+              "weight": 0.0997,
+              "alignment": 0.5661
+            },
+            {
+              "token": "test",
+              "weight": 0.0957,
+              "alignment": 0.5321
+            }
+          ]
+        },
+        {
+          "outlet": "nbcnews.com",
+          "distance": 0.588,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0576,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0582,
+              "alignment": 1.0
+            },
+            {
+              "token": "hands",
+              "weight": 0.0526,
+              "alignment": 0.4007
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0697,
+              "alignment": 0.8933
+            },
+            {
+              "token": "new",
+              "weight": 0.0752,
+              "alignment": 0.6289
+            },
+            {
+              "token": "power",
+              "weight": 0.0607,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.0564,
+              "alignment": 0.5869
+            },
+            {
+              "token": "tighten",
+              "weight": 0.0463,
+              "alignment": 0.3541
+            },
+            {
+              "token": "his",
+              "weight": 0.0463,
+              "alignment": 0.3541
+            },
+            {
+              "token": "grip",
+              "weight": 0.0463,
+              "alignment": 0.3541
+            },
+            {
+              "token": "on",
+              "weight": 0.0589,
+              "alignment": 0.4386
+            },
+            {
+              "token": "the",
+              "weight": 0.0463,
+              "alignment": 0.3541
+            },
+            {
+              "token": "federal",
+              "weight": 0.1451,
+              "alignment": 0.7277
+            },
+            {
+              "token": "government",
+              "weight": 0.1806,
+              "alignment": 0.8062
+            }
+          ]
+        },
+        {
+          "outlet": "wkow.com",
+          "distance": 0.6246,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Supreme",
+              "weight": 0.0693,
+              "alignment": 1.0
+            },
+            {
+              "token": "Court",
+              "weight": 0.0717,
+              "alignment": 1.0
+            },
+            {
+              "token": "limits",
+              "weight": 0.0617,
+              "alignment": 0.3541
+            },
+            {
+              "token": "power",
+              "weight": 0.0757,
+              "alignment": 0.9685
+            },
+            {
+              "token": "of",
+              "weight": 0.0722,
+              "alignment": 0.5602
+            },
+            {
+              "token": "federal",
+              "weight": 0.1755,
+              "alignment": 0.6623
+            },
+            {
+              "token": "government",
+              "weight": 0.2309,
+              "alignment": 0.7107
+            },
+            {
+              "token": "to",
+              "weight": 0.0722,
+              "alignment": 0.5358
+            },
+            {
+              "token": "disarm",
+              "weight": 0.0617,
+              "alignment": 0.3541
+            },
+            {
+              "token": "drug",
+              "weight": 0.0617,
+              "alignment": 0.3541
+            },
+            {
+              "token": "users",
+              "weight": 0.0471,
+              "alignment": 0.3723
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 283,
+      "consensus_headline": "John Bolton Pleads Guilty In Classified Documents Case",
+      "n_outlets": 21,
+      "members": [
+        {
+          "outlet": "reuters.com",
+          "distance": 0.2696,
+          "lean5": "center",
+          "tokens": [
+            {
+              "token": "Trump",
+              "weight": 0.0974,
+              "alignment": 0.8172
+            },
+            {
+              "token": "adviser-turned-critic",
+              "weight": 0.0734,
+              "alignment": 0.9145
+            },
+            {
+              "token": "John",
+              "weight": 0.121,
+              "alignment": 0.6287
+            },
+            {
+              "token": "Bolton",
+              "weight": 0.0748,
+              "alignment": 1.0
+            },
+            {
+              "token": "pleads",
+              "weight": 0.069,
+              "alignment": 1.0
+            },
+            {
+              "token": "guilty",
+              "weight": 0.0691,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.0413,
+              "alignment": 1.0
+            },
+            {
+              "token": "mishandling",
+              "weight": 0.1917,
+              "alignment": 0.8521
+            },
+            {
+              "token": "classified",
+              "weight": 0.1093,
+              "alignment": 1.0
+            },
+            {
+              "token": "documents",
+              "weight": 0.153,
+              "alignment": 0.8935
+            }
+          ]
+        },
+        {
+          "outlet": "aljazeera.com",
+          "distance": 0.2923,
+          "lean5": null,
+          "tokens": [
+            {
+              "token": "Ex-Trump",
+              "weight": 0.1211,
+              "alignment": 0.6799
+            },
+            {
+              "token": "adviser",
+              "weight": 0.1535,
+              "alignment": 0.7006
+            },
+            {
+              "token": "Bolton",
+              "weight": 0.0847,
+              "alignment": 0.9066
+            },
+            {
+              "token": "pleads",
+              "weight": 0.065,
+              "alignment": 1.0
+            },
+            {
+              "token": "guilty",
+              "weight": 0.0847,
+              "alignment": 0.9032
+            },
+            {
+              "token": "in",
+              "weight": 0.1142,
+              "alignment": 0.2378
+            },
+            {
+              "token": "classified",
+              "weight": 0.1224,
+              "alignment": 0.9576
+            },
+            {
+              "token": "documents",
+              "weight": 0.1738,
+              "alignment": 0.7381
+            },
+            {
+              "token": "case",
+              "weight": 0.0806,
+              "alignment": 0.216
             }
           ]
         },
         {
           "outlet": "breitbart.com",
-          "distance": 0.4484,
+          "distance": 0.3103,
           "lean5": "right",
           "tokens": [
             {
-              "token": "NPR",
-              "weight": 0.048,
-              "alignment": 0.88
+              "token": "Ex-Trump",
+              "weight": 0.0968,
+              "alignment": 0.7659
             },
             {
-              "token": "Retracts",
-              "weight": 0.1271,
-              "alignment": 0.8131
+              "token": "Advisor",
+              "weight": 0.1977,
+              "alignment": 0.3399
             },
             {
-              "token": "False",
-              "weight": 0.1242,
-              "alignment": 0.5434
+              "token": "John",
+              "weight": 0.0857,
+              "alignment": 0.7203
             },
             {
-              "token": "Story",
-              "weight": 0.0746,
-              "alignment": 0.8768
-            },
-            {
-              "token": "Saying",
-              "weight": 0.0738,
-              "alignment": 0.4114
-            },
-            {
-              "token": "Justice",
-              "weight": 0.117,
-              "alignment": 0.8129
-            },
-            {
-              "token": "Alito",
-              "weight": 0.0591,
-              "alignment": 0.9952
-            },
-            {
-              "token": "Was",
-              "weight": 0.0543,
-              "alignment": 0.303
-            },
-            {
-              "token": "Retiring",
-              "weight": 0.1116,
-              "alignment": 0.8597
-            },
-            {
-              "token": "8216",
-              "weight": 0.0607,
-              "alignment": 0.3517
-            },
-            {
-              "token": "Erroneously",
-              "weight": 0.0543,
-              "alignment": 0.303
-            },
-            {
-              "token": "Published",
-              "weight": 0.0543,
-              "alignment": 0.303
-            },
-            {
-              "token": "8217",
-              "weight": 0.0412,
-              "alignment": 0.8451
-            }
-          ]
-        },
-        {
-          "outlet": "10tv.com",
-          "distance": 0.4567,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Is",
-              "weight": 0.053,
-              "alignment": 0.5148
-            },
-            {
-              "token": "Supreme",
-              "weight": 0.1448,
-              "alignment": 0.6109
-            },
-            {
-              "token": "Court",
-              "weight": 0.117,
-              "alignment": 0.5574
-            },
-            {
-              "token": "Justice",
-              "weight": 0.1193,
-              "alignment": 0.7435
-            },
-            {
-              "token": "Samuel",
-              "weight": 0.0671,
-              "alignment": 0.3299
-            },
-            {
-              "token": "Alito",
-              "weight": 0.0664,
-              "alignment": 0.8565
-            },
-            {
-              "token": "retiring",
-              "weight": 0.1014,
-              "alignment": 0.8433
-            },
-            {
-              "token": "Retracted",
-              "weight": 0.1411,
-              "alignment": 0.7751
-            },
-            {
-              "token": "story",
-              "weight": 0.0703,
-              "alignment": 0.9222
-            },
-            {
-              "token": "sparks",
-              "weight": 0.0612,
-              "alignment": 0.303
-            },
-            {
-              "token": "confusion",
-              "weight": 0.0585,
-              "alignment": 0.3683
-            }
-          ]
-        },
-        {
-          "outlet": "nationalreview.com",
-          "distance": 0.5188,
-          "lean5": "lean-right",
-          "tokens": [
-            {
-              "token": "Nina",
-              "weight": 0.0724,
-              "alignment": 0.303
-            },
-            {
-              "token": "Totenberg",
-              "weight": 0.0885,
-              "alignment": 0.303
-            },
-            {
-              "token": "8217",
-              "weight": 0.1042,
-              "alignment": 0.5498
-            },
-            {
-              "token": "s",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "False",
-              "weight": 0.1536,
-              "alignment": 0.5351
-            },
-            {
-              "token": "Report",
-              "weight": 0.1556,
-              "alignment": 0.558
-            },
-            {
-              "token": "on",
-              "weight": 0.0894,
-              "alignment": 0.5545
-            },
-            {
-              "token": "Alito",
-              "weight": 0.0571,
+              "token": "Bolton",
+              "weight": 0.0661,
               "alignment": 1.0
             },
             {
-              "token": "8217",
-              "weight": 0.1042,
-              "alignment": 0.5498
-            },
-            {
-              "token": "s",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "Retirement",
-              "weight": 0.1749,
-              "alignment": 0.8093
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 36,
-      "consensus_headline": "McConnell was found 'unconscious' in home last month as condition remains unknown",
-      "n_outlets": 15,
-      "members": [
-        {
-          "outlet": "foxnews.com",
-          "distance": 0.3415,
-          "lean5": "right",
-          "tokens": [
-            {
-              "token": "McConnell",
-              "weight": 0.0807,
+              "token": "Pleads",
+              "weight": 0.061,
               "alignment": 1.0
             },
             {
-              "token": "was",
-              "weight": 0.0586,
-              "alignment": 0.9564
-            },
-            {
-              "token": "found",
-              "weight": 0.1238,
-              "alignment": 0.6391
-            },
-            {
-              "token": "unconscious'",
-              "weight": 0.1186,
-              "alignment": 0.8566
-            },
-            {
-              "token": "in",
-              "weight": 0.0698,
-              "alignment": 0.3119
-            },
-            {
-              "token": "home",
-              "weight": 0.0812,
-              "alignment": 0.6849
-            },
-            {
-              "token": "last",
-              "weight": 0.1069,
-              "alignment": 0.5361
-            },
-            {
-              "token": "month",
-              "weight": 0.1215,
-              "alignment": 0.5567
-            },
-            {
-              "token": "as",
-              "weight": 0.0603,
-              "alignment": 0.3472
-            },
-            {
-              "token": "condition",
-              "weight": 0.0705,
-              "alignment": 0.4204
-            },
-            {
-              "token": "remains",
-              "weight": 0.0639,
-              "alignment": 0.3842
-            },
-            {
-              "token": "unknown",
-              "weight": 0.0442,
-              "alignment": 0.3276
-            }
-          ]
-        },
-        {
-          "outlet": "cbsnews.com",
-          "distance": 0.5032,
-          "lean5": "lean-left",
-          "tokens": [
-            {
-              "token": "Mitch",
-              "weight": 0.0457,
-              "alignment": 1.0
-            },
-            {
-              "token": "McConnell",
-              "weight": 0.0563,
-              "alignment": 1.0
-            },
-            {
-              "token": "still",
-              "weight": 0.0486,
-              "alignment": 0.3699
-            },
-            {
-              "token": "hospitalized",
-              "weight": 0.1377,
-              "alignment": 0.7769
-            },
-            {
-              "token": "after",
-              "weight": 0.0794,
-              "alignment": 0.6392
-            },
-            {
-              "token": "EMS",
-              "weight": 0.0441,
-              "alignment": 0.3119
-            },
-            {
-              "token": "responded",
-              "weight": 0.1192,
-              "alignment": 0.6935
-            },
-            {
-              "token": "to",
-              "weight": 0.0358,
-              "alignment": 0.7317
-            },
-            {
-              "token": "his",
-              "weight": 0.0588,
-              "alignment": 0.581
-            },
-            {
-              "token": "home",
-              "weight": 0.0551,
-              "alignment": 0.7701
-            },
-            {
-              "token": "for",
-              "weight": 0.0504,
-              "alignment": 0.3845
-            },
-            {
-              "token": "unconscious",
-              "weight": 0.0926,
-              "alignment": 0.9562
-            },
-            {
-              "token": "person",
-              "weight": 0.0463,
-              "alignment": 0.342
-            },
-            {
-              "token": "last",
-              "weight": 0.0643,
-              "alignment": 0.6351
-            },
-            {
-              "token": "month",
-              "weight": 0.0656,
-              "alignment": 0.7449
-            }
-          ]
-        },
-        {
-          "outlet": "newrepublic.com",
-          "distance": 0.5347,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Mitch",
-              "weight": 0.0754,
-              "alignment": 0.8999
-            },
-            {
-              "token": "McConnell",
-              "weight": 0.0809,
-              "alignment": 1.0
-            },
-            {
-              "token": "Was",
-              "weight": 0.0917,
-              "alignment": 0.6075
-            },
-            {
-              "token": "Found",
-              "weight": 0.1156,
-              "alignment": 0.6236
-            },
-            {
-              "token": "Unconscious",
-              "weight": 0.1492,
-              "alignment": 0.7985
-            },
-            {
-              "token": "Before",
-              "weight": 0.0744,
-              "alignment": 0.349
-            },
-            {
-              "token": "He",
-              "weight": 0.0536,
-              "alignment": 0.5058
-            },
-            {
-              "token": "Was",
-              "weight": 0.0917,
-              "alignment": 0.6075
-            },
-            {
-              "token": "Rushed",
-              "weight": 0.0785,
-              "alignment": 0.4369
-            },
-            {
-              "token": "to",
-              "weight": 0.0609,
-              "alignment": 0.5494
-            },
-            {
-              "token": "Hospital",
-              "weight": 0.128,
-              "alignment": 0.6554
-            }
-          ]
-        },
-        {
-          "outlet": "thehill.com",
-          "distance": 0.6227,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "Medics",
-              "weight": 0.0362,
-              "alignment": 0.3965
-            },
-            {
-              "token": "responded",
-              "weight": 0.1695,
-              "alignment": 0.5765
-            },
-            {
-              "token": "to",
-              "weight": 0.0388,
-              "alignment": 0.7251
-            },
-            {
-              "token": "report",
-              "weight": 0.0458,
-              "alignment": 0.3413
-            },
-            {
-              "token": "of",
-              "weight": 0.0419,
-              "alignment": 0.3119
-            },
-            {
-              "token": "cardiac",
-              "weight": 0.0524,
-              "alignment": 0.3119
-            },
-            {
-              "token": "arrest\u2019",
-              "weight": 0.0152,
-              "alignment": 0.5312
-            },
-            {
-              "token": "at",
-              "weight": 0.0629,
-              "alignment": 0.3119
-            },
-            {
-              "token": "McConnell\u2019s",
-              "weight": 0.1008,
-              "alignment": 1.0
-            },
-            {
-              "token": "home",
-              "weight": 0.0753,
-              "alignment": 0.6705
-            },
-            {
-              "token": "on",
-              "weight": 0.0395,
-              "alignment": 0.4944
-            },
-            {
-              "token": "day",
-              "weight": 0.0419,
-              "alignment": 0.3119
-            },
-            {
-              "token": "he",
-              "weight": 0.0467,
-              "alignment": 0.6315
-            },
-            {
-              "token": "was",
-              "weight": 0.051,
-              "alignment": 1.0
-            },
-            {
-              "token": "hospitalized",
-              "weight": 0.1821,
-              "alignment": 0.6951
-            }
-          ]
-        },
-        {
-          "outlet": "thedailybeast.com",
-          "distance": 0.678,
-          "lean5": "left",
-          "tokens": [
-            {
-              "token": "Mitch",
-              "weight": 0.1004,
-              "alignment": 0.8114
-            },
-            {
-              "token": "McConnell\u2019s",
-              "weight": 0.1724,
-              "alignment": 0.8697
-            },
-            {
-              "token": "Goons",
-              "weight": 0.0845,
-              "alignment": 0.4114
-            },
-            {
-              "token": "Cornered",
-              "weight": 0.0641,
-              "alignment": 0.4178
-            },
-            {
-              "token": "on",
-              "weight": 0.0492,
-              "alignment": 0.4587
-            },
-            {
-              "token": "Truth",
-              "weight": 0.0594,
-              "alignment": 0.3545
-            },
-            {
-              "token": "About",
-              "weight": 0.0501,
-              "alignment": 0.3119
-            },
-            {
-              "token": "His",
-              "weight": 0.0979,
-              "alignment": 0.4745
-            },
-            {
-              "token": "Health",
-              "weight": 0.0626,
-              "alignment": 0.3784
-            },
-            {
-              "token": "After",
-              "weight": 0.1497,
-              "alignment": 0.4864
-            },
-            {
-              "token": "CPR",
-              "weight": 0.0501,
-              "alignment": 0.3119
-            },
-            {
-              "token": "Bombshell",
-              "weight": 0.0596,
-              "alignment": 0.4861
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 122,
-      "consensus_headline": "How the White House Rose Garden and its plantings have changed over the past century",
-      "n_outlets": 15,
-      "members": [
-        {
-          "outlet": "apnews.com",
-          "distance": 0.0558,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "How",
-              "weight": 0.041,
-              "alignment": 1.0
-            },
-            {
-              "token": "the",
-              "weight": 0.0713,
-              "alignment": 1.0
-            },
-            {
-              "token": "White",
-              "weight": 0.067,
-              "alignment": 1.0
-            },
-            {
-              "token": "House",
-              "weight": 0.0709,
-              "alignment": 1.0
-            },
-            {
-              "token": "Rose",
-              "weight": 0.0609,
-              "alignment": 1.0
-            },
-            {
-              "token": "Garden",
-              "weight": 0.0756,
-              "alignment": 1.0
-            },
-            {
-              "token": "and",
-              "weight": 0.049,
-              "alignment": 1.0
-            },
-            {
-              "token": "its",
-              "weight": 0.0495,
-              "alignment": 1.0
-            },
-            {
-              "token": "plantings",
-              "weight": 0.1042,
-              "alignment": 1.0
-            },
-            {
-              "token": "have",
-              "weight": 0.0567,
-              "alignment": 1.0
-            },
-            {
-              "token": "changed",
-              "weight": 0.0883,
-              "alignment": 1.0
-            },
-            {
-              "token": "over",
-              "weight": 0.0583,
-              "alignment": 1.0
-            },
-            {
-              "token": "the",
-              "weight": 0.0713,
-              "alignment": 1.0
-            },
-            {
-              "token": "past",
-              "weight": 0.0569,
-              "alignment": 1.0
-            },
-            {
-              "token": "century",
-              "weight": 0.0789,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "bostonherald.com",
-          "distance": 0.0558,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "How",
-              "weight": 0.041,
-              "alignment": 1.0
-            },
-            {
-              "token": "the",
-              "weight": 0.0713,
-              "alignment": 1.0
-            },
-            {
-              "token": "White",
-              "weight": 0.067,
-              "alignment": 1.0
-            },
-            {
-              "token": "House",
-              "weight": 0.0709,
-              "alignment": 1.0
-            },
-            {
-              "token": "Rose",
-              "weight": 0.0609,
-              "alignment": 1.0
-            },
-            {
-              "token": "Garden",
-              "weight": 0.0756,
-              "alignment": 1.0
-            },
-            {
-              "token": "and",
-              "weight": 0.049,
-              "alignment": 1.0
-            },
-            {
-              "token": "its",
-              "weight": 0.0495,
-              "alignment": 1.0
-            },
-            {
-              "token": "plantings",
-              "weight": 0.1042,
-              "alignment": 1.0
-            },
-            {
-              "token": "have",
-              "weight": 0.0567,
-              "alignment": 1.0
-            },
-            {
-              "token": "changed",
-              "weight": 0.0883,
-              "alignment": 1.0
-            },
-            {
-              "token": "over",
-              "weight": 0.0583,
-              "alignment": 1.0
-            },
-            {
-              "token": "the",
-              "weight": 0.0713,
-              "alignment": 1.0
-            },
-            {
-              "token": "past",
-              "weight": 0.0569,
-              "alignment": 1.0
-            },
-            {
-              "token": "century",
-              "weight": 0.0789,
-              "alignment": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 153,
-      "consensus_headline": "Senate Ethics Panel Tosses Out Complaint Against Eric Swalwell&#8217;s Buddy Ruben Gallego",
-      "n_outlets": 14,
-      "members": [
-        {
-          "outlet": "dailycaller.com",
-          "distance": 0.1642,
-          "lean5": "right",
-          "tokens": [
-            {
-              "token": "Senate",
-              "weight": 0.065,
-              "alignment": 1.0
-            },
-            {
-              "token": "Ethics",
-              "weight": 0.0728,
-              "alignment": 1.0
-            },
-            {
-              "token": "Panel",
-              "weight": 0.1322,
-              "alignment": 0.5933
-            },
-            {
-              "token": "Tosses",
-              "weight": 0.0785,
-              "alignment": 0.5388
-            },
-            {
-              "token": "Out",
-              "weight": 0.0557,
-              "alignment": 0.3024
-            },
-            {
-              "token": "Complaint",
-              "weight": 0.1112,
-              "alignment": 1.0
-            },
-            {
-              "token": "Against",
-              "weight": 0.0919,
-              "alignment": 1.0
-            },
-            {
-              "token": "Eric",
-              "weight": 0.0557,
-              "alignment": 0.3024
-            },
-            {
-              "token": "Swalwell",
-              "weight": 0.0597,
-              "alignment": 0.3222
-            },
-            {
-              "token": "8217",
-              "weight": 0.0557,
-              "alignment": 0.3024
-            },
-            {
-              "token": "s",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "Buddy",
-              "weight": 0.0557,
-              "alignment": 0.3024
-            },
-            {
-              "token": "Ruben",
-              "weight": 0.0914,
-              "alignment": 0.8027
-            },
-            {
-              "token": "Gallego",
-              "weight": 0.0748,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "thehill.com",
-          "distance": 0.2859,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "Senate",
-              "weight": 0.0718,
-              "alignment": 1.0
-            },
-            {
-              "token": "Ethics",
-              "weight": 0.0916,
-              "alignment": 1.0
-            },
-            {
-              "token": "panel",
-              "weight": 0.1743,
-              "alignment": 0.5298
-            },
-            {
-              "token": "dismisses",
-              "weight": 0.1928,
-              "alignment": 0.7113
-            },
-            {
-              "token": "Luna",
-              "weight": 0.1169,
-              "alignment": 0.3024
-            },
-            {
-              "token": "complaint",
-              "weight": 0.1339,
-              "alignment": 0.9757
-            },
-            {
-              "token": "against",
-              "weight": 0.1157,
-              "alignment": 0.9225
-            },
-            {
-              "token": "Gallego",
-              "weight": 0.103,
-              "alignment": 0.8951
-            }
-          ]
-        },
-        {
-          "outlet": "ms.now",
-          "distance": 0.3816,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Senate",
-              "weight": 0.0663,
-              "alignment": 1.0
-            },
-            {
-              "token": "Ethics",
-              "weight": 0.0858,
-              "alignment": 1.0
-            },
-            {
-              "token": "Committee",
-              "weight": 0.2128,
-              "alignment": 0.6301
-            },
-            {
-              "token": "dismisses",
-              "weight": 0.1526,
-              "alignment": 0.8858
-            },
-            {
-              "token": "complaint",
-              "weight": 0.1116,
-              "alignment": 1.0
-            },
-            {
-              "token": "against",
-              "weight": 0.0952,
-              "alignment": 1.0
-            },
-            {
-              "token": "Sen",
-              "weight": 0.0962,
-              "alignment": 0.6508
-            },
-            {
-              "token": "Ruben",
-              "weight": 0.1045,
-              "alignment": 0.8288
-            },
-            {
-              "token": "Gallego",
-              "weight": 0.075,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "npr.org",
-          "distance": 0.3816,
-          "lean5": "lean-left",
-          "tokens": [
-            {
-              "token": "Senate",
-              "weight": 0.0663,
-              "alignment": 1.0
-            },
-            {
-              "token": "Ethics",
-              "weight": 0.0858,
-              "alignment": 1.0
-            },
-            {
-              "token": "Committee",
-              "weight": 0.2128,
-              "alignment": 0.6301
-            },
-            {
-              "token": "dismisses",
-              "weight": 0.1526,
-              "alignment": 0.8858
-            },
-            {
-              "token": "complaint",
-              "weight": 0.1116,
-              "alignment": 1.0
-            },
-            {
-              "token": "against",
-              "weight": 0.0952,
-              "alignment": 1.0
-            },
-            {
-              "token": "Sen",
-              "weight": 0.0962,
-              "alignment": 0.6508
-            },
-            {
-              "token": "Ruben",
-              "weight": 0.1045,
-              "alignment": 0.8288
-            },
-            {
-              "token": "Gallego",
-              "weight": 0.075,
-              "alignment": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 2,
-      "consensus_headline": "The FBI is directing hundreds of analysts to its probe of Georgia\u2019s 2020 presidential election",
-      "n_outlets": 13,
-      "members": [
-        {
-          "outlet": "apnews.com",
-          "distance": 0.1215,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "The",
-              "weight": 0.0447,
-              "alignment": 0.8517
-            },
-            {
-              "token": "FBI",
-              "weight": 0.0399,
-              "alignment": 1.0
-            },
-            {
-              "token": "is",
-              "weight": 0.0455,
-              "alignment": 0.8517
-            },
-            {
-              "token": "directing",
-              "weight": 0.1036,
-              "alignment": 0.8658
-            },
-            {
-              "token": "hundreds",
-              "weight": 0.0932,
-              "alignment": 0.8517
-            },
-            {
-              "token": "of",
-              "weight": 0.0649,
-              "alignment": 0.8592
-            },
-            {
-              "token": "analysts",
-              "weight": 0.0608,
+              "token": "Guilty",
+              "weight": 0.0616,
               "alignment": 1.0
             },
             {
               "token": "to",
-              "weight": 0.0311,
-              "alignment": 1.0
-            },
-            {
-              "token": "its",
-              "weight": 0.0536,
-              "alignment": 0.8608
-            },
-            {
-              "token": "probe",
-              "weight": 0.069,
-              "alignment": 0.8517
-            },
-            {
-              "token": "of",
-              "weight": 0.0649,
-              "alignment": 0.8592
-            },
-            {
-              "token": "Georgia\u2019s",
-              "weight": 0.0862,
-              "alignment": 0.6349
-            },
-            {
-              "token": "2020",
-              "weight": 0.0543,
-              "alignment": 1.0
-            },
-            {
-              "token": "presidential",
-              "weight": 0.1299,
-              "alignment": 0.8517
-            },
-            {
-              "token": "election",
-              "weight": 0.0584,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "santafenewmexican.com",
-          "distance": 0.1244,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "The",
-              "weight": 0.0447,
-              "alignment": 0.8517
-            },
-            {
-              "token": "FBI",
-              "weight": 0.0399,
-              "alignment": 1.0
-            },
-            {
-              "token": "is",
-              "weight": 0.0455,
-              "alignment": 0.8517
-            },
-            {
-              "token": "directing",
-              "weight": 0.1036,
-              "alignment": 0.8658
-            },
-            {
-              "token": "hundreds",
-              "weight": 0.0932,
-              "alignment": 0.8517
-            },
-            {
-              "token": "of",
-              "weight": 0.0649,
-              "alignment": 0.8592
-            },
-            {
-              "token": "analysts",
-              "weight": 0.0608,
-              "alignment": 1.0
-            },
-            {
-              "token": "to",
-              "weight": 0.0311,
-              "alignment": 1.0
-            },
-            {
-              "token": "its",
-              "weight": 0.0536,
-              "alignment": 0.8608
-            },
-            {
-              "token": "probe",
-              "weight": 0.069,
-              "alignment": 0.8517
-            },
-            {
-              "token": "of",
-              "weight": 0.0649,
-              "alignment": 0.8592
-            },
-            {
-              "token": "Georgia's",
-              "weight": 0.0862,
-              "alignment": 0.6349
-            },
-            {
-              "token": "2020",
-              "weight": 0.0543,
-              "alignment": 1.0
-            },
-            {
-              "token": "presidential",
-              "weight": 0.1299,
-              "alignment": 0.8517
-            },
-            {
-              "token": "election",
-              "weight": 0.0584,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "cbsnews.com",
-          "distance": 0.5895,
-          "lean5": "lean-left",
-          "tokens": [
-            {
-              "token": "FBI",
-              "weight": 0.0239,
-              "alignment": 1.0
-            },
-            {
-              "token": "orders",
-              "weight": 0.0875,
-              "alignment": 0.4259
-            },
-            {
-              "token": "field",
-              "weight": 0.0772,
-              "alignment": 0.4333
-            },
-            {
-              "token": "offices",
-              "weight": 0.0954,
-              "alignment": 0.4463
-            },
-            {
-              "token": "to",
-              "weight": 0.0379,
-              "alignment": 0.7406
-            },
-            {
-              "token": "send",
-              "weight": 0.0655,
-              "alignment": 0.4259
-            },
-            {
-              "token": "analysts",
               "weight": 0.042,
+              "alignment": 0.9395
+            },
+            {
+              "token": "Mishandling",
+              "weight": 0.163,
+              "alignment": 0.8504
+            },
+            {
+              "token": "Classified",
+              "weight": 0.0965,
               "alignment": 1.0
             },
             {
-              "token": "to",
-              "weight": 0.0379,
-              "alignment": 0.7406
-            },
-            {
-              "token": "Atlanta",
-              "weight": 0.0924,
-              "alignment": 0.4321
-            },
-            {
-              "token": "for",
-              "weight": 0.0597,
-              "alignment": 0.4259
-            },
-            {
-              "token": "2020",
-              "weight": 0.0375,
-              "alignment": 0.9065
-            },
-            {
-              "token": "election",
-              "weight": 0.0496,
-              "alignment": 1.0
-            },
-            {
-              "token": "investigation",
-              "weight": 0.1446,
-              "alignment": 0.4581
-            },
-            {
-              "token": "sources",
-              "weight": 0.0993,
-              "alignment": 0.4259
-            },
-            {
-              "token": "say",
-              "weight": 0.0494,
-              "alignment": 0.4259
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 661,
-      "consensus_headline": "John Bolton Pleads Guilty In Classified Documents Case",
-      "n_outlets": 13,
-      "members": [
-        {
-          "outlet": "dw.com",
-          "distance": 0.3194,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Trump",
-              "weight": 0.1439,
-              "alignment": 0.5234
-            },
-            {
-              "token": "foe",
-              "weight": 0.1244,
-              "alignment": 0.2463
-            },
-            {
-              "token": "John",
-              "weight": 0.0725,
-              "alignment": 0.8416
-            },
-            {
-              "token": "Bolton",
-              "weight": 0.0751,
-              "alignment": 1.0
-            },
-            {
-              "token": "pleads",
-              "weight": 0.0721,
-              "alignment": 1.0
-            },
-            {
-              "token": "guilty",
-              "weight": 0.0721,
-              "alignment": 1.0
-            },
-            {
-              "token": "in",
-              "weight": 0.0549,
-              "alignment": 0.8664
-            },
-            {
-              "token": "classified",
-              "weight": 0.1219,
-              "alignment": 1.0
-            },
-            {
-              "token": "docs",
-              "weight": 0.1505,
-              "alignment": 0.457
-            },
-            {
-              "token": "case",
-              "weight": 0.1125,
-              "alignment": 0.5555
+              "token": "Documents",
+              "weight": 0.1295,
+              "alignment": 0.8915
             }
           ]
         },
         {
-          "outlet": "npr.org",
-          "distance": 0.3249,
+          "outlet": "nbcnews.com",
+          "distance": 0.3179,
           "lean5": "lean-left",
           "tokens": [
             {
-              "token": "John",
-              "weight": 0.0228,
-              "alignment": 1.0
-            },
-            {
-              "token": "Bolton",
-              "weight": 0.0453,
-              "alignment": 1.0
-            },
-            {
-              "token": "former",
-              "weight": 0.0936,
-              "alignment": 0.3154
-            },
-            {
-              "token": "Trump",
-              "weight": 0.0933,
-              "alignment": 0.6069
-            },
-            {
-              "token": "national",
-              "weight": 0.1232,
-              "alignment": 0.5353
-            },
-            {
-              "token": "security",
-              "weight": 0.1356,
-              "alignment": 0.5228
+              "token": "Ex-Trump",
+              "weight": 0.0784,
+              "alignment": 0.8549
             },
             {
               "token": "adviser",
-              "weight": 0.125,
-              "alignment": 0.4539
+              "weight": 0.1398,
+              "alignment": 0.752
             },
-            {
-              "token": "pleads",
-              "weight": 0.0515,
-              "alignment": 1.0
-            },
-            {
-              "token": "guilty",
-              "weight": 0.0378,
-              "alignment": 1.0
-            },
-            {
-              "token": "in",
-              "weight": 0.0325,
-              "alignment": 1.0
-            },
-            {
-              "token": "classified",
-              "weight": 0.0584,
-              "alignment": 1.0
-            },
-            {
-              "token": "documents",
-              "weight": 0.117,
-              "alignment": 0.7838
-            },
-            {
-              "token": "case",
-              "weight": 0.0641,
-              "alignment": 0.6611
-            }
-          ]
-        },
-        {
-          "outlet": "thehill.com",
-          "distance": 0.329,
-          "lean5": "center",
-          "tokens": [
             {
               "token": "John",
-              "weight": 0.0539,
-              "alignment": 1.0
+              "weight": 0.0759,
+              "alignment": 0.8303
             },
             {
               "token": "Bolton",
-              "weight": 0.0929,
+              "weight": 0.0633,
               "alignment": 1.0
             },
             {
               "token": "pleads",
-              "weight": 0.0879,
+              "weight": 0.0576,
               "alignment": 1.0
             },
             {
               "token": "guilty",
-              "weight": 0.0879,
+              "weight": 0.0589,
               "alignment": 1.0
             },
             {
-              "token": "in",
-              "weight": 0.0766,
-              "alignment": 0.7296
+              "token": "to",
+              "weight": 0.046,
+              "alignment": 0.8991
+            },
+            {
+              "token": "mishandling",
+              "weight": 0.149,
+              "alignment": 0.8927
             },
             {
               "token": "classified",
-              "weight": 0.1378,
+              "weight": 0.1016,
               "alignment": 1.0
             },
             {
-              "token": "documents",
-              "weight": 0.2763,
-              "alignment": 0.5198
-            },
-            {
-              "token": "prosecution",
-              "weight": 0.1868,
-              "alignment": 0.3575
+              "token": "information",
+              "weight": 0.2296,
+              "alignment": 0.4708
             }
           ]
         },
         {
           "outlet": "huffpost.com",
-          "distance": 0.3429,
+          "distance": 0.3928,
           "lean5": "left",
           "tokens": [
             {
               "token": "Ex-National",
-              "weight": 0.1006,
-              "alignment": 0.6195
+              "weight": 0.0586,
+              "alignment": 0.6623
             },
             {
               "token": "Security",
-              "weight": 0.1756,
-              "alignment": 0.4938
+              "weight": 0.131,
+              "alignment": 0.2564
             },
             {
               "token": "Adviser",
-              "weight": 0.1498,
-              "alignment": 0.4375
+              "weight": 0.1422,
+              "alignment": 0.7005
             },
             {
               "token": "John",
-              "weight": 0.0481,
-              "alignment": 1.0
+              "weight": 0.0671,
+              "alignment": 0.9275
             },
             {
               "token": "Bolton",
-              "weight": 0.0531,
+              "weight": 0.0664,
               "alignment": 1.0
             },
             {
               "token": "Pleads",
-              "weight": 0.047,
+              "weight": 0.0626,
               "alignment": 1.0
             },
             {
               "token": "Guilty",
-              "weight": 0.0516,
+              "weight": 0.0634,
               "alignment": 1.0
             },
             {
               "token": "To",
-              "weight": 0.0717,
-              "alignment": 0.3921
+              "weight": 0.0458,
+              "alignment": 0.6895
             },
             {
               "token": "Retaining",
-              "weight": 0.1007,
-              "alignment": 0.2922
+              "weight": 0.1012,
+              "alignment": 0.3022
             },
             {
               "token": "Classified",
-              "weight": 0.0833,
+              "weight": 0.1165,
               "alignment": 1.0
             },
             {
               "token": "Documents",
-              "weight": 0.1187,
-              "alignment": 0.8419
-            }
-          ]
-        },
-        {
-          "outlet": "foxnews.com",
-          "distance": 0.4273,
-          "lean5": "right",
-          "tokens": [
-            {
-              "token": "Trump",
-              "weight": 0.1031,
-              "alignment": 0.6323
-            },
-            {
-              "token": "unloads",
-              "weight": 0.0562,
-              "alignment": 0.3734
-            },
-            {
-              "token": "on",
-              "weight": 0.0459,
-              "alignment": 0.3232
-            },
-            {
-              "token": "apos",
-              "weight": 0.0612,
-              "alignment": 0.2336
-            },
-            {
-              "token": "lunatic",
-              "weight": 0.0554,
-              "alignment": 0.3712
-            },
-            {
-              "token": "apos",
-              "weight": 0.0612,
-              "alignment": 0.2336
-            },
-            {
-              "token": "John",
-              "weight": 0.039,
-              "alignment": 1.0
-            },
-            {
-              "token": "Bolton",
-              "weight": 0.0638,
-              "alignment": 1.0
-            },
-            {
-              "token": "after",
-              "weight": 0.0621,
-              "alignment": 0.2707
-            },
-            {
-              "token": "ex-aide",
-              "weight": 0.0286,
-              "alignment": 0.4086
-            },
-            {
-              "token": "pleads",
-              "weight": 0.0741,
-              "alignment": 0.9958
-            },
-            {
-              "token": "guilty",
-              "weight": 0.0523,
-              "alignment": 1.0
-            },
-            {
-              "token": "in",
-              "weight": 0.0292,
-              "alignment": 1.0
-            },
-            {
-              "token": "classified",
-              "weight": 0.091,
-              "alignment": 1.0
-            },
-            {
-              "token": "docs",
-              "weight": 0.098,
-              "alignment": 0.5924
-            },
-            {
-              "token": "case",
-              "weight": 0.0791,
-              "alignment": 0.6828
+              "weight": 0.1452,
+              "alignment": 0.8539
             }
           ]
         },
         {
           "outlet": "nationalreview.com",
-          "distance": 0.5357,
+          "distance": 0.4778,
           "lean5": "lean-right",
           "tokens": [
             {
               "token": "John",
-              "weight": 0.0441,
+              "weight": 0.0433,
               "alignment": 1.0
             },
             {
               "token": "Bolton",
-              "weight": 0.0963,
+              "weight": 0.0564,
               "alignment": 1.0
             },
             {
               "token": "Pleads",
-              "weight": 0.0729,
+              "weight": 0.0505,
               "alignment": 1.0
             },
             {
               "token": "Guilty",
-              "weight": 0.0779,
+              "weight": 0.0517,
               "alignment": 1.0
             },
             {
               "token": "to",
-              "weight": 0.0671,
-              "alignment": 0.4084
+              "weight": 0.0264,
+              "alignment": 1.0
             },
             {
               "token": "Mishandling",
-              "weight": 0.1049,
-              "alignment": 0.3111
+              "weight": 0.1532,
+              "alignment": 0.8927
             },
             {
               "token": "Classified",
-              "weight": 0.1421,
-              "alignment": 0.9948
+              "weight": 0.0909,
+              "alignment": 1.0
             },
             {
               "token": "Information",
-              "weight": 0.1564,
-              "alignment": 0.4311
+              "weight": 0.2585,
+              "alignment": 0.4494
             },
             {
               "token": "Faces",
-              "weight": 0.0784,
-              "alignment": 0.2336
+              "weight": 0.0952,
+              "alignment": 0.216
             },
             {
               "token": "Five-Year",
@@ -10162,846 +11033,377 @@
             },
             {
               "token": "Prison",
-              "weight": 0.0965,
-              "alignment": 0.2973
+              "weight": 0.1055,
+              "alignment": 0.248
             },
             {
               "token": "Sentence",
-              "weight": 0.0634,
-              "alignment": 0.3348
+              "weight": 0.0683,
+              "alignment": 0.2864
             }
           ]
         }
       ]
     },
     {
-      "event_id": 37,
-      "consensus_headline": "Election worker says federal officers confronted her at polls over social media post criticizing ICE",
-      "n_outlets": 12,
+      "event_id": 535,
+      "consensus_headline": "Lawyers urge judge to block Trump order that would create eligible voter list , limit mail ballots",
+      "n_outlets": 21,
       "members": [
         {
-          "outlet": "abcnews.com",
-          "distance": 0.018,
+          "outlet": "baltimoresun.com",
+          "distance": 0.0,
           "lean5": null,
           "tokens": [
             {
-              "token": "Election",
-              "weight": 0.0731,
+              "token": "Lawyers",
+              "weight": 0.0721,
               "alignment": 1.0
             },
             {
-              "token": "worker",
-              "weight": 0.0688,
+              "token": "urge",
+              "weight": 0.0561,
               "alignment": 1.0
             },
             {
-              "token": "says",
-              "weight": 0.0552,
+              "token": "judge",
+              "weight": 0.0637,
               "alignment": 1.0
             },
             {
-              "token": "federal",
-              "weight": 0.0798,
+              "token": "to",
+              "weight": 0.0399,
               "alignment": 1.0
             },
             {
-              "token": "officers",
-              "weight": 0.0913,
+              "token": "block",
+              "weight": 0.0614,
               "alignment": 1.0
             },
             {
-              "token": "confronted",
-              "weight": 0.0963,
+              "token": "Trump",
+              "weight": 0.0626,
               "alignment": 1.0
             },
             {
-              "token": "her",
-              "weight": 0.048,
+              "token": "order",
+              "weight": 0.0625,
               "alignment": 1.0
             },
             {
-              "token": "at",
-              "weight": 0.0414,
+              "token": "that",
+              "weight": 0.0538,
               "alignment": 1.0
             },
             {
-              "token": "polls",
-              "weight": 0.0631,
+              "token": "would",
+              "weight": 0.0626,
               "alignment": 1.0
             },
             {
-              "token": "over",
+              "token": "create",
+              "weight": 0.0702,
+              "alignment": 1.0
+            },
+            {
+              "token": "eligible",
+              "weight": 0.089,
+              "alignment": 1.0
+            },
+            {
+              "token": "voter",
+              "weight": 0.0638,
+              "alignment": 1.0
+            },
+            {
+              "token": "list",
               "weight": 0.0549,
               "alignment": 1.0
             },
             {
-              "token": "social",
-              "weight": 0.0712,
+              "token": "limit",
+              "weight": 0.0625,
               "alignment": 1.0
             },
             {
-              "token": "media",
-              "weight": 0.0617,
+              "token": "mail",
+              "weight": 0.0551,
               "alignment": 1.0
             },
             {
-              "token": "post",
-              "weight": 0.0562,
-              "alignment": 1.0
-            },
-            {
-              "token": "criticizing",
-              "weight": 0.1044,
-              "alignment": 1.0
-            },
-            {
-              "token": "ICE",
-              "weight": 0.0345,
+              "token": "ballots",
+              "weight": 0.0697,
               "alignment": 1.0
             }
           ]
         },
+        {
+          "outlet": "yahoo.com",
+          "distance": 0.0,
+          "lean5": "lean-left",
+          "tokens": [
+            {
+              "token": "Lawyers",
+              "weight": 0.0721,
+              "alignment": 1.0
+            },
+            {
+              "token": "urge",
+              "weight": 0.0561,
+              "alignment": 1.0
+            },
+            {
+              "token": "judge",
+              "weight": 0.0637,
+              "alignment": 1.0
+            },
+            {
+              "token": "to",
+              "weight": 0.0399,
+              "alignment": 1.0
+            },
+            {
+              "token": "block",
+              "weight": 0.0614,
+              "alignment": 1.0
+            },
+            {
+              "token": "Trump",
+              "weight": 0.0626,
+              "alignment": 1.0
+            },
+            {
+              "token": "order",
+              "weight": 0.0625,
+              "alignment": 1.0
+            },
+            {
+              "token": "that",
+              "weight": 0.0538,
+              "alignment": 1.0
+            },
+            {
+              "token": "would",
+              "weight": 0.0626,
+              "alignment": 1.0
+            },
+            {
+              "token": "create",
+              "weight": 0.0702,
+              "alignment": 1.0
+            },
+            {
+              "token": "eligible",
+              "weight": 0.089,
+              "alignment": 1.0
+            },
+            {
+              "token": "voter",
+              "weight": 0.0638,
+              "alignment": 1.0
+            },
+            {
+              "token": "list",
+              "weight": 0.0549,
+              "alignment": 1.0
+            },
+            {
+              "token": "limit",
+              "weight": 0.0625,
+              "alignment": 1.0
+            },
+            {
+              "token": "mail",
+              "weight": 0.0551,
+              "alignment": 1.0
+            },
+            {
+              "token": "ballots",
+              "weight": 0.0697,
+              "alignment": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": 391,
+      "consensus_headline": "Norman Rockwell sketches of White House visitors go on display",
+      "n_outlets": 19,
+      "members": [
         {
           "outlet": "apnews.com",
-          "distance": 0.018,
+          "distance": 0.2062,
           "lean5": "center",
           "tokens": [
             {
-              "token": "Election",
-              "weight": 0.0731,
+              "token": "Norman",
+              "weight": 0.065,
               "alignment": 1.0
             },
             {
-              "token": "worker",
-              "weight": 0.0688,
+              "token": "Rockwell",
+              "weight": 0.11,
+              "alignment": 0.9715
+            },
+            {
+              "token": "sketches",
+              "weight": 0.1483,
+              "alignment": 0.8325
+            },
+            {
+              "token": "of",
+              "weight": 0.0668,
+              "alignment": 0.8315
+            },
+            {
+              "token": "White",
+              "weight": 0.0701,
               "alignment": 1.0
             },
             {
-              "token": "says",
-              "weight": 0.0552,
+              "token": "House",
+              "weight": 0.0701,
               "alignment": 1.0
             },
             {
-              "token": "federal",
-              "weight": 0.0798,
-              "alignment": 1.0
+              "token": "visitors",
+              "weight": 0.1562,
+              "alignment": 0.7795
             },
             {
-              "token": "officers",
-              "weight": 0.0913,
-              "alignment": 1.0
+              "token": "go",
+              "weight": 0.1154,
+              "alignment": 0.433
             },
             {
-              "token": "confronted",
-              "weight": 0.0963,
-              "alignment": 1.0
+              "token": "on",
+              "weight": 0.0765,
+              "alignment": 0.7118
             },
             {
-              "token": "her",
-              "weight": 0.048,
-              "alignment": 1.0
-            },
-            {
-              "token": "at",
-              "weight": 0.0414,
-              "alignment": 1.0
-            },
-            {
-              "token": "polls",
-              "weight": 0.0631,
-              "alignment": 1.0
-            },
-            {
-              "token": "over",
-              "weight": 0.0549,
-              "alignment": 1.0
-            },
-            {
-              "token": "social",
-              "weight": 0.0712,
-              "alignment": 1.0
-            },
-            {
-              "token": "media",
-              "weight": 0.0617,
-              "alignment": 1.0
-            },
-            {
-              "token": "post",
-              "weight": 0.0562,
-              "alignment": 1.0
-            },
-            {
-              "token": "criticizing",
-              "weight": 0.1044,
-              "alignment": 1.0
-            },
-            {
-              "token": "ICE",
-              "weight": 0.0345,
-              "alignment": 1.0
+              "token": "display",
+              "weight": 0.1214,
+              "alignment": 0.8326
             }
           ]
         },
         {
-          "outlet": "washingtonpost.com",
-          "distance": 0.018,
-          "lean5": "lean-left",
+          "outlet": "lufkindailynews.com",
+          "distance": 0.2491,
+          "lean5": null,
           "tokens": [
             {
-              "token": "Election",
-              "weight": 0.0731,
+              "token": "Norman",
+              "weight": 0.064,
               "alignment": 1.0
             },
             {
-              "token": "worker",
-              "weight": 0.0688,
+              "token": "Rockwell's",
+              "weight": 0.0779,
               "alignment": 1.0
             },
             {
-              "token": "says",
-              "weight": 0.0552,
-              "alignment": 1.0
+              "token": "sketches",
+              "weight": 0.1394,
+              "alignment": 0.9026
             },
             {
-              "token": "federal",
-              "weight": 0.0798,
-              "alignment": 1.0
+              "token": "of",
+              "weight": 0.0573,
+              "alignment": 0.9036
             },
             {
-              "token": "officers",
-              "weight": 0.0913,
-              "alignment": 1.0
-            },
-            {
-              "token": "confronted",
-              "weight": 0.0963,
-              "alignment": 1.0
-            },
-            {
-              "token": "her",
-              "weight": 0.048,
-              "alignment": 1.0
-            },
-            {
-              "token": "at",
-              "weight": 0.0414,
-              "alignment": 1.0
-            },
-            {
-              "token": "polls",
-              "weight": 0.0631,
-              "alignment": 1.0
-            },
-            {
-              "token": "over",
-              "weight": 0.0549,
-              "alignment": 1.0
-            },
-            {
-              "token": "social",
-              "weight": 0.0712,
-              "alignment": 1.0
-            },
-            {
-              "token": "media",
-              "weight": 0.0617,
-              "alignment": 1.0
-            },
-            {
-              "token": "post",
-              "weight": 0.0562,
-              "alignment": 1.0
-            },
-            {
-              "token": "criticizing",
-              "weight": 0.1044,
-              "alignment": 1.0
-            },
-            {
-              "token": "ICE",
-              "weight": 0.0345,
-              "alignment": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 121,
-      "consensus_headline": "Harvard Professor With Polarizing Alien Theories To Lead New White House UFO Council",
-      "n_outlets": 12,
-      "members": [
-        {
-          "outlet": "huffpost.com",
-          "distance": 0.1705,
-          "lean5": "left",
-          "tokens": [
-            {
-              "token": "Harvard",
-              "weight": 0.0581,
-              "alignment": 1.0
-            },
-            {
-              "token": "Professor",
-              "weight": 0.087,
-              "alignment": 1.0
-            },
-            {
-              "token": "With",
-              "weight": 0.1055,
-              "alignment": 0.5533
-            },
-            {
-              "token": "Polarizing",
-              "weight": 0.191,
-              "alignment": 0.5613
-            },
-            {
-              "token": "Alien",
-              "weight": 0.0845,
-              "alignment": 0.8088
-            },
-            {
-              "token": "Theories",
-              "weight": 0.1125,
-              "alignment": 0.8442
-            },
-            {
-              "token": "To",
-              "weight": 0.0432,
-              "alignment": 0.9712
-            },
-            {
-              "token": "Lead",
-              "weight": 0.0501,
-              "alignment": 1.0
-            },
-            {
-              "token": "New",
+              "token": "White",
               "weight": 0.0604,
-              "alignment": 0.9346
-            },
-            {
-              "token": "White",
-              "weight": 0.0563,
               "alignment": 1.0
             },
             {
               "token": "House",
-              "weight": 0.0528,
+              "weight": 0.0604,
               "alignment": 1.0
             },
             {
-              "token": "UFO",
-              "weight": 0.0404,
-              "alignment": 1.0
+              "token": "visitors",
+              "weight": 0.1347,
+              "alignment": 0.8398
             },
             {
-              "token": "Council",
-              "weight": 0.0581,
-              "alignment": 1.0
+              "token": "are",
+              "weight": 0.1194,
+              "alignment": 0.433
+            },
+            {
+              "token": "now",
+              "weight": 0.1161,
+              "alignment": 0.4471
+            },
+            {
+              "token": "on",
+              "weight": 0.0656,
+              "alignment": 0.7624
+            },
+            {
+              "token": "display",
+              "weight": 0.1048,
+              "alignment": 0.9024
             }
           ]
         },
         {
-          "outlet": "bostonglobe.com",
-          "distance": 0.2014,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Harvard",
-              "weight": 0.0516,
-              "alignment": 1.0
-            },
-            {
-              "token": "professor",
-              "weight": 0.0755,
-              "alignment": 1.0
-            },
-            {
-              "token": "with",
-              "weight": 0.0857,
-              "alignment": 0.6147
-            },
-            {
-              "token": "polarizing",
-              "weight": 0.1712,
-              "alignment": 0.5929
-            },
-            {
-              "token": "alien",
-              "weight": 0.0697,
-              "alignment": 0.8983
-            },
-            {
-              "token": "theories",
-              "weight": 0.1045,
-              "alignment": 0.8324
-            },
-            {
-              "token": "is",
-              "weight": 0.071,
-              "alignment": 0.2889
-            },
-            {
-              "token": "picked",
-              "weight": 0.071,
-              "alignment": 0.2889
-            },
-            {
-              "token": "to",
-              "weight": 0.0384,
-              "alignment": 0.8855
-            },
-            {
-              "token": "lead",
-              "weight": 0.0403,
-              "alignment": 1.0
-            },
-            {
-              "token": "new",
-              "weight": 0.0474,
-              "alignment": 1.0
-            },
-            {
-              "token": "White",
-              "weight": 0.0465,
-              "alignment": 1.0
-            },
-            {
-              "token": "House",
-              "weight": 0.0441,
-              "alignment": 1.0
-            },
-            {
-              "token": "UFO",
-              "weight": 0.0317,
-              "alignment": 1.0
-            },
-            {
-              "token": "council",
-              "weight": 0.0516,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "thehill.com",
-          "distance": 0.2183,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "Harvard",
-              "weight": 0.1165,
-              "alignment": 0.9182
-            },
-            {
-              "token": "professor",
-              "weight": 0.187,
-              "alignment": 0.7773
-            },
-            {
-              "token": "to",
-              "weight": 0.0923,
-              "alignment": 0.6172
-            },
-            {
-              "token": "lead",
-              "weight": 0.0937,
-              "alignment": 0.8731
-            },
-            {
-              "token": "new",
-              "weight": 0.1111,
-              "alignment": 0.6901
-            },
-            {
-              "token": "White",
-              "weight": 0.1072,
-              "alignment": 0.8797
-            },
-            {
-              "token": "House",
-              "weight": 0.1013,
-              "alignment": 0.9143
-            },
-            {
-              "token": "UFO",
-              "weight": 0.0743,
-              "alignment": 0.9102
-            },
-            {
-              "token": "council",
-              "weight": 0.1165,
-              "alignment": 0.9182
-            }
-          ]
-        },
-        {
-          "outlet": "cbsnews.com",
-          "distance": 0.3066,
+          "outlet": "usatoday.com",
+          "distance": 0.624,
           "lean5": "lean-left",
           "tokens": [
             {
-              "token": "Harvard",
-              "weight": 0.0767,
+              "token": "Norman",
+              "weight": 0.0485,
               "alignment": 1.0
             },
             {
-              "token": "professor",
-              "weight": 0.1205,
-              "alignment": 0.9534
-            },
-            {
-              "token": "known",
-              "weight": 0.0878,
-              "alignment": 0.2889
-            },
-            {
-              "token": "for",
-              "weight": 0.0926,
-              "alignment": 0.3188
-            },
-            {
-              "token": "alien",
-              "weight": 0.1074,
-              "alignment": 0.6824
-            },
-            {
-              "token": "theories",
-              "weight": 0.1437,
-              "alignment": 0.7555
-            },
-            {
-              "token": "to",
-              "weight": 0.0414,
+              "token": "Rockwell's",
+              "weight": 0.0504,
               "alignment": 1.0
             },
             {
-              "token": "lead",
-              "weight": 0.0693,
-              "alignment": 0.8808
+              "token": "hidden",
+              "weight": 0.1474,
+              "alignment": 0.433
             },
             {
               "token": "White",
-              "weight": 0.0791,
-              "alignment": 0.9064
+              "weight": 0.0538,
+              "alignment": 1.0
             },
             {
               "token": "House",
-              "weight": 0.0631,
+              "weight": 0.0527,
               "alignment": 1.0
             },
             {
-              "token": "UFO",
-              "weight": 0.0419,
-              "alignment": 1.0
+              "token": "masterpiece",
+              "weight": 0.2032,
+              "alignment": 0.4359
             },
             {
-              "token": "council",
-              "weight": 0.0767,
-              "alignment": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "event_id": 646,
-      "consensus_headline": "Comer issues 2 subpoenas to billionaire Leon Black",
-      "n_outlets": 12,
-      "members": [
-        {
-          "outlet": "thehill.com",
-          "distance": 0.341,
-          "lean5": "center",
-          "tokens": [
-            {
-              "token": "Comer",
-              "weight": 0.0949,
-              "alignment": 0.3686
+              "token": "steps",
+              "weight": 0.1177,
+              "alignment": 0.4379
             },
             {
-              "token": "issues",
-              "weight": 0.1285,
-              "alignment": 0.3735
+              "token": "into",
+              "weight": 0.1065,
+              "alignment": 0.433
             },
             {
-              "token": "2",
-              "weight": 0.0,
-              "alignment": 0.0
+              "token": "public",
+              "weight": 0.1328,
+              "alignment": 0.433
             },
             {
-              "token": "subpoenas",
-              "weight": 0.3117,
-              "alignment": 0.5229
-            },
-            {
-              "token": "to",
-              "weight": 0.0859,
-              "alignment": 0.752
-            },
-            {
-              "token": "billionaire",
-              "weight": 0.2133,
-              "alignment": 0.9854
-            },
-            {
-              "token": "Leon",
-              "weight": 0.0827,
-              "alignment": 0.9913
-            },
-            {
-              "token": "Black",
-              "weight": 0.0829,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "cbsnews.com",
-          "distance": 0.4692,
-          "lean5": "lean-left",
-          "tokens": [
-            {
-              "token": "Billionaire",
-              "weight": 0.1242,
-              "alignment": 1.0
-            },
-            {
-              "token": "Leon",
-              "weight": 0.051,
-              "alignment": 1.0
-            },
-            {
-              "token": "Black",
-              "weight": 0.0689,
-              "alignment": 1.0
-            },
-            {
-              "token": "subpoenaed",
-              "weight": 0.1996,
-              "alignment": 0.6345
-            },
-            {
-              "token": "to",
-              "weight": 0.0646,
-              "alignment": 0.6697
-            },
-            {
-              "token": "return",
-              "weight": 0.0494,
-              "alignment": 0.3757
-            },
-            {
-              "token": "to",
-              "weight": 0.0646,
-              "alignment": 0.6697
-            },
-            {
-              "token": "House",
-              "weight": 0.0523,
-              "alignment": 0.3388
-            },
-            {
-              "token": "Epstein",
-              "weight": 0.1555,
-              "alignment": 0.7773
-            },
-            {
-              "token": "panel",
-              "weight": 0.0624,
-              "alignment": 0.3917
-            },
-            {
-              "token": "in",
-              "weight": 0.0648,
-              "alignment": 0.5242
-            },
-            {
-              "token": "3",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "weeks",
-              "weight": 0.0428,
-              "alignment": 0.3388
-            }
-          ]
-        },
-        {
-          "outlet": "sentinelcolorado.com",
-          "distance": 0.4745,
-          "lean5": null,
-          "tokens": [
-            {
-              "token": "Billionaire",
-              "weight": 0.0954,
-              "alignment": 1.0
-            },
-            {
-              "token": "investor",
-              "weight": 0.1777,
-              "alignment": 0.7243
-            },
-            {
-              "token": "Leon",
-              "weight": 0.039,
-              "alignment": 1.0
-            },
-            {
-              "token": "Black",
-              "weight": 0.0533,
-              "alignment": 1.0
-            },
-            {
-              "token": "is",
-              "weight": 0.0506,
-              "alignment": 0.3968
-            },
-            {
-              "token": "set",
-              "weight": 0.0388,
-              "alignment": 0.3388
-            },
-            {
-              "token": "to",
-              "weight": 0.0491,
-              "alignment": 0.6322
-            },
-            {
-              "token": "testify",
-              "weight": 0.0423,
-              "alignment": 0.3863
-            },
-            {
-              "token": "to",
-              "weight": 0.0491,
-              "alignment": 0.6322
-            },
-            {
-              "token": "Congress",
-              "weight": 0.0474,
-              "alignment": 0.4607
-            },
-            {
-              "token": "about",
-              "weight": 0.0443,
-              "alignment": 0.3388
-            },
-            {
-              "token": "158M",
-              "weight": 0.0738,
-              "alignment": 0.5986
-            },
-            {
-              "token": "in",
-              "weight": 0.048,
-              "alignment": 0.5551
-            },
-            {
-              "token": "payments",
-              "weight": 0.0429,
-              "alignment": 0.4129
-            },
-            {
-              "token": "to",
-              "weight": 0.0491,
-              "alignment": 0.6322
-            },
-            {
-              "token": "Epstein",
-              "weight": 0.0992,
-              "alignment": 1.0
-            }
-          ]
-        },
-        {
-          "outlet": "huffpost.com",
-          "distance": 0.5851,
-          "lean5": "left",
-          "tokens": [
-            {
-              "token": "Billionaire",
-              "weight": 0.1256,
-              "alignment": 1.0
-            },
-            {
-              "token": "Investor",
-              "weight": 0.206,
-              "alignment": 0.698
-            },
-            {
-              "token": "Leon",
-              "weight": 0.0497,
-              "alignment": 1.0
-            },
-            {
-              "token": "Black",
-              "weight": 0.0674,
-              "alignment": 1.0
-            },
-            {
-              "token": "Defends",
-              "weight": 0.0528,
-              "alignment": 0.3388
-            },
-            {
-              "token": "158M",
-              "weight": 0.0923,
-              "alignment": 0.5594
-            },
-            {
-              "token": "Paid",
-              "weight": 0.0582,
-              "alignment": 0.4001
-            },
-            {
-              "token": "To",
-              "weight": 0.034,
-              "alignment": 1.0
-            },
-            {
-              "token": "Epstein",
-              "weight": 0.116,
-              "alignment": 0.9069
-            },
-            {
-              "token": "I",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "Knew",
-              "weight": 0.0528,
-              "alignment": 0.3388
-            },
-            {
-              "token": "Jekyll",
-              "weight": 0.066,
-              "alignment": 0.3388
-            },
-            {
-              "token": "I",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "Didn't",
-              "weight": 0.0,
-              "alignment": 0.0
-            },
-            {
-              "token": "Know",
-              "weight": 0.0792,
-              "alignment": 0.3388
-            },
-            {
-              "token": "Hyde'",
-              "weight": 0.0,
-              "alignment": 0.0
+              "token": "view",
+              "weight": 0.0869,
+              "alignment": 0.4528
             }
           ]
         }
@@ -93614,22 +94016,6 @@
       "rho": 0.715584,
       "n_outlets": 21,
       "gate_pass": true
-    }
-  },
-  "scopes": {
-    "aggregates": {
-      "since": "2026-05-14",
-      "until": "2026-07-05",
-      "n_corpus_articles": 21488,
-      "n_events": 141,
-      "note": "All aggregate charts reflect the full corpus."
-    },
-    "examples": {
-      "since": "2026-06-27",
-      "until": "2026-07-04",
-      "n_corpus_articles": 7417,
-      "n_events": 43,
-      "note": "Example story cards reflect the trailing recent window."
     }
   }
 }
