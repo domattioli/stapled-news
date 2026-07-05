@@ -175,6 +175,19 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         n_corpus_articles = conn.execute("SELECT COUNT(*) FROM article").fetchone()[0]
         n_corpus_outlets = conn.execute("SELECT COUNT(*) FROM outlet").fetchone()[0]
 
+        ranking_list = [
+            {
+                "outlet": m["outlet"],
+                "n_articles": m["n_articles"],
+                "mean_distance": round(m["mean_distance"], 6),
+                "ci_low": round(m["ci_low"], 6),
+                "ci_high": round(m["ci_high"], 6),
+                "lean": PANEL_LEAN.get(m["outlet"]),
+                "lean5": PANEL_LEAN5.get(m["outlet"]),
+            }
+            for m in outlet_metrics
+        ]
+
         consensus_bundle = {
             "generated_at": datetime.utcnow().isoformat(),
             "corpus": {
@@ -186,18 +199,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 "n_corpus_articles": n_corpus_articles,
                 "n_outlets": n_corpus_outlets,
             },
-            "ranking": [
-                {
-                    "outlet": m["outlet"],
-                    "n_articles": m["n_articles"],
-                    "mean_distance": round(m["mean_distance"], 6),
-                    "ci_low": round(m["ci_low"], 6),
-                    "ci_high": round(m["ci_high"], 6),
-                    "lean": PANEL_LEAN.get(m["outlet"]),
-                    "lean5": PANEL_LEAN5.get(m["outlet"]),
-                }
-                for m in outlet_metrics
-            ],
+            "ranking": ranking_list,
+            "ranking_display": _curate_ranking_for_display(ranking_list),
             "lean_breakdown": lean_breakdown(article_rows, seed=seed),
             "panel_composition": panel_composition(article_rows),
             "panel_spectrum": panel_spectrum(article_rows),
@@ -205,6 +208,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
             "regional_impact": regional_impact(article_rows),
             "consensus_lean": consensus_lean_axis(conn, min_outlets=min_outlets, seed=seed),
             "weekly": weekly_data,
+            "weekly_display": _curate_weekly_for_display(weekly_data),
             "events": [
                 {
                     "event_id": e["event_id"],
@@ -231,6 +235,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 "v1_planted": {
                     "copier_mean": round(v1_validation["copier_mean"], 6),
                     "noise_mean": round(v1_validation["noise_mean"], 6),
+                    "corpus_mean": round(v1_validation.get("corpus_mean", 0.0), 6),
                     "gate_pass": v1_validation["gate_pass"],
                 },
                 "v2_split_half": {
@@ -318,32 +323,75 @@ FAMOUS_OUTLETS = {
 }
 
 
-def _curate_members(members, target=10):
-    """Pick a legible, representative slate of ~8-10 outlets per event: famous
-    national outlets first, spread across the AllSides lean spectrum where
-    available, plus 1-2 less-famous (often regional, unrated) outlets so the
-    syndication-heavy long tail stays visible. Falls back to distance order when
-    an event has fewer members than the target."""
-    if len(members) <= target:
-        return members
-    famous = [m for m in members if m["outlet"] in FAMOUS_OUTLETS]
-    other = [m for m in members if m["outlet"] not in FAMOUS_OUTLETS]
-    picked, seen_lean = [], {}
-    # First pass over famous: cap per lean bucket so one camp cannot fill the slate.
-    for m in famous:
-        lean = PANEL_LEAN5.get(m["outlet"], "unrated")
-        if seen_lean.get(lean, 0) < 3:
-            picked.append(m)
-            seen_lean[lean] = seen_lean.get(lean, 0) + 1
-    # Reserve 2 slots for less-famous outlets (regional / unrated long tail).
-    n_other = min(2, len(other), max(0, target - len(picked)))
-    picked = picked[: target - n_other] + other[:n_other]
-    # Backfill from remaining famous if short.
-    if len(picked) < target:
-        for m in famous:
-            if m not in picked and len(picked) < target:
-                picked.append(m)
+def _curate_members(members):
+    """Pick at most one outlet per AllSides lean category (left, lean-left,
+    center, lean-right, right, unrated) per story, so a single dominant camp
+    cannot fill the card and every example stays legible at a glance. Within
+    a category, prefers a famous national outlet, then distance to consensus."""
+    by_category = {}
+    for m in members:
+        category = PANEL_LEAN5.get(m["outlet"], "unrated")
+        by_category.setdefault(category, []).append(m)
+    picked = [
+        sorted(group, key=lambda m: (m["outlet"] not in FAMOUS_OUTLETS, m["distance"]))[0]
+        for group in by_category.values()
+    ]
     return sorted(picked, key=lambda m: m["distance"])
+
+
+def _curate_ranking_for_display(ranking, n_recognizable=20, n_tail=5):
+    """For the outlet-ranking chart: recognizable (FAMOUS_OUTLETS) names plus
+    the most extreme entries at both ends, so the chart stays legible on a
+    corpus with hundreds of ranked outlets without losing the shape of the
+    full distribution. `ranking` must already be sorted by mean_distance
+    ascending; returns the full list unchanged if it is already small."""
+    if len(ranking) <= n_recognizable + 2 * n_tail:
+        return ranking
+    tail = ranking[:n_tail] + ranking[-n_tail:]
+    famous = [r for r in ranking if r["outlet"] in FAMOUS_OUTLETS]
+    seen = set()
+    curated = []
+    for r in tail + famous:
+        if r["outlet"] not in seen:
+            seen.add(r["outlet"])
+            curated.append(r)
+    curated.sort(key=lambda r: r["mean_distance"])
+    return curated
+
+
+def _curate_weekly_for_display(weekly, target=8):
+    """Pick up to `target` recognizable (FAMOUS_OUTLETS) outlets spread across
+    the AllSides lean spectrum for the weekly-trajectory chart, round-robin
+    across categories and preferring outlets with more weeks of coverage
+    within each. Plotting every qualifying outlet (which can be 50+) makes
+    the chart unreadable; this keeps it legible while still showing every
+    part of the spectrum, not just whichever camp has the most outlets."""
+    by_category = {}
+    for outlet, weeks in weekly.items():
+        if outlet not in FAMOUS_OUTLETS or not weeks:
+            continue
+        category = PANEL_LEAN5.get(outlet, "unrated")
+        by_category.setdefault(category, []).append((outlet, weeks))
+    for group in by_category.values():
+        group.sort(key=lambda ow: -len(ow[1]))
+
+    category_order = ["left", "lean-left", "center", "lean-right", "right", "unrated"]
+    picked = {}
+    round_idx = 0
+    while len(picked) < target:
+        added_this_round = False
+        for category in category_order:
+            group = by_category.get(category, [])
+            if round_idx < len(group):
+                outlet, weeks = group[round_idx]
+                picked[outlet] = weeks
+                added_this_round = True
+                if len(picked) >= target:
+                    break
+        if not added_this_round:
+            break
+        round_idx += 1
+    return picked
 
 
 def _build_events_detail(article_rows, top_events, max_events=12):
@@ -370,7 +418,7 @@ def _build_events_detail(article_rows, top_events, max_events=12):
             if cur is None or m["distance"] < cur["distance"]:
                 best[m["outlet"]] = m
         members = sorted(best.values(), key=lambda m: m["distance"])
-        members = _curate_members(members, target=10)
+        members = _curate_members(members)
         titles = [m["title"] for m in members]
         impacts = token_impacts(titles)
         detail.append({

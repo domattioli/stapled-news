@@ -1,6 +1,7 @@
 """Unit tests for consensus distance analysis module."""
 
 import json
+import numpy as np
 from stapled.db import connect
 from stapled.experiments import e7_consensus
 from stapled.experiments.runner import run_experiment
@@ -9,6 +10,7 @@ from stapled.analyze.consensus_distance import (
     aggregate_outlets,
     validate_planted,
     build_event_vectors,
+    _lean_bucket_weights,
 )
 
 
@@ -408,3 +410,111 @@ def test_build_event_vectors(tmp_path):
     # Check vectorizer_dict
     assert "word" in vectorizer_dict
     assert "char" in vectorizer_dict
+
+
+def test_lean_bucket_weights_equalizes_bucket_totals():
+    """Each present PANEL_LEAN bucket should receive equal total weight,
+    regardless of how many outlets/articles are in it."""
+    # 6 left-rated outlets, 1 right-rated, 1 unrated.
+    outlets = [
+        "nytimes.com", "cnn.com", "washingtonpost.com",
+        "npr.org", "msnbc.com", "vox.com",
+        "foxnews.com",
+        "some-unrated-blog.example",
+    ]
+    w = _lean_bucket_weights(outlets)
+    totals = {}
+    from stapled.analyze.consensus_distance import PANEL_LEAN
+    for outlet, weight in zip(outlets, w):
+        bucket = PANEL_LEAN.get(outlet, "unrated")
+        totals[bucket] = totals.get(bucket, 0.0) + weight
+
+    assert len(totals) == 3  # left, right, unrated all present
+    shares = list(totals.values())
+    assert all(abs(s - shares[0]) < 1e-9 for s in shares), (
+        f"bucket totals should be equal, got {totals}"
+    )
+    assert abs(sum(shares) - 1.0) < 1e-9
+
+
+def test_lean_bucket_weights_single_bucket_is_uniform():
+    """With no PANEL_LEAN outlets present, balancing degenerates to uniform
+    per-article weight (preserves pre-existing behavior for unrated-only
+    events, and for tests using synthetic outlet names)."""
+    outlets = ["A", "B", "C"]
+    w = _lean_bucket_weights(outlets)
+    assert np.allclose(w, [1.0 / 3, 1.0 / 3, 1.0 / 3])
+
+
+def test_compute_distances_lean_balanced_controls_for_panel_skew(tmp_path):
+    """A story covered by 6 left-rated outlets writing near-identical wording
+    and 1 right-rated outlet writing distinctly different wording: under raw
+    per-article weighting the centroid is dominated by the left bloc's exact
+    phrasing (left distance ~0, right distance high). Under lean-balanced
+    weighting, left and right each get equal say in the centroid, which must
+    pull the centroid toward the right outlet's wording — shrinking its
+    distance relative to the unbalanced case."""
+    db_path = tmp_path / "test_lean_balance.db"
+    conn = connect(str(db_path))
+
+    left_outlets = [
+        "nytimes.com", "cnn.com", "washingtonpost.com",
+        "npr.org", "msnbc.com", "vox.com",
+    ]
+    right_outlets = ["foxnews.com"]
+    all_outlets = left_outlets + right_outlets
+
+    outlet_ids = {}
+    for name in all_outlets:
+        cursor = conn.execute("INSERT INTO outlet (name) VALUES (?)", (name,))
+        outlet_ids[name] = cursor.lastrowid
+
+    conn.execute("INSERT INTO event (id) VALUES (?)", (1,))
+
+    article_id = 1
+    for name in left_outlets:
+        conn.execute(
+            "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (outlet_ids[name], f"url-{article_id}",
+             "Senate passes the infrastructure funding bill", "body", "2024-01-01", "ok"),
+        )
+        conn.execute(
+            "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+            (article_id, 1, "occurred", 0.9),
+        )
+        article_id += 1
+    for name in right_outlets:
+        conn.execute(
+            "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (outlet_ids[name], f"url-{article_id}",
+             "Lawmakers clash over pork-laden spending package", "body", "2024-01-01", "ok"),
+        )
+        conn.execute(
+            "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+            (article_id, 1, "occurred", 0.9),
+        )
+        article_id += 1
+    conn.commit()
+
+    unbalanced = compute_distances(conn, min_outlets=1, lean_balanced=False)
+    balanced = compute_distances(conn, min_outlets=1, lean_balanced=True)
+
+    def right_distance(data):
+        return next(r["distance"] for r in data["articles"] if r["outlet"] == "foxnews.com")
+
+    def mean_left_distance(data):
+        left_rows = [r["distance"] for r in data["articles"] if r["outlet"] in left_outlets]
+        return sum(left_rows) / len(left_rows)
+
+    assert right_distance(balanced) < right_distance(unbalanced), (
+        "balancing should pull the centroid toward the outnumbered bucket, "
+        "shrinking its distance from consensus"
+    )
+    assert mean_left_distance(balanced) > mean_left_distance(unbalanced), (
+        "balancing should move the centroid away from the numerically-dominant "
+        "bucket's exact wording, growing its distance from consensus"
+    )
+
+    conn.close()
