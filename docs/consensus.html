@@ -678,7 +678,7 @@
         <!-- Hero Section: Beeswarm + Stats -->
         <div class="section" id="sec-overview" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="article-kicker" style="margin-bottom: 15px;">EVERY SOURCE, ONE DOT</div>
-            <p class="tldr"><b>TL;DR</b> &nbsp;527 outlets ranked by mean drift across 11,799 analyzed headlines: how far each outlet's typical wording sits from the consensus its peers converge on.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;<span id="tldr-outlets-overview">—</span> outlets ranked by mean drift across <span id="tldr-articles-overview">—</span> analyzed headlines: how far each outlet's typical wording sits from the consensus its peers converge on.</p>
             <div class="plotly-container">
                 <div id="hero-swarm"></div>
             </div>
@@ -695,11 +695,11 @@
 
         <div class="article-body" id="sec-take" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
             <div class="commentary-kicker">THE TAKE</div>
-            <p>The outlet nearest the consensus wording is <span id="top-outlet-text">—</span> (mean drift <span id="top-dist-text">—</span>) against a <span id="field-mean-text">—</span> field mean across 527 ranked outlets; farthest is <span id="bottom-outlet-text">—</span> (mean drift <span id="bottom-dist-text">—</span>). Outlets at either end of the ranking typically have few analyzed headlines each, so they mark the range rather than the most statistically stable individual estimates. The gap reflects outlet style, not political lean: outlets near consensus tend to run wire copy verbatim, while outlets far from it write more distinctive headlines for the same story. Left, center, and right outlets differ only slightly in mean drift (see the next section for the exact gap); distance is not a useful lean detector in practice.</p>
+            <p>The outlet nearest the consensus wording is <span id="top-outlet-text">—</span> (mean drift <span id="top-dist-text">—</span>) against a <span id="field-mean-text">—</span> field mean across <span id="ranked-outlets-text">—</span> ranked outlets; farthest is <span id="bottom-outlet-text">—</span> (mean drift <span id="bottom-dist-text">—</span>). Outlets at either end of the ranking typically have few analyzed headlines each, so they mark the range rather than the most statistically stable individual estimates. The gap reflects outlet style, not political lean: outlets near consensus tend to run wire copy verbatim, while outlets far from it write more distinctive headlines for the same story. Left, center, and right outlets differ only slightly in mean drift (see the next section for the exact gap); distance is not a useful lean detector in practice.</p>
 
             <p>Does the consensus wording itself lean, independent of style? A story covered by <span id="left-share-text">51</span> percent left-rated outlet share and <span id="right-share-text">24</span> percent right-rated share produces a raw average that leans left for arithmetic reasons alone, regardless of what any outlet actually wrote. We correct for this: the consensus centroid used for the direction analysis below weights left, center, right, and unrated outlets equally per story, so no single camp defines "consensus" simply by outnumbering the others. The direction section below reports what remains after that correction.</p>
 
-            <p>Corpus depth: <span id="n-events-text">141</span> analyzed stories. The collector adds roughly 500 headlines an hour; confidence intervals will keep narrowing, and individual outlet rankings may still shift, particularly near either end of the ranking where analyzed-headline counts are low.</p>
+            <p>Corpus depth: <span id="n-events-text">141</span> analyzed stories drawn from <span id="corpus-span-text">—</span> of collection. The collector adds roughly <span id="collector-rate-text">—</span> headlines a day; confidence intervals will keep narrowing, and individual outlet rankings may still shift, particularly near either end of the ranking where analyzed-headline counts are low.</p>
         </div>
 
         <div class="stats-strip" id="stats-strip">
@@ -728,7 +728,7 @@
         <!-- Chart 1: Outlet Ranking (FiveThirtyEight style) -->
         <div class="section" id="sec-ranking">
             <h2 class="section-title">Nearness to Consensus Tracks Wire-Copy Volume, Not Political Lean</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;527 outlets ranked by mean distance from consensus across 11,799 analyzed headlines. Outlets nearest consensus tend to be wire-copy-heavy affiliates with few analyzed headlines each; outlets farthest tend to write more distinctive headlines. Lean shows no correlation with distance.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;<span id="tldr-outlets-ranking">—</span> outlets ranked by mean distance from consensus across <span id="tldr-articles-ranking">—</span> analyzed headlines. Outlets nearest consensus tend to be wire-copy-heavy affiliates with few analyzed headlines each; outlets farthest tend to write more distinctive headlines. Lean shows no correlation with distance.</p>
             <div class="plotly-container">
                 <div id="us-ranking"></div>
             </div>
@@ -784,9 +784,9 @@
         <div class="section" id="sec-direction">
             <div class="article-kicker" style="margin-bottom: 15px;">CONSENSUS DIRECTION</div>
             <h2 class="section-title">Correcting for Panel Composition Moves Consensus Wording From Left-of-Center to Near-Neutral</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Raw panel composition mechanically pulls a naive consensus average toward whichever camp has more coverage. Computing consensus with left, center, right, and unrated outlets weighted equally per story moves the consensus-wording position from clearly left-of-center to close to the 0.5 midpoint, though a small further-left tilt survives the correction.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Raw panel composition mechanically pulls a naive consensus average toward whichever camp has more coverage. Computing consensus with left, center, right, and unrated outlets weighted equally per story moves the consensus-wording position toward the 0.5 midpoint. <span id="direction-tldr-verdict">—</span></p>
             <div class="article-body" style="margin-bottom: 30px;">
-                <p>Distance (above) found the three camps close together. Direction is a different question: for <span id="n-events-lean-text">43</span> stories with both left-rated and right-rated outlets, we build left-camp and right-camp wording centroids, then project a bias-corrected consensus centroid onto the axis between them (see the method note above: left, center, right, and unrated outlets weighted equally per story). Result: consensus position is <span id="mean-position-text">0.47</span> on a 0-1 scale (0 = left-camp wording, 1 = right-camp wording), 95% CI <span id="ci-low-text">0.45</span>-<span id="ci-high-text">0.50</span>. That interval sits just under the 0.5 midpoint: a small leftward tilt remains after the correction, far smaller than the raw, uncorrected estimate below.</p>
+                <p>Distance (above) found the three camps close together. Direction is a different question: for <span id="n-events-lean-text">43</span> stories with both left-rated and right-rated outlets, we build left-camp and right-camp wording centroids, then project a bias-corrected consensus centroid onto the axis between them (see the method note above: left, center, right, and unrated outlets weighted equally per story). Result: consensus position is <span id="mean-position-text">0.47</span> on a 0-1 scale (0 = left-camp wording, 1 = right-camp wording), 95% CI <span id="ci-low-text">0.45</span>-<span id="ci-high-text">0.50</span>. <span id="direction-verdict">—</span></p>
             </div>
             <div class="plotly-container">
                 <div id="lean-axis-plot"></div>
@@ -820,7 +820,7 @@
             </div>
 
             <div class="article-body" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                <p style="font-size: 15px; color: #666;"><strong>Limitation.</strong> Only <span id="n-events-scored-caveat-text">43</span> of <span id="n-events-total-caveat-text">141</span> analyzed stories have both a left-rated and a right-rated outlet; the remaining stories cannot be coded for direction, including nearly half the corpus that carries no AllSides rating at all (see the unrated-outlet section below). Camp separation averages <span id="mean-sep-text">1.08</span>, indicating a real left-versus-right wording difference on these stories rather than noise. This is a direction estimate: it does not measure truth or accuracy. The correction removes panel composition as an explanation for the position shown above; the small remaining leftward tilt (95% CI upper bound just under 0.5) reflects wording rather than coverage share.</p>
+                <p style="font-size: 15px; color: #666;"><strong>Limitation.</strong> Only <span id="n-events-scored-caveat-text">43</span> of <span id="n-events-total-caveat-text">141</span> analyzed stories have both a left-rated and a right-rated outlet; the remaining stories cannot be coded for direction, including nearly half the corpus that carries no AllSides rating at all (see the unrated-outlet section below). Camp separation averages <span id="mean-sep-text">1.08</span>, indicating a real left-versus-right wording difference on these stories rather than noise. This is a direction estimate: it does not measure truth or accuracy. The correction removes panel composition as an explanation for the position shown above. <span id="direction-caveat-verdict">—</span></p>
             </div>
         </div>
 
@@ -1098,7 +1098,40 @@
                     setText('right-share-text', Math.round(usData.panel_composition.right.weighted_share*100));
                 }
                 if (usData.corpus && usData.corpus.n_events) setText('n-events-text', usData.corpus.n_events);
+                renderCorpusScale(usData);
             } catch (err) { console.error('section take failed:', err); }
+        }
+
+        // Corpus-scale figures that used to be hardcoded in the prose. Reading them
+        // from the bundle keeps the TL;DRs and the take honest on every refresh
+        // instead of drifting one run behind the data they describe.
+        function renderCorpusScale(usData) {
+            const corpus = usData.corpus || {};
+            const nOutlets = (usData.ranking || []).length || corpus.n_outlets || 0;
+            const nArticles = corpus.n_articles || (usData.articles || []).length || 0;
+            const outletsStr = nOutlets.toLocaleString();
+            const articlesStr = nArticles.toLocaleString();
+
+            setText('tldr-outlets-overview', outletsStr);
+            setText('tldr-articles-overview', articlesStr);
+            setText('ranked-outlets-text', outletsStr);
+            setText('tldr-outlets-ranking', outletsStr);
+            setText('tldr-articles-ranking', articlesStr);
+
+            // Collection rate: corpus-wide headlines per day over the window the
+            // bundle actually covers, so the figure tracks the cron cadence rather
+            // than restating the schedule the collector ran on at authoring time.
+            const since = corpus.since ? new Date(corpus.since) : null;
+            const until = corpus.until ? new Date(corpus.until) : null;
+            if (since && until && !isNaN(since) && !isNaN(until)) {
+                const days = Math.max(1, Math.round((until - since) / 86400000));
+                setText('corpus-span-text', days + (days === 1 ? ' day' : ' days'));
+                const total = corpus.n_corpus_articles || nArticles;
+                if (total) {
+                    const perDay = Math.round(total / days / 10) * 10;
+                    setText('collector-rate-text', perDay.toLocaleString());
+                }
+            }
         }
 
         function renderHeader(corpus) {
@@ -1423,6 +1456,38 @@
                 setText('mean-sep-text', meanSeparation.toFixed(2));
                 if (usData.corpus && usData.corpus.n_events) {
                     setText('n-events-total-caveat-text', usData.corpus.n_events);
+                }
+
+                // The direction verdict is read off the interval rather than asserted.
+                // Through the 2026-07-05 bundle the CI sat wholly below 0.5 and the page
+                // said so in fixed prose; on the full corpus it straddles the midpoint,
+                // which makes that claim wrong. Deciding here means the sentence tracks
+                // whatever the next refresh produces instead of going stale silently.
+                const straddlesMidpoint = ciLow <= 0.5 && ciHigh >= 0.5;
+                const leansLeft = ciHigh < 0.5;
+                if (straddlesMidpoint) {
+                    setText('direction-verdict',
+                        'That interval spans the 0.5 midpoint, so the corrected consensus wording is not '
+                        + 'distinguishable from centre at this corpus size: no leftward or rightward tilt '
+                        + 'survives the correction as a statistically supported claim.');
+                    setText('direction-tldr-verdict',
+                        'On the current corpus the corrected position is statistically indistinguishable '
+                        + 'from the midpoint — no directional tilt survives.');
+                    setText('direction-caveat-verdict',
+                        'Because the 95% interval includes 0.5, the corrected position supports no claim of '
+                        + 'directional tilt; a real tilt may still emerge, or be ruled out, as the corpus grows.');
+                } else {
+                    const side = leansLeft ? 'leftward' : 'rightward';
+                    const bound = leansLeft ? 'upper' : 'lower';
+                    setText('direction-verdict',
+                        `That interval sits entirely ${leansLeft ? 'below' : 'above'} the 0.5 midpoint: a small `
+                        + `${side} tilt remains after the correction, far smaller than the raw, uncorrected `
+                        + 'estimate below.');
+                    setText('direction-tldr-verdict',
+                        `A small further-${leansLeft ? 'left' : 'right'} tilt survives the correction.`);
+                    setText('direction-caveat-verdict',
+                        `The small remaining ${side} tilt (95% CI ${bound} bound clear of 0.5) reflects wording `
+                        + 'rather than coverage share.');
                 }
 
                 // Panel composition for juxtaposition
