@@ -1,5 +1,6 @@
 """Event alignment via TF-IDF + agglomerative clustering."""
 
+import re
 import sqlite3
 from typing import Dict, Tuple, List, Set
 from collections import defaultdict
@@ -161,9 +162,14 @@ def _normalize_claim_text(
     parts = [actor or "", action or "", obj or "", title or ""]
     text = " ".join(parts).lower()
 
-    # Apply alias normalization
-    for alias, canonical in ALIAS_MAP.items():
-        text = text.replace(alias, canonical)
+    # Apply alias normalization. Word-boundary match (not plain substring
+    # replace) so e.g. the "us" -> "united states" alias doesn't rewrite the
+    # interior of "House"/"Russia"/"discuss"/"bus"/etc. `(?<!\w)...(?!\w)`
+    # rather than `\b...\b` because \b fails at a trailing non-word char
+    # (e.g. the "." in "u.s."). Longest alias first so "justice department"
+    # is consumed before the standalone "doj"/shorter aliases could interfere.
+    for alias, canonical in sorted(ALIAS_MAP.items(), key=lambda kv: -len(kv[0])):
+        text = re.sub(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", canonical, text)
 
     return text
 

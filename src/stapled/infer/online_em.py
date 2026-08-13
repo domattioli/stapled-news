@@ -4,7 +4,7 @@ import sqlite3
 import numpy as np
 import json
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 class OnlineEM:
@@ -238,25 +238,32 @@ class OnlineEM:
         } for o in self.outlet_ids}
         batch_ll = 0.0
 
-        # Load events and claims from DB
-        placeholders = ",".join("?" * len(event_ids))
-        cursor = self.conn.execute(
-            f"""
-            SELECT e.id, json_group_array(json_object(
-                'outlet_id', a.outlet_id,
-                'observation', CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END,
-                'certainty', COALESCE(c.certainty, 0.5),
-                'vote_key', CASE WHEN a.dedup_cluster_id IS NOT NULL THEN 'c' || a.dedup_cluster_id ELSE 'a' || a.id END
-            )) as claims_json
-            FROM event e
-            JOIN claim c ON e.id = c.event_id
-            JOIN article a ON c.article_id = a.id
-            WHERE e.id IN ({placeholders})
-            GROUP BY e.id
-            """,
-            event_ids,
-        )
-        event_rows = cursor.fetchall()
+        # Load events and claims from DB. Chunk the IN(...) — SQLite caps bound
+        # parameters per statement (SQLITE_MAX_VARIABLE_NUMBER, 32766 by
+        # default), which the full per-batch event set can otherwise exceed
+        # as the event table grows (mirrors _fetch_in_chunks in
+        # analyze/consensus_distance.py).
+        event_rows = []
+        for i in range(0, len(event_ids), 900):
+            chunk = event_ids[i : i + 900]
+            placeholders = ",".join("?" * len(chunk))
+            cursor = self.conn.execute(
+                f"""
+                SELECT e.id, json_group_array(json_object(
+                    'outlet_id', a.outlet_id,
+                    'observation', CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END,
+                    'certainty', COALESCE(c.certainty, 0.5),
+                    'vote_key', CASE WHEN a.dedup_cluster_id IS NOT NULL THEN 'c' || a.dedup_cluster_id ELSE 'a' || a.id END
+                )) as claims_json
+                FROM event e
+                JOIN claim c ON e.id = c.event_id
+                JOIN article a ON c.article_id = a.id
+                WHERE e.id IN ({placeholders})
+                GROUP BY e.id
+                """,
+                chunk,
+            )
+            event_rows.extend(cursor.fetchall())
 
         for event_id, claims_json in event_rows:
             claims = json.loads(claims_json)
@@ -400,13 +407,17 @@ class OnlineEM:
             "batch_ll": float(batch_ll),
         }
 
-    def accumulate(self, batch_stats: Dict, t: int) -> None:
+    def accumulate(self, batch_stats: Dict, t: int, posteriors: Optional[Dict] = None) -> None:
         """
         Accumulate batch statistics with Robbins-Monro step size.
 
         Args:
             batch_stats: {outlet_id → {sens, spec, exp_tp, exp_fp, exp_tn, exp_fn, n_obs}}
             t: Batch index (0-indexed)
+            posteriors: optional {event_id → [p_s0, p_s1]} from this batch's
+                e_step_batch (result["posteriors"]), used to re-estimate the
+                state prior pi below. Omitted for backward compatibility -
+                without it pi stays at its previous value (only clipped).
         """
         # Robbins-Monro: γ_t = (t+2)**-0.6
         gamma = (t + 2.0) ** (-0.6)
@@ -465,9 +476,13 @@ class OnlineEM:
                 snapshot_rows,
             )
 
-        # NOTE: self.pi (the state prior) is not re-estimated here — accumulate()
-        # only receives outlet-keyed batch_stats, not the batch's posteriors, so
-        # there is no M-step input for pi. This just keeps it within bounds.
+        # M-step for pi: Robbins-Monro step toward this batch's mean P(state=1)
+        # posterior, the same smoothing accumulate() already applies to
+        # sens/spec above, so the class prior adapts to the observed positive-
+        # event base rate instead of staying pinned at its init value forever.
+        if posteriors:
+            batch_mean_p_s1 = float(np.mean([p[1] for p in posteriors.values()]))
+            self.pi = (1 - gamma) * self.pi + gamma * batch_mean_p_s1
         self.pi = np.clip(self.pi, 0.01, 0.99)
 
         # Persist state

@@ -158,23 +158,20 @@ def _run_em_single(
         agreement = agreement_count / total_count if total_count > 0 else 0.5
         # Initialize sens/spec from agreement; clip to avoid extremes (but allow good outlets to be good)
         agreement = np.clip(agreement, 0.2, 0.95)
+        if seed != 42:
+            # Perturb non-baseline restarts so their first E-step (which is
+            # what actually determines the trajectory - see posteriors init
+            # below) starts from a different point instead of silently
+            # reproducing restart 0 every time.
+            agreement = np.clip(agreement + rng.normal(0, 0.05), 0.01, 0.99)
         sens[o_idx] = agreement
         spec[o_idx] = agreement
 
-    # For restart 0, initialize with majority vote; for others, random perturbation
-    if seed == 42:
-        # Majority vote initialization
-        posteriors = {}
-        for event_id, claims_list in claims_by_event.items():
-            obs_sum = sum(c["observation"] for c in claims_list)
-            majority = 1 if obs_sum > len(claims_list) / 2 else 0
-            posteriors[event_id] = np.array([1 - majority, majority])  # [P(s=0), P(s=1)]
-    else:
-        # Random initialization
-        posteriors = {}
-        for event_id in claims_by_event:
-            p1 = rng.uniform(0.3, 0.7)
-            posteriors[event_id] = np.array([1 - p1, p1])
+    # posteriors is populated by the first E-step below (it unconditionally
+    # assigns every event_id before any consumer reads the dict); restart
+    # diversity comes from the sens/spec perturbation above, not from a
+    # posteriors init.
+    posteriors = {}
 
     pi = 0.5  # prior on state=1
 

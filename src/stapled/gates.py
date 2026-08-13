@@ -39,16 +39,19 @@ def assert_recovery_passed(conn: sqlite3.Connection) -> None:
 
 
 def corroboration_label(conn: sqlite3.Connection, event_id: int) -> str:
-    """Return 'triangulated' if claims supporting event come from >=2 distinct outlets, else 'uncorroborated'."""
-    # Count distinct outlets (or dedup clusters if set) for claims tied to this event.
-    # dedup_cluster_id and outlet_id are separate ID namespaces (both small ints
-    # starting at 1) - namespace-prefix them before COALESCE so a cluster id never
-    # collides with an unrelated outlet id (or vice versa).
+    """Return 'triangulated' if claims supporting event come from >=2 distinct outlets
+    AND >=2 distinct dedup-collapsed sources, else 'uncorroborated'."""
+    # Two conditions, both required: >=2 distinct outlets, AND >=2 distinct
+    # dedup-collapsed sources (articles sharing a dedup_cluster_id count as
+    # one source). Outlet count alone is not enough — two different outlets
+    # both republishing the same verbatim wire copy share one dedup cluster
+    # and must not count as independent corroboration.
     cursor = conn.execute(
         """
-        SELECT COUNT(DISTINCT CASE WHEN a.dedup_cluster_id IS NOT NULL
+        SELECT COUNT(DISTINCT a.outlet_id),
+               COUNT(DISTINCT CASE WHEN a.dedup_cluster_id IS NOT NULL
                                     THEN 'c' || a.dedup_cluster_id
-                                    ELSE 'o' || a.outlet_id END)
+                                    ELSE 'a' || a.id END)
         FROM claim c
         JOIN article a ON c.article_id = a.id
         WHERE c.event_id = ?
@@ -56,5 +59,8 @@ def corroboration_label(conn: sqlite3.Connection, event_id: int) -> str:
         (event_id,),
     )
     row = cursor.fetchone()
-    distinct_sources = row[0] if row else 0
-    return "triangulated" if distinct_sources >= 2 else "uncorroborated"
+    distinct_outlets = row[0] if row else 0
+    distinct_sources = row[1] if row else 0
+    if distinct_outlets >= 2 and distinct_sources >= 2:
+        return "triangulated"
+    return "uncorroborated"

@@ -75,6 +75,8 @@ def iter_remote_lines(
     req = urllib.request.Request(url)
     if byte_offset > 0:
         req.add_header("Range", f"bytes={byte_offset}-")
+        if etag:
+            req.add_header("If-Range", etag)
 
     try:
         with urllib.request.urlopen(req) as response:
@@ -90,6 +92,20 @@ def iter_remote_lines(
                     total_size = int(content_range.split("/")[-1])
                 except (ValueError, IndexError):
                     pass
+
+            # If-Range (set above from the stored etag) makes the server
+            # honor Range only when the file hasn't changed; otherwise it
+            # ignores Range/If-Range and returns the FULL body (no
+            # Content-Range header) instead of a 206 partial starting at
+            # byte_offset. Resuming as if byte_offset still applied would
+            # then splice into an arbitrary point of the new file - detect
+            # the missing Content-Range and restart this source from
+            # scratch instead.
+            if byte_offset > 0 and content_range is None:
+                byte_offset = 0
+                rows_ingested = 0
+                total_size = None
+
             if total_size is None:
                 content_length = response.headers.get("Content-Length")
                 if content_length:

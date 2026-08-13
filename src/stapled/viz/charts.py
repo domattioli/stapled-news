@@ -291,7 +291,7 @@ def _render_corroboration_pie(
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
     ax.set_title("Event Corroboration")
 
-    fig.text(0.1, 0.01, "Triangulated = 3+ outlets agree; uncorroborated = single-source claim", fontsize=9, color='#555555', style='italic')
+    fig.text(0.1, 0.01, "Triangulated = >=2 outlets via >=2 independent (dedup-collapsed) sources; uncorroborated = everything else", fontsize=9, color='#555555', style='italic')
     filename = f"run_{run_id}_corroboration_pie.png"
     filepath = assets_dir / filename
     fig.savefig(filepath, dpi=100, bbox_inches='tight')

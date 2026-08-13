@@ -701,8 +701,8 @@ def train_stream(
 
             # Dedup and extract
             dedup_new_articles(conn, article_ids)
-            extract_all_unextracted(conn)
-            update_all_framing(conn)
+            extract_all_unextracted(conn, article_ids)
+            update_all_framing(conn, article_ids)
 
             # Get newly created claim IDs. Chunk the IN(...) — SQLite caps bound
             # parameters per statement (SQLITE_MAX_VARIABLE_NUMBER, 32766 by
@@ -750,7 +750,7 @@ def train_stream(
                 online_ll_trace.append(batch_ll)
 
                 # Accumulate with Robbins-Monro
-                em.accumulate(batch_stats, batch_count - 1)
+                em.accumulate(batch_stats, batch_count - 1, posteriors=result["posteriors"])
 
         # Get top 3 outlets by reliability
         top_3_outlets = []
@@ -763,7 +763,7 @@ def train_stream(
             )[:3]
 
         out.set_data(
-            source_bytes=total_rows,
+            total_rows=total_rows,
             batches_processed=batch_count,
             new_events=new_events_count,
             new_claims=new_claims_count,

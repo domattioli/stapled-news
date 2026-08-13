@@ -223,3 +223,87 @@ def test_corroboration_label_dedup_clusters(tmp_path):
     # Should be uncorroborated because both articles in same dedup_cluster
     label = corroboration_label(conn, event_id)
     assert label == "uncorroborated"
+
+
+def test_corroboration_label_two_outlets_shared_wire_copy(tmp_path):
+    """Two DIFFERENT outlets whose only articles share one dedup_cluster_id
+    (a verbatim wire copy) must not count as independent corroboration."""
+    db_path = tmp_path / "test.db"
+    conn = connect(str(db_path))
+
+    cursor = conn.execute("INSERT INTO outlet (name, is_synthetic) VALUES ('outlet1', 1)")
+    outlet1_id = cursor.lastrowid
+    cursor = conn.execute("INSERT INTO outlet (name, is_synthetic) VALUES ('outlet2', 1)")
+    outlet2_id = cursor.lastrowid
+
+    # Same dedup_cluster_id (7) across the two outlets: one shared wire copy.
+    cursor = conn.execute(
+        "INSERT INTO article (outlet_id, url, ingest_status, dedup_cluster_id) VALUES (?, ?, 'ok', 7)",
+        (outlet1_id, "http://ex.com/a"),
+    )
+    article1_id = cursor.lastrowid
+    cursor = conn.execute(
+        "INSERT INTO article (outlet_id, url, ingest_status, dedup_cluster_id) VALUES (?, ?, 'ok', 7)",
+        (outlet2_id, "http://ex.com/b"),
+    )
+    article2_id = cursor.lastrowid
+
+    cursor = conn.execute("INSERT INTO event (label) VALUES (?)", ("test",))
+    event_id = cursor.lastrowid
+
+    conn.execute(
+        "INSERT INTO claim (article_id, event_id, certainty, valence, extraction_score) "
+        "VALUES (?, ?, 0.5, 0.0, 0.9)",
+        (article1_id, event_id),
+    )
+    conn.execute(
+        "INSERT INTO claim (article_id, event_id, certainty, valence, extraction_score) "
+        "VALUES (?, ?, 0.5, 0.0, 0.9)",
+        (article2_id, event_id),
+    )
+    conn.commit()
+
+    # 2 distinct outlets but only 1 distinct dedup-collapsed source -> not triangulated.
+    label = corroboration_label(conn, event_id)
+    assert label == "uncorroborated"
+
+
+def test_corroboration_label_two_outlets_two_clusters(tmp_path):
+    """Two different outlets with two distinct dedup clusters ARE independent
+    corroboration."""
+    db_path = tmp_path / "test.db"
+    conn = connect(str(db_path))
+
+    cursor = conn.execute("INSERT INTO outlet (name, is_synthetic) VALUES ('outlet1', 1)")
+    outlet1_id = cursor.lastrowid
+    cursor = conn.execute("INSERT INTO outlet (name, is_synthetic) VALUES ('outlet2', 1)")
+    outlet2_id = cursor.lastrowid
+
+    cursor = conn.execute(
+        "INSERT INTO article (outlet_id, url, ingest_status, dedup_cluster_id) VALUES (?, ?, 'ok', 7)",
+        (outlet1_id, "http://ex.com/a"),
+    )
+    article1_id = cursor.lastrowid
+    cursor = conn.execute(
+        "INSERT INTO article (outlet_id, url, ingest_status, dedup_cluster_id) VALUES (?, ?, 'ok', 8)",
+        (outlet2_id, "http://ex.com/b"),
+    )
+    article2_id = cursor.lastrowid
+
+    cursor = conn.execute("INSERT INTO event (label) VALUES (?)", ("test",))
+    event_id = cursor.lastrowid
+
+    conn.execute(
+        "INSERT INTO claim (article_id, event_id, certainty, valence, extraction_score) "
+        "VALUES (?, ?, 0.5, 0.0, 0.9)",
+        (article1_id, event_id),
+    )
+    conn.execute(
+        "INSERT INTO claim (article_id, event_id, certainty, valence, extraction_score) "
+        "VALUES (?, ?, 0.5, 0.0, 0.9)",
+        (article2_id, event_id),
+    )
+    conn.commit()
+
+    label = corroboration_label(conn, event_id)
+    assert label == "triangulated"

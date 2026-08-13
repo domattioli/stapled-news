@@ -16,6 +16,7 @@ import io
 import json
 import os
 import re
+import sys
 import time
 import urllib.parse
 import urllib.request
@@ -207,16 +208,45 @@ def main():
 
     out = os.path.join(OUT_DIR, "headlines.csv.gz")
     # Accumulate across runs: prior corpus rows are kept (URL-keyed).
+    prior_row_count = 0
+    prior_merge_ok = True
     if os.path.exists(out):
         try:
             with gzip.open(out, "rt", encoding="utf-8") as f:
                 for prior in csv.DictReader(f):
+                    prior_row_count += 1
                     rows.setdefault(prior["url"], (
                         prior["domain"], prior["title"], prior["url"],
                         prior["seendate"], prior["source"],
                     ))
         except Exception as e:  # noqa: BLE001
+            prior_merge_ok = False
             report.append(f"- prior-corpus merge failed: {type(e).__name__}")
+
+    # Refuse to silently shrink the committed corpus: a failed (or partial,
+    # e.g. truncated-mid-DictReader) prior-merge must not result in
+    # overwriting headlines.csv.gz with just this run's freshly fetched rows
+    # in place of the full accreted corpus.
+    if not prior_merge_ok or (prior_row_count > 0 and len(rows) < prior_row_count):
+        if not prior_merge_ok:
+            report.append(
+                f"- ABORTING write: prior-corpus read failed after {prior_row_count} "
+                "rows; refusing to overwrite headlines.csv.gz with a possibly-partial "
+                "merge. Leaving headlines.csv.gz untouched."
+            )
+        else:
+            report.append(
+                f"- ABORTING write: merged total {len(rows)} rows < prior corpus's "
+                f"{prior_row_count} rows. "
+                "Leaving headlines.csv.gz untouched to avoid shrinking the corpus."
+            )
+        report.insert(2, f"**Total unique headlines: {len(rows)} (NOT WRITTEN)**")
+        with open(os.path.join(OUT_DIR, "FETCH_REPORT.md"), "w") as f:
+            f.write("\n".join(report) + "\n")
+        print(f"ABORT: refusing to overwrite {out} "
+              f"(prior_merge_ok={prior_merge_ok}, prior_row_count={prior_row_count})")
+        sys.exit(1)
+
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow(["domain", "title", "url", "seendate", "source"])
