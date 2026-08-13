@@ -203,31 +203,65 @@ def realign_all(
             else:
                 candidate_pairs.add((j, idx))
 
-    # 6. Score pairs and generate merge edges
+    # 6. Score pairs and generate merge edges.
+    #
+    # Scored in batches rather than pair-by-pair. The per-pair form
+    # (combined_matrix[i].dot(combined_matrix[j].T)) spends nearly all of its
+    # time in scipy call overhead, which made a full-corpus realign impractical:
+    # cost scales with candidate-pair count, and a ~43k-article corpus generates
+    # millions of pairs. Rows are already L2-normalised, so the row-wise product
+    # of two gathered blocks summed along axis 1 is exactly the same cosine, just
+    # computed for a whole batch at once.
+    #
+    # A pair can only merge if it clears `guard_floor` (a necessary condition of
+    # the test below), so the per-pair entity-set work runs on survivors only
+    # instead of every candidate. Merge decisions are unchanged, and union-find
+    # is order-independent, so the resulting clusters match the scalar version.
     merge_edges = []
-    for i, j in candidate_pairs:
-        cosine_sim = float(combined_matrix[i].dot(combined_matrix[j].T).toarray()[0, 0])
+    guard_floor = similarity_threshold - 0.15
+    scored_matrix = combined_matrix.tocsr()
+    pair_batch_size = 50_000
 
-        # Apply entity boost if enabled
-        effective_sim = cosine_sim
-        if entity_mode == "boost" and claim_entities[i] and claim_entities[j]:
-            # Count phrase/token overlaps
-            entity_overlap = len(claim_entities[i] & claim_entities[j])
-            if entity_overlap > 0:
-                effective_sim = cosine_sim + 0.1
+    if candidate_pairs:
+        pair_array = np.fromiter(
+            (idx for pair in candidate_pairs for idx in pair),
+            dtype=np.int32,
+            count=2 * len(candidate_pairs),
+        ).reshape(-1, 2)
 
-        # Merge if effective_sim >= threshold AND cosine >= threshold - 0.15
-        if effective_sim >= similarity_threshold and cosine_sim >= similarity_threshold - 0.15:
-            # Hard guard: disjoint entity sets with both having entities -> higher bar
-            if (
-                claim_entities[i]
-                and claim_entities[j]
-                and len(claim_entities[i] & claim_entities[j]) == 0
-            ):
-                if cosine_sim < 0.75:
-                    continue  # Too risky to merge
+        for start in range(0, pair_array.shape[0], pair_batch_size):
+            batch = pair_array[start : start + pair_batch_size]
+            left = batch[:, 0]
+            right = batch[:, 1]
+            sims = np.asarray(
+                scored_matrix[left].multiply(scored_matrix[right]).sum(axis=1)
+            ).ravel()
 
-            merge_edges.append((i, j))
+            for offset in np.nonzero(sims >= guard_floor)[0]:
+                i = int(left[offset])
+                j = int(right[offset])
+                cosine_sim = float(sims[offset])
+
+                # Apply entity boost if enabled
+                effective_sim = cosine_sim
+                if entity_mode == "boost" and claim_entities[i] and claim_entities[j]:
+                    # Count phrase/token overlaps
+                    entity_overlap = len(claim_entities[i] & claim_entities[j])
+                    if entity_overlap > 0:
+                        effective_sim = cosine_sim + 0.1
+
+                # Merge if effective_sim >= threshold AND cosine >= threshold - 0.15
+                if effective_sim >= similarity_threshold and cosine_sim >= guard_floor:
+                    # Hard guard: disjoint entity sets with both having entities -> higher bar
+                    if (
+                        claim_entities[i]
+                        and claim_entities[j]
+                        and len(claim_entities[i] & claim_entities[j]) == 0
+                    ):
+                        if cosine_sim < 0.75:
+                            continue  # Too risky to merge
+
+                    merge_edges.append((i, j))
 
     # 7. Union-find to form clusters
     uf = UnionFind(len(claim_ids))
