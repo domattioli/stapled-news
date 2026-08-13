@@ -26,6 +26,7 @@ from stapled.analyze.consensus_distance import (
     panel_spectrum,
     consensus_lean_axis,
     regional_impact,
+    _lean_bucket_weights,
     PANEL_LEAN,
     PANEL_LEAN5,
 )
@@ -191,7 +192,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         consensus_bundle = {
             "generated_at": datetime.utcnow().isoformat(),
             "corpus": {
-                "repo": "defgsus/frontpage-archive-2026",
+                "repo": "stapled-news corpus/us/headlines.csv.gz (GDELT+RSS+Google News)",
                 "since": since,
                 "until": until,
                 "n_events": len(event_rows),
@@ -402,25 +403,43 @@ def _build_events_detail(article_rows, top_events, max_events=12):
     with the event centroid). The site colors low-alignment, high-weight words as
     the ones pushing a headline away from the stapled consensus.
     """
+    import re as _re
+
     by_event = {}
     for row in article_rows:
         by_event.setdefault(row["event_id"], []).append(row)
 
     detail = []
     for e in top_events[:max_events]:
-        members = by_event.get(e["event_id"], [])
-        if len(members) < 2:
+        full_members = by_event.get(e["event_id"], [])
+        if len(full_members) < 2:
             continue
+
+        # Word-level attribution against the SAME weighted centroid the printed
+        # distances came from (compute_distances: syndication-dedup + lean-bucket
+        # weighted, over every article for the event) - not a fresh uniform
+        # centroid refit on only the curated subset shown below, which could
+        # color a word green while its printed distance says the opposite.
+        full_titles = [m["title"] for m in full_members]
+        outlet_names = [m["outlet"] for m in full_members]
+        norm_titles = [_re.sub(r"\s+", " ", (t or "").strip().lower()) for t in full_titles]
+        dup_counts = {}
+        for nt in norm_titles:
+            dup_counts[nt] = dup_counts.get(nt, 0) + 1
+        synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
+        lean_w = _lean_bucket_weights(outlet_names)
+        full_impacts = token_impacts(full_titles, weights=synd_w * lean_w)
+
         # One row per outlet: keep that outlet's closest-to-consensus headline.
         best = {}
-        for m in members:
+        for m, imp in zip(full_members, full_impacts):
             cur = best.get(m["outlet"])
-            if cur is None or m["distance"] < cur["distance"]:
-                best[m["outlet"]] = m
-        members = sorted(best.values(), key=lambda m: m["distance"])
+            if cur is None or m["distance"] < cur[0]["distance"]:
+                best[m["outlet"]] = (m, imp)
+        members = sorted((p[0] for p in best.values()), key=lambda m: m["distance"])
         members = _curate_members(members)
-        titles = [m["title"] for m in members]
-        impacts = token_impacts(titles)
+        impacts_by_outlet = {m["outlet"]: imp for m, imp in best.values()}
+        impacts = [impacts_by_outlet[m["outlet"]] for m in members]
         detail.append({
             "event_id": e["event_id"],
             "consensus_headline": e["consensus_headline"],
@@ -444,7 +463,7 @@ def _syndication_stats(article_rows):
     import re as _re
     groups = {}
     for r in article_rows:
-        key = (r["event_id"], _re.sub(r"\\s+", " ", (r["title"] or "").strip().lower()))
+        key = (r["event_id"], _re.sub(r"\s+", " ", (r["title"] or "").strip().lower()))
         groups.setdefault(key, []).append(r["outlet"])
     total = len(article_rows)
     collapsed = sum(len(v) - 1 for v in groups.values() if len(v) > 1)

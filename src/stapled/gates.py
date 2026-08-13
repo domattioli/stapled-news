@@ -40,10 +40,15 @@ def assert_recovery_passed(conn: sqlite3.Connection) -> None:
 
 def corroboration_label(conn: sqlite3.Connection, event_id: int) -> str:
     """Return 'triangulated' if claims supporting event come from >=2 distinct outlets, else 'uncorroborated'."""
-    # Count distinct outlets (or dedup clusters if set) for claims tied to this event
+    # Count distinct outlets (or dedup clusters if set) for claims tied to this event.
+    # dedup_cluster_id and outlet_id are separate ID namespaces (both small ints
+    # starting at 1) - namespace-prefix them before COALESCE so a cluster id never
+    # collides with an unrelated outlet id (or vice versa).
     cursor = conn.execute(
         """
-        SELECT COUNT(DISTINCT COALESCE(a.dedup_cluster_id, a.outlet_id))
+        SELECT COUNT(DISTINCT CASE WHEN a.dedup_cluster_id IS NOT NULL
+                                    THEN 'c' || a.dedup_cluster_id
+                                    ELSE 'o' || a.outlet_id END)
         FROM claim c
         JOIN article a ON c.article_id = a.id
         WHERE c.event_id = ?

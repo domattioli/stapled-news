@@ -164,11 +164,12 @@ def realign_all(
         else set()
     )
 
-    # Second pass: index rare words for claims with no discriminative entity
-    # (none at all, or only oversized ones) so they still get blocking candidates.
-    for idx, entities in enumerate(claim_entities):
-        if any(e not in oversized_entities for e in entities):
-            continue
+    # Second pass: index rare words for ALL claims (not just no-entity ones) so a
+    # no-entity claim's rare-word fallback can still surface an entity-bearing
+    # claim as a candidate - entity-bearing claims only *generate* candidates via
+    # the entity block below, but they must still be *findable* by rare word,
+    # or a no-entity/entity-bearing pair with identical text is never candidated.
+    for idx in range(len(claim_entities)):
         word_indices = word_matrix[idx].nonzero()[1]
         for word_idx in word_indices:
             if vocab_df[word_idx] <= rare_threshold:

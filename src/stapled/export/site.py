@@ -152,6 +152,12 @@ def export_run(conn: sqlite3.Connection, run_id: int, out_dir: str) -> None:
         "charts": chart_metadata,
     }
 
+    # Add note for real runs
+    if corpus_id is None:
+        # Real run: add footer note about derived outlets
+        footer_note = "Outlets derived from ISOT dataset labels (reuters + fake:<channel> pseudo-outlets); reliability/bias are model estimates, not editorial judgments."
+        run_data["footer_note"] = footer_note
+
     # Write run_<run_id>.json
     run_json_path = out_path / f"run_{run_id_val}.json"
     run_json_path.write_text(json.dumps(run_data, indent=2))
@@ -175,10 +181,3 @@ def export_run(conn: sqlite3.Connection, run_id: int, out_dir: str) -> None:
     run_html = run_template.render(**run_data)
     run_html_path = out_path / f"run_{run_id_val}.html"
     run_html_path.write_text(run_html)
-
-    # Add note for real runs
-    if corpus_id is None:
-        # Real run: add footer note about derived outlets
-        footer_note = "Outlets derived from ISOT dataset labels (reuters + fake:<channel> pseudo-outlets); reliability/bias are model estimates, not editorial judgments."
-        # Could add to run_data or template context
-        run_data["footer_note"] = footer_note

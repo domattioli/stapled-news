@@ -419,10 +419,6 @@ class OnlineEM:
 
             stats = batch_stats[outlet_id]
 
-            # Update sens/spec
-            self.sens[outlet_id] = (1 - gamma) * self.sens[outlet_id] + gamma * stats["sens"]
-            self.spec[outlet_id] = (1 - gamma) * self.spec[outlet_id] + gamma * stats["spec"]
-
             # Update expected confusion matrix counts
             self.exp_tp[outlet_id] = (1 - gamma) * self.exp_tp[outlet_id] + gamma * stats["exp_tp"]
             self.exp_fp[outlet_id] = (1 - gamma) * self.exp_fp[outlet_id] + gamma * stats["exp_fp"]
@@ -445,8 +441,12 @@ class OnlineEM:
             tn = self.exp_tn[outlet_id]
             fn = self.exp_fn[outlet_id]
 
-            sens = tp / (tp + fn) if (tp + fn) > 0 else 0.5
-            spec = tn / (tn + fp) if (tn + fp) > 0 else 0.5
+            # M-step: re-estimate sens/spec from the RM-smoothed expected confusion
+            # counts so the next E-step actually reweights outlets by reliability.
+            sens = tp / (tp + fn) if (tp + fn) > 0 else self.sens[outlet_id]
+            spec = tn / (tn + fp) if (tn + fp) > 0 else self.spec[outlet_id]
+            self.sens[outlet_id] = sens
+            self.spec[outlet_id] = spec
             snapshot_rows.append((t, outlet_id, (sens + spec) / 2.0))
 
         if suffstats_rows:
@@ -465,7 +465,9 @@ class OnlineEM:
                 snapshot_rows,
             )
 
-        # Update prior
+        # NOTE: self.pi (the state prior) is not re-estimated here — accumulate()
+        # only receives outlet-keyed batch_stats, not the batch's posteriors, so
+        # there is no M-step input for pi. This just keeps it within bounds.
         self.pi = np.clip(self.pi, 0.01, 0.99)
 
         # Persist state

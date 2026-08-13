@@ -652,7 +652,6 @@
                 <li><a href="#sec-regional">The unrated half</a><span class="toc-note">regional outlets' impact</span></li>
                 <li><a href="#sec-validation">Validation</a><span class="toc-note">does the method work</span></li>
                 <li><a href="#sec-future">What's next</a><span class="toc-note">future directions</span></li>
-                <li><a href="#sec-future">What's next</a><span class="toc-note">future directions</span></li>
             </ol>
         </nav>
 
@@ -828,7 +827,7 @@
         <div class="section" id="sec-explorer">
             <h2 class="section-title">Each Outlet's Rewrite: Where Wording Diverges from Consensus Phrase</h2>
             <p class="tldr"><b>TL;DR</b> &nbsp;Read the consensus headline, then each outlet's version below it. Green words align with the consensus wording; red words diverge, with color intensity scaling to the word's effect on distance score. Each story shows at most one outlet per AllSides lean category (left, lean-left, center, lean-right, right, unrated), so no single camp fills the card.</p>
-            <p class="figure-caption" style="margin-bottom: 25px;">Consensus headline at top; per-member row shows wording, distance score, and AllSides lean badge. Example stories are drawn from the trailing recent week so they stay current, while the ranking and aggregate charts elsewhere on this page reflect the full corpus (see date ranges above).</p>
+            <p class="figure-caption" style="margin-bottom: 25px;">Consensus headline at top; per-member row shows wording, distance score, and AllSides lean badge. Example stories are the most-covered stories (by outlet count) across the full corpus, the same population the ranking and aggregate charts elsewhere on this page reflect (see date ranges above) — not limited to the trailing week.</p>
             <div id="explorer-container">
                 <!-- Populated by JS -->
             </div>
@@ -852,8 +851,8 @@
 
         <!-- Validation -->
         <div class="section" id="sec-validation">
-            <h2 class="section-title">Both Validation Gates Pass: Planted Baseline and Split-Half Stability</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;V1 (planted baseline) passes: the algorithm correctly separates copiers from noise. V2 (split-half stability) now passes too, exceeding its 0.6 Spearman-correlation threshold at this corpus size; V2 previously failed when the corpus held far fewer stories.</p>
+            <h2 class="section-title">One of Two Validation Gates Pass: Planted Baseline Passes, Split-Half Stability Does Not Yet</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;V1 (planted baseline) passes: the algorithm correctly separates copiers from noise. V2 (split-half stability) still fails, short of its 0.6 Spearman-correlation threshold at this corpus size.</p>
             <div class="validation-cards" id="validation-cards">
                 <!-- Populated by JS -->
             </div>
@@ -864,7 +863,7 @@
             <div class="article-kicker" style="margin-bottom: 15px;">WHAT'S NEXT</div>
             <h2 class="section-title">Five Paths: Data Depth, Method Improvement, Visualization, and Validation at Scale</h2>
             <ol style="max-width: 740px; margin: 25px auto; font-size: 15px; line-height: 1.7; color: #333;">
-                <li><strong>More two-camp stories.</strong> The direction axis draws on a narrower subset (stories with both a left-rated and a right-rated outlet) than the aggregate distance ranking; continued hourly collection grows that subset and tightens its confidence interval, now that split-half stability (V2) already passes on the full corpus.</li>
+                <li><strong>More two-camp stories.</strong> The direction axis draws on a narrower subset (stories with both a left-rated and a right-rated outlet) than the aggregate distance ranking; continued hourly collection grows that subset and tightens its confidence interval, and should also help split-half stability (V2) clear its gate, which it does not yet on the current corpus.</li>
                 <li><strong>Expand unrated coverage.</strong> An AllSides 2024 CSV plus an MBFC fallback would encode more of the outlets the direction analysis currently folds into a single unrated bucket, letting more of the corpus be individually placed on the left-right axis.</li>
                 <li><strong>Near-duplicate syndication beyond exact matches.</strong> Current method catches byte-identical wire copy. MinHash would capture light edits ("The Latest: …", trailing attributions) that exact-match dedup misses.</li>
                 <li><strong>Embedding distance instead of lexical.</strong> Sentence embeddings measure semantic drift; two headlines paraphrasing the same idea read as closer than surface-word cosine allows.</li>
@@ -1940,7 +1939,7 @@
                             <div style="margin-top: 15px;">
                                 <span class="validation-pill ${v2.gate_pass ? 'pill-pass' : 'pill-fail'}">${v2.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
                             </div>
-                            ${v2.rho < 0.6 ? '<div class="validation-note">Stability below target: corpus too young or insufficient week coverage.</div>' : ''}
+                            ${v2.rho < 0.6 ? '<div class="validation-note">Stability below target: too few outlets have ≥10 articles in both random halves at this corpus size.</div>' : ''}
                         `;
                         validationCardsDiv.appendChild(card);
                     }

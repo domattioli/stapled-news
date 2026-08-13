@@ -704,15 +704,19 @@ def train_stream(
             extract_all_unextracted(conn)
             update_all_framing(conn)
 
-            # Get newly created claim IDs
+            # Get newly created claim IDs. Chunk the IN(...) — SQLite caps bound
+            # parameters per statement (SQLITE_MAX_VARIABLE_NUMBER, 32766 by
+            # default), which a single large batch could otherwise exceed.
             new_claim_ids = []
-            cursor = conn.execute(
-                "SELECT id FROM claim WHERE article_id IN ({})".format(
-                    ",".join("?" * len(article_ids))
-                ),
-                article_ids,
-            )
-            new_claim_ids = [row[0] for row in cursor.fetchall()]
+            for i in range(0, len(article_ids), 900):
+                id_chunk = article_ids[i:i + 900]
+                cursor = conn.execute(
+                    "SELECT id FROM claim WHERE article_id IN ({})".format(
+                        ",".join("?" * len(id_chunk))
+                    ),
+                    id_chunk,
+                )
+                new_claim_ids.extend(row[0] for row in cursor.fetchall())
 
             # Align incremental
             if new_claim_ids:
