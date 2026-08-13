@@ -447,13 +447,16 @@ def test_lean_bucket_weights_single_bucket_is_uniform():
 
 
 def test_compute_distances_lean_balanced_controls_for_panel_skew(tmp_path):
-    """A story covered by 6 left-rated outlets writing near-identical wording
+    """A story covered by 6 left-rated outlets (split across two distinct wire
+    headlines, so syndication-dedup alone does not already equalize the camps)
     and 1 right-rated outlet writing distinctly different wording: under raw
     per-article weighting the centroid is dominated by the left bloc's exact
     phrasing (left distance ~0, right distance high). Under lean-balanced
-    weighting, left and right each get equal say in the centroid, which must
-    pull the centroid toward the right outlet's wording — shrinking its
-    distance relative to the unbalanced case."""
+    weighting, left and right each get equal say in the centroid (half the
+    total weight each, regardless of the left camp's two-vs-one effective-vote
+    split), which must pull the centroid further toward the right outlet's
+    wording than dedup alone does — shrinking its distance relative to the
+    dedup-only (unbalanced) case."""
     db_path = tmp_path / "test_lean_balance.db"
     conn = connect(str(db_path))
 
@@ -461,6 +464,14 @@ def test_compute_distances_lean_balanced_controls_for_panel_skew(tmp_path):
         "nytimes.com", "cnn.com", "washingtonpost.com",
         "npr.org", "msnbc.com", "vox.com",
     ]
+    left_titles = {
+        "nytimes.com": "Senate passes the infrastructure funding bill",
+        "cnn.com": "Senate passes the infrastructure funding bill",
+        "washingtonpost.com": "Senate passes the infrastructure funding bill",
+        "npr.org": "Senate approves the infrastructure spending package",
+        "msnbc.com": "Senate approves the infrastructure spending package",
+        "vox.com": "Senate approves the infrastructure spending package",
+    }
     right_outlets = ["foxnews.com"]
     all_outlets = left_outlets + right_outlets
 
@@ -477,7 +488,7 @@ def test_compute_distances_lean_balanced_controls_for_panel_skew(tmp_path):
             "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
             "VALUES (?, ?, ?, ?, ?, ?)",
             (outlet_ids[name], f"url-{article_id}",
-             "Senate passes the infrastructure funding bill", "body", "2024-01-01", "ok"),
+             left_titles[name], "body", "2024-01-01", "ok"),
         )
         conn.execute(
             "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",

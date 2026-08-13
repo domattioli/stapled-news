@@ -427,7 +427,9 @@ def _build_events_detail(article_rows, top_events, max_events=12):
         for nt in norm_titles:
             dup_counts[nt] = dup_counts.get(nt, 0) + 1
         synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
-        lean_w = _lean_bucket_weights(outlet_names)
+        # _lean_bucket_weights folds synd_w in already (bucket-normalized over
+        # effective votes) — do not multiply synd_w in again below.
+        lean_w = _lean_bucket_weights(outlet_names, synd_w)
 
         # One row per outlet: keep that outlet's closest-to-consensus headline.
         # Picked from the already-computed "distance" field so we don't need
@@ -444,7 +446,7 @@ def _build_events_detail(article_rows, top_events, max_events=12):
         # over the FULL member list (see token_impacts docstring) - avoids
         # densifying and attributing every one of full_members' rows.
         curated_idx = [best_idx[m["outlet"]] for m in members]
-        impacts = token_impacts(full_titles, weights=synd_w * lean_w, attribute_indices=curated_idx)
+        impacts = token_impacts(full_titles, weights=lean_w, attribute_indices=curated_idx)
         detail.append({
             "event_id": e["event_id"],
             "consensus_headline": e["consensus_headline"],
