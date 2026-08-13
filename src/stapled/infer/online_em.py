@@ -4,7 +4,6 @@ import sqlite3
 import numpy as np
 import json
 from datetime import datetime
-from typing import Dict, List, Optional
 
 
 class OnlineEM:
@@ -12,7 +11,7 @@ class OnlineEM:
 
     def __init__(
         self,
-        outlet_ids: List[int],
+        outlet_ids: list[int],
         tolerance: float = 1e-5,
         conn: sqlite3.Connection = None,
         dedup_voting: bool = True,
@@ -102,7 +101,7 @@ class OnlineEM:
         """Bind database connection."""
         self.conn = conn
 
-    def ensure_outlets(self, outlet_ids: List[int]) -> None:
+    def ensure_outlets(self, outlet_ids: list[int]) -> None:
         """Register outlets discovered after init (streaming creates outlets lazily)."""
         for o in outlet_ids:
             if o not in self.sens:
@@ -138,7 +137,7 @@ class OnlineEM:
         else:
             raise ValueError("Invalid event input format")
 
-    def _e_step_from_dicts(self, events: List[Dict]) -> Dict[int, np.ndarray]:
+    def _e_step_from_dicts(self, events: list[dict]) -> dict[int, np.ndarray]:
         """E-step from event dicts."""
         posteriors = {}
 
@@ -212,7 +211,7 @@ class OnlineEM:
 
         return posteriors
 
-    def _e_step_from_ids(self, event_ids: List[int], outlet_params: Dict = None) -> Dict[str, any]:
+    def _e_step_from_ids(self, event_ids: list[int], outlet_params: dict = None) -> dict[str, any]:
         """
         E-step on batch of events, loading from database.
 
@@ -407,7 +406,7 @@ class OnlineEM:
             "batch_ll": float(batch_ll),
         }
 
-    def accumulate(self, batch_stats: Dict, t: int, posteriors: Optional[Dict] = None) -> None:
+    def accumulate(self, batch_stats: dict, t: int, posteriors: dict | None = None) -> None:
         """
         Accumulate batch statistics with Robbins-Monro step size.
 
@@ -503,7 +502,7 @@ class OnlineEM:
 
         self.conn.commit()
 
-    def params(self) -> Dict[int, Dict[str, float]]:
+    def params(self) -> dict[int, dict[str, float]]:
         """
         Get current parameters.
 
