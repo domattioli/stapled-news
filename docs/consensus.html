@@ -678,7 +678,7 @@
         <!-- Hero Section: Beeswarm + Stats -->
         <div class="section" id="sec-overview" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="article-kicker" style="margin-bottom: 15px;">EVERY SOURCE, ONE DOT</div>
-            <p class="tldr"><b>TL;DR</b> &nbsp;527 outlets ranked by mean drift across 11,799 analyzed headlines: how far each outlet's typical wording sits from the consensus its peers converge on.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;<span id="tldr-outlets-overview">—</span> outlets ranked by mean drift across <span id="tldr-articles-overview">—</span> analyzed headlines: how far each outlet's typical wording sits from the consensus its peers converge on.</p>
             <div class="plotly-container">
                 <div id="hero-swarm"></div>
             </div>
@@ -695,11 +695,11 @@
 
         <div class="article-body" id="sec-take" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
             <div class="commentary-kicker">THE TAKE</div>
-            <p>The outlet nearest the consensus wording is <span id="top-outlet-text">—</span> (mean drift <span id="top-dist-text">—</span>) against a <span id="field-mean-text">—</span> field mean across 527 ranked outlets; farthest is <span id="bottom-outlet-text">—</span> (mean drift <span id="bottom-dist-text">—</span>). Outlets at either end of the ranking typically have few analyzed headlines each, so they mark the range rather than the most statistically stable individual estimates. The gap reflects outlet style, not political lean: outlets near consensus tend to run wire copy verbatim, while outlets far from it write more distinctive headlines for the same story. Left, center, and right outlets differ only slightly in mean drift (see the next section for the exact gap); distance is not a useful lean detector in practice.</p>
+            <p>The outlet nearest the consensus wording is <span id="top-outlet-text">—</span> (mean drift <span id="top-dist-text">—</span>) against a <span id="field-mean-text">—</span> field mean across <span id="ranked-outlets-text">—</span> ranked outlets; farthest is <span id="bottom-outlet-text">—</span> (mean drift <span id="bottom-dist-text">—</span>). Outlets at either end of the ranking typically have few analyzed headlines each, so they mark the range rather than the most statistically stable individual estimates. The gap reflects outlet style, not political lean: outlets near consensus tend to run wire copy verbatim, while outlets far from it write more distinctive headlines for the same story. Left, center, and right outlets differ only slightly in mean drift (see the next section for the exact gap); distance is not a useful lean detector in practice.</p>
 
             <p>Does the consensus wording itself lean, independent of style? A story covered by <span id="left-share-text">51</span> percent left-rated outlet share and <span id="right-share-text">24</span> percent right-rated share produces a raw average that leans left for arithmetic reasons alone, regardless of what any outlet actually wrote. We correct for this: the consensus centroid used for the direction analysis below weights left, center, right, and unrated outlets equally per story, so no single camp defines "consensus" simply by outnumbering the others. The direction section below reports what remains after that correction.</p>
 
-            <p>Corpus depth: <span id="n-events-text">141</span> analyzed stories. The collector adds roughly 500 headlines an hour; confidence intervals will keep narrowing, and individual outlet rankings may still shift, particularly near either end of the ranking where analyzed-headline counts are low.</p>
+            <p>Corpus depth: <span id="n-events-text">141</span> analyzed stories drawn from <span id="corpus-span-text">—</span> of collection. The collector adds roughly <span id="collector-rate-text">—</span> headlines a day; confidence intervals will keep narrowing, and individual outlet rankings may still shift, particularly near either end of the ranking where analyzed-headline counts are low.</p>
         </div>
 
         <div class="stats-strip" id="stats-strip">
@@ -728,7 +728,7 @@
         <!-- Chart 1: Outlet Ranking (FiveThirtyEight style) -->
         <div class="section" id="sec-ranking">
             <h2 class="section-title">Nearness to Consensus Tracks Wire-Copy Volume, Not Political Lean</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;527 outlets ranked by mean distance from consensus across 11,799 analyzed headlines. Outlets nearest consensus tend to be wire-copy-heavy affiliates with few analyzed headlines each; outlets farthest tend to write more distinctive headlines. Lean shows no correlation with distance.</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;<span id="tldr-outlets-ranking">—</span> outlets ranked by mean distance from consensus across <span id="tldr-articles-ranking">—</span> analyzed headlines. Outlets nearest consensus tend to be wire-copy-heavy affiliates with few analyzed headlines each; outlets farthest tend to write more distinctive headlines. Lean shows no correlation with distance.</p>
             <div class="plotly-container">
                 <div id="us-ranking"></div>
             </div>
@@ -1098,7 +1098,40 @@
                     setText('right-share-text', Math.round(usData.panel_composition.right.weighted_share*100));
                 }
                 if (usData.corpus && usData.corpus.n_events) setText('n-events-text', usData.corpus.n_events);
+                renderCorpusScale(usData);
             } catch (err) { console.error('section take failed:', err); }
+        }
+
+        // Corpus-scale figures that used to be hardcoded in the prose. Reading them
+        // from the bundle keeps the TL;DRs and the take honest on every refresh
+        // instead of drifting one run behind the data they describe.
+        function renderCorpusScale(usData) {
+            const corpus = usData.corpus || {};
+            const nOutlets = (usData.ranking || []).length || corpus.n_outlets || 0;
+            const nArticles = corpus.n_articles || (usData.articles || []).length || 0;
+            const outletsStr = nOutlets.toLocaleString();
+            const articlesStr = nArticles.toLocaleString();
+
+            setText('tldr-outlets-overview', outletsStr);
+            setText('tldr-articles-overview', articlesStr);
+            setText('ranked-outlets-text', outletsStr);
+            setText('tldr-outlets-ranking', outletsStr);
+            setText('tldr-articles-ranking', articlesStr);
+
+            // Collection rate: corpus-wide headlines per day over the window the
+            // bundle actually covers, so the figure tracks the cron cadence rather
+            // than restating the schedule the collector ran on at authoring time.
+            const since = corpus.since ? new Date(corpus.since) : null;
+            const until = corpus.until ? new Date(corpus.until) : null;
+            if (since && until && !isNaN(since) && !isNaN(until)) {
+                const days = Math.max(1, Math.round((until - since) / 86400000));
+                setText('corpus-span-text', days + (days === 1 ? ' day' : ' days'));
+                const total = corpus.n_corpus_articles || nArticles;
+                if (total) {
+                    const perDay = Math.round(total / days / 10) * 10;
+                    setText('collector-rate-text', perDay.toLocaleString());
+                }
+            }
         }
 
         function renderHeader(corpus) {
