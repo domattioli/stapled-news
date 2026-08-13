@@ -59,23 +59,35 @@ def build_event_vectors(titles: List[str]) -> Tuple[Dict, csr_matrix]:
     return (vectorizer_dict, combined)
 
 
-def _lean_bucket_weights(outlet_names: List[str]) -> np.ndarray:
+def _lean_bucket_weights(
+    outlet_names: List[str], synd_w: Optional[np.ndarray] = None
+) -> np.ndarray:
     """
     Per-article weights so each ideological bucket present among an event's
     outlets (left / center / right / unrated, via PANEL_LEAN) contributes
     equal total weight to that event's centroid — controlling for a panel
     that happens to include more outlets or articles from one camp than
     another (e.g. a corpus with more left-rated than right-rated outlets)
-    mechanically defining "consensus" as that camp's wording. Within a
-    bucket, articles split that bucket's share evenly; the caller combines
-    this with syndication weight for wire-copy dedup.
+    mechanically defining "consensus" as that camp's wording.
+
+    `synd_w` (optional, one entry per outlet_names, default all-1) is the
+    caller's syndication-dedup weight (1/dup_count). Within a bucket,
+    articles split that bucket's share in proportion to synd_w, normalized
+    over the bucket's OWN synd_w total — not article count — so a bucket
+    made mostly of wire copies of one headline still gets its full equal
+    share instead of having that share divided down by dedup on top of the
+    bucket split (a wire-heavy camp would otherwise be muted, not equalized).
+    The returned weights already fold in synd_w; callers must not multiply
+    synd_w in again.
     """
     buckets = [PANEL_LEAN.get(o, "unrated") for o in outlet_names]
-    bucket_n: Dict[str, int] = {}
-    for b in buckets:
-        bucket_n[b] = bucket_n.get(b, 0) + 1
-    share = 1.0 / len(bucket_n)
-    return np.array([share / bucket_n[b] for b in buckets])
+    if synd_w is None:
+        synd_w = np.ones(len(outlet_names))
+    bucket_synd_total: Dict[str, float] = {}
+    for b, sw in zip(buckets, synd_w):
+        bucket_synd_total[b] = bucket_synd_total.get(b, 0.0) + sw
+    share = 1.0 / len(bucket_synd_total)
+    return np.array([share * sw / bucket_synd_total[b] for b, sw in zip(buckets, synd_w)])
 
 
 def compute_distances(
@@ -161,12 +173,15 @@ def compute_distances(
         for nt in norm_titles:
             dup_counts[nt] = dup_counts.get(nt, 0) + 1
         synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
-        lean_w = _lean_bucket_weights(outlet_names) if lean_balanced else 1.0
+        # lean_w already folds synd_w in when lean_balanced (bucket-normalized
+        # over effective, syndication-collapsed votes — see _lean_bucket_weights);
+        # do not multiply synd_w in again here.
+        lean_w = _lean_bucket_weights(outlet_names, synd_w) if lean_balanced else synd_w
 
         if weights:
-            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * synd_w * lean_w
+            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * lean_w
         else:
-            w = synd_w * lean_w
+            w = lean_w
         w = w / w.sum()
         centroid = vectors.T.dot(w)
 
@@ -860,7 +875,9 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         L = _centroid(Lmask)
         R = _centroid(Rmask)
         outlet_names = [o for o, _ in members]
-        lean_w = _lean_bucket_weights(outlet_names) * synd_w
+        # _lean_bucket_weights folds synd_w in already (bucket-normalized over
+        # effective votes) — do not multiply synd_w in again here.
+        lean_w = _lean_bucket_weights(outlet_names, synd_w)
         lean_w = lean_w / lean_w.sum()
         C_vec = dense.T.dot(lean_w)
         C_norm = np.linalg.norm(C_vec)
