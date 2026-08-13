@@ -3,7 +3,6 @@
 import re
 import sqlite3
 import numpy as np
-from typing import Dict, List, Optional, Tuple
 from collections import defaultdict
 from datetime import datetime
 
@@ -12,7 +11,7 @@ from sklearn.preprocessing import normalize
 from scipy.sparse import hstack, csr_matrix
 
 
-def build_event_vectors(titles: List[str]) -> Tuple[Dict, csr_matrix]:
+def build_event_vectors(titles: list[str]) -> tuple[dict, csr_matrix]:
     """
     Build dual word+char TF-IDF vectors for titles.
 
@@ -60,7 +59,7 @@ def build_event_vectors(titles: List[str]) -> Tuple[Dict, csr_matrix]:
 
 
 def _lean_bucket_weights(
-    outlet_names: List[str], synd_w: Optional[np.ndarray] = None
+    outlet_names: list[str], synd_w: np.ndarray | None = None
 ) -> np.ndarray:
     """
     Per-article weights so each ideological bucket present among an event's
@@ -83,7 +82,7 @@ def _lean_bucket_weights(
     buckets = [PANEL_LEAN.get(o, "unrated") for o in outlet_names]
     if synd_w is None:
         synd_w = np.ones(len(outlet_names))
-    bucket_synd_total: Dict[str, float] = {}
+    bucket_synd_total: dict[str, float] = {}
     for b, sw in zip(buckets, synd_w):
         bucket_synd_total[b] = bucket_synd_total.get(b, 0.0) + sw
     share = 1.0 / len(bucket_synd_total)
@@ -93,9 +92,9 @@ def _lean_bucket_weights(
 def compute_distances(
     conn: sqlite3.Connection,
     min_outlets: int = 5,
-    weights: Optional[Dict[int, float]] = None,
+    weights: dict[int, float] | None = None,
     lean_balanced: bool = True,
-) -> Dict:
+) -> dict:
     """
     Compute consensus distance for all events with >= min_outlets.
 
@@ -237,10 +236,10 @@ def compute_distances(
 
 
 def aggregate_outlets(
-    article_rows: List[Dict],
+    article_rows: list[dict],
     seed: int = 42,
     n_boot: int = 1000,
-) -> List[Dict]:
+) -> list[dict]:
     """
     Aggregate distance metrics by outlet with bootstrap CIs.
 
@@ -323,9 +322,9 @@ def _fetch_in_chunks(
 
 def weekly_series(
     conn: sqlite3.Connection,
-    article_rows: List[Dict],
+    article_rows: list[dict],
     min_week_articles: int = 3,
-) -> Dict[str, List[Dict]]:
+) -> dict[str, list[dict]]:
     """
     Compute weekly time series of mean distance per outlet.
 
@@ -412,7 +411,7 @@ def weekly_series(
     return result
 
 
-def validate_planted(data_dict: Dict) -> Dict:
+def validate_planted(data_dict: dict) -> dict:
     """
     V1 sanity gate via synthetic planted outlets, measured against REAL event centroids.
 
@@ -505,9 +504,9 @@ def validate_planted(data_dict: Dict) -> Dict:
 
 
 def validate_split_half(
-    article_rows: List[Dict],
+    article_rows: list[dict],
     seed: int = 42,
-) -> Dict:
+) -> dict:
     """
     Validate stability via split-half Spearman correlation.
 
@@ -588,11 +587,11 @@ def validate_split_half(
 
 
 def token_impacts(
-    member_titles: List[str],
+    member_titles: list[str],
     max_events_tokens: int = 40,
-    weights: Optional[np.ndarray] = None,
-    attribute_indices: Optional[List[int]] = None,
-) -> List[List[Dict]]:
+    weights: np.ndarray | None = None,
+    attribute_indices: list[int] | None = None,
+) -> list[list[dict]]:
     """
     Per-headline word-level attribution of distance from the event centroid.
 
@@ -729,7 +728,7 @@ _THREE = {"left": "left", "lean-left": "left", "center": "center",
 PANEL_LEAN = {dom: _THREE[v] for dom, v in PANEL_LEAN5.items()}
 
 
-def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000) -> Dict:
+def lean_breakdown(article_rows: list[dict], seed: int = 42, n_boot: int = 1000) -> dict:
     """
     Mean distance from consensus by panel lean bucket, with bootstrap CIs.
 
@@ -743,7 +742,7 @@ def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000)
     longer drives the centroid.
     """
     rng = np.random.default_rng(seed)
-    groups: Dict[str, List[float]] = {"left": [], "center": [], "right": []}
+    groups: dict[str, list[float]] = {"left": [], "center": [], "right": []}
     unmapped = set()
     for r in article_rows:
         lean = PANEL_LEAN.get(r["outlet"])
@@ -775,7 +774,7 @@ def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000)
     return out
 
 
-def panel_composition(article_rows: List[Dict]) -> Dict:
+def panel_composition(article_rows: list[dict]) -> dict:
     """Panel makeup by lean bucket: outlet counts, article counts, and
     coverage-weighted article share. This is the composition the consensus
     centroid is built from — the direct evidence for or against a leaning panel.
@@ -801,7 +800,7 @@ def panel_composition(article_rows: List[Dict]) -> Dict:
     }
 
 
-def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int = 1000) -> Dict:
+def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int = 1000) -> dict:
     """
     Signed left<->right position of each consensus headline, not just its distance.
 
@@ -862,7 +861,9 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
             dup_counts[nt] = dup_counts.get(nt, 0) + 1
         synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
 
-        def _centroid(mask):
+        # synd_w bound as a default so the closure cannot pick up a later
+        # iteration's array if this is ever called after the loop advances.
+        def _centroid(mask, synd_w=synd_w):
             sub = dense[mask]
             sw = synd_w[mask]
             sw = sw / sw.sum() if sw.sum() > 0 else np.full(sw.shape, 1.0 / len(sw))
@@ -915,7 +916,7 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
     return out
 
 
-def panel_spectrum(article_rows: List[Dict]) -> Dict:
+def panel_spectrum(article_rows: list[dict]) -> dict:
     """Five-point AllSides spectrum of the panel: per-category outlet count,
     article count, and coverage-weighted share. Finer than the 3-bucket
     composition so the site can render a true left->right spectrum."""
@@ -942,7 +943,7 @@ def panel_spectrum(article_rows: List[Dict]) -> Dict:
     }
 
 
-def regional_impact(article_rows: List[Dict]) -> Dict:
+def regional_impact(article_rows: list[dict]) -> dict:
     """Footprint of AllSides-unrated outlets (mostly regional chains) on the
     corpus: their share of analyzed articles, their mean drift vs rated national
     outlets, and how many events they form the majority of. Unrated outlets carry

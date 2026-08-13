@@ -3,7 +3,6 @@
 import sqlite3
 import re
 import hashlib
-from typing import Dict, List, Set, Tuple
 
 
 class UnionFind:
@@ -58,7 +57,7 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
 
     # Banded bucketing: partition hash space into 4 bands of 16 bits
     # For each band, articles with same bucket are candidates
-    buckets: Dict[Tuple[int, str], List[int]] = {}
+    buckets: dict[tuple[int, str], list[int]] = {}
     for i, h in enumerate(hashes):
         for band in range(4):
             bucket_bits = _get_band_bits(h, band)
@@ -77,7 +76,7 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
                     uf.union(idx_i, idx_j)
 
     # Build clusters
-    clusters: Dict[int, List[int]] = {}
+    clusters: dict[int, list[int]] = {}
     for i in range(n):
         root = uf.find(i)
         if root not in clusters:
@@ -92,15 +91,15 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
     existing_rows = conn.execute(
         "SELECT body, dedup_cluster_id FROM article WHERE dedup_cluster_id IS NOT NULL"
     ).fetchall()
-    existing_buckets: Dict[Tuple[int, str], List[Tuple[int, int]]] = {}
+    existing_buckets: dict[tuple[int, str], list[tuple[int, int]]] = {}
     for existing_body, existing_cluster in existing_rows:
         eh = _simhash(existing_body)
         for band in range(4):
             bucket_key = (band, _get_band_bits(eh, band))
             existing_buckets.setdefault(bucket_key, []).append((eh, existing_cluster))
 
-    root_to_existing_cluster: Dict[int, int] = {}
-    root_to_existing_matches: Dict[int, Set[int]] = {}
+    root_to_existing_cluster: dict[int, int] = {}
+    root_to_existing_matches: dict[int, set[int]] = {}
     for root, members in clusters.items():
         matches = set()
         for member_idx in members:

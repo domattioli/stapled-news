@@ -2,7 +2,6 @@
 
 import re
 import sqlite3
-from typing import Dict, List, Optional, Tuple
 
 
 # Hedging lexicon
@@ -29,7 +28,7 @@ def update_framing_for_article(
     conn: sqlite3.Connection,
     article_id: int,
     body: str,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Update framing metadata (hedging, certainty, valence, attribution)
     for all claims from an article. Returns {claims_updated: int}.
@@ -67,8 +66,8 @@ def update_framing_for_article(
 
 
 def update_all_framing(
-    conn: sqlite3.Connection, article_ids: Optional[List[int]] = None
-) -> Dict[str, int]:
+    conn: sqlite3.Connection, article_ids: list[int] | None = None
+) -> dict[str, int]:
     """
     Update framing for claims without checking article.
 
@@ -115,7 +114,7 @@ def update_all_framing(
 
 def _extract_hedging_certainty(
     text: str, claim_text: str
-) -> Tuple[str, float]:
+) -> tuple[str, float]:
     """
     Determine hedging level (none/weak/strong) and certainty [0.05, 1.0].
     Certainty: 1.0 - 0.25*weak_hits - 0.5*strong_hits, clipped to [0.05, 1.0].
