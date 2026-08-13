@@ -213,7 +213,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         metrics = _compute_metrics(results, n_multi_outlet_events)
 
         # Create plot
-        png_path = _create_plot(results, out_path)
+        png_path = _create_plot(results, out_path, n_multi_outlet_events)
 
         conn.close()
 
@@ -263,7 +263,7 @@ def _run_em_and_score(conn, outlet_ids, outlet_info, event_ids, batch_size):
     for batch_idx in range(0, len(event_ids), batch_size):
         batch_ids = event_ids[batch_idx : batch_idx + batch_size]
         result = em.e_step_batch(batch_ids)
-        em.accumulate(result["batch_stats"], batch_idx // batch_size)
+        em.accumulate(result["batch_stats"], batch_idx // batch_size, posteriors=result["posteriors"])
 
     # Extract parameters and compute metrics
     params = em.params()
@@ -370,7 +370,7 @@ def _compute_metrics(results, n_multi_outlet_events):
     return metrics
 
 
-def _create_plot(results, out_path):
+def _create_plot(results, out_path, n_multi_outlet_events=None):
     """Create fivethirtyeight line chart of AUC vs anchor budget."""
     import matplotlib as mpl
 
@@ -420,7 +420,7 @@ def _create_plot(results, out_path):
     ax.legend(loc='lower right', fontsize=10)
 
     caption = (
-        f"Anchoring k of {results[0]['mean_fake_reliability'] if results else 'N'} multi-outlet events "
+        f"Anchoring k of {n_multi_outlet_events if n_multi_outlet_events is not None else 'N'} multi-outlet events "
         "breaks the labeling symmetry. Real outlet (reuters) vs synthetic (fake:*) classification."
     )
     ax.text(

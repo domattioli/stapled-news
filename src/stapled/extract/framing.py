@@ -2,7 +2,7 @@
 
 import re
 import sqlite3
-from typing import Dict, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 # Hedging lexicon
@@ -66,17 +66,44 @@ def update_framing_for_article(
     return {"claims_updated": count}
 
 
-def update_all_framing(conn: sqlite3.Connection) -> Dict[str, int]:
-    """Update framing for all claims without checking article."""
-    cursor = conn.execute(
-        """
-        SELECT DISTINCT a.id, a.body
-        FROM article a
-        JOIN claim c ON a.id = c.article_id
-        WHERE c.hedging = 'none' OR c.certainty = 0.5
-        ORDER BY a.id
+def update_all_framing(
+    conn: sqlite3.Connection, article_ids: Optional[List[int]] = None
+) -> Dict[str, int]:
     """
-    )
+    Update framing for claims without checking article.
+
+    The hedging='none' OR certainty=0.5 filter is meant to pick out
+    not-yet-framed claims, but framing an unhedged claim also PRODUCES
+    hedging='none' (certainty=1.0 doesn't match, but plenty of claims land
+    at certainty=0.5 via one strong hedge) - so it re-matches its own
+    output and callers that loop (train_stream, once per batch) would
+    re-frame the whole accumulated corpus every call. Pass article_ids to
+    scope the update to a known batch instead of relying on that filter.
+    """
+    if article_ids is not None:
+        if not article_ids:
+            return {"claims_updated": 0}
+        placeholders = ",".join("?" * len(article_ids))
+        cursor = conn.execute(
+            f"""
+            SELECT DISTINCT a.id, a.body
+            FROM article a
+            JOIN claim c ON a.id = c.article_id
+            WHERE a.id IN ({placeholders})
+            ORDER BY a.id
+        """,
+            article_ids,
+        )
+    else:
+        cursor = conn.execute(
+            """
+            SELECT DISTINCT a.id, a.body
+            FROM article a
+            JOIN claim c ON a.id = c.article_id
+            WHERE c.hedging = 'none' OR c.certainty = 0.5
+            ORDER BY a.id
+        """
+        )
 
     total = {"claims_updated": 0}
     for article_id, body in cursor.fetchall():

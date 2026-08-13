@@ -94,17 +94,39 @@ def extract_claims_from_article(
 
 def extract_all_unextracted(
     conn: sqlite3.Connection,
+    article_ids: Optional[List[int]] = None,
 ) -> Dict[str, int]:
-    """Extract claims from all articles without claims. Returns summary counts."""
-    cursor = conn.execute(
-        """
+    """Extract claims from articles without claims. Returns summary counts.
+
+    Pass article_ids to scope extraction to a known batch (mirrors
+    update_all_framing) so callers that loop per-batch (train_stream) don't
+    silently extract claims for out-of-batch articles that framing and
+    alignment never see.
+    """
+    if article_ids is not None:
+        if not article_ids:
+            return {"articles_processed": 0, "claims_created": 0}
+        placeholders = ",".join("?" * len(article_ids))
+        cursor = conn.execute(
+            f"""
+            SELECT DISTINCT a.id, a.title, a.body
+            FROM article a
+            LEFT JOIN claim c ON a.id = c.article_id
+            WHERE c.id IS NULL AND a.id IN ({placeholders})
+            ORDER BY a.id
+        """,
+            article_ids,
+        )
+    else:
+        cursor = conn.execute(
+            """
         SELECT DISTINCT a.id, a.title, a.body
         FROM article a
         LEFT JOIN claim c ON a.id = c.article_id
         WHERE c.id IS NULL
         ORDER BY a.id
     """
-    )
+        )
 
     rows = cursor.fetchall()
     total_counts = {"articles_processed": 0, "claims_created": 0}

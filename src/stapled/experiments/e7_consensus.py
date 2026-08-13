@@ -93,7 +93,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         for batch_idx in range(0, len(event_ids), batch_size):
             batch_ids = event_ids[batch_idx : batch_idx + batch_size]
             result = em.e_step_batch(batch_ids)
-            em.accumulate(result["batch_stats"], batch_idx // batch_size)
+            em.accumulate(result["batch_stats"], batch_idx // batch_size, posteriors=result["posteriors"])
 
         # Extract EM parameters for outlet agreement
         params = em.params()
@@ -117,7 +117,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         # Validation gates
         v1_validation = validate_planted(data_dict)
-        v2_validation = validate_split_half(conn, article_rows, seed=seed)
+        v2_validation = validate_split_half(article_rows, seed=seed)
 
         # Write outputs
         out_path = Path(out_dir)
@@ -428,18 +428,23 @@ def _build_events_detail(article_rows, top_events, max_events=12):
             dup_counts[nt] = dup_counts.get(nt, 0) + 1
         synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
         lean_w = _lean_bucket_weights(outlet_names)
-        full_impacts = token_impacts(full_titles, weights=synd_w * lean_w)
 
         # One row per outlet: keep that outlet's closest-to-consensus headline.
-        best = {}
-        for m, imp in zip(full_members, full_impacts):
-            cur = best.get(m["outlet"])
-            if cur is None or m["distance"] < cur[0]["distance"]:
-                best[m["outlet"]] = (m, imp)
-        members = sorted((p[0] for p in best.values()), key=lambda m: m["distance"])
+        # Picked from the already-computed "distance" field so we don't need
+        # per-title attribution over the full (possibly huge) member list just
+        # to find the winners - only the curated <=6 rows actually get shown.
+        best_idx = {}
+        for idx, m in enumerate(full_members):
+            cur = best_idx.get(m["outlet"])
+            if cur is None or m["distance"] < full_members[cur]["distance"]:
+                best_idx[m["outlet"]] = idx
+        members = sorted((full_members[i] for i in best_idx.values()), key=lambda m: m["distance"])
         members = _curate_members(members)
-        impacts_by_outlet = {m["outlet"]: imp for m, imp in best.values()}
-        impacts = [impacts_by_outlet[m["outlet"]] for m in members]
+        # Attribute only the curated rows, against the centroid fit/weighted
+        # over the FULL member list (see token_impacts docstring) - avoids
+        # densifying and attributing every one of full_members' rows.
+        curated_idx = [best_idx[m["outlet"]] for m in members]
+        impacts = token_impacts(full_titles, weights=synd_w * lean_w, attribute_indices=curated_idx)
         detail.append({
             "event_id": e["event_id"],
             "consensus_headline": e["consensus_headline"],
@@ -464,11 +469,16 @@ def _syndication_stats(article_rows):
     groups = {}
     for r in article_rows:
         key = (r["event_id"], _re.sub(r"\s+", " ", (r["title"] or "").strip().lower()))
-        groups.setdefault(key, []).append(r["outlet"])
+        g = groups.setdefault(key, {"raw_title": r["title"], "outlets": []})
+        g["outlets"].append(r["outlet"])
     total = len(article_rows)
-    collapsed = sum(len(v) - 1 for v in groups.values() if len(v) > 1)
+    collapsed = sum(len(v["outlets"]) - 1 for v in groups.values() if len(v["outlets"]) > 1)
     top = sorted(
-        ({"headline": k[1], "outlets": len(set(v))} for k, v in groups.items() if len(set(v)) > 1),
+        (
+            {"headline": v["raw_title"], "outlets": len(set(v["outlets"]))}
+            for v in groups.values()
+            if len(set(v["outlets"])) > 1
+        ),
         key=lambda x: -x["outlets"],
     )[:6]
     return {

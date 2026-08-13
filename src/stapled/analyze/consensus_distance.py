@@ -490,7 +490,6 @@ def validate_planted(data_dict: Dict) -> Dict:
 
 
 def validate_split_half(
-    conn: sqlite3.Connection,
     article_rows: List[Dict],
     seed: int = 42,
 ) -> Dict:
@@ -502,7 +501,6 @@ def validate_split_half(
     Reports Spearman ρ and passes if ρ >= 0.6.
 
     Args:
-        conn: SQLite connection
         article_rows: Output "articles" from compute_distances
         seed: Random seed for reproducible split
 
@@ -515,8 +513,7 @@ def validate_split_half(
     """
     from scipy.stats import spearmanr
 
-    article_ids = tuple(row["article_id"] for row in article_rows)
-    if not article_ids:
+    if not article_rows:
         return {"rho": 0.0, "n_outlets": 0, "gate_pass": False}
 
     # Extract unique events and randomly split them
@@ -579,6 +576,7 @@ def token_impacts(
     member_titles: List[str],
     max_events_tokens: int = 40,
     weights: Optional[np.ndarray] = None,
+    attribute_indices: Optional[List[int]] = None,
 ) -> List[List[Dict]]:
     """
     Per-headline word-level attribution of distance from the event centroid.
@@ -593,24 +591,34 @@ def token_impacts(
                   consensus; high alignment marks shared-with-consensus wording.
 
     Args:
-        member_titles: headlines to attribute.
+        member_titles: headlines used to fit the vectorizer and the centroid
+            (so the vocabulary/IDF and centroid match a caller's full-event
+            distance computation, even if only a subset is attributed below).
         max_events_tokens: cap on tokens attributed per headline.
         weights: optional per-title weight for the centroid (e.g. the same
             syndication/lean weighting compute_distances uses), so the centroid
             matches the one a caller's displayed distance was computed against.
             Defaults to a uniform mean over member_titles when omitted.
+        attribute_indices: optional subset of member_titles indices to run the
+            (expensive, per-title) attribution loop for. The centroid is still
+            fit and weighted over the FULL member_titles list; only the dense
+            row extraction + attribution below is limited to this subset, so a
+            caller with a huge member list and a handful of curated rows to
+            display doesn't have to densify/attribute the whole matrix.
+            Defaults to all indices when omitted.
 
-    Returns one list per member title: [{token, weight, alignment}], tokens in
-    original order, weights normalized per headline to sum to 1.
+    Returns one list per attributed title (all of member_titles, in order, if
+    attribute_indices is omitted; otherwise one per attribute_indices entry,
+    in that order): [{token, weight, alignment}], tokens in original order,
+    weights normalized per headline to sum to 1.
     """
     vec_dict, vectors = build_event_vectors(member_titles)
-    dense = np.asarray(vectors.todense())
     if weights is not None:
         w = np.asarray(weights, dtype=float)
         w = w / w.sum() if w.sum() > 0 else np.full(len(member_titles), 1.0 / len(member_titles))
-        centroid = dense.T.dot(w)
+        centroid = np.asarray(vectors.T.dot(w)).ravel()
     else:
-        centroid = dense.mean(axis=0)
+        centroid = np.asarray(vectors.mean(axis=0)).ravel()
     norm = np.linalg.norm(centroid)
     if norm > 0:
         centroid = centroid / norm
@@ -621,9 +629,12 @@ def token_impacts(
     char_features = char_vec.get_feature_names_out()
     n_word = len(word_features)
 
+    indices = range(len(member_titles)) if attribute_indices is None else attribute_indices
+
     out = []
-    for i, title in enumerate(member_titles):
-        a = dense[i]
+    for i in indices:
+        title = member_titles[i]
+        a = np.asarray(vectors[i].todense()).ravel()
         tokens = re.findall(r"\w[\w'’-]*", title)
         lowered = [t.lower() for t in tokens]
         toward = np.zeros(len(tokens))
@@ -825,9 +836,22 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         _, vecs = build_event_vectors(titles)
         dense = np.asarray(vecs.todense())
 
+        # Syndication weighting: collapse exact-duplicate headlines (same
+        # normalization as compute_distances) so a wire story carried
+        # verbatim by N outlets in one camp counts as a single vote toward
+        # that camp's centroid, not N - otherwise duplication manufactures
+        # false consensus inside the direction axis itself.
+        norm_titles = [re.sub(r"\s+", " ", (t or "").strip().lower()) for t in titles]
+        dup_counts = {}
+        for nt in norm_titles:
+            dup_counts[nt] = dup_counts.get(nt, 0) + 1
+        synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
+
         def _centroid(mask):
             sub = dense[mask]
-            v = sub.mean(axis=0)
+            sw = synd_w[mask]
+            sw = sw / sw.sum() if sw.sum() > 0 else np.full(sw.shape, 1.0 / len(sw))
+            v = sub.T.dot(sw)
             n = np.linalg.norm(v)
             return v / n if n > 0 else v
 
@@ -836,7 +860,8 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         L = _centroid(Lmask)
         R = _centroid(Rmask)
         outlet_names = [o for o, _ in members]
-        lean_w = _lean_bucket_weights(outlet_names)
+        lean_w = _lean_bucket_weights(outlet_names) * synd_w
+        lean_w = lean_w / lean_w.sum()
         C_vec = dense.T.dot(lean_w)
         C_norm = np.linalg.norm(C_vec)
         C = C_vec / C_norm if C_norm > 0 else C_vec
@@ -852,8 +877,12 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
             "event_id": eid,
             "position": round(t, 4),
             "separation": round(sep, 4),
-            "n_left": int(Lmask.sum()),
-            "n_right": int(Rmask.sum()),
+            # Effective (syndication-collapsed) vote counts, matching the
+            # weighting _centroid() actually uses to place L/R and the
+            # plotted position — not raw member counts, which overstate a
+            # camp dominated by copies of one wire headline (#C4).
+            "n_left": round(float(synd_w[Lmask].sum()), 1),
+            "n_right": round(float(synd_w[Rmask].sum()), 1),
             "consensus_headline": titles[int(np.argmin(dists))],
         })
 
