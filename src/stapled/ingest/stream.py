@@ -1,5 +1,6 @@
 """Streaming remote CSV ingestion with cursor resumption."""
 
+import codecs
 import sqlite3
 import urllib.request
 import urllib.error
@@ -105,8 +106,14 @@ def iter_remote_lines(
             malformed_count = 0
             total_records = 0
 
+            # Incremental decoder: carries any partial multi-byte UTF-8 sequence
+            # across the 8192-byte read boundary instead of mangling it into
+            # U+FFFD replacement chars (which would also drift consumed_bytes,
+            # since it's derived by re-encoding the decoded text).
+            decoder = codecs.getincrementaldecoder("utf-8")(errors="replace")
+
             for chunk in iter(lambda: response.read(8192), b""):
-                buffer += chunk.decode("utf-8", errors="replace")
+                buffer += decoder.decode(chunk)
 
                 # Split records: quoted (RFC 4180) or plain newline split
                 if quoting:
@@ -161,6 +168,9 @@ def iter_remote_lines(
                         batch_rows = []
                         batch_byte_count = 0
                         consumed_bytes = 0
+
+            # Flush any pending bytes trapped in the incremental decoder at EOF.
+            buffer += decoder.decode(b"", final=True)
 
             # Handle final incomplete record (file without trailing newline)
             if buffer:
@@ -274,14 +284,16 @@ def _split_plain_records(text: str) -> List[str]:
 
 def dedup_new_articles(conn: sqlite3.Connection, article_ids: List[int]) -> None:
     """
-    Insert article_ids into simhash_bucket (4 bands × 16-bit buckets).
-    Do NOT re-cluster; just bucket the new IDs for incremental joins later.
+    Insert article_ids into simhash_bucket (4 bands × 16-bit buckets), then join
+    each new article against whatever already shares a band bucket (Hamming
+    distance <= 6) so streamed near-duplicates get dedup_cluster_id set
+    incrementally, without re-clustering the whole table.
 
     Args:
         conn: Database connection
         article_ids: List of article IDs to bucket
     """
-    from stapled.ingest.dedup import _simhash, _get_band_bits
+    from stapled.ingest.dedup import _simhash, _get_band_bits, _hamming_distance
 
     cursor = conn.execute(
         "SELECT id, body FROM article WHERE id IN ({})".format(
@@ -291,14 +303,83 @@ def dedup_new_articles(conn: sqlite3.Connection, article_ids: List[int]) -> None
     )
     articles = cursor.fetchall()
 
+    hashes = {}
     for article_id, body in articles:
         h = _simhash(body)
+        hashes[article_id] = h
         for band in range(4):
             bucket_bits = _get_band_bits(h, band)
             conn.execute(
                 """INSERT OR IGNORE INTO simhash_bucket (band, bucketkey, article_id)
                    VALUES (?, ?, ?)""",
                 (band, bucket_bits, article_id),
+            )
+
+    conn.commit()
+
+    if not hashes:
+        return
+
+    # Seed the cluster ID counter past whatever dedup_articles() has already
+    # assigned, so incremental joins never collide with batch-assigned clusters.
+    next_cluster_id = (
+        conn.execute("SELECT COALESCE(MAX(dedup_cluster_id), 0) FROM article").fetchone()[0]
+        + 1
+    )
+
+    for article_id, h in hashes.items():
+        candidate_ids = set()
+        for band in range(4):
+            bucket_bits = _get_band_bits(h, band)
+            rows = conn.execute(
+                """SELECT article_id FROM simhash_bucket
+                   WHERE band = ? AND bucketkey = ? AND article_id != ?""",
+                (band, bucket_bits, article_id),
+            ).fetchall()
+            candidate_ids.update(r[0] for r in rows)
+
+        if not candidate_ids:
+            continue
+
+        cand_rows = conn.execute(
+            "SELECT id, body, dedup_cluster_id FROM article WHERE id IN ({})".format(
+                ",".join("?" * len(candidate_ids))
+            ),
+            list(candidate_ids),
+        ).fetchall()
+
+        matched_clusters = set()
+        matched_unclustered = []
+        for cand_id, cand_body, cand_cluster in cand_rows:
+            cand_hash = hashes.get(cand_id) or _simhash(cand_body)
+            if _hamming_distance(h, cand_hash) <= 6:
+                if cand_cluster is not None:
+                    matched_clusters.add(cand_cluster)
+                else:
+                    matched_unclustered.append(cand_id)
+
+        if not matched_clusters and not matched_unclustered:
+            continue  # band collision only; not an actual near-duplicate
+
+        if matched_clusters:
+            target_cluster = min(matched_clusters)
+            for other in matched_clusters - {target_cluster}:
+                conn.execute(
+                    "UPDATE article SET dedup_cluster_id = ? WHERE dedup_cluster_id = ?",
+                    (target_cluster, other),
+                )
+        else:
+            target_cluster = next_cluster_id
+            next_cluster_id += 1
+
+        conn.execute(
+            "UPDATE article SET dedup_cluster_id = ? WHERE id = ?",
+            (target_cluster, article_id),
+        )
+        for uid in matched_unclustered:
+            conn.execute(
+                "UPDATE article SET dedup_cluster_id = ? WHERE id = ?",
+                (target_cluster, uid),
             )
 
     conn.commit()

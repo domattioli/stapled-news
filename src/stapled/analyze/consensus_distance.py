@@ -286,6 +286,26 @@ def aggregate_outlets(
     return results
 
 
+def _fetch_in_chunks(
+    conn: sqlite3.Connection, sql_template: str, values, chunk_size: int = 900
+) -> list:
+    """Run a 'SELECT ... WHERE col IN ({})' query in chunks and concatenate the
+    rows. SQLite caps bound parameters per statement (SQLITE_MAX_VARIABLE_NUMBER,
+    32766 by default) — a single IN(...) built from the full analyzed-article set
+    can exceed that as the corpus grows, so chunk instead of binding it all at once.
+    """
+    rows = []
+    values = list(values)
+    for i in range(0, len(values), chunk_size):
+        chunk = values[i : i + chunk_size]
+        cursor = conn.execute(
+            sql_template.format(",".join("?" * len(chunk))),
+            chunk,
+        )
+        rows.extend(cursor.fetchall())
+    return rows
+
+
 def weekly_series(
     conn: sqlite3.Connection,
     article_rows: List[Dict],
@@ -314,24 +334,18 @@ def weekly_series(
         return {}
 
     # Get URLs from article table
-    cursor = conn.execute(
-        "SELECT id, url, published_at FROM article WHERE id IN ({})".format(
-            ",".join("?" * len(article_ids))
-        ),
-        article_ids,
+    rows = _fetch_in_chunks(
+        conn, "SELECT id, url, published_at FROM article WHERE id IN ({})", article_ids
     )
-    article_data = {row[0]: (row[1], row[2]) for row in cursor.fetchall()}
+    article_data = {row[0]: (row[1], row[2]) for row in rows}
 
     # Try to get first_seen from fp_article_meta
     urls = tuple(v[0] for v in article_data.values())
     if urls:
-        cursor = conn.execute(
-            "SELECT url, first_seen FROM fp_article_meta WHERE url IN ({})".format(
-                ",".join("?" * len(urls))
-            ),
-            urls,
+        rows = _fetch_in_chunks(
+            conn, "SELECT url, first_seen FROM fp_article_meta WHERE url IN ({})", urls
         )
-        fp_meta = {row[0]: row[1] for row in cursor.fetchall()}
+        fp_meta = {row[0]: row[1] for row in rows}
     else:
         fp_meta = {}
 
@@ -501,45 +515,9 @@ def validate_split_half(
     """
     from scipy.stats import spearmanr
 
-    # Get event_id -> ISO week for each article
-    article_week = {}
-
     article_ids = tuple(row["article_id"] for row in article_rows)
     if not article_ids:
         return {"rho": 0.0, "n_outlets": 0, "gate_pass": False}
-
-    # Get URLs and published_at from article table
-    cursor = conn.execute(
-        "SELECT id, url, published_at FROM article WHERE id IN ({})".format(
-            ",".join("?" * len(article_ids))
-        ),
-        article_ids,
-    )
-    article_data = {row[0]: (row[1], row[2]) for row in cursor.fetchall()}
-
-    # Try to get first_seen from fp_article_meta
-    urls = tuple(v[0] for v in article_data.values())
-    if urls:
-        cursor = conn.execute(
-            "SELECT url, first_seen FROM fp_article_meta WHERE url IN ({})".format(
-                ",".join("?" * len(urls))
-            ),
-            urls,
-        )
-        fp_meta = {row[0]: row[1] for row in cursor.fetchall()}
-    else:
-        fp_meta = {}
-
-    # Build article_week using fp_meta if available, else published_at
-    for article_id, (url, published_at) in article_data.items():
-        ts = fp_meta.get(url) or published_at
-        if ts:
-            try:
-                dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-                iso_week = dt.strftime("%G-W%V")
-                article_week[article_id] = iso_week
-            except (ValueError, AttributeError):
-                pass
 
     # Extract unique events and randomly split them
     unique_events = set(row["event_id"] for row in article_rows)
@@ -597,7 +575,11 @@ def validate_split_half(
     }
 
 
-def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List[List[Dict]]:
+def token_impacts(
+    member_titles: List[str],
+    max_events_tokens: int = 40,
+    weights: Optional[np.ndarray] = None,
+) -> List[List[Dict]]:
     """
     Per-headline word-level attribution of distance from the event centroid.
 
@@ -605,17 +587,30 @@ def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List
       weight    — the word's share of the headline's vector mass (Σ a_f², features
                   attributed to the word; bigram features split between both words,
                   char_wb n-grams assigned to the word containing them)
-      alignment — the fraction of that mass that overlaps the (uniform) member
-                  centroid (Σ a_f·c_f / Σ a_f²), in [0, ~1]. Low alignment with
-                  high weight marks the words pushing the headline away from
+      alignment — the fraction of that mass that overlaps the member centroid
+                  (Σ a_f·c_f / Σ a_f²), in [0, ~1]. Low alignment with high
+                  weight marks the words pushing the headline away from
                   consensus; high alignment marks shared-with-consensus wording.
+
+    Args:
+        member_titles: headlines to attribute.
+        max_events_tokens: cap on tokens attributed per headline.
+        weights: optional per-title weight for the centroid (e.g. the same
+            syndication/lean weighting compute_distances uses), so the centroid
+            matches the one a caller's displayed distance was computed against.
+            Defaults to a uniform mean over member_titles when omitted.
 
     Returns one list per member title: [{token, weight, alignment}], tokens in
     original order, weights normalized per headline to sum to 1.
     """
     vec_dict, vectors = build_event_vectors(member_titles)
     dense = np.asarray(vectors.todense())
-    centroid = dense.mean(axis=0)
+    if weights is not None:
+        w = np.asarray(weights, dtype=float)
+        w = w / w.sum() if w.sum() > 0 else np.full(len(member_titles), 1.0 / len(member_titles))
+        centroid = dense.T.dot(w)
+    else:
+        centroid = dense.mean(axis=0)
     norm = np.linalg.norm(centroid)
     if norm > 0:
         centroid = centroid / norm

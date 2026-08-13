@@ -84,11 +84,20 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
             clusters[root] = []
         clusters[root].append(i)
 
+    # Seed the cluster ID counter from existing clusters so a re-run (this
+    # function only loads articles WHERE dedup_cluster_id IS NULL) doesn't
+    # reissue IDs already held by clusters assigned on a prior run.
+    max_existing = conn.execute(
+        "SELECT COALESCE(MAX(dedup_cluster_id), 0) FROM article"
+    ).fetchone()[0]
+
     # Assign dedup_cluster_id for clusters with size >= 2
     cluster_count = 0
-    for cluster_idx, (root, members) in enumerate(clusters.items()):
+    next_cluster_id = max_existing + 1
+    for root, members in clusters.items():
         if len(members) >= 2:
-            cluster_id = cluster_idx + 1  # 1-indexed cluster ID
+            cluster_id = next_cluster_id
+            next_cluster_id += 1
             for member_idx in members:
                 article_id = article_ids[member_idx]
                 conn.execute(
