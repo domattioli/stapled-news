@@ -4,7 +4,6 @@ import sqlite3
 import numpy as np
 import json
 from datetime import datetime
-from typing import Dict, List
 
 
 class OnlineEM:
@@ -12,7 +11,7 @@ class OnlineEM:
 
     def __init__(
         self,
-        outlet_ids: List[int],
+        outlet_ids: list[int],
         tolerance: float = 1e-5,
         conn: sqlite3.Connection = None,
         dedup_voting: bool = True,
@@ -102,7 +101,7 @@ class OnlineEM:
         """Bind database connection."""
         self.conn = conn
 
-    def ensure_outlets(self, outlet_ids: List[int]) -> None:
+    def ensure_outlets(self, outlet_ids: list[int]) -> None:
         """Register outlets discovered after init (streaming creates outlets lazily)."""
         for o in outlet_ids:
             if o not in self.sens:
@@ -138,7 +137,7 @@ class OnlineEM:
         else:
             raise ValueError("Invalid event input format")
 
-    def _e_step_from_dicts(self, events: List[Dict]) -> Dict[int, np.ndarray]:
+    def _e_step_from_dicts(self, events: list[dict]) -> dict[int, np.ndarray]:
         """E-step from event dicts."""
         posteriors = {}
 
@@ -212,7 +211,7 @@ class OnlineEM:
 
         return posteriors
 
-    def _e_step_from_ids(self, event_ids: List[int], outlet_params: Dict = None) -> Dict[str, any]:
+    def _e_step_from_ids(self, event_ids: list[int], outlet_params: dict = None) -> dict[str, any]:
         """
         E-step on batch of events, loading from database.
 
@@ -238,25 +237,32 @@ class OnlineEM:
         } for o in self.outlet_ids}
         batch_ll = 0.0
 
-        # Load events and claims from DB
-        placeholders = ",".join("?" * len(event_ids))
-        cursor = self.conn.execute(
-            f"""
-            SELECT e.id, json_group_array(json_object(
-                'outlet_id', a.outlet_id,
-                'observation', CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END,
-                'certainty', COALESCE(c.certainty, 0.5),
-                'vote_key', CASE WHEN a.dedup_cluster_id IS NOT NULL THEN 'c' || a.dedup_cluster_id ELSE 'a' || a.id END
-            )) as claims_json
-            FROM event e
-            JOIN claim c ON e.id = c.event_id
-            JOIN article a ON c.article_id = a.id
-            WHERE e.id IN ({placeholders})
-            GROUP BY e.id
-            """,
-            event_ids,
-        )
-        event_rows = cursor.fetchall()
+        # Load events and claims from DB. Chunk the IN(...) — SQLite caps bound
+        # parameters per statement (SQLITE_MAX_VARIABLE_NUMBER, 32766 by
+        # default), which the full per-batch event set can otherwise exceed
+        # as the event table grows (mirrors _fetch_in_chunks in
+        # analyze/consensus_distance.py).
+        event_rows = []
+        for i in range(0, len(event_ids), 900):
+            chunk = event_ids[i : i + 900]
+            placeholders = ",".join("?" * len(chunk))
+            cursor = self.conn.execute(
+                f"""
+                SELECT e.id, json_group_array(json_object(
+                    'outlet_id', a.outlet_id,
+                    'observation', CASE WHEN c.action LIKE 'not-%' OR c.action IN ('did-not-occur', 'did not occur') THEN 0 ELSE 1 END,
+                    'certainty', COALESCE(c.certainty, 0.5),
+                    'vote_key', CASE WHEN a.dedup_cluster_id IS NOT NULL THEN 'c' || a.dedup_cluster_id ELSE 'a' || a.id END
+                )) as claims_json
+                FROM event e
+                JOIN claim c ON e.id = c.event_id
+                JOIN article a ON c.article_id = a.id
+                WHERE e.id IN ({placeholders})
+                GROUP BY e.id
+                """,
+                chunk,
+            )
+            event_rows.extend(cursor.fetchall())
 
         for event_id, claims_json in event_rows:
             claims = json.loads(claims_json)
@@ -400,13 +406,17 @@ class OnlineEM:
             "batch_ll": float(batch_ll),
         }
 
-    def accumulate(self, batch_stats: Dict, t: int) -> None:
+    def accumulate(self, batch_stats: dict, t: int, posteriors: dict | None = None) -> None:
         """
         Accumulate batch statistics with Robbins-Monro step size.
 
         Args:
             batch_stats: {outlet_id → {sens, spec, exp_tp, exp_fp, exp_tn, exp_fn, n_obs}}
             t: Batch index (0-indexed)
+            posteriors: optional {event_id → [p_s0, p_s1]} from this batch's
+                e_step_batch (result["posteriors"]), used to re-estimate the
+                state prior pi below. Omitted for backward compatibility -
+                without it pi stays at its previous value (only clipped).
         """
         # Robbins-Monro: γ_t = (t+2)**-0.6
         gamma = (t + 2.0) ** (-0.6)
@@ -418,10 +428,6 @@ class OnlineEM:
                 continue
 
             stats = batch_stats[outlet_id]
-
-            # Update sens/spec
-            self.sens[outlet_id] = (1 - gamma) * self.sens[outlet_id] + gamma * stats["sens"]
-            self.spec[outlet_id] = (1 - gamma) * self.spec[outlet_id] + gamma * stats["spec"]
 
             # Update expected confusion matrix counts
             self.exp_tp[outlet_id] = (1 - gamma) * self.exp_tp[outlet_id] + gamma * stats["exp_tp"]
@@ -445,8 +451,12 @@ class OnlineEM:
             tn = self.exp_tn[outlet_id]
             fn = self.exp_fn[outlet_id]
 
-            sens = tp / (tp + fn) if (tp + fn) > 0 else 0.5
-            spec = tn / (tn + fp) if (tn + fp) > 0 else 0.5
+            # M-step: re-estimate sens/spec from the RM-smoothed expected confusion
+            # counts so the next E-step actually reweights outlets by reliability.
+            sens = tp / (tp + fn) if (tp + fn) > 0 else self.sens[outlet_id]
+            spec = tn / (tn + fp) if (tn + fp) > 0 else self.spec[outlet_id]
+            self.sens[outlet_id] = sens
+            self.spec[outlet_id] = spec
             snapshot_rows.append((t, outlet_id, (sens + spec) / 2.0))
 
         if suffstats_rows:
@@ -465,7 +475,13 @@ class OnlineEM:
                 snapshot_rows,
             )
 
-        # Update prior
+        # M-step for pi: Robbins-Monro step toward this batch's mean P(state=1)
+        # posterior, the same smoothing accumulate() already applies to
+        # sens/spec above, so the class prior adapts to the observed positive-
+        # event base rate instead of staying pinned at its init value forever.
+        if posteriors:
+            batch_mean_p_s1 = float(np.mean([p[1] for p in posteriors.values()]))
+            self.pi = (1 - gamma) * self.pi + gamma * batch_mean_p_s1
         self.pi = np.clip(self.pi, 0.01, 0.99)
 
         # Persist state
@@ -486,7 +502,7 @@ class OnlineEM:
 
         self.conn.commit()
 
-    def params(self) -> Dict[int, Dict[str, float]]:
+    def params(self) -> dict[int, dict[str, float]]:
         """
         Get current parameters.
 

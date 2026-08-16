@@ -3,7 +3,6 @@
 import re
 import sqlite3
 import numpy as np
-from typing import Dict, List, Optional, Tuple
 from collections import defaultdict
 from datetime import datetime
 
@@ -12,7 +11,7 @@ from sklearn.preprocessing import normalize
 from scipy.sparse import hstack, csr_matrix
 
 
-def build_event_vectors(titles: List[str]) -> Tuple[Dict, csr_matrix]:
+def build_event_vectors(titles: list[str]) -> tuple[dict, csr_matrix]:
     """
     Build dual word+char TF-IDF vectors for titles.
 
@@ -59,31 +58,43 @@ def build_event_vectors(titles: List[str]) -> Tuple[Dict, csr_matrix]:
     return (vectorizer_dict, combined)
 
 
-def _lean_bucket_weights(outlet_names: List[str]) -> np.ndarray:
+def _lean_bucket_weights(
+    outlet_names: list[str], synd_w: np.ndarray | None = None
+) -> np.ndarray:
     """
     Per-article weights so each ideological bucket present among an event's
     outlets (left / center / right / unrated, via PANEL_LEAN) contributes
     equal total weight to that event's centroid — controlling for a panel
     that happens to include more outlets or articles from one camp than
     another (e.g. a corpus with more left-rated than right-rated outlets)
-    mechanically defining "consensus" as that camp's wording. Within a
-    bucket, articles split that bucket's share evenly; the caller combines
-    this with syndication weight for wire-copy dedup.
+    mechanically defining "consensus" as that camp's wording.
+
+    `synd_w` (optional, one entry per outlet_names, default all-1) is the
+    caller's syndication-dedup weight (1/dup_count). Within a bucket,
+    articles split that bucket's share in proportion to synd_w, normalized
+    over the bucket's OWN synd_w total — not article count — so a bucket
+    made mostly of wire copies of one headline still gets its full equal
+    share instead of having that share divided down by dedup on top of the
+    bucket split (a wire-heavy camp would otherwise be muted, not equalized).
+    The returned weights already fold in synd_w; callers must not multiply
+    synd_w in again.
     """
     buckets = [PANEL_LEAN.get(o, "unrated") for o in outlet_names]
-    bucket_n: Dict[str, int] = {}
-    for b in buckets:
-        bucket_n[b] = bucket_n.get(b, 0) + 1
-    share = 1.0 / len(bucket_n)
-    return np.array([share / bucket_n[b] for b in buckets])
+    if synd_w is None:
+        synd_w = np.ones(len(outlet_names))
+    bucket_synd_total: dict[str, float] = {}
+    for b, sw in zip(buckets, synd_w):
+        bucket_synd_total[b] = bucket_synd_total.get(b, 0.0) + sw
+    share = 1.0 / len(bucket_synd_total)
+    return np.array([share * sw / bucket_synd_total[b] for b, sw in zip(buckets, synd_w)])
 
 
 def compute_distances(
     conn: sqlite3.Connection,
     min_outlets: int = 5,
-    weights: Optional[Dict[int, float]] = None,
+    weights: dict[int, float] | None = None,
     lean_balanced: bool = True,
-) -> Dict:
+) -> dict:
     """
     Compute consensus distance for all events with >= min_outlets.
 
@@ -161,12 +172,15 @@ def compute_distances(
         for nt in norm_titles:
             dup_counts[nt] = dup_counts.get(nt, 0) + 1
         synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
-        lean_w = _lean_bucket_weights(outlet_names) if lean_balanced else 1.0
+        # lean_w already folds synd_w in when lean_balanced (bucket-normalized
+        # over effective, syndication-collapsed votes — see _lean_bucket_weights);
+        # do not multiply synd_w in again here.
+        lean_w = _lean_bucket_weights(outlet_names, synd_w) if lean_balanced else synd_w
 
         if weights:
-            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * synd_w * lean_w
+            w = np.array([weights.get(aid, 1.0) for aid in article_ids]) * lean_w
         else:
-            w = synd_w * lean_w
+            w = lean_w
         w = w / w.sum()
         centroid = vectors.T.dot(w)
 
@@ -222,10 +236,10 @@ def compute_distances(
 
 
 def aggregate_outlets(
-    article_rows: List[Dict],
+    article_rows: list[dict],
     seed: int = 42,
     n_boot: int = 1000,
-) -> List[Dict]:
+) -> list[dict]:
     """
     Aggregate distance metrics by outlet with bootstrap CIs.
 
@@ -286,11 +300,31 @@ def aggregate_outlets(
     return results
 
 
+def _fetch_in_chunks(
+    conn: sqlite3.Connection, sql_template: str, values, chunk_size: int = 900
+) -> list:
+    """Run a 'SELECT ... WHERE col IN ({})' query in chunks and concatenate the
+    rows. SQLite caps bound parameters per statement (SQLITE_MAX_VARIABLE_NUMBER,
+    32766 by default) — a single IN(...) built from the full analyzed-article set
+    can exceed that as the corpus grows, so chunk instead of binding it all at once.
+    """
+    rows = []
+    values = list(values)
+    for i in range(0, len(values), chunk_size):
+        chunk = values[i : i + chunk_size]
+        cursor = conn.execute(
+            sql_template.format(",".join("?" * len(chunk))),
+            chunk,
+        )
+        rows.extend(cursor.fetchall())
+    return rows
+
+
 def weekly_series(
     conn: sqlite3.Connection,
-    article_rows: List[Dict],
+    article_rows: list[dict],
     min_week_articles: int = 3,
-) -> Dict[str, List[Dict]]:
+) -> dict[str, list[dict]]:
     """
     Compute weekly time series of mean distance per outlet.
 
@@ -314,24 +348,18 @@ def weekly_series(
         return {}
 
     # Get URLs from article table
-    cursor = conn.execute(
-        "SELECT id, url, published_at FROM article WHERE id IN ({})".format(
-            ",".join("?" * len(article_ids))
-        ),
-        article_ids,
+    rows = _fetch_in_chunks(
+        conn, "SELECT id, url, published_at FROM article WHERE id IN ({})", article_ids
     )
-    article_data = {row[0]: (row[1], row[2]) for row in cursor.fetchall()}
+    article_data = {row[0]: (row[1], row[2]) for row in rows}
 
     # Try to get first_seen from fp_article_meta
     urls = tuple(v[0] for v in article_data.values())
     if urls:
-        cursor = conn.execute(
-            "SELECT url, first_seen FROM fp_article_meta WHERE url IN ({})".format(
-                ",".join("?" * len(urls))
-            ),
-            urls,
+        rows = _fetch_in_chunks(
+            conn, "SELECT url, first_seen FROM fp_article_meta WHERE url IN ({})", urls
         )
-        fp_meta = {row[0]: row[1] for row in cursor.fetchall()}
+        fp_meta = {row[0]: row[1] for row in rows}
     else:
         fp_meta = {}
 
@@ -383,7 +411,7 @@ def weekly_series(
     return result
 
 
-def validate_planted(data_dict: Dict) -> Dict:
+def validate_planted(data_dict: dict) -> dict:
     """
     V1 sanity gate via synthetic planted outlets, measured against REAL event centroids.
 
@@ -476,10 +504,9 @@ def validate_planted(data_dict: Dict) -> Dict:
 
 
 def validate_split_half(
-    conn: sqlite3.Connection,
-    article_rows: List[Dict],
+    article_rows: list[dict],
     seed: int = 42,
-) -> Dict:
+) -> dict:
     """
     Validate stability via split-half Spearman correlation.
 
@@ -488,7 +515,6 @@ def validate_split_half(
     Reports Spearman ρ and passes if ρ >= 0.6.
 
     Args:
-        conn: SQLite connection
         article_rows: Output "articles" from compute_distances
         seed: Random seed for reproducible split
 
@@ -501,45 +527,8 @@ def validate_split_half(
     """
     from scipy.stats import spearmanr
 
-    # Get event_id -> ISO week for each article
-    article_week = {}
-
-    article_ids = tuple(row["article_id"] for row in article_rows)
-    if not article_ids:
+    if not article_rows:
         return {"rho": 0.0, "n_outlets": 0, "gate_pass": False}
-
-    # Get URLs and published_at from article table
-    cursor = conn.execute(
-        "SELECT id, url, published_at FROM article WHERE id IN ({})".format(
-            ",".join("?" * len(article_ids))
-        ),
-        article_ids,
-    )
-    article_data = {row[0]: (row[1], row[2]) for row in cursor.fetchall()}
-
-    # Try to get first_seen from fp_article_meta
-    urls = tuple(v[0] for v in article_data.values())
-    if urls:
-        cursor = conn.execute(
-            "SELECT url, first_seen FROM fp_article_meta WHERE url IN ({})".format(
-                ",".join("?" * len(urls))
-            ),
-            urls,
-        )
-        fp_meta = {row[0]: row[1] for row in cursor.fetchall()}
-    else:
-        fp_meta = {}
-
-    # Build article_week using fp_meta if available, else published_at
-    for article_id, (url, published_at) in article_data.items():
-        ts = fp_meta.get(url) or published_at
-        if ts:
-            try:
-                dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-                iso_week = dt.strftime("%G-W%V")
-                article_week[article_id] = iso_week
-            except (ValueError, AttributeError):
-                pass
 
     # Extract unique events and randomly split them
     unique_events = set(row["event_id"] for row in article_rows)
@@ -597,7 +586,12 @@ def validate_split_half(
     }
 
 
-def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List[List[Dict]]:
+def token_impacts(
+    member_titles: list[str],
+    max_events_tokens: int = 40,
+    weights: np.ndarray | None = None,
+    attribute_indices: list[int] | None = None,
+) -> list[list[dict]]:
     """
     Per-headline word-level attribution of distance from the event centroid.
 
@@ -605,17 +599,40 @@ def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List
       weight    — the word's share of the headline's vector mass (Σ a_f², features
                   attributed to the word; bigram features split between both words,
                   char_wb n-grams assigned to the word containing them)
-      alignment — the fraction of that mass that overlaps the (uniform) member
-                  centroid (Σ a_f·c_f / Σ a_f²), in [0, ~1]. Low alignment with
-                  high weight marks the words pushing the headline away from
+      alignment — the fraction of that mass that overlaps the member centroid
+                  (Σ a_f·c_f / Σ a_f²), in [0, ~1]. Low alignment with high
+                  weight marks the words pushing the headline away from
                   consensus; high alignment marks shared-with-consensus wording.
 
-    Returns one list per member title: [{token, weight, alignment}], tokens in
-    original order, weights normalized per headline to sum to 1.
+    Args:
+        member_titles: headlines used to fit the vectorizer and the centroid
+            (so the vocabulary/IDF and centroid match a caller's full-event
+            distance computation, even if only a subset is attributed below).
+        max_events_tokens: cap on tokens attributed per headline.
+        weights: optional per-title weight for the centroid (e.g. the same
+            syndication/lean weighting compute_distances uses), so the centroid
+            matches the one a caller's displayed distance was computed against.
+            Defaults to a uniform mean over member_titles when omitted.
+        attribute_indices: optional subset of member_titles indices to run the
+            (expensive, per-title) attribution loop for. The centroid is still
+            fit and weighted over the FULL member_titles list; only the dense
+            row extraction + attribution below is limited to this subset, so a
+            caller with a huge member list and a handful of curated rows to
+            display doesn't have to densify/attribute the whole matrix.
+            Defaults to all indices when omitted.
+
+    Returns one list per attributed title (all of member_titles, in order, if
+    attribute_indices is omitted; otherwise one per attribute_indices entry,
+    in that order): [{token, weight, alignment}], tokens in original order,
+    weights normalized per headline to sum to 1.
     """
     vec_dict, vectors = build_event_vectors(member_titles)
-    dense = np.asarray(vectors.todense())
-    centroid = dense.mean(axis=0)
+    if weights is not None:
+        w = np.asarray(weights, dtype=float)
+        w = w / w.sum() if w.sum() > 0 else np.full(len(member_titles), 1.0 / len(member_titles))
+        centroid = np.asarray(vectors.T.dot(w)).ravel()
+    else:
+        centroid = np.asarray(vectors.mean(axis=0)).ravel()
     norm = np.linalg.norm(centroid)
     if norm > 0:
         centroid = centroid / norm
@@ -626,9 +643,12 @@ def token_impacts(member_titles: List[str], max_events_tokens: int = 40) -> List
     char_features = char_vec.get_feature_names_out()
     n_word = len(word_features)
 
+    indices = range(len(member_titles)) if attribute_indices is None else attribute_indices
+
     out = []
-    for i, title in enumerate(member_titles):
-        a = dense[i]
+    for i in indices:
+        title = member_titles[i]
+        a = np.asarray(vectors[i].todense()).ravel()
         tokens = re.findall(r"\w[\w'’-]*", title)
         lowered = [t.lower() for t in tokens]
         toward = np.zeros(len(tokens))
@@ -708,7 +728,7 @@ _THREE = {"left": "left", "lean-left": "left", "center": "center",
 PANEL_LEAN = {dom: _THREE[v] for dom, v in PANEL_LEAN5.items()}
 
 
-def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000) -> Dict:
+def lean_breakdown(article_rows: list[dict], seed: int = 42, n_boot: int = 1000) -> dict:
     """
     Mean distance from consensus by panel lean bucket, with bootstrap CIs.
 
@@ -722,7 +742,7 @@ def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000)
     longer drives the centroid.
     """
     rng = np.random.default_rng(seed)
-    groups: Dict[str, List[float]] = {"left": [], "center": [], "right": []}
+    groups: dict[str, list[float]] = {"left": [], "center": [], "right": []}
     unmapped = set()
     for r in article_rows:
         lean = PANEL_LEAN.get(r["outlet"])
@@ -754,7 +774,7 @@ def lean_breakdown(article_rows: List[Dict], seed: int = 42, n_boot: int = 1000)
     return out
 
 
-def panel_composition(article_rows: List[Dict]) -> Dict:
+def panel_composition(article_rows: list[dict]) -> dict:
     """Panel makeup by lean bucket: outlet counts, article counts, and
     coverage-weighted article share. This is the composition the consensus
     centroid is built from — the direct evidence for or against a leaning panel.
@@ -780,7 +800,7 @@ def panel_composition(article_rows: List[Dict]) -> Dict:
     }
 
 
-def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int = 1000) -> Dict:
+def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int = 1000) -> dict:
     """
     Signed left<->right position of each consensus headline, not just its distance.
 
@@ -830,9 +850,24 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         _, vecs = build_event_vectors(titles)
         dense = np.asarray(vecs.todense())
 
-        def _centroid(mask):
+        # Syndication weighting: collapse exact-duplicate headlines (same
+        # normalization as compute_distances) so a wire story carried
+        # verbatim by N outlets in one camp counts as a single vote toward
+        # that camp's centroid, not N - otherwise duplication manufactures
+        # false consensus inside the direction axis itself.
+        norm_titles = [re.sub(r"\s+", " ", (t or "").strip().lower()) for t in titles]
+        dup_counts = {}
+        for nt in norm_titles:
+            dup_counts[nt] = dup_counts.get(nt, 0) + 1
+        synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
+
+        # synd_w bound as a default so the closure cannot pick up a later
+        # iteration's array if this is ever called after the loop advances.
+        def _centroid(mask, synd_w=synd_w):
             sub = dense[mask]
-            v = sub.mean(axis=0)
+            sw = synd_w[mask]
+            sw = sw / sw.sum() if sw.sum() > 0 else np.full(sw.shape, 1.0 / len(sw))
+            v = sub.T.dot(sw)
             n = np.linalg.norm(v)
             return v / n if n > 0 else v
 
@@ -841,7 +876,10 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
         L = _centroid(Lmask)
         R = _centroid(Rmask)
         outlet_names = [o for o, _ in members]
-        lean_w = _lean_bucket_weights(outlet_names)
+        # _lean_bucket_weights folds synd_w in already (bucket-normalized over
+        # effective votes) — do not multiply synd_w in again here.
+        lean_w = _lean_bucket_weights(outlet_names, synd_w)
+        lean_w = lean_w / lean_w.sum()
         C_vec = dense.T.dot(lean_w)
         C_norm = np.linalg.norm(C_vec)
         C = C_vec / C_norm if C_norm > 0 else C_vec
@@ -857,8 +895,12 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
             "event_id": eid,
             "position": round(t, 4),
             "separation": round(sep, 4),
-            "n_left": int(Lmask.sum()),
-            "n_right": int(Rmask.sum()),
+            # Effective (syndication-collapsed) vote counts, matching the
+            # weighting _centroid() actually uses to place L/R and the
+            # plotted position — not raw member counts, which overstate a
+            # camp dominated by copies of one wire headline (#C4).
+            "n_left": round(float(synd_w[Lmask].sum()), 1),
+            "n_right": round(float(synd_w[Rmask].sum()), 1),
             "consensus_headline": titles[int(np.argmin(dists))],
         })
 
@@ -874,7 +916,7 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
     return out
 
 
-def panel_spectrum(article_rows: List[Dict]) -> Dict:
+def panel_spectrum(article_rows: list[dict]) -> dict:
     """Five-point AllSides spectrum of the panel: per-category outlet count,
     article count, and coverage-weighted share. Finer than the 3-bucket
     composition so the site can render a true left->right spectrum."""
@@ -901,7 +943,7 @@ def panel_spectrum(article_rows: List[Dict]) -> Dict:
     }
 
 
-def regional_impact(article_rows: List[Dict]) -> Dict:
+def regional_impact(article_rows: list[dict]) -> dict:
     """Footprint of AllSides-unrated outlets (mostly regional chains) on the
     corpus: their share of analyzed articles, their mean drift vs rated national
     outlets, and how many events they form the majority of. Unrated outlets carry

@@ -2,7 +2,6 @@
 
 import re
 import sqlite3
-from typing import List, Optional, Dict, Tuple
 
 from stapled.db import insert_and_get_id
 
@@ -67,7 +66,7 @@ def extract_claims_from_article(
     article_id: int,
     title: str,
     body: str,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Extract claims from article. Returns {claims_created: int}.
     """
@@ -94,17 +93,39 @@ def extract_claims_from_article(
 
 def extract_all_unextracted(
     conn: sqlite3.Connection,
-) -> Dict[str, int]:
-    """Extract claims from all articles without claims. Returns summary counts."""
-    cursor = conn.execute(
-        """
+    article_ids: list[int] | None = None,
+) -> dict[str, int]:
+    """Extract claims from articles without claims. Returns summary counts.
+
+    Pass article_ids to scope extraction to a known batch (mirrors
+    update_all_framing) so callers that loop per-batch (train_stream) don't
+    silently extract claims for out-of-batch articles that framing and
+    alignment never see.
+    """
+    if article_ids is not None:
+        if not article_ids:
+            return {"articles_processed": 0, "claims_created": 0}
+        placeholders = ",".join("?" * len(article_ids))
+        cursor = conn.execute(
+            f"""
+            SELECT DISTINCT a.id, a.title, a.body
+            FROM article a
+            LEFT JOIN claim c ON a.id = c.article_id
+            WHERE c.id IS NULL AND a.id IN ({placeholders})
+            ORDER BY a.id
+        """,
+            article_ids,
+        )
+    else:
+        cursor = conn.execute(
+            """
         SELECT DISTINCT a.id, a.title, a.body
         FROM article a
         LEFT JOIN claim c ON a.id = c.article_id
         WHERE c.id IS NULL
         ORDER BY a.id
     """
-    )
+        )
 
     rows = cursor.fetchall()
     total_counts = {"articles_processed": 0, "claims_created": 0}
@@ -125,14 +146,14 @@ def _get_first_n_sentences(text: str, n: int) -> str:
     return " ".join(sentences[:n])
 
 
-def _split_sentences(text: str) -> List[str]:
+def _split_sentences(text: str) -> list[str]:
     """Simple sentence splitting on . ! ?"""
     # Split on sentence-ending punctuation
     sentences = re.split(r"(?<=[.!?])\s+", text)
     return [s.strip() for s in sentences if s.strip()]
 
 
-def _extract_claim_from_sentence(sentence: str, article_body: str) -> Optional[Dict]:
+def _extract_claim_from_sentence(sentence: str, article_body: str) -> dict | None:
     """Extract one claim from a sentence."""
     sentence = sentence.strip()
 
@@ -173,7 +194,7 @@ def _extract_claim_from_sentence(sentence: str, article_body: str) -> Optional[D
     }
 
 
-def _extract_actor(sentence: str) -> Optional[str]:
+def _extract_actor(sentence: str) -> str | None:
     """Extract leading capitalized span or known entity."""
     # Look for consecutive capitalized words at sentence start
     match = re.match(r"^([A-Z][a-zA-Z\s&]+?)(?:\s+(?:said|announced|voted|denied|claimed|warned))", sentence)
@@ -193,7 +214,7 @@ def _extract_actor(sentence: str) -> Optional[str]:
     return None
 
 
-def _extract_action(sentence: str) -> Optional[str]:
+def _extract_action(sentence: str) -> str | None:
     """Extract first verb from lexicon."""
     sentence_lower = sentence.lower()
     for verb in VERB_LEXICON:
@@ -202,7 +223,7 @@ def _extract_action(sentence: str) -> Optional[str]:
     return None
 
 
-def _extract_object(sentence: str, actor: Optional[str], action: Optional[str]) -> Optional[str]:
+def _extract_object(sentence: str, actor: str | None, action: str | None) -> str | None:
     """Extract object: clause following action, truncated to 80 chars."""
     if not action:
         return None
@@ -219,7 +240,7 @@ def _extract_object(sentence: str, actor: Optional[str], action: Optional[str]) 
     return None
 
 
-def _extract_time_ref(sentence: str) -> Optional[str]:
+def _extract_time_ref(sentence: str) -> str | None:
     """Extract time reference: month names, weekdays, or 'on <Month> <d>'."""
     # Try month patterns
     for month in ["January", "February", "March", "April", "May", "June",
@@ -246,7 +267,7 @@ def _extract_time_ref(sentence: str) -> Optional[str]:
     return None
 
 
-def _extract_location(sentence: str, article_body: str) -> Optional[str]:
+def _extract_location(sentence: str, article_body: str) -> str | None:
     """Extract location: try known list, else dateline city from body."""
     # Try known locations
     for location_key, location_name in LOCATIONS.items():
@@ -263,7 +284,7 @@ def _extract_location(sentence: str, article_body: str) -> Optional[str]:
     return None
 
 
-def _extract_magnitude(sentence: str) -> Tuple[Optional[float], Optional[str]]:
+def _extract_magnitude(sentence: str) -> tuple[float | None, str | None]:
     """Extract magnitude: number + unit from MAGNITUDE_UNITS."""
     for unit in MAGNITUDE_UNITS:
         # Look for <number> <unit> pattern
@@ -291,7 +312,7 @@ def _has_negation(sentence: str) -> bool:
     return any(re.search(p, sentence, re.IGNORECASE) for p in negation_patterns)
 
 
-def _insert_claim(conn: sqlite3.Connection, article_id: int, claim: Dict) -> int:
+def _insert_claim(conn: sqlite3.Connection, article_id: int, claim: dict) -> int:
     """Insert claim into database."""
     insert_and_get_id(
         conn,

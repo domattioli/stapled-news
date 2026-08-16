@@ -79,7 +79,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         for batch_idx in range(0, len(event_ids), batch_size):
             batch_ids = event_ids[batch_idx : batch_idx + batch_size]
             result = em.e_step_batch(batch_ids)
-            em.accumulate(result["batch_stats"], batch_idx // batch_size)
+            em.accumulate(result["batch_stats"], batch_idx // batch_size, posteriors=result["posteriors"])
 
         # Extract EM parameters
         params = em.params()

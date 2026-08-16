@@ -3,7 +3,6 @@
 import sqlite3
 import re
 import hashlib
-from typing import Dict, List, Tuple
 
 
 class UnionFind:
@@ -43,7 +42,7 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
     )
     articles = cursor.fetchall()
 
-    if len(articles) < 2:
+    if not articles:
         return 0
 
     article_ids = [row[0] for row in articles]
@@ -58,7 +57,7 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
 
     # Banded bucketing: partition hash space into 4 bands of 16 bits
     # For each band, articles with same bucket are candidates
-    buckets: Dict[Tuple[int, str], List[int]] = {}
+    buckets: dict[tuple[int, str], list[int]] = {}
     for i, h in enumerate(hashes):
         for band in range(4):
             bucket_bits = _get_band_bits(h, band)
@@ -77,25 +76,82 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
                     uf.union(idx_i, idx_j)
 
     # Build clusters
-    clusters: Dict[int, List[int]] = {}
+    clusters: dict[int, list[int]] = {}
     for i in range(n):
         root = uf.find(i)
         if root not in clusters:
             clusters[root] = []
         clusters[root].append(i)
 
-    # Assign dedup_cluster_id for clusters with size >= 2
+    # Join each new cluster against ALREADY-clustered articles (this function
+    # only loaded WHERE dedup_cluster_id IS NULL above, so a re-ingested
+    # verbatim copy of a story clustered on a prior run is otherwise invisible
+    # here and would mint a second cluster id for the same wire story - mirrors
+    # the banded-bucket join stream.py's dedup_new_articles does incrementally).
+    existing_rows = conn.execute(
+        "SELECT body, dedup_cluster_id FROM article WHERE dedup_cluster_id IS NOT NULL"
+    ).fetchall()
+    existing_buckets: dict[tuple[int, str], list[tuple[int, int]]] = {}
+    for existing_body, existing_cluster in existing_rows:
+        eh = _simhash(existing_body)
+        for band in range(4):
+            bucket_key = (band, _get_band_bits(eh, band))
+            existing_buckets.setdefault(bucket_key, []).append((eh, existing_cluster))
+
+    root_to_existing_cluster: dict[int, int] = {}
+    root_to_existing_matches: dict[int, set[int]] = {}
+    for root, members in clusters.items():
+        matches = set()
+        for member_idx in members:
+            h = hashes[member_idx]
+            for band in range(4):
+                bucket_key = (band, _get_band_bits(h, band))
+                for eh, existing_cluster in existing_buckets.get(bucket_key, []):
+                    if _hamming_distance(h, eh) <= 6:
+                        matches.add(existing_cluster)
+        if matches:
+            root_to_existing_cluster[root] = min(matches)
+            root_to_existing_matches[root] = matches
+
+    # Seed the cluster ID counter from existing clusters so a re-run (this
+    # function only loads articles WHERE dedup_cluster_id IS NULL) doesn't
+    # reissue IDs already held by clusters assigned on a prior run.
+    max_existing = conn.execute(
+        "SELECT COALESCE(MAX(dedup_cluster_id), 0) FROM article"
+    ).fetchone()[0]
+
+    # Assign dedup_cluster_id: clusters matching an existing dedup cluster join
+    # it (even a lone new article); otherwise a fresh id is minted for
+    # clusters with size >= 2. cluster_count reports only newly minted ids.
     cluster_count = 0
-    for cluster_idx, (root, members) in enumerate(clusters.items()):
-        if len(members) >= 2:
-            cluster_id = cluster_idx + 1  # 1-indexed cluster ID
-            for member_idx in members:
-                article_id = article_ids[member_idx]
-                conn.execute(
-                    "UPDATE article SET dedup_cluster_id = ? WHERE id = ?",
-                    (cluster_id, article_id),
-                )
+    next_cluster_id = max_existing + 1
+    for root, members in clusters.items():
+        target_cluster = root_to_existing_cluster.get(root)
+        if target_cluster is None:
+            if len(members) < 2:
+                continue
+            target_cluster = next_cluster_id
+            next_cluster_id += 1
             cluster_count += 1
+        else:
+            # This new cluster is a near-duplicate of >1 pre-existing cluster
+            # (a transitive bridge, e.g. a wire story whose two prior variants
+            # were just under the threshold of each other but both match the
+            # new copy) - collapse the other existing clusters into the
+            # target so the story doesn't keep casting multiple dedup_voting
+            # votes. Mirrors the incremental join in ingest/stream.py.
+            other_matches = root_to_existing_matches[root] - {target_cluster}
+            for other in other_matches:
+                conn.execute(
+                    "UPDATE article SET dedup_cluster_id = ? WHERE dedup_cluster_id = ?",
+                    (target_cluster, other),
+                )
+        for member_idx in members:
+            article_id = article_ids[member_idx]
+            conn.execute(
+                "UPDATE article SET dedup_cluster_id = ? WHERE id = ?",
+                (target_cluster, article_id),
+            )
 
     conn.commit()
     return cluster_count

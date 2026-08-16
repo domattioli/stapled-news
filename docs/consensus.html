@@ -652,7 +652,6 @@
                 <li><a href="#sec-regional">The unrated half</a><span class="toc-note">regional outlets' impact</span></li>
                 <li><a href="#sec-validation">Validation</a><span class="toc-note">does the method work</span></li>
                 <li><a href="#sec-future">What's next</a><span class="toc-note">future directions</span></li>
-                <li><a href="#sec-future">What's next</a><span class="toc-note">future directions</span></li>
             </ol>
         </nav>
 
@@ -751,7 +750,7 @@
         <div class="section" id="sec-panel">
             <div class="article-kicker" style="margin-bottom: 15px;">PANEL COMPOSITION</div>
             <h2 class="section-title">Left, Center, and Right Outlets Drift Nearly the Same Distance from Consensus</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Left, center, and right outlets differ in mean drift from consensus by no more than 0.011 on a 0-1 scale (0.820 vs. 0.814 vs. 0.809). At this corpus size the gap is statistically detectable but too small to use drift as a lean signal. Drift measures style (how much an outlet rewrites), not stance (which side it favors).</p>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Left, center, and right outlets differ in mean drift from consensus by no more than <span id="panel-tldr-gap">0.011</span> on a 0-1 scale (<span id="panel-tldr-left">0.820</span> vs. <span id="panel-tldr-center">0.814</span> vs. <span id="panel-tldr-right">0.809</span>). At this corpus size the gap is statistically detectable but too small to use drift as a lean signal. Drift measures style (how much an outlet rewrites), not stance (which side it favors).</p>
 
             <!-- Panel Spectrum -->
             <div id="panel-spectrum-container" style="max-width: 740px; margin: 30px auto;">
@@ -783,8 +782,8 @@
         <!-- Lean Axis Section -->
         <div class="section" id="sec-direction">
             <div class="article-kicker" style="margin-bottom: 15px;">CONSENSUS DIRECTION</div>
-            <h2 class="section-title">Correcting for Panel Composition Moves Consensus Wording From Left-of-Center to Near-Neutral</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;Raw panel composition mechanically pulls a naive consensus average toward whichever camp has more coverage. Computing consensus with left, center, right, and unrated outlets weighted equally per story moves the consensus-wording position toward the 0.5 midpoint. <span id="direction-tldr-verdict">—</span></p>
+            <h2 class="section-title">Correcting for Panel Composition, Consensus Wording Sits Near-Neutral</h2>
+            <p class="tldr"><b>TL;DR</b> &nbsp;Raw panel composition would mechanically pull a naive consensus average toward whichever camp has more coverage. Computing consensus with left, center, right, and unrated outlets weighted equally per story keeps the consensus-wording position close to the 0.5 midpoint. <span id="direction-tldr-verdict">—</span></p>
             <div class="article-body" style="margin-bottom: 30px;">
                 <p>Distance (above) found the three camps close together. Direction is a different question: for <span id="n-events-lean-text">43</span> stories with both left-rated and right-rated outlets, we build left-camp and right-camp wording centroids, then project a bias-corrected consensus centroid onto the axis between them (see the method note above: left, center, right, and unrated outlets weighted equally per story). Result: consensus position is <span id="mean-position-text">0.47</span> on a 0-1 scale (0 = left-camp wording, 1 = right-camp wording), 95% CI <span id="ci-low-text">0.45</span>-<span id="ci-high-text">0.50</span>. <span id="direction-verdict">—</span></p>
             </div>
@@ -828,7 +827,7 @@
         <div class="section" id="sec-explorer">
             <h2 class="section-title">Each Outlet's Rewrite: Where Wording Diverges from Consensus Phrase</h2>
             <p class="tldr"><b>TL;DR</b> &nbsp;Read the consensus headline, then each outlet's version below it. Green words align with the consensus wording; red words diverge, with color intensity scaling to the word's effect on distance score. Each story shows at most one outlet per AllSides lean category (left, lean-left, center, lean-right, right, unrated), so no single camp fills the card.</p>
-            <p class="figure-caption" style="margin-bottom: 25px;">Consensus headline at top; per-member row shows wording, distance score, and AllSides lean badge. Example stories are drawn from the trailing recent week so they stay current, while the ranking and aggregate charts elsewhere on this page reflect the full corpus (see date ranges above).</p>
+            <p class="figure-caption" style="margin-bottom: 25px;">Consensus headline at top; per-member row shows wording, distance score, and AllSides lean badge. Example stories are the most-covered stories (by outlet count) across the full corpus, the same population the ranking and aggregate charts elsewhere on this page reflect (see date ranges above) — not limited to the trailing week.</p>
             <div id="explorer-container">
                 <!-- Populated by JS -->
             </div>
@@ -852,8 +851,8 @@
 
         <!-- Validation -->
         <div class="section" id="sec-validation">
-            <h2 class="section-title">Both Validation Gates Pass: Planted Baseline and Split-Half Stability</h2>
-            <p class="tldr"><b>TL;DR</b> &nbsp;V1 (planted baseline) passes: the algorithm correctly separates copiers from noise. V2 (split-half stability) now passes too, exceeding its 0.6 Spearman-correlation threshold at this corpus size; V2 previously failed when the corpus held far fewer stories.</p>
+            <h2 class="section-title" id="validation-title">One of Two Validation Gates Pass: Planted Baseline Passes, Split-Half Stability Does Not Yet</h2>
+            <p class="tldr" id="validation-tldr"><b>TL;DR</b> &nbsp;V1 (planted baseline) passes: the algorithm correctly separates copiers from noise. V2 (split-half stability) still fails, short of its 0.6 Spearman-correlation threshold at this corpus size.</p>
             <div class="validation-cards" id="validation-cards">
                 <!-- Populated by JS -->
             </div>
@@ -864,7 +863,7 @@
             <div class="article-kicker" style="margin-bottom: 15px;">WHAT'S NEXT</div>
             <h2 class="section-title">Five Paths: Data Depth, Method Improvement, Visualization, and Validation at Scale</h2>
             <ol style="max-width: 740px; margin: 25px auto; font-size: 15px; line-height: 1.7; color: #333;">
-                <li><strong>More two-camp stories.</strong> The direction axis draws on a narrower subset (stories with both a left-rated and a right-rated outlet) than the aggregate distance ranking; continued hourly collection grows that subset and tightens its confidence interval, now that split-half stability (V2) already passes on the full corpus.</li>
+                <li><strong>More two-camp stories.</strong> The direction axis draws on a narrower subset (stories with both a left-rated and a right-rated outlet) than the aggregate distance ranking; continued daily collection grows that subset and tightens its confidence interval, and should also help split-half stability (V2) clear its gate, which it does not yet on the current corpus.</li>
                 <li><strong>Expand unrated coverage.</strong> An AllSides 2024 CSV plus an MBFC fallback would encode more of the outlets the direction analysis currently folds into a single unrated bucket, letting more of the corpus be individually placed on the left-right axis.</li>
                 <li><strong>Near-duplicate syndication beyond exact matches.</strong> Current method catches byte-identical wire copy. MinHash would capture light edits ("The Latest: …", trailing attributions) that exact-match dedup misses.</li>
                 <li><strong>Embedding distance instead of lexical.</strong> Sentence embeddings measure semantic drift; two headlines paraphrasing the same idea read as closer than surface-word cosine allows.</li>
@@ -1345,6 +1344,18 @@
                     const groupNames = ['left', 'center', 'right'];
                     const groupLabels = ['Left-leaning outlets', 'Center outlets', 'Right-leaning outlets'];
 
+                    // Panel TL;DR figures: driven from the same lean_breakdown means
+                    // the chart-interpretation paragraph below renders, so the two
+                    // don't drift apart on a bundle refresh (was hardcoded before).
+                    if (groups['left'] && groups['center'] && groups['right']) {
+                        const l = groups['left'].mean_distance, c = groups['center'].mean_distance, r = groups['right'].mean_distance;
+                        const gap = Math.max(Math.abs(l - c), Math.abs(c - r), Math.abs(l - r));
+                        setText('panel-tldr-gap', gap.toFixed(3));
+                        setText('panel-tldr-left', l.toFixed(3));
+                        setText('panel-tldr-center', c.toFixed(3));
+                        setText('panel-tldr-right', r.toFixed(3));
+                    }
+
                     const panelComp = usData.panel_composition || {};
                     const totalWeightedShare = (panelComp.left?.weighted_share || 0) + (panelComp.center?.weighted_share || 0) + (panelComp.right?.weighted_share || 0);
                     if (totalWeightedShare > 0) {
@@ -1416,15 +1427,31 @@
                         let proseText = '';
                         if (leftGroup && centerGroup && rightGroup) {
                             const overlaps = (a, b) => a.ci_low <= b.ci_high && b.ci_low <= a.ci_high;
-                            const allOverlap = overlaps(leftGroup, centerGroup) && overlaps(centerGroup, rightGroup) && overlaps(leftGroup, rightGroup);
+                            // Report per-pair, not one all-or-nothing verdict: with three
+                            // blocs it's common for one pair to be separable while another
+                            // isn't, and a single "CIs do/don't overlap" sentence keyed to
+                            // AND-of-all-three misdescribes the pairs that disagree with it.
+                            const pairs = [
+                                { label: 'left vs. center', sep: !overlaps(leftGroup, centerGroup) },
+                                { label: 'center vs. right', sep: !overlaps(centerGroup, rightGroup) },
+                                { label: 'left vs. right', sep: !overlaps(leftGroup, rightGroup) },
+                            ];
                             const maxGap = Math.max(
                                 Math.abs(leftGroup.mean_distance - centerGroup.mean_distance),
                                 Math.abs(centerGroup.mean_distance - rightGroup.mean_distance),
                                 Math.abs(leftGroup.mean_distance - rightGroup.mean_distance)
                             );
-                            const comparison = allOverlap
-                                ? `All three confidence intervals overlap: the three blocs' mean distance from consensus is statistically indistinguishable at this corpus size (largest gap ${maxGap.toFixed(3)}).`
-                                : `The three blocs' mean distance from consensus differs by up to ${maxGap.toFixed(3)} on a 0-1 scale (left ${leftGroup.mean_distance.toFixed(3)}, center ${centerGroup.mean_distance.toFixed(3)}, right ${rightGroup.mean_distance.toFixed(3)}): detectable at this sample size (95% confidence intervals do not overlap), but too small to use as a practical lean signal.`;
+                            const means = `left ${leftGroup.mean_distance.toFixed(3)}, center ${centerGroup.mean_distance.toFixed(3)}, right ${rightGroup.mean_distance.toFixed(3)}`;
+                            const separable = pairs.filter(p => p.sep).map(p => p.label);
+                            const indistinguishable = pairs.filter(p => !p.sep).map(p => p.label);
+                            let comparison;
+                            if (separable.length === 0) {
+                                comparison = `All three confidence intervals overlap: the three blocs' mean distance from consensus (${means}) is statistically indistinguishable at this corpus size (largest gap ${maxGap.toFixed(3)}).`;
+                            } else if (indistinguishable.length === 0) {
+                                comparison = `The three blocs' mean distance from consensus (${means}) differs by up to ${maxGap.toFixed(3)} on a 0-1 scale: every pair is separable at this sample size (95% confidence intervals do not overlap), but the gap is too small to use as a practical lean signal.`;
+                            } else {
+                                comparison = `The three blocs' mean distance from consensus (${means}) differs by up to ${maxGap.toFixed(3)} on a 0-1 scale: ${separable.join(', ')} ${separable.length > 1 ? 'are' : 'is'} separable at this sample size (95% confidence intervals do not overlap), while ${indistinguishable.join(', ')} ${indistinguishable.length > 1 ? 'are' : 'is'} statistically indistinguishable (confidence intervals overlap).`;
+                            }
                             proseText = `<strong>Chart interpretation:</strong> ${comparison} Distance measures wording similarity, not accuracy or political stance. Whether the consensus wording itself leans is a separate question, addressed with a bias-corrected estimate in the next section.`;
                         }
                         proseDiv.innerHTML = proseText;
@@ -1481,8 +1508,7 @@
                     const bound = leansLeft ? 'upper' : 'lower';
                     setText('direction-verdict',
                         `That interval sits entirely ${leansLeft ? 'below' : 'above'} the 0.5 midpoint: a small `
-                        + `${side} tilt remains after the correction, far smaller than the raw, uncorrected `
-                        + 'estimate below.');
+                        + `${side} tilt remains after the correction for panel composition.`);
                     setText('direction-tldr-verdict',
                         `A small further-${leansLeft ? 'left' : 'right'} tilt survives the correction.`);
                     setText('direction-caveat-verdict',
@@ -1550,7 +1576,7 @@
                     hovertemplate: '<b>%{customdata[0]}</b><br>' +
                         'Position: %{x:.3f}<br>' +
                         'Separation: %{customdata[1]:.3f}<br>' +
-                        'L: %{customdata[2]} vs R: %{customdata[3]}<extra></extra>',
+                        'Members L: %{customdata[2]} vs R: %{customdata[3]}<extra></extra>',
                     customdata: perEvent.map(e => [
                         e.consensus_headline,
                         e.separation || 0,
@@ -1777,7 +1803,8 @@
                         if (!event || !event.members) continue;
 
                         const card = document.createElement('div');
-                        const outletCount = (event.members || []).length;
+                        const outletCount = event.n_outlets || (event.members || []).length;
+                        const shownCount = (event.members || []).length;
                         const distances = (event.members || []).map(m => m.distance);
                         const avgDist = distances.reduce((a, b) => a + b, 0) / distances.length;
 
@@ -1786,7 +1813,7 @@
                         const headline = document.createElement('div');
                         headline.className = 'card-headline-row';
                         headline.innerHTML = `
-                            <div class="card-kicker">STAPLED HEADLINE · ${outletCount} OUTLETS</div>
+                            <div class="card-kicker">STAPLED HEADLINE · ${outletCount} OUTLETS${shownCount < outletCount ? ` · showing ${shownCount}` : ''}</div>
                             <p class="card-consensus-headline">${event.consensus_headline || '(consensus headline)'}</p>
                         `;
                         card.appendChild(headline);
@@ -1890,6 +1917,27 @@
         function renderValidation(usData) {
             try {
                 const validation = usData.validation || {};
+
+                // Headline + TL;DR are derived from the actual gate_pass booleans,
+                // not hardcoded, so a future bundle where V2 flips to passing (or
+                // V1 flips to failing) doesn't ship a heading that contradicts the
+                // pill states rendered into the cards below it.
+                const v1Pass = !!(validation.v1_planted && validation.v1_planted.gate_pass);
+                const v2Pass = !!(validation.v2_split_half && validation.v2_split_half.gate_pass);
+                const titleEl = document.getElementById('validation-title');
+                const tldrEl = document.getElementById('validation-tldr');
+                if (titleEl && tldrEl) {
+                    const passCount = (v1Pass ? 1 : 0) + (v2Pass ? 1 : 0);
+                    // Subject-verb agreement: "One ... Passes" (singular subject) vs.
+                    // "Zero/Two ... Pass" (plural subject).
+                    const countWord = ['Zero', 'One', 'Two'][passCount];
+                    const gatesVerb = passCount === 1 ? 'Passes' : 'Pass';
+                    const v1Word = v1Pass ? 'Passes' : 'Does Not Pass Yet';
+                    const v2Word = v2Pass ? 'Passes' : 'Does Not Pass Yet';
+                    titleEl.textContent = `${countWord} of Two Validation Gates ${gatesVerb}: Planted Baseline ${v1Word}, Split-Half Stability ${v2Word}`;
+                    tldrEl.innerHTML = `<b>TL;DR</b> &nbsp;V1 (planted baseline) ${v1Pass ? 'passes' : 'fails'}: the algorithm ${v1Pass ? 'correctly separates copiers from noise' : 'does not yet cleanly separate copiers from noise'}. V2 (split-half stability) ${v2Pass ? 'passes' : 'still fails'}, ${v2Pass ? 'meeting' : 'short of'} its 0.6 Spearman-correlation threshold at this corpus size.`;
+                }
+
                 const validationCardsDiv = document.getElementById('validation-cards');
                 if (validationCardsDiv) {
                     validationCardsDiv.innerHTML = '';
@@ -1940,7 +1988,7 @@
                             <div style="margin-top: 15px;">
                                 <span class="validation-pill ${v2.gate_pass ? 'pill-pass' : 'pill-fail'}">${v2.gate_pass ? '✓ Pass' : '✗ Fail'}</span>
                             </div>
-                            ${v2.rho < 0.6 ? '<div class="validation-note">Stability below target: corpus too young or insufficient week coverage.</div>' : ''}
+                            ${v2.rho < 0.6 ? `<div class="validation-note">${(v2.n_outlets || 0) < 2 ? 'Stability below target: too few outlets have &ge;10 articles in both random halves at this corpus size.' : 'Stability below target: the per-outlet distance ranking does not reproduce across random event halves at this corpus size (Spearman &rho; below 0.6), even though enough outlets qualified to compare.'}</div>` : ''}
                         `;
                         validationCardsDiv.appendChild(card);
                     }

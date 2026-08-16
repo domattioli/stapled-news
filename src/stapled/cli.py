@@ -701,18 +701,22 @@ def train_stream(
 
             # Dedup and extract
             dedup_new_articles(conn, article_ids)
-            extract_all_unextracted(conn)
-            update_all_framing(conn)
+            extract_all_unextracted(conn, article_ids)
+            update_all_framing(conn, article_ids)
 
-            # Get newly created claim IDs
+            # Get newly created claim IDs. Chunk the IN(...) — SQLite caps bound
+            # parameters per statement (SQLITE_MAX_VARIABLE_NUMBER, 32766 by
+            # default), which a single large batch could otherwise exceed.
             new_claim_ids = []
-            cursor = conn.execute(
-                "SELECT id FROM claim WHERE article_id IN ({})".format(
-                    ",".join("?" * len(article_ids))
-                ),
-                article_ids,
-            )
-            new_claim_ids = [row[0] for row in cursor.fetchall()]
+            for i in range(0, len(article_ids), 900):
+                id_chunk = article_ids[i:i + 900]
+                cursor = conn.execute(
+                    "SELECT id FROM claim WHERE article_id IN ({})".format(
+                        ",".join("?" * len(id_chunk))
+                    ),
+                    id_chunk,
+                )
+                new_claim_ids.extend(row[0] for row in cursor.fetchall())
 
             # Align incremental
             if new_claim_ids:
@@ -746,7 +750,7 @@ def train_stream(
                 online_ll_trace.append(batch_ll)
 
                 # Accumulate with Robbins-Monro
-                em.accumulate(batch_stats, batch_count - 1)
+                em.accumulate(batch_stats, batch_count - 1, posteriors=result["posteriors"])
 
         # Get top 3 outlets by reliability
         top_3_outlets = []
@@ -759,7 +763,7 @@ def train_stream(
             )[:3]
 
         out.set_data(
-            source_bytes=total_rows,
+            total_rows=total_rows,
             batches_processed=batch_count,
             new_events=new_events_count,
             new_claims=new_claims_count,

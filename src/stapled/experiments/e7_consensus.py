@@ -26,6 +26,7 @@ from stapled.analyze.consensus_distance import (
     panel_spectrum,
     consensus_lean_axis,
     regional_impact,
+    _lean_bucket_weights,
     PANEL_LEAN,
     PANEL_LEAN5,
 )
@@ -92,7 +93,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         for batch_idx in range(0, len(event_ids), batch_size):
             batch_ids = event_ids[batch_idx : batch_idx + batch_size]
             result = em.e_step_batch(batch_ids)
-            em.accumulate(result["batch_stats"], batch_idx // batch_size)
+            em.accumulate(result["batch_stats"], batch_idx // batch_size, posteriors=result["posteriors"])
 
         # Extract EM parameters for outlet agreement
         params = em.params()
@@ -116,7 +117,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         # Validation gates
         v1_validation = validate_planted(data_dict)
-        v2_validation = validate_split_half(conn, article_rows, seed=seed)
+        v2_validation = validate_split_half(article_rows, seed=seed)
 
         # Write outputs
         out_path = Path(out_dir)
@@ -191,7 +192,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         consensus_bundle = {
             "generated_at": datetime.utcnow().isoformat(),
             "corpus": {
-                "repo": "defgsus/frontpage-archive-2026",
+                "repo": "stapled-news corpus/us/headlines.csv.gz (GDELT+RSS+Google News)",
                 "since": since,
                 "until": until,
                 "n_events": len(event_rows),
@@ -402,25 +403,50 @@ def _build_events_detail(article_rows, top_events, max_events=12):
     with the event centroid). The site colors low-alignment, high-weight words as
     the ones pushing a headline away from the stapled consensus.
     """
+    import re as _re
+
     by_event = {}
     for row in article_rows:
         by_event.setdefault(row["event_id"], []).append(row)
 
     detail = []
     for e in top_events[:max_events]:
-        members = by_event.get(e["event_id"], [])
-        if len(members) < 2:
+        full_members = by_event.get(e["event_id"], [])
+        if len(full_members) < 2:
             continue
+
+        # Word-level attribution against the SAME weighted centroid the printed
+        # distances came from (compute_distances: syndication-dedup + lean-bucket
+        # weighted, over every article for the event) - not a fresh uniform
+        # centroid refit on only the curated subset shown below, which could
+        # color a word green while its printed distance says the opposite.
+        full_titles = [m["title"] for m in full_members]
+        outlet_names = [m["outlet"] for m in full_members]
+        norm_titles = [_re.sub(r"\s+", " ", (t or "").strip().lower()) for t in full_titles]
+        dup_counts = {}
+        for nt in norm_titles:
+            dup_counts[nt] = dup_counts.get(nt, 0) + 1
+        synd_w = np.array([1.0 / dup_counts[nt] for nt in norm_titles])
+        # _lean_bucket_weights folds synd_w in already (bucket-normalized over
+        # effective votes) — do not multiply synd_w in again below.
+        lean_w = _lean_bucket_weights(outlet_names, synd_w)
+
         # One row per outlet: keep that outlet's closest-to-consensus headline.
-        best = {}
-        for m in members:
-            cur = best.get(m["outlet"])
-            if cur is None or m["distance"] < cur["distance"]:
-                best[m["outlet"]] = m
-        members = sorted(best.values(), key=lambda m: m["distance"])
+        # Picked from the already-computed "distance" field so we don't need
+        # per-title attribution over the full (possibly huge) member list just
+        # to find the winners - only the curated <=6 rows actually get shown.
+        best_idx = {}
+        for idx, m in enumerate(full_members):
+            cur = best_idx.get(m["outlet"])
+            if cur is None or m["distance"] < full_members[cur]["distance"]:
+                best_idx[m["outlet"]] = idx
+        members = sorted((full_members[i] for i in best_idx.values()), key=lambda m: m["distance"])
         members = _curate_members(members)
-        titles = [m["title"] for m in members]
-        impacts = token_impacts(titles)
+        # Attribute only the curated rows, against the centroid fit/weighted
+        # over the FULL member list (see token_impacts docstring) - avoids
+        # densifying and attributing every one of full_members' rows.
+        curated_idx = [best_idx[m["outlet"]] for m in members]
+        impacts = token_impacts(full_titles, weights=lean_w, attribute_indices=curated_idx)
         detail.append({
             "event_id": e["event_id"],
             "consensus_headline": e["consensus_headline"],
@@ -444,12 +470,17 @@ def _syndication_stats(article_rows):
     import re as _re
     groups = {}
     for r in article_rows:
-        key = (r["event_id"], _re.sub(r"\\s+", " ", (r["title"] or "").strip().lower()))
-        groups.setdefault(key, []).append(r["outlet"])
+        key = (r["event_id"], _re.sub(r"\s+", " ", (r["title"] or "").strip().lower()))
+        g = groups.setdefault(key, {"raw_title": r["title"], "outlets": []})
+        g["outlets"].append(r["outlet"])
     total = len(article_rows)
-    collapsed = sum(len(v) - 1 for v in groups.values() if len(v) > 1)
+    collapsed = sum(len(v["outlets"]) - 1 for v in groups.values() if len(v["outlets"]) > 1)
     top = sorted(
-        ({"headline": k[1], "outlets": len(set(v))} for k, v in groups.items() if len(set(v)) > 1),
+        (
+            {"headline": v["raw_title"], "outlets": len(set(v["outlets"]))}
+            for v in groups.values()
+            if len(set(v["outlets"])) > 1
+        ),
         key=lambda x: -x["outlets"],
     )[:6]
     return {

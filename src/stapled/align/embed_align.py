@@ -66,12 +66,17 @@ def realign_all(
         Dict with keys: claims_total, clusters_multi, events_created, claims_in_multi, multi_outlet_events
     """
 
-    # 1. Load ALL claims with article info
+    # 1. Load ALL real-corpus claims with article info. Synthetic-corpus claims
+    # (article.corpus_id NOT NULL) are excluded, matching align()'s filter in
+    # cluster.py - otherwise this realign would cluster synthetic ground-truth
+    # claims into shared events with real-news claims and then delete the
+    # synthetic events outright in step 8 below.
     cursor = conn.execute(
         """
         SELECT c.id, c.actor, c.action, c.object, a.title, a.outlet_id
         FROM claim c
         JOIN article a ON c.article_id = a.id
+        WHERE a.corpus_id IS NULL
         ORDER BY c.id
         """
     )
@@ -164,11 +169,12 @@ def realign_all(
         else set()
     )
 
-    # Second pass: index rare words for claims with no discriminative entity
-    # (none at all, or only oversized ones) so they still get blocking candidates.
-    for idx, entities in enumerate(claim_entities):
-        if any(e not in oversized_entities for e in entities):
-            continue
+    # Second pass: index rare words for ALL claims (not just no-entity ones) so a
+    # no-entity claim's rare-word fallback can still surface an entity-bearing
+    # claim as a candidate - entity-bearing claims only *generate* candidates via
+    # the entity block below, but they must still be *findable* by rare word,
+    # or a no-entity/entity-bearing pair with identical text is never candidated.
+    for idx in range(len(claim_entities)):
         word_indices = word_matrix[idx].nonzero()[1]
         for word_idx in word_indices:
             if vocab_df[word_idx] <= rare_threshold:
@@ -273,11 +279,20 @@ def realign_all(
         root = uf.find(idx)
         clusters[root].append(idx)
 
-    # 8. Clear existing event assignments and orphan events/centroids
-    conn.execute("UPDATE claim SET event_id = NULL")
-    conn.execute("DELETE FROM event_centroid")
-    # Delete orphan events (events with no claims assigned after clearing all assignments)
-    conn.execute("DELETE FROM event WHERE id NOT IN (SELECT -1)")  # Will delete all after UPDATE claim SET event_id=NULL
+    # 8. Clear existing event assignments and orphan events/centroids - scoped
+    # to real-corpus data only (event.corpus_id IS NULL), so synthetic events
+    # carrying ground-truth true_state (and the run_event_result/anchor rows
+    # that reference them) survive a real-data realign untouched.
+    conn.execute(
+        "UPDATE claim SET event_id = NULL "
+        "WHERE article_id IN (SELECT id FROM article WHERE corpus_id IS NULL)"
+    )
+    conn.execute(
+        "DELETE FROM event_centroid WHERE event_id IN "
+        "(SELECT id FROM event WHERE corpus_id IS NULL)"
+    )
+    # Delete orphan real-corpus events (no claims assigned after clearing all assignments above)
+    conn.execute("DELETE FROM event WHERE corpus_id IS NULL")
     conn.commit()
 
     # 9. Create events from clusters
@@ -314,12 +329,15 @@ def realign_all(
 
     conn.commit()
 
-    # Count multi-outlet events (distinct outlets >= 2)
+    # Count multi-outlet events (distinct outlets >= 2), scoped to the
+    # real-corpus events this realign touches (synthetic events untouched
+    # above are out of scope for this run's summary stats).
     cursor = conn.execute(
         """
         SELECT COUNT(DISTINCT e.id)
         FROM event e
-        WHERE (
+        WHERE e.corpus_id IS NULL
+        AND (
             SELECT COUNT(DISTINCT outlet_id)
             FROM claim c
             JOIN article a ON c.article_id = a.id
