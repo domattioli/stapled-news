@@ -37,10 +37,20 @@ from stapled.align.embed_align import realign_all
 from stapled.infer.online_em import OnlineEM
 from stapled.infer.align_incremental import align_incremental
 from stapled.viz.online_convergence import online_convergence, reliability_trajectory
+from stapled.analyze.atomic_cli import (
+    estimator_status_payload,
+    evaluation_payload,
+    extraction_payload,
+    matching_payload,
+    profile_payload,
+    summary_payload,
+)
 
 app = typer.Typer()
 synth_app = typer.Typer()
 app.add_typer(synth_app, name="synth")
+atomic_app = typer.Typer(help="Deterministic atomic-consensus stages.")
+app.add_typer(atomic_app, name="atomic")
 
 
 class CLIOutput:
@@ -92,6 +102,81 @@ class CLIOutput:
         if exit_code != 0:
             for error in self.errors:
                 print(f"Error: {error}", file=sys.stderr)
+
+
+@atomic_app.command("extract")
+def atomic_extract_cmd(
+    headline: str = typer.Argument(..., help="One English headline"),
+    json_output: bool = typer.Option(False, "--json", help="Emit machine-readable atoms"),
+):
+    """Extract v1 atoms; unsupported grammar exits non-zero with an abstention reason."""
+    payload = extraction_payload(headline)
+    data = json.loads(payload)
+    refused = any(atom["abstention_reason"] for atom in data["atoms"])
+    if json_output:
+        print(payload)
+    else:
+        print(data)
+    if refused:
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("match")
+def atomic_match_cmd(
+    atoms_json: str = typer.Argument(..., help="Atom JSON emitted by atomic extract"),
+    event_id: str = typer.Option(..., "--event-id"),
+    aspect: str = typer.Option(..., "--aspect"),
+):
+    """Match only explicit event/aspect-scoped occurrences."""
+    try:
+        print(matching_payload(json.loads(atoms_json), event_id, aspect))
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("summarize")
+def atomic_summarize_cmd(atoms_json: str = typer.Argument(..., help="Scoped atom JSON")):
+    """Group scoped non-abstained occurrences into deterministic SCUs."""
+    try:
+        print(summary_payload(json.loads(atoms_json)))
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("profile")
+def atomic_profile_cmd(
+    outlet: str = typer.Option(..., "--outlet"),
+    family: str = typer.Option(..., "--family"),
+    observations_json: str = typer.Argument(...),
+    classifications_json: str = typer.Argument(...),
+):
+    """Render an event-specific descriptive coverage profile, not a quality score."""
+    try:
+        print(profile_payload(outlet, family, json.loads(observations_json), json.loads(classifications_json)))
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("evaluate")
+def atomic_evaluate_cmd(pilot: int = typer.Option(...), heldout: int = typer.Option(...), adjudicated: int = typer.Option(...), metrics_json: str = typer.Argument("{}")):
+    """Report evaluation only; insufficient held-out adjudication stays inconclusive."""
+    print(evaluation_payload(pilot, heldout, adjudicated, json.loads(metrics_json)))
+
+
+@atomic_app.command("estimator")
+def atomic_estimator_cmd(primary_improvement: float = typer.Option(...), controls_json: str = typer.Argument("[]"), adjudicated: int = typer.Option(0)):
+    """Gate experimental categorical output; no held-out evidence means withheld."""
+    print(estimator_status_payload(primary_improvement, json.loads(controls_json), adjudicated))
+
+
+@atomic_app.command("reproduce")
+def atomic_reproduce_cmd(payload_json: str = typer.Argument(...)):
+    """Return canonical semantic hash for a supplied frozen analysis payload."""
+    from stapled.analyze.atomic_run import semantic_hash
+    print(json.dumps({"semantic_hash": semantic_hash(json.loads(payload_json))}, sort_keys=True))
 
 
 def _handle_gate_error(err: GateError, out: CLIOutput, command: str) -> int:

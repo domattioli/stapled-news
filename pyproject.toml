@@ -23,6 +23,11 @@ dev = [
     "ruff>=0.0.292",
 ]
 
+[tool.atomic_consensus]
+schema = "specs/005-atomic-consensus/contracts/atomic-consensus.schema.json"
+schema_version = "1.0"
+validation_policy = "validate canonical exports before static publication"
+
 [project.scripts]
 stapled = "stapled.cli:app"
 

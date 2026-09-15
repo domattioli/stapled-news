@@ -1,0 +1,11 @@
+# Frozen parameter registry; no experiment results are asserted here.
+version: atomic-simulator-v1
+seed: 20260915
+scenarios:
+  panel_skew: [balanced, left_heavy, right_heavy]
+  missingness: [none, stratum_missing, outcome_dependent]
+  syndication: [none, exact_copy]
+  ownership: [independent, shared_owner]
+  detail_frequency: [majority, minority]
+  conflict: [none, explicit]
+  temporal_update: [none, compatible_update]

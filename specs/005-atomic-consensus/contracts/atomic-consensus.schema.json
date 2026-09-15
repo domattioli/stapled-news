@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/domattioli/stapled-news/schemas/atomic-consensus.schema.json",
+  "title": "Atomic Consensus Export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "analysis", "events"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "analysis": {"$ref": "#/$defs/analysis"},
+    "events": {"type": "array", "items": {"$ref": "#/$defs/event"}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "analysis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "status", "corpus", "cutoff_at", "versions", "hashes", "panel", "estimator", "evaluation"],
+      "properties": {
+        "run_id": {"type": ["integer", "string"]},
+        "status": {"enum": ["draft", "pilot", "frozen", "evaluated", "exported", "inconclusive", "refused"]},
+        "corpus": {"type": "object", "required": ["ref", "git_rev"], "properties": {"ref": {"type": "string"}, "git_rev": {"type": "string", "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$"}}},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "versions": {"type": "object", "required": ["parser", "rules", "aliases", "taxonomy", "panel"], "properties": {"parser": {"type": "string"}, "rules": {"type": "string"}, "aliases": {"type": "string"}, "taxonomy": {"type": "string"}, "panel": {"type": "string"}}},
+        "hashes": {"type": "object", "required": ["code", "config", "environment", "canonical", "artifact_digests"], "properties": {"code": {"$ref": "#/$defs/hash"}, "config": {"$ref": "#/$defs/hash"}, "environment": {"$ref": "#/$defs/hash"}, "canonical": {"$ref": "#/$defs/hash"}, "artifact_digests": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/hash"}}}},
+        "panel": {"$ref": "#/$defs/panel"},
+        "estimator": {"$ref": "#/$defs/estimator"},
+        "evaluation": {"$ref": "#/$defs/evaluation"},
+        "annotation_counts": {"type": "object", "required": ["pilot_planned", "pilot_actual", "heldout_planned", "heldout_actual", "adjudicated_actual"], "properties": {"pilot_planned": {"const": 20}, "pilot_actual": {"type": "integer", "minimum": 0}, "heldout_planned": {"const": 80}, "heldout_actual": {"type": "integer", "minimum": 0}, "adjudicated_actual": {"type": "integer", "minimum": 0}}}
+      }
+    },
+    "panel": {"type": "object", "required": ["roster", "strata", "weights", "unrated_policy"], "properties": {"roster": {"type": "array", "items": {"type": "string"}}, "strata": {"type": "array", "items": {"type": "string"}}, "weights": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}}, "unrated_policy": {"const": "descriptive-excluded-primary"}}},
+    "estimator": {"type": "object", "required": ["mode", "status"], "properties": {"mode": {"enum": ["balanced_descriptive", "categorical_em"]}, "status": {"enum": ["not_run", "withheld", "published"]}, "score": {"type": ["number", "null"], "minimum": 0, "maximum": 1}, "convergence": {"type": ["object", "null"]}}},
+    "evaluation": {"type": "object", "required": ["pilot_events", "heldout_events", "status"], "properties": {"pilot_events": {"type": "integer", "const": 20}, "heldout_events": {"type": "integer", "const": 80}, "status": {"enum": ["pending", "pass", "fail", "inconclusive"]}, "metrics": {"type": "object"}}},
+    "evidence": {"type": "object", "required": ["article_id", "outlet", "url", "headline", "occurrence_id", "reporting_group_id", "span", "span_convention", "scope", "relation", "rule"], "properties": {"article_id": {"type": ["integer", "string"]}, "outlet": {"type": "string"}, "url": {"type": "string", "format": "uri"}, "headline": {"type": "string"}, "occurrence_id": {"type": "string"}, "reporting_group_id": {"type": "string"}, "span": {"type": "array", "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 0}], "minItems": 2, "maxItems": 2}, "span_convention": {"const": "utf8-codepoint-halfopen"}, "scope": {"type": "object", "required": ["event_id", "aspect"], "properties": {"event_id": {"type": ["integer", "string"]}, "aspect": {"type": "string"}}}, "relation": {"enum": ["support", "contradiction", "equivalence", "possible_conflict"]}, "rule": {"type": "string"}}},
+    "fact": {"type": "object", "required": ["scu_id", "display", "classification", "has_dispute", "support", "evidence"], "properties": {"scu_id": {"type": "string"}, "display": {"type": "string"}, "classification": {"enum": ["shared core", "partial coverage", "disputed reports", "unique detail", "insufficient panel"]}, "has_dispute": {"type": "boolean"}, "support": {"type": "object", "required": ["raw_outlet", "raw_group", "raw_outlet_numerator", "raw_outlet_denominator", "raw_group_numerator", "raw_group_denominator", "balanced", "represented_mass", "missing_mass_bounds", "independent_groups", "effective_n"], "properties": {"raw_outlet": {"type": ["number", "null"], "minimum": 0, "maximum": 1}, "raw_group": {"type": ["number", "null"], "minimum": 0, "maximum": 1}, "raw_outlet_numerator": {"type": "integer", "minimum": 0}, "raw_outlet_denominator": {"type": "integer", "minimum": 0}, "raw_group_numerator": {"type": "integer", "minimum": 0}, "raw_group_denominator": {"type": "integer", "minimum": 0}, "balanced": {"type": ["number", "null"], "minimum": 0, "maximum": 1}, "represented_mass": {"type": "number", "minimum": 0, "maximum": 1}, "missing_mass_bounds": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0, "maximum": 1}}, "independent_groups": {"type": "integer", "minimum": 0}, "effective_n": {"type": "number", "minimum": 0}}}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}, "conflicts": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}, "missing_reasons": {"type": "array", "items": {"type": "string"}}, "sensitivity": {"type": "object", "required": ["leave_group", "leave_stratum", "owner"], "properties": {"leave_group": {"type": "array", "items": {"$ref": "#/$defs/range"}}, "leave_stratum": {"type": "array", "items": {"$ref": "#/$defs/range"}}, "owner": {"type": "array", "items": {"$ref": "#/$defs/range"}}}}, "modeled_core_membership": {"type": ["number", "null"], "minimum": 0, "maximum": 1}}},
+    "event": {"type": "object", "required": ["event_id", "as_of", "facts", "profiles", "coverage"], "properties": {"event_id": {"type": ["integer", "string"]}, "as_of": {"type": "string", "format": "date-time"}, "facts": {"type": "array", "items": {"$ref": "#/$defs/fact"}}, "profiles": {"type": "array", "items": {"$ref": "#/$defs/profile"}}, "coverage": {"type": "object", "required": ["raw_sources", "independent_groups", "represented_target_mass", "missing_strata", "missing_reasons"], "properties": {"raw_sources": {"type": "integer"}, "independent_groups": {"type": "integer"}, "represented_target_mass": {"type": "number"}, "missing_strata": {"type": "array", "items": {"type": "string"}}, "missing_reasons": {"type": "array", "items": {"type": "string"}}}}}},
+    "range": {"type": "object", "required": ["low", "high"], "properties": {"low": {"type": ["number", "null"]}, "high": {"type": ["number", "null"]}}},
+    "profile": {"type": "object", "required": ["outlet", "states", "leave_out"], "properties": {"outlet": {"type": "string"}, "states": {"type": "object", "additionalProperties": {"enum": ["shared", "unique", "conflict", "omission", "non_coverage", "collector_unavailable", "unknown_relevance"]}}, "leave_out": {"type": "array", "items": {"type": "string"}}}}
+  }
+}

@@ -86,6 +86,12 @@ stapled --help                                    # Show all commands
 
 All output committed to `docs/` and deployed to GitHub Pages on push to `main`.
 
+## Atomic Consensus (planned evaluation)
+
+The deterministic atomic-consensus pipeline analyzes reported headline propositions;
+it does not establish truth or publish outlet-quality scores. The 20-pilot/80-held-out
+annotation program remains planned.
+
 ## Testing
 
 ```bash
@@ -177,4 +183,22 @@ tests/
 
 If you use stapled-news in research, cite:
 
-> Inference engine based on STAPLE (Warfield et al., 2004) and Dawid-Skene (1979) models for latent truth discovery from unreliable sources.
+> Mattioli, Dominik. *stapled-news* (software), version 0.1.0.
+> https://github.com/domattioli/stapled-news
+
+See [`CITATION.cff`](CITATION.cff) for machine-readable citation metadata.
+
+### Methodological inspiration
+
+These works informed methods explored by this repository. They are not sources of
+ground truth, and this software should be cited directly rather than cited as any
+of these predecessors.
+
+- Warfield, S. K., Zou, K. H., and Wells, W. M. (2004). “Simultaneous Truth and
+  Performance Level Estimation (STAPLE): An Algorithm for the Validation of Image
+  Segmentation.” *IEEE Transactions on Medical Imaging*, 23(7), 903–921.
+- Dawid, A. P., and Skene, A. M. (1979). “Maximum Likelihood Estimation of
+  Observer Error-Rates Using the EM Algorithm.” *Applied Statistics*, 28(1),
+  20–28.
+- Nenkova, A., and Passonneau, R. (2004). “Evaluating Content Selection in
+  Summarization: The Pyramid Method.” In *HLT-NAACL 2004*, 145–152.
