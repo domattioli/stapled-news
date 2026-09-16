@@ -37,11 +37,11 @@ T036–T044 (US3) → T045–T054 (US4) → T055–T062 (polish/site)`.
 abstain; compatible propositions match order-stably; conflicts remain visible;
 no shared-core label without panel dependencies.
 
-- [ ] T017 [US1] Write extraction tests for subject/predicate/object, quantities, time/location, exact spans, attribution, orthogonal polarity/modality, and abstention in `tests/unit/test_atomic_extract.py`
-- [ ] T018 [US1] Write matching tests for event/aspect scope, aliases, order stability, temporal/numeric updates, polarity conflicts, and governing rules in `tests/unit/test_atomic_match.py`
+- [x] T017 [US1] Write extraction tests for subject/predicate/object, quantities, time/location, exact spans, attribution, orthogonal polarity/modality, and abstention in `tests/unit/test_atomic_extract.py`
+- [x] T018 [US1] Write matching tests for event/aspect scope, aliases, order stability, temporal/numeric updates, polarity conflicts, and governing rules in `tests/unit/test_atomic_match.py`
 - [x] T019 [US1] Write SCU/classification tests including orthogonal `has_dispute` and missing-dependency refusal in `tests/unit/test_atomic_classification.py`
 - [x] T020 [US1] Implement built-in `atomic-grammar-v1` extraction and span capture in `src/stapled/extract/atomic.py`
-- [ ] T021 [US1] Implement versioned normalization, attribution, polarity/modality, aliases, and abstention reasons in `src/stapled/extract/atomic.py`
+- [x] T021 [US1] Implement versioned normalization, attribution, polarity/modality, aliases, and abstention reasons in `src/stapled/extract/atomic.py`
 - [x] T022 [US1] Implement event/aspect-scoped equivalence and compatibility matching in `src/stapled/analyze/atomic_match.py`
 - [x] T023 [US1] Implement explicit contradiction/possible-conflict rules with evidence in `src/stapled/analyze/atomic_match.py`
 - [x] T024 [US1] Implement SCU grouping and downstream-only classification in `src/stapled/analyze/atomic_summary.py`
