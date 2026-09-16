@@ -3,6 +3,7 @@
 import json
 import sqlite3
 import sys
+from dataclasses import asdict
 from pathlib import Path
 from typing import List, Optional
 
@@ -170,6 +171,70 @@ def atomic_evaluate_cmd(pilot: int = typer.Option(...), heldout: int = typer.Opt
 def atomic_estimator_cmd(primary_improvement: float = typer.Option(...), controls_json: str = typer.Argument("[]"), adjudicated: int = typer.Option(0)):
     """Gate experimental categorical output; no held-out evidence means withheld."""
     print(estimator_status_payload(primary_improvement, json.loads(controls_json), adjudicated))
+
+
+@atomic_app.command("annotate")
+def atomic_annotate_cmd(
+    input_path: str = typer.Option(..., "--input", help="JSONL or CSV of headlines"),
+    write_prompt: str = typer.Option(..., "--write-prompt", help="Prompt file to write; multi-batch runs get .NNN suffixes"),
+    batch_size: int = typer.Option(20, "--batch-size"),
+):
+    """Write Fable annotation prompts for manual dispatch; this command calls no model itself."""
+    from stapled.analyze.atomic_annotate import (
+        AnnotationError,
+        batches,
+        build_annotation_prompt,
+        load_items,
+    )
+
+    try:
+        items = load_items(input_path)
+        groups = list(batches(items, batch_size))
+    except (AnnotationError, OSError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+    target = Path(write_prompt)
+    written = []
+    for index, batch in enumerate(groups):
+        prompt_path = target if len(groups) == 1 else target.with_suffix(f".{index:03d}{target.suffix}")
+        batch_path = prompt_path.with_suffix(prompt_path.suffix + ".batch.json")
+        prompt_path.write_text(build_annotation_prompt(batch), encoding="utf-8")
+        batch_path.write_text(json.dumps(list(batch), ensure_ascii=False), encoding="utf-8")
+        written.append({"prompt": str(prompt_path), "batch": str(batch_path), "headlines": len(batch)})
+    print(json.dumps({"batches": written}, sort_keys=True))
+
+
+@atomic_app.command("ingest-annotations")
+def atomic_ingest_annotations_cmd(
+    raw: str = typer.Option(..., "--raw", help="Fable reply: a bare JSON array"),
+    batch: str = typer.Option(..., "--batch", help="Batch JSON written by atomic annotate"),
+    output: str = typer.Option(..., "--output"),
+    model_name: str = typer.Option("fable", "--model-name"),
+):
+    """Validate and provenance-tag a pasted-back reply; output is model-generated, not ground truth."""
+    from stapled.analyze.atomic_annotate import (
+        ANNOTATOR_VERSION,
+        SOURCE_TAG,
+        AnnotationError,
+        parse_annotation_response,
+        prompt_hash,
+    )
+
+    try:
+        items = json.loads(Path(batch).read_text(encoding="utf-8"))
+        atoms = parse_annotation_response(Path(raw).read_text(encoding="utf-8"), items, model_name)
+    except (AnnotationError, OSError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+    payload = {
+        "source": SOURCE_TAG,
+        "annotator_model": model_name,
+        "annotator_version": ANNOTATOR_VERSION,
+        "prompt_hash": prompt_hash(),
+        "annotations": [{**asdict(atom), "span": list(atom.span)} for atom in atoms],
+    }
+    Path(output).write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+    print(json.dumps({"output": output, "annotations": len(atoms), "source": SOURCE_TAG}, sort_keys=True))
 
 
 @atomic_app.command("reproduce")
