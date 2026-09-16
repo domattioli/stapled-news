@@ -41,7 +41,7 @@
 <body>
     <div class="container">
         <h1>Streaming EM Training Report</h1>
-        <p>Generated using online Dawid-Skene EM with Robbins-Monro step sizes.</p>
+        <p>One constant-memory pass of online Dawid-Skene EM over the ISOT CSV stream, Robbins-Monro step (t+2)^-0.6.</p>
         
         <div class="chart-section">
             <h2>Training Data</h2>
@@ -55,7 +55,7 @@
             <h2>Convergence Analysis</h2>
             <figure>
                 <img src="assets/convergence.png" alt="Online EM convergence" style="max-width:100%;">
-                <figcaption>Per-batch log-likelihood during streaming training — flattening curve means the model stopped learning new structure.</figcaption>
+                <figcaption>Per-batch log-likelihood during streaming training. A flat curve means the model has stopped learning new structure.</figcaption>
             </figure>
         </div>
         
@@ -63,14 +63,14 @@
             <h2>Outlet Reliability Trajectory</h2>
             <figure>
                 <img src="assets/reliability.png" alt="Reliability trajectory" style="max-width:100%;">
-                <figcaption>Per-outlet reliability estimate after each training batch — stable lines indicate converged parameters.</figcaption>
+                <figcaption>Per-outlet reliability estimate after each training batch. A flat line is a converged parameter.</figcaption>
             </figure>
         </div>
         
         <p style="background:#fff3cd;border-left:4px solid #ffc107;padding:12px 16px;margin:16px 0;font-size:0.9em;">
-        Note: This model measures consensus among outlets, not objective truth.
-        Outlets dominating coverage may outrank factual but minority voices.
-        Treat reliability scores as a starting point for investigation, not final verdicts.</p>
+        This model measures consensus among outlets, not truth.
+        Outlets that dominate coverage can outrank accurate minority voices.
+        Reliability scores are a starting point for investigation, not a verdict.</p>
         
     </div>
 </body>
