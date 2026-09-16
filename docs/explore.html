@@ -232,55 +232,55 @@
     <div class="container">
         <header>
             <h1>Outlet Consensus Landscape</h1>
-            <p class="intro">Consensus-agreement estimates per outlet across ISOT, FakeNewsNet, and UCI. Streams show how online EM stabilizes reliability estimates per batch. Dedup voting isolates real outlets from syndication clusters. Consensus-agreement is a structural property of coverage, not a factuality verdict.</p>
+            <p class="intro">Per-outlet consensus-agreement across ISOT, FakeNewsNet, and UCI: how estimates settle batch by batch under online EM, how dedup voting collapses syndication clusters, and where the estimator inverts. Consensus-agreement is a structural property of coverage, not a factuality verdict.</p>
             <p class="generated-at" id="generated-at">Loading...</p>
         </header>
 
         <div class="callout">
-            <p><strong>Consensus-agreement is not factuality.</strong> These estimates show where outlets align on shared coverage. A high consensus-agreement score means an outlet usually agrees with other outlets when both report the same event — it does not measure whether those outlets are correct. High consensus-agreement can reflect either accuracy or synchronized misinformation.</p>
+            <p><strong>Consensus-agreement is not factuality.</strong> A high score means an outlet usually agrees with other outlets when both report the same event. It says nothing about whether those outlets are correct: accuracy and synchronized misinformation score the same.</p>
         </div>
 
         <div class="chart-card">
             <h2>ISOT: Consensus-Agreement Landscape (7 outlets)</h2>
-            <p class="chart-caption">Each point is an outlet; vertical axis = consensus-agreement (agreement with other outlets when covering same events), horizontal = systematic bias direction. Reuters (blue, real) ranks last at ρ = 0.0 because synthetic sources dominate; this is majority-capture, not a measurement failure.</p>
+            <p class="chart-caption">One point per outlet. Vertical: consensus-agreement (agreement with other outlets on shared events). Horizontal: systematic bias direction. Reuters (blue, the only real outlet) ranks last because six synthetic sources outnumber it. Majority-capture, not a measurement failure.</p>
             <div id="chart-outlets" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
             <h2>Online EM Convergence: Outlet Estimates Per Batch</h2>
-            <p class="chart-caption">Each outlet's consensus-agreement estimate evolves as the online EM algorithm processes articles in batches. Estimates stabilize as coverage accumulates; real outlets converge to true signal faster than synthetic noise.</p>
+            <p class="chart-caption">Each outlet's consensus-agreement estimate after every batch of articles. Estimates settle as coverage accumulates; a flat line means the parameter has converged.</p>
             <div id="chart-trajectory" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
             <h2>Parameter Recovery: Planted vs. Recovered Consensus-Agreement (30 synthetic seeds)</h2>
-            <p class="chart-caption">Online EM (dedup-on ρ = 0.88) recovers planted outlet parameters better than batch Dawid-Skene (0.90), weighted majority (0.87), or plain majority vote (0.71). Dashed line marks the 0.8 gate for usable recovery. Streaming approximation introduces negligible loss.</p>
+            <p class="chart-caption">Spearman ρ between planted and recovered outlet parameters, per seed. Online EM with dedup on: 0.88. Batch Dawid-Skene: 0.90. Weighted majority: 0.87. Plain majority vote: 0.71. Dashed line marks the 0.8 gate for usable recovery. Streaming costs almost nothing against batch.</p>
             <div id="chart-recovery" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
             <h2>Consensus Confidence by Multi-outlet Coverage</h2>
-            <p class="chart-caption">EM confidence (posterior probability) per event, stratified by the number of independent outlets reporting it. Single-outlet events show broad confidence; high-corroboration events cluster near 0 or 1 (strong convergence on agreed label).</p>
+            <p class="chart-caption">EM posterior confidence per event, split by how many independent outlets report it. Single-outlet events spread across the range; well-corroborated events pile up near 0 or 1.</p>
             <div id="chart-confidence" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
             <h2>Syndication Collapse via Simhash Deduplication</h2>
-            <p class="chart-caption">ISOT: 42,681 articles cluster via simhash into ~2,800 clusters; 73% of articles are syndicated near-duplicates. Dedup voting collapses syndicated blocs to fractional votes so one wire story cannot dominate consensus by sheer repetition.</p>
+            <p class="chart-caption">ISOT: simhash groups 42,681 articles into ~2,800 clusters; 73% of articles are syndicated near-duplicates. Dedup voting gives each bloc one fractional vote, so a wire story cannot win consensus by repetition.</p>
             <div id="chart-dedup" class="plot-container"></div>
         </div>
 
         <div class="chart-card">
             <div class="chart-card-kicker">Natural Corpus</div>
             <h2>FakeNewsNet In-the-Wild Inversion: Consensus-Agreement Rises With Fabrication Share</h2>
-            <p class="chart-caption">FakeNewsNet: 341 outlets after alignment filter, 21,575 articles. Outlets carrying more fabricated stories (flagged by Gossip Cop / PolitiFact fact-checkers) exhibit higher consensus-agreement (ρ = −0.16, p = 0.003). Fabricated celebrity stories are heavily syndicated; consensus masquerades as corroboration. This is the organic counterpart to E3's designed majority-capture.</p>
+            <p class="chart-caption">FakeNewsNet: 21,575 articles, 341 outlets after the alignment filter. Outlets carrying more stories flagged fabricated by Gossip Cop / PolitiFact score higher on consensus-agreement (ρ = −0.16, p = 0.003). Fabricated celebrity stories are heavily syndicated, so consensus masquerades as corroboration. The organic counterpart of E3's designed majority-capture.</p>
             <div id="fnn-scatter" class="plot-container"></div>
         </div>
     </div>
 
     <footer>
         <footer-content>
-            <p>STAPLE‑News — measuring consensus, not truth. Outlet estimates are model artifacts.</p>
+            <p>STAPLE‑News measures consensus, not truth. Outlet estimates are model artifacts.</p>
             <p><a href="https://github.com/domattioli/stapled-news" class="footer-link">GitHub</a> · <a href="paper.html" class="footer-link">Paper</a></p>
         </footer-content>
     </footer>
