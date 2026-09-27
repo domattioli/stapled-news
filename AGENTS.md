@@ -1,6 +1,6 @@
-# CLAUDE.md — stapled-news
+# AGENTS.md — stapled-news
 
-Project memory for Claude Code sessions. This repo is a **`lite`-profile DomI consumer** (roster + profiles: DomI `specs/domi-constitution.md` Article I, ADR 013): it carries this CLAUDE.md, the canonical label set, and one minimal CI lane — **no `.domi-pin` / sync-contract obligation**. Upgrading to the `full` profile is a roster change in DomI, not an ad-hoc local decision.
+Project instructions for agent sessions. This repo is a **`lite`-profile DomI consumer** (roster + profiles: DomI `specs/domi-constitution.md` Article I, ADR 013): it carries this AGENTS.md, the canonical label set, and one minimal CI lane — **no `.domi-pin` / sync-contract obligation**. Upgrading to the `full` profile is a roster change in DomI, not an ad-hoc local decision.
 
 ## What this repo is
 
@@ -27,3 +27,7 @@ One minimal lane (`.github/workflows/ci.yml`): ruff lint + pytest on PR + develo
 - **Known issues**: recurring per-outlet silent fetch failures (axios, newsmax, reuters) logged in FETCH_REPORT.md (spec-019 N4).
 - **Vendored DomI skill**: `.claude/skills/dom-write` (flagged by drift sweep; disposition pending full-profile upgrade via DQ-4).
 - **One rolling PR**: `development → main`, draft status until operator merges (no auto-merge).
+
+## Governance
+
+Universal git, secrets, communication, and session rules live in DomI `.claude/policies/`. This file holds only stapled-news facts. Do not add a CLAUDE.md (DomI `.claude/policies/repo-layout.md`).

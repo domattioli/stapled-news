@@ -24,14 +24,14 @@ Fill out each section. Keep PRs small and atomic.
 
 - [ ] core — affects src/stapled/
 - [ ] ci — affects .github/workflows/
-- [ ] docs — affects README/CLAUDE.md
+- [ ] docs — affects README/AGENTS.md
 - [ ] test — affects tests/
 
 ## Compliance Checklist
 
 <!-- All boxes must be checked before merging. -->
 
-- [ ] I read CLAUDE.md before starting
+- [ ] I read AGENTS.md before starting
 - [ ] If this targets `main`: verified the rolling PR `development → main` is updated
 - [ ] No unrelated changes mixed in (single-purpose PR)
 - [ ] No new dependencies added without explicit need
