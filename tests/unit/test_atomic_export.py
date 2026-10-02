@@ -33,7 +33,7 @@ def test_export_refuses_malformed_or_overclaiming_estimator_status():
 
 
 def test_contract_declares_pending_evaluation_and_nullable_modeled_score():
-    contract = json.loads((Path(__file__).parents[2] / "specs/005-atomic-consensus/contracts/atomic-consensus.schema.json").read_text())
+    contract = json.loads((Path(__file__).parents[2] / "schemas/atomic-consensus.schema.json").read_text())
     assert "pending" in contract["$defs"]["evaluation"]["properties"]["status"]["enum"]
     assert "null" in contract["$defs"]["fact"]["properties"]["modeled_core_membership"]["type"]
 

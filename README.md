@@ -165,7 +165,7 @@ Single-file SQLite, `stapled.db` (git-ignored):
 
 ## 9. Atomic consensus (planned evaluation)
 
-A deterministic pipeline (`stapled atomic extract | match | summarize | profile | annotate | evaluate`) breaks event headlines into small auditable propositions and reports how often independent reporting groups, stratified by a declared left/center/right panel, mention each one. It measures *reported agreement*: it does not establish truth, grade outlet quality, or infer claims absent from every sampled headline. Spec: [`specs/005-atomic-consensus/spec.md`](specs/005-atomic-consensus/spec.md). Annotation protocol (20 pilot events, 80 frozen held-out, two annotators plus an adjudicator): [`docs/ATOMIC_ANNOTATION_GUIDE.md`](docs/ATOMIC_ANNOTATION_GUIDE.md). No annotations or metrics recorded yet.
+A deterministic pipeline (`stapled atomic extract | match | summarize | profile | annotate | evaluate`) breaks event headlines into small auditable propositions and reports how often independent reporting groups, stratified by a declared left/center/right panel, mention each one. It measures *reported agreement*: it does not establish truth, grade outlet quality, or infer claims absent from every sampled headline. Spec: [`specs/005-atomic-consensus/spec.md`](https://github.com/domattioli/DomI/blob/development/specs/consumers/stapled-news/specs/005-atomic-consensus/spec.md) (kept in DomI). Annotation protocol (20 pilot events, 80 frozen held-out, two annotators plus an adjudicator): [`docs/ATOMIC_ANNOTATION_GUIDE.md`](docs/ATOMIC_ANNOTATION_GUIDE.md). No annotations or metrics recorded yet.
 
 <div align="right"><a href="#stapled-news"><sub>^ Back to top</sub></a></div>
 
