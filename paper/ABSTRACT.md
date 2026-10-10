@@ -1,47 +1,44 @@
 # Abstract
 
-**STAPLE-News: Estimating Cross-Outlet Consensus and Selective Omission from Streaming News Coverage**
+**Many Biased Witnesses: Does Dependence-Aware Consensus Across News Outlets Recover Fact-Checked Truth?**
 
-When many outlets cover the same event, their accounts overlap imperfectly: claims are
-asserted, contradicted, or silently omitted. We present a method for quantifying this
-structure without labeled data, adapting the STAPLE algorithm from medical image
-segmentation — where an expectation-maximization loop jointly estimates a hidden
-segmentation and each rater's performance — to multi-outlet news. Events take the role of
-the hidden object, outlets act as raters, and atomic claims extracted from coverage are
-the units each outlet includes or omits. The model jointly infers the consensus status of
-every claim and two interpretable parameters per outlet: coverage of consensus claims
-(sensitivity) and propagation of non-consensus claims (one minus specificity). We
-deliberately frame the estimand as *consensus*: this is what unsupervised latent-class
-inference identifies, and we examine its relationship to factual accuracy in the
-discussion rather than claiming it in the results.
+Every outlet's account of an event is a partial, slanted guess at what happened. The
+intuition that "enough guesses average out to the truth" fails for news in two ways:
+outlets copy each other, so their errors are not independent, and bias leans in shared
+directions, so errors do not cancel. We test whether a model that corrects for both
+failures recovers externally verified truth better than counting outlets.
 
-Methodologically, the system is an *online* EM (stepwise Cappé–Moulines updates) over an
-HTTP-Range streaming ingestion layer: a single constant-memory pass with resumable byte
-cursors, requiring no full corpus download and suitable for continuous monitoring of a
-rolling news stream. Per-outlet sufficient statistics persist across batches, so estimates
-update incrementally as new coverage arrives.
+We treat outlets as noisy raters of a hidden event, in the tradition of Dawid–Skene,
+STAPLE, and truth discovery (including the Latent Truth Model's use of source silence as
+negative evidence). Coverage is decomposed into atomic claims. For every event an outlet
+covered, each claim is either carried or omitted; omission counts only when the outlet
+covered the event. The model jointly estimates the consensus status of each claim and two
+error rates per outlet: coverage of consensus claims (sensitivity) and propagation of
+non-consensus claims (one minus specificity). Near-duplicate syndicated copies are
+clustered so that one underlying account casts one vote. Estimation uses no labels and
+runs as an online EM over a streaming news feed.
 
-We validate the estimator in three steps. First, on synthetic corpora with planted
-parameters, the streaming EM recovers outlet parameters reliably (Spearman ρ ≥ 0.8).
-Second, we characterize a key robustness concern: wire-service syndication, where many
-outlets republish a single underlying account, inflates that account's effective vote
-share and pulls the consensus toward it. Routing votes through near-duplicate clusters so
-syndicated copies count once measurably corrects this distortion. Third, applying the
-model to the ISOT corpus (~44k articles, labels held out) and to a multi-outlet corpus, we
-find that consensus-agreement parameters correlate positively with independent third-party
-factual-reporting ratings while remaining uncorrelated with left–right placement —
-indicating the model captures agreement with the cross-outlet factual record rather than
-ideological stance. The coverage parameter supports a per-outlet, per-topic *omission
-audit*: which outlets systematically fail to carry claims that the rest of the field
-corroborates, tracked over time.
+Consensus is not truth: unsupervised inference cannot tell a reliable majority from an
+unreliable one. We therefore evaluate against open fact-check verdicts (ClaimReview
+records and public fact-check datasets), held out from estimation. The primary question
+is whether dependence-aware weighted consensus matches fact-check verdicts more often,
+and with better calibration, than majority vote and than unclustered weighting. We also
+test whether using fact-check verdicts as anchors during estimation improves held-out
+accuracy. The study is pre-registered to stop if fewer than 50 claims match a fact-check
+verdict.
 
-We discuss the limits of consensus as an estimand — including the identifiability argument
-for why unsupervised inference cannot distinguish a reliable majority from an unreliable
-one, the conditions under which consensus and accuracy diverge, and a low-cost anchoring
-mechanism (already implemented) for tying estimates to externally verified claims. Code,
-the streaming pipeline, and the synthetic benchmark are released.
+Supporting results: on synthetic corpora with planted parameters, the streaming EM
+recovers outlet parameters (Spearman ρ ≥ 0.8), and clustering syndicated copies corrects
+the consensus distortion that wire republication otherwise causes. Outlet lean, taken
+from open academic ratings, is used only as a covariate to check that the error rates do
+not simply encode left–right position.
+
+Contribution: the inference methods exist; the contribution is an empirical test, on
+real multi-outlet coverage, of when cross-outlet consensus can stand in for truth, and of
+how much dependence correction and anchoring matter. Code, the streaming pipeline, and
+the synthetic benchmark are released.
 
 ---
 
-*Keywords: latent-class models, Dawid-Skene, online EM, news coverage, media consensus,
-selective omission, computational social science*
+*Keywords: truth discovery, latent-class models, Dawid–Skene, source dependence,
+fact-checking, news coverage, computational social science*
