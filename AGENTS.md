@@ -25,7 +25,7 @@ One minimal lane (`.github/workflows/ci.yml`): ruff lint + pytest on PR + develo
 
 - **Corpus freshness**: `corpus/us/headlines.csv.gz` accretes daily (cron `17 8 * * *`, dropped from hourly) on `development` via `.github/workflows/fetch-us-news.yml` (GDELT throttles; RSS + Google News publisher feeds are working sources). The fetch only works from an Actions runner — Claude Code sandbox sessions are denied by the egress proxy (403 on CONNECT to every news host), so a session can rerun the pipeline over the committed corpus but cannot extend it. Production site (main/GitHub Pages) reflects the last promotion PR merge to main (frozen as of 2026-06-13); operator controls promotion cadence (DQ-4 queue item).
 - **Known issues**: recurring per-outlet silent fetch failures (axios, newsmax, reuters) logged in FETCH_REPORT.md (spec-019 N4).
-- **Vendored DomI skill**: `.claude/skills/dom-write` (flagged by drift sweep; disposition pending full-profile upgrade via DQ-4).
+- **DomI skills**: declared in `.claude/skills.manifest.json` (write-like-scientist); `skills/sync-from-domi/scripts/link_skills.sh` links them as untracked symlinks. The vendored legacy `dom-write` copy was removed 2026-10-28.
 - **One rolling PR**: `development → main`, draft status until operator merges (no auto-merge).
 
 ## Governance
