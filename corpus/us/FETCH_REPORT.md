@@ -1,19 +1,19 @@
-# US headline fetch — 2026-11-04T08:22:25.682005+00:00
+# US headline fetch — 2026-11-05T08:23:54.864403+00:00
 
-**Total unique headlines: 101965**
+**Total unique headlines: 102761**
 - RSS politico.com: 30 items
 - RSS thehill.com: 100 items
 - RSS npr.org: 10 items
 - RSS foxnews.com: 25 items
 - RSS cnn.com: 14 items
-- RSS nytimes.com: 37 items
+- RSS nytimes.com: 20 items
 - RSS washingtonpost.com: FAILED HTTPError
 - RSS abcnews.go.com: 25 items
 - RSS cbsnews.com: 30 items
 - RSS nbcnews.com: 25 items
 - RSS axios.com: FAILED HTTPError
 - RSS newsmax.com: FAILED TimeoutError
-- RSS breitbart.com: 47 items
+- RSS breitbart.com: 50 items
 - RSS huffpost.com: 50 items
 - RSS theguardian.com: 17 items
 - RSS apnews.com: FAILED HTTPError
@@ -26,10 +26,10 @@
 - RSS nationalreview.com: 20 items
 - RSS salon.com: 30 items
 - RSS washingtontimes.com: FAILED HTTPError
-- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 51 items
-- GoogleNews gl=US&ceid=US:en: 100 items
+- GoogleNews ITICS?hl=en-US&gl=US&ceid=US:en: 57 items
+- GoogleNews gl=US&ceid=US:en: 99 items
 - GoogleNews US&gl=US&ceid=US:en: 100 items
-- GoogleNews =US&ceid=US:en: 94 items
-- GoogleNews n-US&gl=US&ceid=US:en: 99 items
-- GoogleNews gl=US&ceid=US:en: 81 items
+- GoogleNews =US&ceid=US:en: 98 items
+- GoogleNews n-US&gl=US&ceid=US:en: 103 items
+- GoogleNews gl=US&ceid=US:en: 78 items
 - HF probe: palewire datasets visible: []
