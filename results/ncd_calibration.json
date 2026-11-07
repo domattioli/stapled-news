@@ -1,0 +1,84 @@
+{
+  "tau": 0.29,
+  "tau_per_seed": [
+    0.26,
+    0.28,
+    0.27,
+    0.28,
+    0.27,
+    0.27,
+    0.28,
+    0.29,
+    0.29,
+    0.28
+  ],
+  "tau_seed_mean": 0.277,
+  "tau_seed_sd": 0.009486832980505129,
+  "fpr": 0.0,
+  "recall": 1.0,
+  "fpr_cap": 0.01,
+  "per_bin": {
+    "<200": {
+      "n_pos": 1326,
+      "n_neg": 6142,
+      "ncd_recall": 1.0,
+      "ncd_fpr": 0.0,
+      "simhash_recall": 0.049773755656108594,
+      "simhash_fpr": 0.0
+    },
+    "200-1000": {
+      "n_pos": 3406,
+      "n_neg": 10583,
+      "ncd_recall": 1.0,
+      "ncd_fpr": 0.0,
+      "simhash_recall": 0.028185554903112156,
+      "simhash_fpr": 0.0
+    },
+    ">1000": {
+      "n_pos": 3268,
+      "n_neg": 3275,
+      "ncd_recall": 1.0,
+      "ncd_fpr": 0.0,
+      "simhash_recall": 0.00397796817625459,
+      "simhash_fpr": 0.0
+    },
+    "eligible(>=200)": {
+      "n_pos": 6674,
+      "n_neg": 13858,
+      "ncd_recall": 1.0,
+      "ncd_fpr": 0.0,
+      "simhash_recall": 0.016332034761762062,
+      "simhash_fpr": 0.0
+    }
+  },
+  "baseline": "simhash Hamming<=6 on the same pairs (per-bin simhash_* fields)",
+  "blocking_recall_mean": 0.7467499999999999,
+  "negatives": {
+    "n_neg_blocked": 0,
+    "n_neg_random": 20000
+  },
+  "runtime_s": 0.2897364874000118,
+  "runtime_s_per_seed": [
+    0.32537839600001917,
+    0.2757017440000027,
+    0.29657408100001703,
+    0.31840145199998915,
+    0.23664483400000336,
+    0.23657063400003153,
+    0.2716990780000401,
+    0.29809191800001145,
+    0.31167343999999275,
+    0.32662929700001087
+  ],
+  "us_per_pair": 57.129904999998516,
+  "n_docs": 720,
+  "n_pairs": 28000,
+  "n_seeds": 10,
+  "compressor": "zlib (zstd unavailable, fallback)",
+  "level": 3,
+  "python": "3.11.18",
+  "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+  "corpus_note": "E2 generator + injection; bodies replaced with synthetic topic-structured long docs because E2 template bodies are <200 bytes. Zipf pseudo-words, not real news text; random negatives are easier than real distinct stories, so tau is optimistic.",
+  "calibration_wall_s": 19.41,
+  "runtime_note": "runtime_s = mean wall time of one ncd_dedup() call per seed corpus (n_docs docs); calibration_wall_s = whole script, 10 seeds, this container (4 vCPU)"
+}
