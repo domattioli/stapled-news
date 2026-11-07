@@ -308,3 +308,54 @@ def test_e6_tolerates_unaligned_reuters_claims(tmp_path):
     entry = run_experiment("e6", e6_anchoring.run, config, seed=42, out_dir=str(tmp_path / "out"))
     assert set(entry["metrics"]["auc_by_budget"]) == {"0", "5"} or set(
         entry["metrics"]["auc_by_budget"]) == {0, 5}
+
+
+def _thin_stream_db(path):
+    """reuters/fake:x/fake:y carry 3 claims each; fake:thin carries one."""
+    conn = connect(str(path))
+    ids = {}
+    for name in ["reuters", "fake:x", "fake:y", "fake:thin"]:
+        ids[name] = conn.execute(
+            "INSERT INTO outlet (name, is_synthetic) VALUES (?, ?)", (name, int(name != "reuters"))
+        ).lastrowid
+    n = 0
+    for event_id in (1, 2, 3):
+        conn.execute("INSERT INTO event (id) VALUES (?)", (event_id,))
+        names = ["reuters", "fake:x", "fake:y"] + (["fake:thin"] if event_id == 1 else [])
+        for name in names:
+            n += 1
+            aid = conn.execute(
+                "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (ids[name], f"url-{n}", f"title-{n}", "body", "2024-01-01", "ok"),
+            ).lastrowid
+            action = "occurred" if name == "reuters" else "did-not-occur"
+            conn.execute(
+                "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+                (aid, event_id, action, 0.9),
+            )
+    conn.commit()
+    conn.close()
+
+
+def test_e6_min_obs_filter(tmp_path):
+    """min_obs drops thin outlets from scoring; default 3 matches the other experiments."""
+    db_path = tmp_path / "thin_stream.db"
+    _thin_stream_db(db_path)
+    base = {"db_path": str(db_path), "min_outlets": 2, "batch_size": 32, "budgets": [0, 2]}
+
+    default = run_experiment("e6", e6_anchoring.run, dict(base), seed=42,
+                             out_dir=str(tmp_path / "default"))["metrics"]
+    assert default["min_obs"] == 3
+    assert default["n_outlets_scored"] == 3
+
+    m1 = run_experiment("e6", e6_anchoring.run, dict(base, min_obs=1), seed=42,
+                        out_dir=str(tmp_path / "m1"))["metrics"]
+    assert m1["min_obs"] == 1
+    assert m1["n_outlets_scored"] == 4
+
+    m5 = run_experiment("e6", e6_anchoring.run, dict(base, min_obs=5), seed=42,
+                        out_dir=str(tmp_path / "m5"))["metrics"]
+    assert m5["n_outlets_scored"] == 0
+    # EM event set is not filtered by min_obs
+    assert default["n_multi_outlet_events"] == m1["n_multi_outlet_events"] == 3

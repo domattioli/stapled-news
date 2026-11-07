@@ -17,6 +17,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from stapled.db import connect
+from stapled.experiments.e4_external import hard_claim_counts
 from stapled.infer.online_em import OnlineEM
 
 
@@ -30,6 +31,9 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         batch_size: Batch size for EM (default 32)
         budgets: List of anchor budget k values (default [0, 5, 10, 25, 50, 100, 200])
         quick: If True, use budgets [0, 25]
+        min_obs: Minimum hard claim count per outlet for scoring (default 3).
+            Outlets below the cutoff still take part in EM but are left out of
+            AUC, real-rank and mean-fake-reliability, as in e3/e3b/e4.
 
     Returns:
         dict with outputs (CSV, PNG paths) and metrics
@@ -39,6 +43,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
     min_outlets = config.get("min_outlets", 2)
     batch_size = config.get("batch_size", 32)
     quick = config.get("quick", False)
+    min_obs = config.get("min_obs", 3)
 
     if quick:
         budgets = [0, 25]
@@ -92,6 +97,11 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         event_with_counts = cursor.fetchall()
         multi_outlet_events = [row[0] for row in event_with_counts]
         n_multi_outlet_events = len(multi_outlet_events)
+
+        # Hard claim counts per outlet over the EM event set; outlets below
+        # min_obs are excluded from scoring (not from EM).
+        hard_counts = hard_claim_counts(conn, min_outlets)
+        scored_outlet_ids = [o for o in outlet_ids if hard_counts.get(o, 0) >= min_obs]
 
         # Average each budget over n_seeds independent anchor draws so the curve
         # reflects the budget, not a single lucky/unlucky draw (single draws are
@@ -168,7 +178,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                             budget_conn.commit()
 
                     auc, real_rank, reuters_reliability, mean_fake_reliability = _run_em_and_score(
-                        budget_conn, outlet_ids, outlet_info, event_ids, batch_size
+                        budget_conn, outlet_ids, outlet_info, event_ids, batch_size,
+                        scored_outlet_ids=scored_outlet_ids,
                     )
                     trial_aucs.append(auc)
                     trial_ranks.append(real_rank)
@@ -211,6 +222,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         # Compute metrics
         metrics = _compute_metrics(results, n_multi_outlet_events)
+        metrics["min_obs"] = min_obs
+        metrics["n_outlets_scored"] = len(scored_outlet_ids)
 
         # Create plot
         png_path = _create_plot(results, out_path)
@@ -251,9 +264,12 @@ def _get_event_anchor_truth(conn, event_id: int, reuters_id) -> int:
     return 1 if count > 0 else 0
 
 
-def _run_em_and_score(conn, outlet_ids, outlet_info, event_ids, batch_size):
+def _run_em_and_score(conn, outlet_ids, outlet_info, event_ids, batch_size,
+                      scored_outlet_ids=None):
     """
     Run OnlineEM and compute AUC + rank metrics.
+
+    EM runs over all outlet_ids; scoring uses scored_outlet_ids (default: all).
 
     Returns: (auc, real_rank, reuters_reliability, mean_fake_reliability)
     """
@@ -269,7 +285,9 @@ def _run_em_and_score(conn, outlet_ids, outlet_info, event_ids, batch_size):
     params = em.params()
     results = []
 
-    for outlet_id in outlet_ids:
+    if scored_outlet_ids is None:
+        scored_outlet_ids = outlet_ids
+    for outlet_id in scored_outlet_ids:
         outlet_name = outlet_info[outlet_id]["name"]
         is_real = (outlet_name == "reuters")
         param = params[outlet_id]
