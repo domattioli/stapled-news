@@ -1,0 +1,28 @@
+{
+  "boot": {
+    "verdict": "FILTER ARTIFACT",
+    "sign_stable": true,
+    "sig_cutoffs": [
+      1
+    ],
+    "ci_excludes_0": {
+      "1": true,
+      "2": false,
+      "3": false,
+      "5": false
+    }
+  },
+  "seed": {
+    "verdict": "FILTER ARTIFACT",
+    "sign_stable": true,
+    "sig_cutoffs": [
+      1
+    ],
+    "ci_excludes_0": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+    }
+  }
+}
