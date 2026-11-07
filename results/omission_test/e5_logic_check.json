@@ -1,0 +1,16 @@
+{
+  "max_abs_diff_vs_e5_compute_coverage_matrix": 0.0,
+  "n_audit_events_full": 7166,
+  "audit_events_per_category_full": {
+    "uci_b": 1999.0,
+    "uci_t": 1779.0,
+    "uci_e": 2068.0,
+    "uci_m": 1320.0
+  },
+  "committed_e5_csv_outlets_matched": 30,
+  "committed_e5_csv_argmin_accuracy_vs_full_share": 0.9666666666666667,
+  "insample_accuracy_full_data": {
+    "30": 0.9666666666666667,
+    "100": 0.9
+  }
+}

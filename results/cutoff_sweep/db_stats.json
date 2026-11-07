@@ -1,0 +1,39 @@
+{
+ "fnn.db": {
+  "sha256": "b3d35b92522c34d22c8acd6ee30fe4b11b0a5e48bb3e33cdc1fc0861111e86ab",
+  "rows": {
+   "article": 21575,
+   "article_label": 21575,
+   "claim": 6121,
+   "event": 2266,
+   "outlet": 2531,
+   "outlet_external_label": 859,
+   "schema_migrations": 6,
+   "source_cursor": 4
+  }
+ },
+ "uci.db": {
+  "sha256": "10c256f24bc38f73331664210b6187a267352fafdc33b500086815565f4858df",
+  "rows": {
+   "article": 422703,
+   "article_label": 422703,
+   "claim": 422703,
+   "event": 7231,
+   "outlet": 10980,
+   "outlet_external_label": 859,
+   "schema_migrations": 6,
+   "source_cursor": 1,
+   "uci_story": 7231
+  }
+ },
+ "stream.db": {
+  "sha256": "e3a99f639dae335a6602f1e2b70629e86bf0e73c847b398a2dc3420023b20a26",
+  "rows": {
+   "article": 43295,
+   "claim": 57480,
+   "event": 20184,
+   "outlet": 7,
+   "schema_migrations": 6
+  }
+ }
+}
