@@ -1,0 +1,28 @@
+[
+  {
+    "experiment": "e4_uci",
+    "git_sha": "8841393b3419b91f518771a08484292c4a807813",
+    "git_dirty": true,
+    "db_sha256": "a02cca346e3214a64b26a48a909787e18de9e0fbac96ef1598179e6f5e92f27d",
+    "seed": 47,
+    "config_hash": "a419117f96450fcb9d2b1e0e22fdc052591131d4c278505eb62ca8c79cec79ca",
+    "outputs": [
+      "results/rerun_m1/e4_uci/seed_47/e4_external.csv",
+      "results/rerun_m1/e4_uci/seed_47/e4_external.png"
+    ],
+    "metrics": {
+      "n_outlets_joined": 207,
+      "n_events_used": 7202,
+      "spearman_fact": -0.028369384993473235,
+      "spearman_bias_abs": -0.037544506022523,
+      "spearman_fact_ci_lower": -0.1870466069811096,
+      "spearman_fact_ci_upper": 0.1264292797654879,
+      "spearman_bias_abs_ci_lower": -0.16529685926046012,
+      "spearman_bias_abs_ci_upper": 0.10025280623446198,
+      "min_obs": 3,
+      "n_claims": 422703,
+      "n_articles_total": 422703
+    },
+    "timestamp": "2026-11-07T07:44:05.831671+00:00"
+  }
+]

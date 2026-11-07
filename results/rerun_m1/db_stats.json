@@ -1,0 +1,49 @@
+{
+ "fnn.db": {
+  "sha256": "33ece1612f25c7f07fa1ac47a806503ea394d0fdced6d62446d6c0fe39b6d5d0",
+  "rows": {
+   "article": 21575,
+   "article_label": 21575,
+   "claim": 6121,
+   "event": 2266,
+   "outlet": 2531,
+   "outlet_external_label": 859,
+   "schema_migrations": 6,
+   "source_cursor": 4
+  }
+ },
+ "uci.db": {
+  "sha256": "a02cca346e3214a64b26a48a909787e18de9e0fbac96ef1598179e6f5e92f27d",
+  "rows": {
+   "article": 422703,
+   "article_label": 422703,
+   "claim": 422703,
+   "event": 7231,
+   "outlet": 10980,
+   "outlet_external_label": 859,
+   "schema_migrations": 6,
+   "source_cursor": 1,
+   "uci_story": 7231
+  }
+ },
+ "stream.db": {
+  "sha256": "c58dd7251bdfd89f7e6ec1c8ec5b510b59f91f78b8a7ce6ff0cff8990f5bd253",
+  "rows": {
+   "article": 43295,
+   "claim": 57480,
+   "event": 20184,
+   "outlet": 7,
+   "schema_migrations": 6
+  }
+ },
+ "stream_alignonly.db": {
+  "sha256": "222c87fa1784960ea0578b9941c5eb1834ac0b4b0c747a73847679267e542370",
+  "rows": {
+   "article": 43295,
+   "claim": 57480,
+   "event": 12946,
+   "outlet": 7,
+   "schema_migrations": 6
+  }
+ }
+}
