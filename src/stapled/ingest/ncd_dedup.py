@@ -35,7 +35,7 @@ ZSTD_AVAILABLE = _zstd is not None
 
 # Calibrated on E2 perturbed copies; see results/ncd_calibration.json
 # (produced by scripts/calibrate_ncd_tau.py).
-TAU_DEFAULT = 0.50
+TAU_DEFAULT = 0.29
 
 _MINHASH_SEED = 0x5EED
 _SHINGLE_WORDS = 5
