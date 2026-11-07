@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 from stapled.db import connect
 from stapled.infer.online_em import OnlineEM
+from stapled.experiments.e4_external import hard_claim_counts
 
 
 def run(config: dict, seed: int, out_dir: str) -> dict:
@@ -27,6 +28,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         db_path: Path to stream.db (default "stream.db")
         min_outlets: Minimum distinct outlets per event (default 2)
         batch_size: Batch size for EM (default 32)
+        min_obs: Minimum hard claim count per outlet (default 3)
 
     Returns:
         dict with outputs (CSV, PNG paths) and metrics
@@ -35,6 +37,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
     db_path = config.get("db_path", "stream.db")
     min_outlets = config.get("min_outlets", 2)
     batch_size = config.get("batch_size", 32)
+    min_obs = config.get("min_obs", 3)
 
     # Copy DB to temp file (avoid mutating stream.db)
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -70,12 +73,15 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         )
         event_ids = [row[0] for row in cursor.fetchall()]
 
+        hard_counts = hard_claim_counts(conn, min_outlets)
+
         # Run experiment with dedup=True and dedup=False
         results = []
 
         # Pass 1: dedup=True
         results.extend(
-            _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup=True)
+            _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup=True,
+                         hard_counts=hard_counts)
         )
 
         # Reset suffstats for second pass
@@ -86,8 +92,12 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         # Pass 2: dedup=False
         results.extend(
-            _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup=False)
+            _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup=False,
+                         hard_counts=hard_counts)
         )
+
+        # Drop outlets with too few hard claims
+        results = [r for r in results if r["n_obs"] >= min_obs]
 
         # Write CSV
         out_path = Path(out_dir)
@@ -107,7 +117,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 f.write(
                     f"{int(r['dedup'])},{r['outlet']},{is_real},"
                     f"{r['sens']:.6f},{r['spec']:.6f},{r['reliability']:.6f},"
-                    f"{int(r['n_obs'])}\n"
+                    f"{r['n_obs']:.1f}\n"
                 )
 
         # Compute metrics and create plot (dedup=True only)
@@ -115,6 +125,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         dedup_off_results = [r for r in results if not r["dedup"]]
 
         metrics = _compute_metrics(dedup_on_results, dedup_off_results, len(event_ids))
+        metrics["min_obs"] = min_obs
 
         png_path = _create_plot(dedup_on_results, out_path)
 
@@ -133,7 +144,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
             pass
 
 
-def _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup):
+def _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup, hard_counts):
     """
     Run one EM pass (dedup=True or False).
 
@@ -164,7 +175,8 @@ def _run_em_pass(conn, outlet_ids, outlet_info, event_ids, batch_size, dedup):
             "sens": param["sens"],
             "spec": param["spec"],
             "reliability": param["reliability"],
-            "n_obs": em.n_obs[outlet_id],
+            "n_obs": float(hard_counts.get(outlet_id, 0)),
+            "n_obs_soft": em.n_obs[outlet_id],
         })
 
     return results

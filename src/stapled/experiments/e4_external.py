@@ -20,6 +20,30 @@ from stapled.db import connect
 from stapled.infer.online_em import OnlineEM
 
 
+def hard_claim_counts(conn, min_outlets):
+    """Hard claim count per outlet over the events EM uses (>= min_outlets distinct outlets).
+
+    Returns:
+        dict {outlet_id: int}; outlets with no such claims are absent.
+    """
+    rows = conn.execute(
+        """
+        SELECT a.outlet_id, COUNT(c.id)
+        FROM claim c JOIN article a ON c.article_id = a.id
+        WHERE c.event_id IN (
+            SELECT c2.event_id FROM claim c2
+            JOIN article a2 ON c2.article_id = a2.id
+            WHERE c2.event_id IS NOT NULL
+            GROUP BY c2.event_id
+            HAVING COUNT(DISTINCT a2.outlet_id) >= ?
+        )
+        GROUP BY a.outlet_id
+        """,
+        (min_outlets,),
+    ).fetchall()
+    return {row[0]: row[1] for row in rows}
+
+
 def run(config: dict, seed: int, out_dir: str) -> dict:
     """
     Run E4 external label validation experiment.
@@ -29,6 +53,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         min_outlets: Minimum distinct outlets per event (default 2)
         batch_size: Batch size for EM (default 32)
         min_articles_per_outlet: Minimum articles per outlet (default 5)
+        min_obs: Minimum hard claim count per outlet (default 3)
 
     Returns:
         dict with outputs (CSV, PNG paths) and metrics
@@ -38,6 +63,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
     min_outlets = config.get("min_outlets", 2)
     batch_size = config.get("batch_size", 32)
     min_articles_per_outlet = config.get("min_articles_per_outlet", 5)
+    min_obs = config.get("min_obs", 3)
+    rng = np.random.default_rng(seed)
 
     # Copy DB to temp file
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -73,6 +100,13 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         )
         event_ids = [row[0] for row in cursor.fetchall()]
 
+        # Seeded batch order so different seeds give real replicates
+        event_ids = rng.permutation(event_ids).tolist()
+
+        hard_counts = hard_claim_counts(conn, min_outlets)
+        n_claims = conn.execute("SELECT COUNT(*) FROM claim").fetchone()[0]
+        n_articles_total = conn.execute("SELECT COUNT(*) FROM article").fetchone()[0]
+
         # Run EM with dedup_voting=True (one pass)
         em = OnlineEM(outlet_ids, conn=conn, dedup_voting=True)
 
@@ -85,19 +119,22 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         params = em.params()
 
         # Build external label metrics per outlet
-        outlet_scores = _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet)
+        outlet_scores = _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet, hard_counts)
 
-        # Filter outlets with sufficient articles and valid external labels
+        # Filter outlets with sufficient articles, hard claims and valid external labels
         valid_outlets = [
             s for s in outlet_scores
             if s["n_articles"] >= min_articles_per_outlet
-            and s["n_obs"] > 0
+            and s["n_obs"] >= min_obs
             and s["fact_ordinal"] is not None
             and s["bias_distance"] is not None
         ]
 
         # Compute global metrics with bootstrap CI
         metrics = _compute_metrics(valid_outlets, len(event_ids), seed)
+        metrics["min_obs"] = min_obs
+        metrics["n_claims"] = n_claims
+        metrics["n_articles_total"] = n_articles_total
 
         # Write CSV
         out_path = Path(out_dir)
@@ -115,11 +152,11 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 f.write(
                     f"{s['outlet']},{int(s['n_articles'])},{fact_str},{bias_str},"
                     f"{s['sens']:.6f},{s['spec']:.6f},{s['reliability']:.6f},"
-                    f"{int(s['n_obs'])}\n"
+                    f"{s['n_obs']:.1f}\n"
                 )
 
         # Create two-panel scatter plot
-        png_path = _create_plot(valid_outlets, out_path)
+        png_path = _create_plot(valid_outlets, out_path, rng)
 
         conn.close()
 
@@ -171,7 +208,7 @@ def _encode_bias_distance(bias_str):
         return None
 
 
-def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet):
+def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet, hard_counts):
     """
     Compute external label metrics for each outlet.
 
@@ -183,7 +220,8 @@ def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articl
     for outlet_id in outlet_ids:
         outlet_name = outlet_info[outlet_id]["name"]
         param = params[outlet_id]
-        n_obs = em.n_obs[outlet_id]
+        n_obs_soft = em.n_obs[outlet_id]
+        n_obs = float(hard_counts.get(outlet_id, 0))
 
         # Count articles for this outlet
         cursor = conn.execute(
@@ -220,6 +258,7 @@ def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articl
             "spec": param["spec"],
             "reliability": param["reliability"],
             "n_obs": n_obs,
+            "n_obs_soft": n_obs_soft,
         })
 
     return results
@@ -294,7 +333,7 @@ def _compute_metrics(valid_outlets, n_events_used, seed):
     return metrics
 
 
-def _create_plot(valid_outlets, out_path):
+def _create_plot(valid_outlets, out_path, rng):
     """Create fivethirtyeight two-panel scatter: reliability vs fact_ordinal and bias_distance."""
     import matplotlib as mpl
 
@@ -318,7 +357,7 @@ def _create_plot(valid_outlets, out_path):
 
     # Panel 1: reliability vs fact_ordinal
     # Add jitter to ordinals
-    fact_jitter = fact_ordinals + np.random.normal(0, 0.05, len(fact_ordinals))
+    fact_jitter = fact_ordinals + rng.normal(0, 0.05, len(fact_ordinals))
     ax1.scatter(fact_jitter, reliabilities, s=100, alpha=0.6, color="#1f77b4", edgecolors="black", linewidth=1)
 
     rho_fact, _ = spearmanr(reliabilities, fact_ordinals)
@@ -330,7 +369,7 @@ def _create_plot(valid_outlets, out_path):
     ax1.set_xticks([0, 1, 2])
 
     # Panel 2: reliability vs bias_distance
-    bias_jitter = bias_distances + np.random.normal(0, 0.05, len(bias_distances))
+    bias_jitter = bias_distances + rng.normal(0, 0.05, len(bias_distances))
     ax2.scatter(bias_jitter, reliabilities, s=100, alpha=0.6, color="#ff7f0e", edgecolors="black", linewidth=1)
 
     rho_bias, _ = spearmanr(reliabilities, bias_distances)

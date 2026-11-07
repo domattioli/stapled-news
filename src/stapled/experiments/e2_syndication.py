@@ -16,6 +16,7 @@ from stapled.db import connect
 from stapled.synth.generator import generate
 from stapled.infer.online_em import OnlineEM
 from stapled.ingest.dedup import dedup_articles
+from stapled.ingest.ncd_dedup import ncd_dedup
 
 
 def run(config: dict, seed: int, out_dir: str) -> dict:
@@ -28,6 +29,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         synth_config_path: Path to synth config YAML (default "configs/synth-baseline.yml")
         n_seeds: Number of seeds per multiplicity (default 10)
         perturb: If True, run both "exact" and "perturbed" modes (default True)
+        dedup_method: "simhash" (default) or "ncd" (MinHash-blocked NCD dedup)
 
     Returns:
         dict with outputs (CSV, PNG paths) and metrics
@@ -38,6 +40,9 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
     n_seeds = config.get("n_seeds", 10)
     perturb = config.get("perturb", True)
     synth_config_path = config.get("synth_config_path", "configs/synth-baseline.yml")
+    dedup_method = config.get("dedup_method", "simhash")
+    if dedup_method not in ("simhash", "ncd"):
+        raise ValueError(f"dedup_method must be 'simhash' or 'ncd', got {dedup_method!r}")
 
     if quick:
         multiplicities = [1, 5]
@@ -54,7 +59,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         for m in multiplicities:
             for s in range(n_seeds):
                 seed_results = _run_seed(
-                    s, seed, synth_config, m, mode
+                    s, seed, synth_config, m, mode, dedup_method
                 )
                 results.extend(seed_results)
 
@@ -93,7 +98,12 @@ def _load_synth_config(path: str) -> dict:
 
 
 def _run_seed(
-    seed_idx: int, base_seed: int, synth_config: dict, multiplicity: int, mode: str
+    seed_idx: int,
+    base_seed: int,
+    synth_config: dict,
+    multiplicity: int,
+    mode: str,
+    dedup_method: str = "simhash",
 ) -> list:
     """
     Run experiment for one (seed, multiplicity, mode) triplet.
@@ -136,7 +146,10 @@ def _run_seed(
             )
 
         # Run dedup to cluster duplicates
-        dedup_articles(conn)
+        if dedup_method == "ncd":
+            ncd_dedup(conn)
+        else:
+            dedup_articles(conn)
 
         # Get event IDs
         cursor = conn.execute(
