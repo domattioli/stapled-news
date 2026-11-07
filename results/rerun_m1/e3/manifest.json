@@ -1,0 +1,25 @@
+[
+  {
+    "experiment": "e3",
+    "git_sha": "8841393b3419b91f518771a08484292c4a807813",
+    "git_dirty": true,
+    "db_sha256": "c58dd7251bdfd89f7e6ec1c8ec5b510b59f91f78b8a7ce6ff0cff8990f5bd253",
+    "seed": 42,
+    "config_hash": "0e7db6ec81688ac487fe5232b7659a3368b677366c25b0c7e7cfcb22376219b0",
+    "outputs": [
+      "results/rerun_m1/e3/e3_isot.csv",
+      "results/rerun_m1/e3/e3_isot.png"
+    ],
+    "metrics": {
+      "auc_dedup_on": 0.0,
+      "real_rank_dedup_on": 7,
+      "mean_reliability_dedup_on": 0.5940564226025186,
+      "inversion_flag": false,
+      "n_events_used": 2925,
+      "n_outlets": 7,
+      "auc_dedup_off": 0.0,
+      "min_obs": 3
+    },
+    "timestamp": "2026-11-07T07:55:51.851754+00:00"
+  }
+]

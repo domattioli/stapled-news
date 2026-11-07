@@ -277,3 +277,34 @@ def test_anchor_truth_assignment(tmp_path):
     assert truth_2 == 0, "Event 2 should have true_state=0 (no reuters)"
 
     conn.close()
+
+
+def test_e6_tolerates_unaligned_reuters_claims(tmp_path):
+    """Claims with event_id NULL (unaligned) must not break the anchor truth lookup."""
+    db_path = tmp_path / "unaligned_stream.db"
+    conn = connect(str(db_path))
+    ids = [conn.execute("INSERT INTO outlet (name, is_synthetic) VALUES (?, ?)", (n, s)).lastrowid
+           for n, s in (("reuters", 0), ("fake:x", 1), ("fake:y", 1))]
+    for i in range(1, 11):
+        conn.execute("INSERT INTO event (id) VALUES (?)", (i,))
+    art = 0
+    for event_id in list(range(1, 11)) + [None]:
+        for oid in ids:
+            art += 1
+            conn.execute(
+                "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (oid, f"u-{art}", "t", "b", "2024-01-01", "ok"),
+            )
+            action = "occurred" if oid == ids[0] else "did-not-occur"
+            conn.execute(
+                "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+                (art, event_id, action, 0.9),
+            )
+    conn.commit()
+    conn.close()
+
+    config = {"db_path": str(db_path), "min_outlets": 2, "batch_size": 32, "budgets": [0, 5]}
+    entry = run_experiment("e6", e6_anchoring.run, config, seed=42, out_dir=str(tmp_path / "out"))
+    assert set(entry["metrics"]["auc_by_budget"]) == {"0", "5"} or set(
+        entry["metrics"]["auc_by_budget"]) == {0, 5}

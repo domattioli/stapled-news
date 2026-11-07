@@ -154,7 +154,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                                     int(r[0]) for r in budget_conn.execute(
                                         "SELECT DISTINCT c.event_id FROM claim c "
                                         "JOIN article a ON c.article_id = a.id "
-                                        "WHERE a.outlet_id = ?",
+                                        "WHERE a.outlet_id = ? AND c.event_id IS NOT NULL",
                                         (budget_reuters_id,),
                                     )
                                 }
