@@ -91,6 +91,7 @@ def test_e3b_runs_on_synthetic_db(tmp_path):
         "min_outlets": 2,
         "batch_size": 32,
         "min_articles_per_outlet": 1,
+        "min_obs": 1,
     }
 
     out_dir = tmp_path / "e3b_output"
@@ -120,7 +121,7 @@ def test_e3b_runs_on_synthetic_db(tmp_path):
         sens = float(parts[3])
         spec = float(parts[4])
         reliability = float(parts[5])
-        n_obs = int(parts[6])
+        n_obs = float(parts[6])
 
         assert outlet in ["good.com", "ok.com", "bad.com"]
         assert n_articles >= 1
@@ -316,6 +317,57 @@ def test_e3b_filters_by_min_articles(tmp_path):
     parts = lines[1].strip().split(",")
     outlet = parts[0]
     assert outlet == "rich.com"
+
+
+def _build_thin_db(db_path):
+    """a/b/c have 3 labeled claims each; thin.com has one."""
+    conn = connect(str(db_path))
+    ids = {}
+    for name in ["a.com", "b.com", "c.com", "thin.com"]:
+        ids[name] = conn.execute(
+            "INSERT INTO outlet (name, is_synthetic) VALUES (?, ?)", (name, 0)
+        ).lastrowid
+    n = 0
+    for event_id in (1, 2, 3):
+        conn.execute("INSERT INTO event (id) VALUES (?)", (event_id,))
+        names = ["a.com", "b.com", "c.com"] + (["thin.com"] if event_id == 1 else [])
+        for name in names:
+            n += 1
+            aid = conn.execute(
+                "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (ids[name], f"url-{n}", f"title-{n}", "body", "2024-01-01", "ok"),
+            ).lastrowid
+            conn.execute(
+                "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+                (aid, event_id, "occurred", 0.9),
+            )
+            conn.execute(
+                "INSERT INTO article_label (article_id, dataset, label) VALUES (?, ?, ?)",
+                (aid, "fnn", "fake" if name == "c.com" else "real"),
+            )
+    conn.commit()
+    conn.close()
+
+
+def test_e3b_min_obs_filter_and_reproducible(tmp_path):
+    db_path = tmp_path / "thin.db"
+    _build_thin_db(db_path)
+    config = {"db_path": str(db_path), "min_outlets": 2, "batch_size": 1,
+              "min_articles_per_outlet": 1}
+
+    entry = run_experiment("e3b", e3b_fnn.run, config, seed=5, out_dir=str(tmp_path / "r1"))
+    run_experiment("e3b", e3b_fnn.run, config, seed=5, out_dir=str(tmp_path / "r2"))
+
+    csv1 = (tmp_path / "r1" / "e3b_fnn.csv").read_bytes()
+    assert csv1 == (tmp_path / "r2" / "e3b_fnn.csv").read_bytes()
+    assert (tmp_path / "r1" / "e3b_fnn.png").read_bytes() == (tmp_path / "r2" / "e3b_fnn.png").read_bytes()
+
+    rows = [line.split(",") for line in csv1.decode().strip().split("\n")[1:]]
+    assert {r[0] for r in rows} == {"a.com", "b.com", "c.com"}
+    for r in rows:
+        assert float(r[6]) >= 3
+    assert entry["metrics"]["min_obs"] == 3
 
 
 def test_auc_computation():

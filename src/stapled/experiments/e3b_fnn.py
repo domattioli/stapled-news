@@ -18,6 +18,7 @@ from scipy.stats import spearmanr
 
 from stapled.db import connect
 from stapled.infer.online_em import OnlineEM
+from stapled.experiments.e4_external import hard_claim_counts
 
 
 def run(config: dict, seed: int, out_dir: str) -> dict:
@@ -29,6 +30,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         min_outlets: Minimum distinct outlets per event (default 2)
         batch_size: Batch size for EM (default 32)
         min_articles_per_outlet: Minimum labeled articles per outlet (default 5)
+        min_obs: Minimum hard claim count per outlet (default 3)
 
     Returns:
         dict with outputs (CSV, PNG paths) and metrics
@@ -38,6 +40,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
     min_outlets = config.get("min_outlets", 2)
     batch_size = config.get("batch_size", 32)
     min_articles_per_outlet = config.get("min_articles_per_outlet", 5)
+    min_obs = config.get("min_obs", 3)
+    rng = np.random.default_rng(seed)
 
     # Copy DB to temp file
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -73,6 +77,11 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         )
         event_ids = [row[0] for row in cursor.fetchall()]
 
+        # Seeded batch order so different seeds give real replicates
+        event_ids = rng.permutation(event_ids).tolist()
+
+        hard_counts = hard_claim_counts(conn, min_outlets)
+
         # Run EM with dedup_voting=True (one pass)
         em = OnlineEM(outlet_ids, conn=conn, dedup_voting=True)
 
@@ -85,16 +94,17 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         params = em.params()
 
         # Build label-based metrics per outlet
-        outlet_scores = _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet)
+        outlet_scores = _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet, hard_counts)
 
-        # Filter outlets with sufficient labeled articles
+        # Filter outlets with sufficient labeled articles and hard claims
         valid_outlets = [
             s for s in outlet_scores
-            if s["n_labeled_articles"] >= min_articles_per_outlet and s["n_obs"] > 0
+            if s["n_labeled_articles"] >= min_articles_per_outlet and s["n_obs"] >= min_obs
         ]
 
         # Compute global metrics
         metrics = _compute_metrics(valid_outlets, len(event_ids))
+        metrics["min_obs"] = min_obs
 
         # Write CSV
         out_path = Path(out_dir)
@@ -110,7 +120,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 f.write(
                     f"{s['outlet']},{int(s['n_labeled_articles'])},{s['fake_share']:.6f},"
                     f"{s['sens']:.6f},{s['spec']:.6f},{s['reliability']:.6f},"
-                    f"{int(s['n_obs'])}\n"
+                    f"{s['n_obs']:.1f}\n"
                 )
 
         # Create scatter plot
@@ -131,7 +141,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
             pass
 
 
-def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet):
+def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articles_per_outlet, hard_counts):
     """
     Compute label_fake_share and reliability for each outlet.
 
@@ -143,7 +153,8 @@ def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articl
     for outlet_id in outlet_ids:
         outlet_name = outlet_info[outlet_id]["name"]
         param = params[outlet_id]
-        n_obs = em.n_obs[outlet_id]
+        n_obs_soft = em.n_obs[outlet_id]
+        n_obs = float(hard_counts.get(outlet_id, 0))
 
         # Count labeled articles by label for this outlet
         cursor = conn.execute(
@@ -173,6 +184,7 @@ def _compute_outlet_scores(conn, outlet_ids, outlet_info, params, em, min_articl
             "spec": param["spec"],
             "reliability": param["reliability"],
             "n_obs": n_obs,
+            "n_obs_soft": n_obs_soft,
         })
 
     return results

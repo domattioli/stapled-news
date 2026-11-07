@@ -69,6 +69,7 @@ def test_e4_runs_on_synthetic_db(tmp_path):
         "min_outlets": 2,
         "batch_size": 32,
         "min_articles_per_outlet": 1,
+        "min_obs": 1,
     }
 
     out_dir = tmp_path / "e4_output"
@@ -99,7 +100,7 @@ def test_e4_runs_on_synthetic_db(tmp_path):
         sens = float(parts[4])
         spec = float(parts[5])
         reliability = float(parts[6])
-        n_obs = int(parts[7])
+        n_obs = float(parts[7])
 
         assert outlet in ["good.com", "bad.com"]
         assert n_articles >= 1
@@ -247,6 +248,7 @@ def test_e4_handles_missing_external_labels(tmp_path):
         "min_outlets": 1,
         "batch_size": 32,
         "min_articles_per_outlet": 1,
+        "min_obs": 1,
     }
 
     out_dir = tmp_path / "e4_missing_test"
@@ -316,6 +318,7 @@ def test_e4_bootstrap_ci(tmp_path):
         "min_outlets": 1,
         "batch_size": 32,
         "min_articles_per_outlet": 1,
+        "min_obs": 1,
     }
 
     out_dir = tmp_path / "e4_bootstrap_test"
@@ -390,6 +393,7 @@ def test_e4_unknown_value_handling(tmp_path):
         "min_outlets": 1,
         "batch_size": 32,
         "min_articles_per_outlet": 1,
+        "min_obs": 1,
     }
 
     out_dir = tmp_path / "e4_unknown_test"
@@ -408,3 +412,78 @@ def test_e4_unknown_value_handling(tmp_path):
 
     metrics = entry["metrics"]
     assert metrics["n_outlets_joined"] == 1
+
+
+def _build_min_obs_db(db_path):
+    """Outlets a/b/c have 3 claims each; thin.com has a single claim. All labeled."""
+    conn = connect(str(db_path))
+    ids = {}
+    for i, name in enumerate(["a.com", "b.com", "c.com", "thin.com"]):
+        ids[name] = conn.execute(
+            "INSERT INTO outlet (name, is_synthetic) VALUES (?, ?)", (name, 0)
+        ).lastrowid
+        conn.execute(
+            "INSERT INTO outlet_external_label (domain, fact, bias, source) VALUES (?, ?, ?, ?)",
+            (name, ["high", "mixed", "low", "high"][i], ["center", "left", "extreme-right", "right"][i], "mbfc"),
+        )
+    n = 0
+    for event_id in (1, 2, 3):
+        conn.execute("INSERT INTO event (id) VALUES (?)", (event_id,))
+        names = ["a.com", "b.com", "c.com"] + (["thin.com"] if event_id == 1 else [])
+        for name in names:
+            n += 1
+            aid = conn.execute(
+                "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (ids[name], f"url-{n}", f"title-{n}", "body", "2024-01-01", "ok"),
+            ).lastrowid
+            conn.execute(
+                "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+                (aid, event_id, "occurred", 0.9),
+            )
+    conn.commit()
+    conn.close()
+
+
+def test_e4_min_obs_hard_count_and_float(tmp_path):
+    """Outlets with fewer than min_obs hard claims are dropped; n_obs is written as float."""
+    db_path = tmp_path / "min_obs.db"
+    _build_min_obs_db(db_path)
+    config = {"db_path": str(db_path), "min_outlets": 2, "batch_size": 2,
+              "min_articles_per_outlet": 1}
+
+    out_dir = tmp_path / "out"
+    entry = run_experiment("e4", e4_external.run, config, seed=1, out_dir=str(out_dir))
+
+    lines = (out_dir / "e4_external.csv").read_text().strip().split("\n")
+    rows = [line.split(",") for line in lines[1:]]
+    assert {r[0] for r in rows} == {"a.com", "b.com", "c.com"}
+    for r in rows:
+        assert float(r[7]) >= 3
+        assert r[7] == "3.0"
+    assert entry["metrics"]["min_obs"] == 3
+    assert entry["metrics"]["n_claims"] == 10
+    assert entry["metrics"]["n_articles_total"] == 10
+
+
+def test_e4_same_seed_identical_outputs(tmp_path):
+    """Same seed gives identical CSV and PNG bytes."""
+    db_path = tmp_path / "repro.db"
+    _build_min_obs_db(db_path)
+    config = {"db_path": str(db_path), "min_outlets": 2, "batch_size": 1,
+              "min_articles_per_outlet": 1}
+
+    run_experiment("e4", e4_external.run, config, seed=7, out_dir=str(tmp_path / "r1"))
+    run_experiment("e4", e4_external.run, config, seed=7, out_dir=str(tmp_path / "r2"))
+
+    assert (tmp_path / "r1" / "e4_external.csv").read_bytes() == (tmp_path / "r2" / "e4_external.csv").read_bytes()
+    assert (tmp_path / "r1" / "e4_external.png").read_bytes() == (tmp_path / "r2" / "e4_external.png").read_bytes()
+
+
+def test_hard_claim_counts(tmp_path):
+    db_path = tmp_path / "counts.db"
+    _build_min_obs_db(db_path)
+    conn = connect(str(db_path))
+    counts = e4_external.hard_claim_counts(conn, 2)
+    conn.close()
+    assert sorted(counts.values()) == [1, 3, 3, 3]

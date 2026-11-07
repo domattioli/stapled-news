@@ -30,15 +30,41 @@ def run_experiment(
     # Run the experiment function
     result = fn(config, seed, out_dir)
 
-    # Get git SHA
+    # Git provenance: repo root resolved from this file, not a hardcoded path
+    git_sha = "unknown"
+    git_dirty = None
     try:
+        git_root = (
+            subprocess.check_output(
+                ["git", "rev-parse", "--show-toplevel"],
+                cwd=str(Path(__file__).resolve().parent),
+                stderr=subprocess.DEVNULL,
+            )
+            .decode()
+            .strip()
+        )
         git_sha = (
-            subprocess.check_output(["git", "rev-parse", "HEAD"], cwd="/home/user/stapled-news")
+            subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=git_root, stderr=subprocess.DEVNULL)
+            .decode()
+            .strip()
+        )
+        git_dirty = bool(
+            subprocess.check_output(["git", "status", "--porcelain"], cwd=git_root, stderr=subprocess.DEVNULL)
             .decode()
             .strip()
         )
     except Exception:
-        git_sha = "unknown"
+        pass
+
+    # Input DB provenance
+    db_sha256 = None
+    db_path = config.get("db_path")
+    if db_path and Path(db_path).is_file():
+        h = hashlib.sha256()
+        with open(db_path, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                h.update(chunk)
+        db_sha256 = h.hexdigest()
 
     # Compute config hash
     config_json = json.dumps(config, sort_keys=True)
@@ -48,6 +74,8 @@ def run_experiment(
     entry = {
         "experiment": experiment_id,
         "git_sha": git_sha,
+        "git_dirty": git_dirty,
+        "db_sha256": db_sha256,
         "seed": seed,
         "config_hash": config_hash,
         "outputs": result.get("outputs", []),

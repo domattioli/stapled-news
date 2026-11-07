@@ -1,6 +1,9 @@
 """Unit tests for experiments package."""
 
+import hashlib
 import json
+
+import pytest
 
 from stapled.experiments.runner import run_experiment
 from stapled.experiments import e1_recovery
@@ -41,6 +44,57 @@ def test_manifest_append(tmp_path):
     assert len(manifest) == 2
     assert manifest[1]["experiment"] == "test_exp"
     assert manifest[1]["seed"] == 43
+
+
+def test_provenance_fields(tmp_path):
+    """git_sha resolved from repo, git_dirty is bool, db_sha256 matches file bytes."""
+
+    def dummy_fn(config, seed, out_dir):
+        return {"outputs": [], "metrics": {}}
+
+    db_file = tmp_path / "x.db"
+    db_file.write_bytes(b"hello provenance" * 100000)
+
+    entry = run_experiment("t", dummy_fn, {"db_path": str(db_file)}, seed=1, out_dir=str(tmp_path / "o"))
+    assert entry["git_sha"] != "unknown"
+    assert isinstance(entry["git_dirty"], bool)
+    assert entry["db_sha256"] == hashlib.sha256(db_file.read_bytes()).hexdigest()
+
+    entry2 = run_experiment("t", dummy_fn, {}, seed=1, out_dir=str(tmp_path / "o"))
+    assert entry2["db_sha256"] is None
+    entry3 = run_experiment("t", dummy_fn, {"db_path": str(tmp_path / "missing.db")}, seed=1,
+                            out_dir=str(tmp_path / "o"))
+    assert entry3["db_sha256"] is None
+
+
+def test_main_accepts_e4_uci_and_rejects_unknown(tmp_path, monkeypatch):
+    pytest.importorskip("sklearn")  # __main__ imports e7, which needs scikit-learn
+    from stapled.experiments import __main__ as cli
+
+    calls = []
+
+    def fake_run_experiment(experiment_id, fn, config, seed, out_dir="results"):
+        calls.append((experiment_id, fn, config, seed, out_dir))
+        return {"seed": seed, "outputs": [], "git_sha": "abcdef012345", "config_hash": "0" * 64, "metrics": {}}
+
+    monkeypatch.setattr(cli, "run_experiment", fake_run_experiment)
+
+    cli.main(["e4_uci", "--db-path", "my.db", "--seed", "10", "--n-seeds", "2",
+              "--out-dir", str(tmp_path)])
+    assert [c[3] for c in calls] == [10, 11]
+    assert calls[0][1] is cli.e4_external.run
+    assert calls[0][2] == {"db_path": "my.db", "min_outlets": 2, "batch_size": 32,
+                           "min_articles_per_outlet": 5, "min_obs": 3}
+    assert calls[0][4].endswith("seed_10") and calls[1][4].endswith("seed_11")
+
+    calls.clear()
+    cli.main(["e4_uci", "--out-dir", str(tmp_path)])
+    assert calls[0][2]["db_path"] == "uci.db"
+    assert calls[0][4] == str(tmp_path)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["e99"])
+    assert exc.value.code != 0
 
 
 def test_config_hash_stable(tmp_path):

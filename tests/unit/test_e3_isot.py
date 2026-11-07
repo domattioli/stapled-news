@@ -88,7 +88,7 @@ def test_e3_runs_on_synthetic_db(tmp_path):
         sens = float(parts[3])
         spec = float(parts[4])
         reliability = float(parts[5])
-        n_obs = int(parts[6])
+        n_obs = float(parts[6])
 
         assert dedup in [0, 1]
         assert outlet in ["reuters", "fake:x", "fake:y"]
@@ -129,6 +129,49 @@ def test_e3_runs_on_synthetic_db(tmp_path):
     assert 0.01 <= metrics["mean_reliability_dedup_on"] <= 0.99
     assert isinstance(metrics["inversion_flag"], bool)
     assert metrics["n_outlets"] == 3
+
+
+def test_e3_min_obs_filter_and_reproducible(tmp_path):
+    """reuters/fake:x/fake:y have 3 claims each; fake:thin has one and is dropped."""
+    db_path = tmp_path / "thin_stream.db"
+    conn = connect(str(db_path))
+    ids = {}
+    for name in ["reuters", "fake:x", "fake:y", "fake:thin"]:
+        ids[name] = conn.execute(
+            "INSERT INTO outlet (name, is_synthetic) VALUES (?, ?)", (name, int(name != "reuters"))
+        ).lastrowid
+    n = 0
+    for event_id in (1, 2, 3):
+        conn.execute("INSERT INTO event (id) VALUES (?)", (event_id,))
+        names = ["reuters", "fake:x", "fake:y"] + (["fake:thin"] if event_id == 1 else [])
+        for name in names:
+            n += 1
+            aid = conn.execute(
+                "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (ids[name], f"url-{n}", f"title-{n}", "body", "2024-01-01", "ok"),
+            ).lastrowid
+            conn.execute(
+                "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
+                (aid, event_id, "occurred", 0.9),
+            )
+    conn.commit()
+    conn.close()
+
+    config = {"db_path": str(db_path), "min_outlets": 2, "batch_size": 1}
+    entry = run_experiment("e3", e3_isot.run, config, seed=3, out_dir=str(tmp_path / "r1"))
+    run_experiment("e3", e3_isot.run, config, seed=3, out_dir=str(tmp_path / "r2"))
+
+    csv1 = (tmp_path / "r1" / "e3_isot.csv").read_bytes()
+    assert csv1 == (tmp_path / "r2" / "e3_isot.csv").read_bytes()
+    assert (tmp_path / "r1" / "e3_isot.png").read_bytes() == (tmp_path / "r2" / "e3_isot.png").read_bytes()
+
+    rows = [line.split(",") for line in csv1.decode().strip().split("\n")[1:]]
+    assert len(rows) == 6  # 2 dedup settings x 3 outlets
+    assert "fake:thin" not in {r[1] for r in rows}
+    for r in rows:
+        assert float(r[6]) >= 3
+    assert entry["metrics"]["min_obs"] == 3
 
 
 def test_manual_auc():
