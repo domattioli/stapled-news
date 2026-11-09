@@ -7,3 +7,5 @@ authors:
   - family-names: "Mattioli"
     given-names: "Dominik"
 repository-code: "https://github.com/domattioli/stapled-news"
+license: PolyForm-Noncommercial-1.0.0
+license-url: "https://github.com/domattioli/stapled-news/blob/main/LICENSE-AI.md"
