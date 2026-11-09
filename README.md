@@ -9,7 +9,7 @@
 <p align="center">
 <a href="https://github.com/domattioli/stapled-news/actions/workflows/ci.yml"><img src="https://github.com/domattioli/stapled-news/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
 <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+"/></a>
-<a href="LICENSE.md"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-lightgrey" alt="License"/></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20NC%201.0.0%20%2B%20no--AI%20terms-lightgrey" alt="License"/></a>
 <a href="https://domattioli.github.io/stapled-news/"><img src="https://img.shields.io/badge/site-GitHub%20Pages-green" alt="Site"/></a>
 <a href="CITATION.cff"><img src="https://img.shields.io/badge/version-0.1.0-informational" alt="Version 0.1.0"/></a>
 </p>
@@ -243,6 +243,6 @@ Methodological inspiration (cite this software directly, not these as stand-ins)
 - Dawid, A. P., Skene, A. M. (1979). Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm. *Applied Statistics*, 28(1), 20–28.
 - Nenkova, A., Passonneau, R. (2004). Evaluating Content Selection in Summarization: The Pyramid Method. *HLT-NAACL 2004*, 145–152.
 
-License: [PolyForm Noncommercial 1.0.0](LICENSE.md).
+License: [PolyForm Noncommercial 1.0.0](LICENSE) **plus** additional terms that forbid AI training ([LICENSE-AI.md](LICENSE-AI.md)). Both apply. Notices: [NOTICE](NOTICE). For commercial or AI-training licenses, contact via https://github.com/domattioli.
 
 <div align="right"><a href="#stapled-news"><sub>^ Back to top</sub></a></div>
