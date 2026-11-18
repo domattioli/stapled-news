@@ -1,0 +1,23 @@
+[
+  {
+    "experiment": "e3b",
+    "git_sha": "8841393b3419b91f518771a08484292c4a807813",
+    "git_dirty": true,
+    "db_sha256": "33ece1612f25c7f07fa1ac47a806503ea394d0fdced6d62446d6c0fe39b6d5d0",
+    "seed": 45,
+    "config_hash": "730cb23fefbb61a618ff9b4db452083ed4b1fc0280f182905931ccf2fd789958",
+    "outputs": [
+      "results/rerun_m1/e3b/seed_45/e3b_fnn.csv",
+      "results/rerun_m1/e3b/seed_45/e3b_fnn.png"
+    ],
+    "metrics": {
+      "n_outlets_scored": 192,
+      "n_events_used": 310,
+      "spearman_rho": -0.12158167320002933,
+      "spearman_pval": 0.09297249837202139,
+      "auc_mostly_fake": 0.15407733921057903,
+      "min_obs": 3
+    },
+    "timestamp": "2026-11-07T07:39:02.322236+00:00"
+  }
+]
