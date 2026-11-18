@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+
 from stapled.baselines import run_baseline
 
 

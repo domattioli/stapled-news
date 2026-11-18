@@ -2,13 +2,13 @@
 
 import re
 import sqlite3
-import numpy as np
 from collections import defaultdict
 from datetime import datetime
 
+import numpy as np
+from scipy.sparse import csr_matrix, hstack
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
-from scipy.sparse import hstack, csr_matrix
 
 
 def build_event_vectors(titles: list[str]) -> tuple[dict, csr_matrix]:
@@ -161,7 +161,7 @@ def compute_distances(
         titles = [m[2] if m[2] else "" for m in members]
 
         # Vectorize all titles for this event
-        vectorizer_dict, vectors = build_event_vectors(titles)
+        _vectorizer_dict, vectors = build_event_vectors(titles)
 
         # Syndication weighting: collapse exact-duplicate headlines (case/space
         # normalized) so one AP wire story carried verbatim by N outlets counts
@@ -382,7 +382,7 @@ def weekly_series(
 
         # Parse ISO week (YYYY-Www format)
         try:
-            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            dt = datetime.fromisoformat(ts)
             iso_week = dt.strftime("%G-W%V")
         except (ValueError, AttributeError):
             continue
@@ -531,7 +531,7 @@ def validate_split_half(
         return {"rho": 0.0, "n_outlets": 0, "gate_pass": False}
 
     # Extract unique events and randomly split them
-    unique_events = set(row["event_id"] for row in article_rows)
+    unique_events = {row["event_id"] for row in article_rows}
     rng = np.random.default_rng(seed)
     events_list = sorted(unique_events)
     rng.shuffle(events_list)
@@ -654,7 +654,7 @@ def token_impacts(
         toward = np.zeros(len(tokens))
         weight = np.zeros(len(tokens))
 
-        def _attribute(feat_idx, contribution_w, contribution_t):
+        def _attribute(feat_idx, contribution_w, contribution_t, weight=weight, toward=toward):
             for tok_i in feat_idx:
                 weight[tok_i] += contribution_w
                 toward[tok_i] += contribution_t
@@ -863,7 +863,7 @@ def consensus_lean_axis(conn, min_outlets: int = 5, seed: int = 42, n_boot: int 
 
         # synd_w bound as a default so the closure cannot pick up a later
         # iteration's array if this is ever called after the loop advances.
-        def _centroid(mask, synd_w=synd_w):
+        def _centroid(mask, synd_w=synd_w, dense=dense):
             sub = dense[mask]
             sw = synd_w[mask]
             sw = sw / sw.sum() if sw.sum() > 0 else np.full(sw.shape, 1.0 / len(sw))
@@ -965,7 +965,7 @@ def regional_impact(article_rows: list[dict]) -> dict:
         "n_total": len(article_rows),
         "n_unrated": len(unrated),
         "pct_unrated": round(100.0 * len(unrated) / n, 1),
-        "n_unrated_outlets": len(set(r["outlet"] for r in unrated)),
+        "n_unrated_outlets": len({r["outlet"] for r in unrated}),
         "mean_drift_rated": mean(rated),
         "mean_drift_unrated": mean(unrated),
         "events_total": len(by_event),

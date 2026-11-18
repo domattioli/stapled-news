@@ -1,8 +1,14 @@
 """Unit tests for stage gates."""
 
 import pytest
+
 from stapled.db import connect
-from stapled.gates import GateError, assert_corpus_passed, assert_recovery_passed, corroboration_label
+from stapled.gates import (
+    GateError,
+    assert_corpus_passed,
+    assert_recovery_passed,
+    corroboration_label,
+)
 
 
 def test_assert_corpus_passed_valid(tmp_path):

@@ -1,25 +1,24 @@
 """Load US headlines CSV corpus with domain normalization and claim synthesis."""
 
-import re
 import csv
 import gzip
+import re
 import sqlite3
-from typing import Dict, Optional
 from datetime import datetime
 
-from stapled.ingest.fakenewsnet import normalize_domain
-from stapled.ingest.csv_loader import _get_or_create_outlet
 from stapled.db import insert_and_get_id
-
+from stapled.ingest.csv_loader import _get_or_create_outlet
+from stapled.ingest.fakenewsnet import normalize_domain
+from stapled.ingest.snapshot import resolve_corpus
 
 # English negation regex for action classification
 ENGLISH_NEGATION = re.compile(
     r"\b(not|no|denies|denied|refutes|rejects|debunk(?:s|ed)?|false|fake|hoax|won't|cancels|cancelled)\b",
-    re.I,
+    re.IGNORECASE,
 )
 
 
-def _normalize_seendate(seendate_str: str) -> Optional[str]:
+def _normalize_seendate(seendate_str: str) -> str | None:
     """
     Parse seendate in various formats.
     - "20260612T140000Z" (ISO8601 basic format) → ISO8601 extended
@@ -44,7 +43,7 @@ def _normalize_seendate(seendate_str: str) -> Optional[str]:
     # Try ISO8601 extended format (already in correct format)
     if "T" in seendate_str:
         try:
-            dt = datetime.fromisoformat(seendate_str.replace("Z", "+00:00"))
+            dt = datetime.fromisoformat(seendate_str)
             return dt.isoformat()
         except ValueError:
             pass
@@ -53,7 +52,7 @@ def _normalize_seendate(seendate_str: str) -> Optional[str]:
     return seendate_str
 
 
-def _extract_actor(title: str) -> Optional[str]:
+def _extract_actor(title: str) -> str | None:
     """Extract first capitalized multi-char token span as actor."""
     words = title.split()
     for word in words:
@@ -81,7 +80,7 @@ def load_us_headlines(
     conn: sqlite3.Connection,
     path: str = "corpus/us/headlines.csv.gz",
     min_outlet_articles: int = 20,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Load US headlines CSV corpus with domain normalization and claim synthesis.
 
@@ -103,18 +102,20 @@ def load_us_headlines(
         "skipped": 0,
     }
 
+    path = resolve_corpus(path)
+
     # Determine if gzip or plain
     if path.endswith(".gz"):
-        file_obj = gzip.open(path, "rt", encoding="utf-8", errors="replace")
+        file_obj = gzip.open(path, "rt", encoding="utf-8", errors="replace")  # noqa: SIM115 - closed in the finally below
     else:
-        file_obj = open(path, "r", encoding="utf-8", errors="replace")
+        file_obj = open(path, "r", encoding="utf-8", errors="replace")  # noqa: SIM115 - closed in the finally below
 
     try:
         reader = csv.DictReader(file_obj)
 
         # Pass 1: collect rows and count per-domain
         rows = []
-        domain_counts: Dict[str, int] = {}
+        domain_counts: dict[str, int] = {}
 
         for row in reader:
             counts["rows_read"] += 1

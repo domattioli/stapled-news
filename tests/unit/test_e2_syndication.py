@@ -3,11 +3,11 @@
 import json
 import tempfile
 
+from stapled.db import connect
 from stapled.experiments import e2_syndication
 from stapled.experiments.runner import run_experiment
-from stapled.db import connect
-from stapled.synth.generator import generate
 from stapled.ingest.dedup import dedup_articles
+from stapled.synth.generator import generate
 
 
 def test_e2_quick_runs(tmp_path):

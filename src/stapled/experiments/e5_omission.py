@@ -9,17 +9,17 @@ Scoring: Combine EM sensitivity with coverage-rate audit on per-outlet × per-ca
 import os
 import shutil
 import tempfile
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from stapled.db import connect
 from stapled.infer.online_em import OnlineEM
-
 
 # Category label mapping (dataset → friendly name)
 CATEGORY_MAP = {
@@ -157,12 +157,9 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         with open(csv_path, "w") as f:
             f.write("outlet,category,events_in_category,events_covered,coverage_rate,omission_score,em_sensitivity,em_reliability\n")
-            for r in results:
-                f.write(
-                    f"{r['outlet']},{r['category']},{int(r['events_in_category'])},{int(r['events_covered'])},"
+            f.writelines(f"{r['outlet']},{r['category']},{int(r['events_in_category'])},{int(r['events_covered'])},"
                     f"{r['coverage_rate']:.6f},{r['omission_score']:.6f},"
-                    f"{r['em_sensitivity']:.6f},{r['em_reliability']:.6f}\n"
-                )
+                    f"{r['em_sensitivity']:.6f},{r['em_reliability']:.6f}\n" for r in results)
 
         # Compute case studies and metrics
         case_studies_md = _generate_case_studies(results)
@@ -429,7 +426,7 @@ def _create_heatmap(results, out_path):
     })
 
     # Build matrix: rows = outlets, cols = categories
-    by_outlet = defaultdict(lambda: {})
+    by_outlet = defaultdict(dict)
     for r in results:
         by_outlet[r["outlet"]][r["category"]] = r["coverage_rate"]
 

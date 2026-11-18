@@ -1,8 +1,9 @@
 """Static site export for inference runs."""
 
-import sqlite3
 import json
+import sqlite3
 from pathlib import Path
+
 from jinja2 import Environment, PackageLoader
 
 from stapled.gates import GateError

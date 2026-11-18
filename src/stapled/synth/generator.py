@@ -1,10 +1,10 @@
 """Synthetic news corpus generation with seeded ground truth."""
 
-import sqlite3
-import numpy as np
 import json
+import sqlite3
 from datetime import datetime, timedelta
 
+import numpy as np
 
 # Word templates for article generation
 COMMON_WORDS = [

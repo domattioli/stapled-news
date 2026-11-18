@@ -3,7 +3,6 @@
 import re
 import sqlite3
 
-
 # Hedging lexicon
 STRONG_HEDGE = ["might", "could", "may", "appears", "seems"]
 WEAK_HEDGE = ["allegedly", "reportedly", "claims"]

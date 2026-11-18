@@ -10,8 +10,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -281,7 +282,7 @@ def _create_plot(results, out_path):
         'grid.linewidth': 0.5,
     })
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    _fig, ax = plt.subplots(figsize=(10, 6))
 
     # Horizontal bars
     y_pos = np.arange(len(outlets))

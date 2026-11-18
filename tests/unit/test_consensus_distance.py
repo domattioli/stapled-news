@@ -1,17 +1,19 @@
 """Unit tests for consensus distance analysis module."""
 
 import json
+
 import numpy as np
+
+from stapled.analyze.consensus_distance import (
+    _lean_bucket_weights,
+    aggregate_outlets,
+    build_event_vectors,
+    compute_distances,
+    validate_planted,
+)
 from stapled.db import connect
 from stapled.experiments import e7_consensus
 from stapled.experiments.runner import run_experiment
-from stapled.analyze.consensus_distance import (
-    compute_distances,
-    aggregate_outlets,
-    validate_planted,
-    build_event_vectors,
-    _lean_bucket_weights,
-)
 
 
 def test_distances_orientation(tmp_path):

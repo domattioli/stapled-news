@@ -2,15 +2,13 @@
 
 import re
 import sqlite3
-from typing import Dict, Tuple, List, Set
 from collections import defaultdict
 
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
-import numpy as np
 
 from stapled.db import insert_and_get_id
-
 
 # Alias normalization
 ALIAS_MAP = {
@@ -31,7 +29,7 @@ def align(
     min_outlets: int = 1,
     max_claims: int = 50000,
     similarity_threshold: float = 0.55,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Cluster unaligned real claims into events via TF-IDF + agglomerative clustering.
     Returns {events_created, claims_aligned, claims_unaligned}.
@@ -84,7 +82,7 @@ def align(
 
     # Find edges where similarity >= threshold
     distances, indices = nn.kneighbors(tfidf_matrix)
-    edges: Set[Tuple[int, int]] = set()
+    edges: set[tuple[int, int]] = set()
 
     for i in range(len(claim_ids)):
         for j, dist in zip(indices[i], distances[i]):
@@ -99,7 +97,7 @@ def align(
         uf.union(i, j)
 
     # Build clusters
-    clusters: Dict[int, List[int]] = defaultdict(list)
+    clusters: dict[int, list[int]] = defaultdict(list)
     for idx, claim_id in enumerate(claim_ids):
         root = uf.find(idx)
         clusters[root].append(idx)
@@ -113,7 +111,7 @@ def align(
             continue
 
         # Check distinct outlets
-        distinct_outlets = len(set(outlet_ids[i] for i in cluster_members))
+        distinct_outlets = len({outlet_ids[i] for i in cluster_members})
         if distinct_outlets < min_outlets:
             continue
 

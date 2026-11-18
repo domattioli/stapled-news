@@ -1,8 +1,9 @@
 """Tests for streaming CSV ingestion."""
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from stapled.db import connect
-from stapled.ingest.stream import dedup_new_articles, iter_remote_lines, _split_quoted_records
+from stapled.ingest.stream import _split_quoted_records, dedup_new_articles, iter_remote_lines
 
 
 def test_stream_cursor_init(tmp_path):

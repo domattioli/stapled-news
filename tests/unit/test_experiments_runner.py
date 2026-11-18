@@ -2,8 +2,8 @@
 
 import json
 
-from stapled.experiments.runner import run_experiment
 from stapled.experiments import e1_recovery
+from stapled.experiments.runner import run_experiment
 
 
 def test_manifest_append(tmp_path):

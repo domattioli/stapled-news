@@ -334,7 +334,7 @@
         <div class="article-header">
             <div class="article-kicker">Results</div>
             <h1 class="article-title">Six Experiments: Recovery Under Synthetic Truth, Syndication Inversion, Majority Capture, Omission Auditing, and Sparse Anchoring</h1>
-            <p class="article-dek">Online EM recovers planted parameters at ρ = 0.88. Wire duplication inverts recovery to ρ = −0.87 (fully repaired by dedup voting). Unreliable majorities are unrepairable (Reuters ranks last on ISOT). FakeNewsNet shows in-the-wild inversion (ρ = −0.16). Consensus-agreement is null against factuality (ρ = −0.10, CI [−0.24, 0.05]). Omission patterns separate by editorial beat with zero labels. Sparse anchoring does not repair echo dominance.</p>
+            <p class="article-dek">Online EM recovers planted parameters at ρ = 0.88. Wire duplication inverts recovery to ρ = −0.87; dedup voting repairs it fully. Unreliable majorities are unrepairable: Reuters ranks last on ISOT. FakeNewsNet inverts in the wild (ρ = −0.16). Consensus-agreement is null against factuality (ρ = −0.10, CI [−0.24, 0.05]). Omission patterns separate by editorial beat with zero labels. Sparse anchoring does not repair echo dominance.</p>
         </div>
 
         <!-- E1 -->
@@ -342,11 +342,11 @@
             <div class="experiment-kicker">E1 Recovery</div>
             <h2 class="experiment-title">Online EM Recovers Planted Outlet Parameters at ρ = 0.88, Matching Batch Methods</h2>
             <div class="experiment-text">
-                <p>Across 30 synthetic corpora with known outlet reliability parameters, online EM recovers planted truth at mean Spearman ρ ≈ 0.88 — on par with batch Dawid-Skene (0.90), ahead of weighted majority vote (0.87), and substantially better than plain majority vote (0.71). The streaming approximation incurs negligible loss. This isolates the estimator machinery as sound; failures in real data are due to unmet assumptions (unreliable majorities or syndication effects), not broken inference.</p>
+                <p>Across 30 synthetic corpora with planted outlet reliability, online EM recovers it at mean Spearman ρ ≈ 0.88: on par with batch Dawid-Skene (0.90), ahead of weighted majority vote (0.87), well ahead of plain majority vote (0.71). The streaming approximation costs almost nothing. The estimator is sound; failures on real data come from unmet assumptions (unreliable majorities, syndication), not broken inference.</p>
             </div>
             <div class="figure-card">
                 <img src="assets/e1_recovery.png" alt="Parameter recovery: online EM vs. baselines" class="figure-image">
-                <div class="figure-caption">E1 recovery: Spearman ρ comparing planted vs. recovered outlet consensus-agreement across 30 seeds. Online EM dedup-on ρ = 0.88; batch Dawid-Skene 0.90; weighted majority 0.87; majority vote 0.71. Streaming introduces negligible loss. The dashed line marks the 0.8 usability gate.</div>
+                <div class="figure-caption">E1 recovery: Spearman ρ between planted and recovered outlet consensus-agreement across 30 seeds. Online EM dedup-on ρ = 0.88; batch Dawid-Skene 0.90; weighted majority 0.87; majority vote 0.71. Dashed line marks the 0.8 usability gate.</div>
             </div>
         </div>
 
@@ -355,8 +355,8 @@
             <div class="experiment-kicker">E2 Syndication</div>
             <h2 class="experiment-title">Syndication Duplication Inverts Recovery to ρ = −0.87; Dedup Voting Fully Repairs It</h2>
             <div class="experiment-text">
-                <p>When one unreliable wire story is duplicated at multiplicity m ∈ {1, 2, 5, 10, 20} and re-attributed as originating from different outlets, un-deduplicated recovery catastrophically degrades: ρ = 0.82 (m=1) → 0.73 (m=2) → 0.31 (m=10) → <strong>−0.87 (m=20)</strong>. At m=20, the model inverts completely: it ranks the fabricated sources above the truth by construction, because the sheer repetition convinces EM that repetition signals consensus truth.</p>
-                <p>With fractional dedup voting enabled (each cluster counts as one vote regardless of size), recovery remains flat across the entire sweep: ρ = 0.78–0.84. This isolates syndication as one fully-repairable mechanism of majority-capture. The data alone contains enough signal to fix it.</p>
+                <p>Duplicate one unreliable wire story at multiplicity m ∈ {1, 2, 5, 10, 20}, re-attribute the copies to different outlets, and un-deduplicated recovery collapses: ρ = 0.82 (m=1) → 0.73 (m=2) → 0.31 (m=10) → <strong>−0.87 (m=20)</strong>. At m=20 the model ranks outlets backwards: repetition reads as consensus, so the echoed unreliable account becomes the reference.</p>
+                <p>With fractional dedup voting on (each cluster counts as one vote regardless of size), recovery stays flat across the sweep: ρ = 0.78–0.84. Syndication is one mechanism of majority-capture, and the data alone contain enough signal to fix it.</p>
             </div>
             <div class="plotly-container">
                 <div id="e2Chart"></div>
@@ -371,11 +371,11 @@
             <div class="experiment-kicker">E3 ISOT</div>
             <h2 class="experiment-title">ISOT Majority-Capture: Reuters Ranks 7/7 Despite Being the Only Truthful Source</h2>
             <div class="experiment-text">
-                <p>ISOT: 42,681 articles. Reuters publishes ~6,000; six synthetic sources publish ~37,000. Reuters is structurally outnumbered 6:1 and ranks last by estimated consensus-agreement (AUC = 0.0). The model adopts the fabricated majority as consensus truth and treats Reuters as an outlier. Dedup voting deflates fake estimates (mean 0.83 → 0.67) but cannot reorder ranks — there is no signal in the data to do so. This is the failure mode that cannot be fixed by data alone. It requires an external anchor (held-out labels, human judgment) or a fundamental rethink of what consensus measures.</p>
+                <p>ISOT: 42,681 articles. Reuters publishes ~6,000; six synthetic sources publish ~37,000. Outnumbered 6:1, Reuters ranks last by estimated consensus-agreement (AUC = 0.0). The model adopts the fabricated majority as consensus and treats Reuters as the outlier. Dedup voting deflates fake estimates (mean 0.83 → 0.67) but cannot reorder ranks; the data carry no signal to do so. This failure mode needs an external anchor (held-out labels, human judgment), not more data.</p>
             </div>
             <div class="figure-card">
                 <img src="assets/e3_isot.png" alt="ISOT corpus: real outlet ranked last by estimated reliability" class="figure-image">
-                <div class="figure-caption">ISOT: 7 outlets ranked by estimated consensus-agreement. Reuters (blue, real, truthful) ranks 7/7. Six synthetic sources (red, fabricated) rank 1–6. The model cannot distinguish truth from synchronized falsehood when the majority lies.</div>
+                <div class="figure-caption">ISOT: 7 outlets ranked by estimated consensus-agreement. Reuters (blue, real) ranks 7/7. Six synthetic sources (red, fabricated) rank 1–6. When the majority lies, the model cannot tell truth from synchronized falsehood.</div>
             </div>
         </div>
 
@@ -384,7 +384,7 @@
             <div class="experiment-kicker">E3b FakeNewsNet</div>
             <h2 class="experiment-title">In-the-Wild Inversion: Consensus-Agreement Rises With Fabrication Share (ρ = −0.16, p = 0.003)</h2>
             <div class="experiment-text">
-                <p>FakeNewsNet: 21,575 articles, 341 outlets after alignment filtering. Held-out fact-checker labels from Gossip Cop and PolitiFact show: outlets carrying more fabricated articles rank higher on consensus-agreement (Spearman ρ = −0.16, p = 0.003, AUC = 0.09). Fabricated celebrity stories are heavily syndicated — low-quality sources co-cover the same tabloid material, so consensus-agreement measures co-coverage intensity, not truthfulness. This replicates E3's designed inversion in organic data and is statistically significant.</p>
+                <p>FakeNewsNet: 21,575 articles, 341 outlets after alignment filtering. Against held-out Gossip Cop and PolitiFact labels, outlets carrying more fabricated articles rank higher on consensus-agreement (Spearman ρ = −0.16, p = 0.003, AUC = 0.09). Fabricated celebrity stories are heavily syndicated; low-quality sources co-cover the same tabloid material, so consensus-agreement measures co-coverage intensity, not truthfulness. E3's designed inversion, replicated in organic data.</p>
             </div>
             <div class="plotly-container">
                 <div id="e3bChart"></div>
@@ -399,13 +399,13 @@
             <div class="experiment-kicker">E4 Factuality Null</div>
             <h2 class="experiment-title">Consensus-Agreement Is Null Against MBFC Factuality: ρ = −0.10 (UCI, n=176 outlets)</h2>
             <div class="experiment-text">
-                <p>FakeNewsNet (MBFC labels on 34 outlets): ρ = −0.11, CI [−0.46, 0.24]. UCI (422,703 headlines, 176 MBFC-rated outlets at the 10-article participation floor, 7,202 multi-outlet events): fact ρ = −0.10, CI [−0.24, 0.05]; ideological-lean ρ = 0.02, CI [−0.12, 0.17]. The null is precise and replicates. Two representative outlets are indistinguishable by consensus-agreement: one low-MBFC source ranking high, another high-MBFC source ranking equally high — both cluster identically, yet one factually bankrupt by external standards. Roughly 3% of UCI headlines carry explicit negation; negation markers carry no factuality signal. E3b (syndication-driven inversion) and E4 (external factuality null) together show consensus-agreement is unidentifiable from coverage patterns alone: it measures co-coverage intensity and popularity clustering, not truth.</p>
+                <p>FakeNewsNet (MBFC labels on 34 outlets): ρ = −0.11, CI [−0.46, 0.24]. UCI (422,703 headlines, 176 MBFC-rated outlets at the 10-article participation floor, 7,202 multi-outlet events): factuality ρ = −0.10, CI [−0.24, 0.05]; ideological lean ρ = 0.02, CI [−0.12, 0.17]. The null is precise and replicates. MBFC-rated low and high outlets sit interleaved at the top of the ranking. Only ~3% of UCI headlines carry explicit negation, and negation carries no factuality signal. E3b (syndication-driven inversion) and E4 (factuality null) together show consensus-agreement is unidentifiable from coverage alone: it measures co-coverage intensity and popularity clustering, not truth.</p>
             </div>
             <div class="plotly-container">
                 <div id="e4-uci-scatter"></div>
             </div>
             <div class="figure-footnote">
-                Interactive scatter: x-axis = MBFC factual rating (low = red, mixed = yellow, high = blue), y-axis = estimated consensus-agreement. Marker size ∝ log(articles); 176 MBFC-rated outlets. Spearman ρ = −0.10, CI [−0.24, 0.05] — no correlation. <a href="assets/e4_external.png">See FakeNewsNet n=34 version</a>.
+                Interactive scatter: x-axis = MBFC factual rating (low = red, mixed = yellow, high = blue), y-axis = estimated consensus-agreement. Marker size ∝ log(articles); 176 MBFC-rated outlets. Spearman ρ = −0.10, CI [−0.24, 0.05]. <a href="assets/e4_external.png">See FakeNewsNet n=34 version</a>.
             </div>
         </div>
 
@@ -414,8 +414,8 @@
             <div class="experiment-kicker">E5 Omission Audit</div>
             <h2 class="experiment-title">The Sensitivity Channel Recovers Editorial Beats With No Labels</h2>
             <div class="experiment-text">
-                <p>The same fitted model exposes per-outlet × per-topic coverage of well-corroborated stories (≥3 outlets, 7,166 events, 30 outlets). Coverage separates by editorial beat with zero supervision. contactmusic.com covers 56% of corroborated entertainment stories but 0.1% of business — a 56-point gap. Entertainment shows the widest spread: tabloids 41–56% (contactmusic.com, thecelebritycafe.com, dailymail.co.uk) vs wire and financial desks 1–3% (bloomberg.com, reuters.com, marketwatch.com, nasdaq.com).</p>
-                <p>This is the label-free product the paper argues for: not "which outlet is truthful" but "which outlet systematically declines to cover what its peers corroborate." Omission auditing measures are available across all outlets whether or not they carry MBFC labels, and the structure is immediately actionable: readers can ask which outlets are omitting claims the broader field treats as corroborated facts.</p>
+                <p>The same fitted model exposes per-outlet × per-topic coverage of well-corroborated stories (≥3 outlets, 7,166 events, 30 outlets). Coverage separates by editorial beat with zero supervision. contactmusic.com covers 56% of corroborated entertainment stories but 0.1% of business, a 56-point gap. Entertainment shows the widest spread: tabloids 41–56% (contactmusic.com, thecelebritycafe.com, dailymail.co.uk) vs. wire and financial desks 1–3% (bloomberg.com, reuters.com, marketwatch.com, nasdaq.com).</p>
+                <p>This is the label-free product: not "which outlet is truthful" but "which outlet systematically declines to cover what its peers corroborate." It works for every outlet, MBFC-rated or not.</p>
             </div>
             <div class="plotly-container">
                 <div id="e5-heatmap"></div>
@@ -430,7 +430,7 @@
             <div class="experiment-kicker">E6 Anchor Cost</div>
             <h2 class="experiment-title">Sparse Anchoring Does Not Repair an Echo-Dominated Majority</h2>
             <div class="experiment-text">
-                <p>Posterior-clamping anchors on externally verified ISOT events, averaged over 10 independent anchor draws per budget (single draws are noisy — which events are anchored matters as much as how many). Mean separation is flat at AUC 0.0 through k=100 (3.4% of 2,941 events), rises to 0.15 at k=400, 0.22 at k=800, 0.67 at k=1,200 (41%), and plateaus at 0.73 by k=2,500 (85%). The real outlet climbs from rank 7 of 7 to rank 2 but never to first; full separation (AUC 1.0) is reached at no budget tested. The standard "add a few fact-checks" prescription fails when the unreliable bloc dominates: anchors fix only the events they touch, but the 6:1 echo majority continues to majority-capture every unanchored event. Even near-complete anchoring only partially repairs the inversion.</p>
+                <p>Posterior-clamping anchors on externally verified ISOT events, averaged over 10 independent anchor draws per budget (single draws are noisy: which events are anchored matters as much as how many). Mean separation is flat at AUC 0.0 through k=100 (3.4% of 2,941 events), rises to 0.15 at k=400, 0.22 at k=800, 0.67 at k=1,200 (41%), and plateaus at 0.73 by k=2,500 (85%). The real outlet climbs from rank 7 of 7 to rank 2, never to first; full separation (AUC 1.0) is reached at no budget tested. "Add a few fact-checks" fails when the unreliable bloc dominates: anchors fix only the events they touch, and the 6:1 echo majority keeps capturing every unanchored one. Near-complete anchoring only partly repairs the inversion.</p>
             </div>
             <div class="plotly-container">
                 <div id="e6-curve"></div>
@@ -443,19 +443,19 @@
         <!-- Closing -->
         <div class="closing-section">
             <h2 class="closing-title">What This Adds Up To</h2>
-            <p class="closing-point"><strong>The estimator is sound.</strong> On synthetic data, online EM recovers planted parameters at ρ = 0.88 — matching batch Dawid-Skene and beating majority voting. The machinery works when its assumptions hold.</p>
-            <p class="closing-point"><strong>Consensus is not truth.</strong> Fitted consensus-agreement measures co-coverage intensity by construction. Syndication duplication inverts recovery to ρ = −0.87 (fully repairable via dedup voting). Unreliable majorities invert recovery irreparably (Reuters ranks last on ISOT). The in-the-wild inversion on FakeNewsNet (ρ = −0.16) replicates this: fabricated stories cluster, so consensus masquerades as corroboration. Consensus-agreement null against factuality (ρ = −0.10, CI [−0.24, 0.05] on UCI) confirms the estimand mismatch.</p>
-            <p class="closing-point"><strong>Omission auditing is the honest use case.</strong> Consensus-agreement estimates which outlets systematically omit claims the broader field corroborates, and which propagate outlier stories (E5). The estimates are label-free and separate outlets by editorial beat without supervision — a real and actionable product not available from supervised outlet classifiers. Anchoring can break the majority-capture symmetry but at a cost that scales with echo dominance: sparse anchoring (the standard prescription) fails when the unreliable bloc dominates (E6).</p>
+            <p class="closing-point"><strong>The estimator is sound.</strong> On synthetic data, online EM recovers planted parameters at ρ = 0.88, matching batch Dawid-Skene and beating majority voting. The machinery works when its assumptions hold.</p>
+            <p class="closing-point"><strong>Consensus is not truth.</strong> Fitted consensus-agreement measures co-coverage intensity by construction. Syndication inverts recovery to ρ = −0.87 (repairable via dedup voting). Unreliable majorities invert it irreparably (Reuters ranks last on ISOT). FakeNewsNet replicates the inversion in the wild (ρ = −0.16): fabricated stories cluster, so consensus masquerades as corroboration. The factuality null (ρ = −0.10, CI [−0.24, 0.05] on UCI) confirms the estimand mismatch.</p>
+            <p class="closing-point"><strong>Omission auditing is the honest use case.</strong> The model reports which outlets systematically omit claims the field corroborates, and which propagate outlier stories (E5). Label-free, and it separates outlets by editorial beat without supervision, which supervised outlet classifiers cannot do. Anchoring can break the majority-capture symmetry, at a cost that scales with echo dominance; sparse anchoring fails when the unreliable bloc dominates (E6).</p>
 
             <div class="callout-box">
-                <strong>STAPLE-News Consensus Principle.</strong> Outlet consensus-agreement is a structural property of coverage, not a verdict on factuality. Estimates measure co-coverage intensity and popularity clustering. High consensus-agreement can reflect accuracy or synchronized misinformation. Use consensus estimates to audit omission and understand outlet ecosystem structure. Do not use to rank truthfulness.
+                <strong>STAPLE-News Consensus Principle.</strong> Outlet consensus-agreement is a structural property of coverage, not a verdict on factuality. It measures co-coverage intensity and popularity clustering; a high score can mean accuracy or synchronized misinformation. Use it to audit omission and map outlet ecosystem structure. Do not use it to rank truthfulness.
             </div>
         </div>
     </div>
 
     <footer>
         <footer-content>
-            <p>STAPLE‑News — measuring consensus, not truth. Outlet estimates are model artifacts.</p>
+            <p>STAPLE‑News measures consensus, not truth. Outlet estimates are model artifacts.</p>
             <p><a href="https://github.com/domattioli/stapled-news" class="footer-link">GitHub</a> · <a href="paper.html" class="footer-link">Paper</a></p>
         </footer-content>
     </footer>

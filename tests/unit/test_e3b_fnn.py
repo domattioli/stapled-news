@@ -2,9 +2,9 @@
 
 import json
 
+from stapled.db import connect
 from stapled.experiments import e3b_fnn
 from stapled.experiments.runner import run_experiment
-from stapled.db import connect
 
 
 def test_e3b_runs_on_synthetic_db(tmp_path):

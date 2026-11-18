@@ -1,8 +1,8 @@
 """Tests for visualization."""
 
+import json
 import tempfile
 from pathlib import Path
-import json
 
 from stapled.db import connect, insert_and_get_id
 from stapled.viz.charts import render_all

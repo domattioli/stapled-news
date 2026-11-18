@@ -1,22 +1,22 @@
 """Streaming remote CSV ingestion with cursor resumption."""
 
 import codecs
-import sqlite3
-import urllib.request
-import urllib.error
 import csv
 import io
-from datetime import datetime
-from typing import List, Dict, Generator, Optional
+import sqlite3
+import urllib.error
+import urllib.request
+from collections.abc import Generator
+from datetime import UTC, datetime
 
 
 def iter_remote_lines(
     url: str, batch_bytes: int, conn: sqlite3.Connection,
     malformed_threshold: float = 0.01,
     delimiter: str = ",",
-    fieldnames: Optional[List[str]] = None,
+    fieldnames: list[str] | None = None,
     quoting: bool = True,
-) -> Generator[List[Dict[str, str]], None, None]:
+) -> Generator[list[dict[str, str]], None, None]:
     """
     Resume from source_cursor using etag + Range header (HTTP 206).
     Yield lists of CSV rows (dicts), batch_bytes ≈ bytes yielded before yield.
@@ -66,9 +66,9 @@ def iter_remote_lines(
                     try:
                         reader = csv.reader(io.StringIO(header_line), delimiter=delimiter)
                         headers = [h.strip() for h in next(reader)]
-                    except Exception:
+                    except Exception:  # noqa: BLE001, S110 - tolerate malformed records and header sniffing failures
                         pass
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 - tolerate malformed records and header sniffing failures
             pass  # If we fail to get header, it will be loaded from the resumed request if at record boundary
 
     # Fetch remote file
@@ -150,7 +150,7 @@ def iter_remote_lines(
                             headers = [h.strip() for h in row]
                             consumed_bytes += record_bytes
                             continue
-                        except Exception:
+                        except Exception:  # noqa: BLE001, S110 - tolerate malformed records and header sniffing failures
                             pass
 
                     # Parse data row
@@ -171,7 +171,7 @@ def iter_remote_lines(
                                 total_records += 1
                             else:
                                 malformed_count += 1
-                        except Exception:
+                        except Exception:  # noqa: BLE001 - tolerate malformed records and header sniffing failures
                             malformed_count += 1
 
                     consumed_bytes += record_bytes
@@ -207,7 +207,7 @@ def iter_remote_lines(
                         total_records += 1
                     else:
                         malformed_count += 1
-                except Exception:
+                except Exception:  # noqa: BLE001 - tolerate malformed records and header sniffing failures
                     malformed_count += 1
 
             # Yield remaining batch; always advance cursor past consumed tail bytes
@@ -232,7 +232,7 @@ def iter_remote_lines(
             if is_complete:
                 conn.execute(
                     "UPDATE source_cursor SET done=1, updated_at=? WHERE id=?",
-                    (datetime.utcnow().isoformat(), cursor_id),
+                    (datetime.now(UTC).replace(tzinfo=None).isoformat(), cursor_id),
                 )
                 conn.commit()
 
@@ -241,14 +241,14 @@ def iter_remote_lines(
             # Range not satisfiable; file is done
             conn.execute(
                 "UPDATE source_cursor SET done=1, updated_at=? WHERE id=?",
-                (datetime.utcnow().isoformat(), cursor_id),
+                (datetime.now(UTC).replace(tzinfo=None).isoformat(), cursor_id),
             )
             conn.commit()
         else:
             raise
 
 
-def _split_quoted_records(text: str) -> List[str]:
+def _split_quoted_records(text: str) -> list[str]:
     """
     Split CSV text on newlines that fall OUTSIDE quotes (RFC 4180).
     Track quote parity: toggle in_quotes on '"' (but '""' inside quotes = two toggles → net unchanged).
@@ -286,7 +286,7 @@ def _split_quoted_records(text: str) -> List[str]:
     return records
 
 
-def _split_plain_records(text: str) -> List[str]:
+def _split_plain_records(text: str) -> list[str]:
     """
     Split unquoted records on plain newlines (no quote logic).
     For unquoted tab-separated data where titles may contain stray quotes.
@@ -298,7 +298,7 @@ def _split_plain_records(text: str) -> List[str]:
     return records
 
 
-def dedup_new_articles(conn: sqlite3.Connection, article_ids: List[int]) -> None:
+def dedup_new_articles(conn: sqlite3.Connection, article_ids: list[int]) -> None:
     """
     Insert article_ids into simhash_bucket (4 bands × 16-bit buckets), then join
     each new article against whatever already shares a band bucket (Hamming
@@ -309,7 +309,7 @@ def dedup_new_articles(conn: sqlite3.Connection, article_ids: List[int]) -> None
         conn: Database connection
         article_ids: List of article IDs to bucket
     """
-    from stapled.ingest.dedup import _simhash, _get_band_bits, _hamming_distance
+    from stapled.ingest.dedup import _get_band_bits, _hamming_distance, _simhash
 
     cursor = conn.execute(
         "SELECT id, body FROM article WHERE id IN ({})".format(
@@ -406,19 +406,19 @@ def _init_cursor(conn: sqlite3.Connection, url: str) -> int:
     cursor = conn.execute(
         """INSERT INTO source_cursor (source_url, byte_offset, rows_ingested, done, updated_at)
            VALUES (?, 0, 0, 0, ?)""",
-        (url, datetime.utcnow().isoformat()),
+        (url, datetime.now(UTC).replace(tzinfo=None).isoformat()),
     )
     conn.commit()
     return cursor.lastrowid
 
 
 def _update_cursor(
-    conn: sqlite3.Connection, cursor_id: int, byte_offset: int, etag: Optional[str], rows_ingested: int
+    conn: sqlite3.Connection, cursor_id: int, byte_offset: int, etag: str | None, rows_ingested: int
 ) -> None:
     """Update cursor with byte_offset, etag, rows_ingested."""
     conn.execute(
         """UPDATE source_cursor SET byte_offset=?, etag=?, rows_ingested=?, updated_at=?
            WHERE id=?""",
-        (byte_offset, etag, rows_ingested, datetime.utcnow().isoformat(), cursor_id),
+        (byte_offset, etag, rows_ingested, datetime.now(UTC).replace(tzinfo=None).isoformat(), cursor_id),
     )
     conn.commit()

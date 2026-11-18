@@ -2,7 +2,7 @@
 
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from stapled.db import connect
 from stapled.ingest.uci import load_uci
@@ -74,7 +74,6 @@ def test_load_uci_mocked():
 
         def mock_iter_remote_lines(url, batch_bytes, conn, **kwargs):
             yield mock_batch
-            return
 
         with patch(
             "stapled.ingest.uci.iter_remote_lines", side_effect=mock_iter_remote_lines

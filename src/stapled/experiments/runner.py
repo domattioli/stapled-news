@@ -1,9 +1,9 @@
 """Experiment runner with manifest tracking."""
 
+import hashlib
 import json
 import subprocess
-import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -37,7 +37,7 @@ def run_experiment(
             .decode()
             .strip()
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 - git sha is optional metadata
         git_sha = "unknown"
 
     # Compute config hash
@@ -52,7 +52,7 @@ def run_experiment(
         "config_hash": config_hash,
         "outputs": result.get("outputs", []),
         "metrics": result.get("metrics", {}),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
     # Load/create manifest

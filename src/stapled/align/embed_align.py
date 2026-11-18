@@ -1,15 +1,13 @@
 """Enhanced claim alignment with TF-IDF + character n-grams + entity boosting."""
 
-import sqlite3
 import re
-import numpy as np
-from typing import Dict, List, Set
+import sqlite3
 from collections import defaultdict
 
+import numpy as np
+from scipy.sparse import hstack
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
-from scipy.sparse import hstack
-
 
 # Stopwords for entity filtering
 _ENTITY_STOPWORDS = {
@@ -49,7 +47,7 @@ def realign_all(
     similarity_threshold: float = 0.5,
     entity_mode: str = "boost",
     max_block_size: int = 0,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Realign all claims into events using combined TF-IDF (word + char n-grams)
     + entity-based blocking + union-find clustering.
@@ -263,9 +261,9 @@ def realign_all(
                         claim_entities[i]
                         and claim_entities[j]
                         and len(claim_entities[i] & claim_entities[j]) == 0
+                        and cosine_sim < 0.75
                     ):
-                        if cosine_sim < 0.75:
-                            continue  # Too risky to merge
+                        continue  # Too risky to merge
 
                     merge_edges.append((i, j))
 
@@ -365,7 +363,7 @@ def _normalize_claim_text(actor: str, action: str, obj: str, title: str) -> str:
     return " ".join(parts)
 
 
-def _extract_entities(text: str) -> Set[str]:
+def _extract_entities(text: str) -> set[str]:
     """
     Extract capitalized entity spans from original text.
     Returns set of lowercased entity phrases and individual tokens.
@@ -398,7 +396,7 @@ def _extract_entities(text: str) -> Set[str]:
 
 
 def _get_cluster_label(
-    claim_texts: List[str], cluster_members: List[int], n_terms: int = 3
+    claim_texts: list[str], cluster_members: list[int], n_terms: int = 3
 ) -> str:
     """
     Get label for cluster: n_terms most frequent non-stopword tokens.

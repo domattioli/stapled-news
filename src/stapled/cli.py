@@ -3,44 +3,56 @@
 import json
 import sqlite3
 import sys
+from dataclasses import asdict
 from pathlib import Path
-from typing import List, Optional
 
 import typer
 import yaml
 
 from stapled import __version__
-from stapled.db import connect
-from stapled.gates import GateError, assert_corpus_passed, assert_recovery_passed
-from stapled.synth.generator import generate as synth_generate
-from stapled.synth.validate import validate as synth_validate
-from stapled.infer.model import RunConfig
-from stapled.infer.em import run_em
-from stapled.recover.score import score as score_run
-from stapled.export.site import export_run
-from stapled.ingest.csv_loader import (
-    load_isot as load_isot_data,
-    _get_or_create_outlet,
-    _strip_reuters_dateline,
-    _normalize_subject,
-)
-from stapled.ingest.fakenewsnet import load_fakenewsnet, load_external_labels
-from stapled.ingest.uci import load_uci
-from stapled.ingest.frontpages import load_frontpages
-from stapled.ingest.us_headlines import load_us_headlines
-from stapled.ingest.dedup import dedup_articles
-from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
-from stapled.extract.claims import extract_all_unextracted
-from stapled.extract.framing import update_all_framing
 from stapled.align.cluster import align
 from stapled.align.embed_align import realign_all
-from stapled.infer.online_em import OnlineEM
+from stapled.analyze.atomic_cli import (
+    estimator_status_payload,
+    evaluation_payload,
+    extraction_payload,
+    matching_payload,
+    profile_payload,
+    summary_payload,
+)
+from stapled.db import connect
+from stapled.export.site import export_run
+from stapled.extract.claims import extract_all_unextracted
+from stapled.extract.framing import update_all_framing
+from stapled.gates import GateError, assert_corpus_passed, assert_recovery_passed
 from stapled.infer.align_incremental import align_incremental
+from stapled.infer.em import run_em
+from stapled.infer.model import RunConfig
+from stapled.infer.online_em import OnlineEM
+from stapled.ingest.csv_loader import (
+    _get_or_create_outlet,
+    _normalize_subject,
+    _strip_reuters_dateline,
+)
+from stapled.ingest.csv_loader import (
+    load_isot as load_isot_data,
+)
+from stapled.ingest.dedup import dedup_articles
+from stapled.ingest.fakenewsnet import load_external_labels, load_fakenewsnet
+from stapled.ingest.frontpages import load_frontpages
+from stapled.ingest.stream import dedup_new_articles, iter_remote_lines
+from stapled.ingest.uci import load_uci
+from stapled.ingest.us_headlines import load_us_headlines
+from stapled.recover.score import score as score_run
+from stapled.synth.generator import generate as synth_generate
+from stapled.synth.validate import validate as synth_validate
 from stapled.viz.online_convergence import online_convergence, reliability_trajectory
 
 app = typer.Typer()
 synth_app = typer.Typer()
 app.add_typer(synth_app, name="synth")
+atomic_app = typer.Typer(help="Deterministic atomic-consensus stages.")
+app.add_typer(atomic_app, name="atomic")
 
 
 class CLIOutput:
@@ -57,7 +69,7 @@ class CLIOutput:
     def add_error(self, msg: str):
         self.errors.append(msg)
 
-    def print_table(self, rows: List[dict], columns: List[str], title: str = ""):
+    def print_table(self, rows: list[dict], columns: list[str], title: str = ""):
         """Print a human-readable table."""
         if self.json_mode:
             return
@@ -92,6 +104,145 @@ class CLIOutput:
         if exit_code != 0:
             for error in self.errors:
                 print(f"Error: {error}", file=sys.stderr)
+
+
+@atomic_app.command("extract")
+def atomic_extract_cmd(
+    headline: str = typer.Argument(..., help="One English headline"),
+    json_output: bool = typer.Option(False, "--json", help="Emit machine-readable atoms"),
+):
+    """Extract v1 atoms; unsupported grammar exits non-zero with an abstention reason."""
+    payload = extraction_payload(headline)
+    data = json.loads(payload)
+    refused = any(atom["abstention_reason"] for atom in data["atoms"])
+    if json_output:
+        print(payload)
+    else:
+        print(data)
+    if refused:
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("match")
+def atomic_match_cmd(
+    atoms_json: str = typer.Argument(..., help="Atom JSON emitted by atomic extract"),
+    event_id: str = typer.Option(..., "--event-id"),
+    aspect: str = typer.Option(..., "--aspect"),
+):
+    """Match only explicit event/aspect-scoped occurrences."""
+    try:
+        print(matching_payload(json.loads(atoms_json), event_id, aspect))
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("summarize")
+def atomic_summarize_cmd(atoms_json: str = typer.Argument(..., help="Scoped atom JSON")):
+    """Group scoped non-abstained occurrences into deterministic SCUs."""
+    try:
+        print(summary_payload(json.loads(atoms_json)))
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("profile")
+def atomic_profile_cmd(
+    outlet: str = typer.Option(..., "--outlet"),
+    family: str = typer.Option(..., "--family"),
+    observations_json: str = typer.Argument(...),
+    classifications_json: str = typer.Argument(...),
+):
+    """Render an event-specific descriptive coverage profile, not a quality score."""
+    try:
+        print(profile_payload(outlet, family, json.loads(observations_json), json.loads(classifications_json)))
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+
+
+@atomic_app.command("evaluate")
+def atomic_evaluate_cmd(pilot: int = typer.Option(...), heldout: int = typer.Option(...), adjudicated: int = typer.Option(...), metrics_json: str = typer.Argument("{}")):
+    """Report evaluation only; insufficient held-out adjudication stays inconclusive."""
+    print(evaluation_payload(pilot, heldout, adjudicated, json.loads(metrics_json)))
+
+
+@atomic_app.command("estimator")
+def atomic_estimator_cmd(primary_improvement: float = typer.Option(...), controls_json: str = typer.Argument("[]"), adjudicated: int = typer.Option(0)):
+    """Gate experimental categorical output; no held-out evidence means withheld."""
+    print(estimator_status_payload(primary_improvement, json.loads(controls_json), adjudicated))
+
+
+@atomic_app.command("annotate")
+def atomic_annotate_cmd(
+    input_path: str = typer.Option(..., "--input", help="JSONL or CSV of headlines"),
+    write_prompt: str = typer.Option(..., "--write-prompt", help="Prompt file to write; multi-batch runs get .NNN suffixes"),
+    batch_size: int = typer.Option(20, "--batch-size"),
+):
+    """Write Fable annotation prompts for manual dispatch; this command calls no model itself."""
+    from stapled.analyze.atomic_annotate import (
+        AnnotationError,
+        batches,
+        build_annotation_prompt,
+        load_items,
+    )
+
+    try:
+        items = load_items(input_path)
+        groups = list(batches(items, batch_size))
+    except (AnnotationError, OSError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+    target = Path(write_prompt)
+    written = []
+    for index, batch in enumerate(groups):
+        prompt_path = target if len(groups) == 1 else target.with_suffix(f".{index:03d}{target.suffix}")
+        batch_path = prompt_path.with_suffix(prompt_path.suffix + ".batch.json")
+        prompt_path.write_text(build_annotation_prompt(batch), encoding="utf-8")
+        batch_path.write_text(json.dumps(list(batch), ensure_ascii=False), encoding="utf-8")
+        written.append({"prompt": str(prompt_path), "batch": str(batch_path), "headlines": len(batch)})
+    print(json.dumps({"batches": written}, sort_keys=True))
+
+
+@atomic_app.command("ingest-annotations")
+def atomic_ingest_annotations_cmd(
+    raw: str = typer.Option(..., "--raw", help="Fable reply: a bare JSON array"),
+    batch: str = typer.Option(..., "--batch", help="Batch JSON written by atomic annotate"),
+    output: str = typer.Option(..., "--output"),
+    model_name: str = typer.Option("fable", "--model-name"),
+):
+    """Validate and provenance-tag a pasted-back reply; output is model-generated, not ground truth."""
+    from stapled.analyze.atomic_annotate import (
+        ANNOTATOR_VERSION,
+        SOURCE_TAG,
+        AnnotationError,
+        parse_annotation_response,
+        prompt_hash,
+    )
+
+    try:
+        items = json.loads(Path(batch).read_text(encoding="utf-8"))
+        atoms = parse_annotation_response(Path(raw).read_text(encoding="utf-8"), items, model_name)
+    except (AnnotationError, OSError, json.JSONDecodeError) as error:
+        print(f"refused: {error}", file=sys.stderr)
+        raise typer.Exit(code=2)
+    payload = {
+        "source": SOURCE_TAG,
+        "annotator_model": model_name,
+        "annotator_version": ANNOTATOR_VERSION,
+        "prompt_hash": prompt_hash(),
+        "annotations": [{**asdict(atom), "span": list(atom.span)} for atom in atoms],
+    }
+    Path(output).write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+    print(json.dumps({"output": output, "annotations": len(atoms), "source": SOURCE_TAG}, sort_keys=True))
+
+
+@atomic_app.command("reproduce")
+def atomic_reproduce_cmd(payload_json: str = typer.Argument(...)):
+    """Return canonical semantic hash for a supplied frozen analysis payload."""
+    from stapled.analyze.atomic_run import semantic_hash
+    print(json.dumps({"semantic_hash": semantic_hash(json.loads(payload_json))}, sort_keys=True))
 
 
 def _handle_gate_error(err: GateError, out: CLIOutput, command: str) -> int:
@@ -182,7 +333,7 @@ def status(db: str = typer.Option("./stapled.db", help="Path to database")):
         out.print_table(rows, ["key", "value"], "Database Status")
         out.output("status", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("status", exit_code=1)
         raise typer.Exit(code=1)
@@ -210,7 +361,7 @@ def synth_generate_cmd(
         out.print_table([{"corpus_id": corpus_id}], ["corpus_id"], "Synthetic Corpus Generated")
         out.output("synth generate", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("synth generate", exit_code=1)
         raise typer.Exit(code=1)
@@ -241,7 +392,7 @@ def synth_validate_cmd(
 
     except typer.Exit:
         raise
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("synth validate", exit_code=1)
         raise typer.Exit(code=1)
@@ -251,7 +402,7 @@ def synth_validate_cmd(
 def load_isot(
     true_csv: str = typer.Option(..., "--true-csv", help="Path to True.csv"),
     fake_csv: str = typer.Option(..., "--fake-csv", help="Path to Fake.csv"),
-    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per outlet"),
+    limit: int | None = typer.Option(None, "--limit", help="Limit per outlet"),
     db: str = typer.Option("./stapled.db", help="Path to database"),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
@@ -270,7 +421,7 @@ def load_isot(
         out.print_table(rows, ["metric", "value"], "ISOT Load Complete")
         out.output("load_isot", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("load_isot", exit_code=1)
         raise typer.Exit(code=1)
@@ -279,8 +430,8 @@ def load_isot(
 @app.command("load-fakenewsnet")
 def load_fakenewsnet_cmd(
     batch_bytes: int = typer.Option(262144, "--batch-bytes", help="Batch size in bytes"),
-    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per source"),
-    datasets: Optional[str] = typer.Option(None, "--datasets", help="Comma-separated dataset names"),
+    limit: int | None = typer.Option(None, "--limit", help="Limit per source"),
+    datasets: str | None = typer.Option(None, "--datasets", help="Comma-separated dataset names"),
     db: str = typer.Option("./stapled.db", help="Path to database"),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
@@ -303,7 +454,7 @@ def load_fakenewsnet_cmd(
         out.print_table(rows, ["metric", "value"], "FakeNewsNet Load Complete")
         out.output("load-fakenewsnet", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("load-fakenewsnet", exit_code=1)
         raise typer.Exit(code=1)
@@ -312,8 +463,8 @@ def load_fakenewsnet_cmd(
 @app.command("load-uci")
 def load_uci_cmd(
     batch_bytes: int = typer.Option(524288, "--batch-bytes", help="Batch size in bytes"),
-    limit: Optional[int] = typer.Option(None, "--limit", help="Limit per source"),
-    categories: Optional[str] = typer.Option(None, "--categories", help="Comma-separated categories (b,t,e,m)"),
+    limit: int | None = typer.Option(None, "--limit", help="Limit per source"),
+    categories: str | None = typer.Option(None, "--categories", help="Comma-separated categories (b,t,e,m)"),
     db: str = typer.Option("./stapled.db", help="Path to database"),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
@@ -323,7 +474,7 @@ def load_uci_cmd(
         conn = connect(db)
         categories_list = None
         if categories:
-            categories_list = set(c.strip() for c in categories.split(","))
+            categories_list = {c.strip() for c in categories.split(",")}
 
         counts = load_uci(conn, batch_bytes=batch_bytes, limit=limit, categories=categories_list)
 
@@ -338,7 +489,7 @@ def load_uci_cmd(
         out.print_table(rows, ["metric", "value"], "UCI Load Complete")
         out.output("load-uci", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("load-uci", exit_code=1)
         raise typer.Exit(code=1)
@@ -360,7 +511,7 @@ def load_external_labels_cmd(
         out.print_table(rows, ["labels_loaded"], "External Labels Load Complete")
         out.output("load-external-labels", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("load-external-labels", exit_code=1)
         raise typer.Exit(code=1)
@@ -382,7 +533,7 @@ def dedup(
         out.print_table(rows, ["dedup_clusters"], "Dedup Complete")
         out.output("dedup", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("dedup", exit_code=1)
         raise typer.Exit(code=1)
@@ -411,7 +562,7 @@ def extract(
         out.print_table(rows, ["metric", "value"], "Extraction Complete")
         out.output("extract", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("extract", exit_code=1)
         raise typer.Exit(code=1)
@@ -437,7 +588,7 @@ def align_cmd(
         out.print_table(rows, ["metric", "value"], "Alignment Complete")
         out.output("align", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("align", exit_code=1)
         raise typer.Exit(code=1)
@@ -477,7 +628,7 @@ def realign_embed_cmd(
         out.print_table(rows, ["metric", "value"], "Enhanced Realignment Complete")
         out.output("realign-embed", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("realign-embed", exit_code=1)
         raise typer.Exit(code=1)
@@ -487,8 +638,8 @@ def realign_embed_cmd(
 def infer(
     synthetic: bool = typer.Option(False, "--synthetic", help="Synthetic corpus mode"),
     real: bool = typer.Option(False, "--real", help="Real-data mode"),
-    corpus: Optional[int] = typer.Option(None, help="Corpus ID (synthetic mode)"),
-    event_ids: Optional[str] = typer.Option(None, help="Event IDs (real mode)"),
+    corpus: int | None = typer.Option(None, help="Corpus ID (synthetic mode)"),
+    event_ids: str | None = typer.Option(None, help="Event IDs (real mode)"),
     db: str = typer.Option("./stapled.db", help="Path to database"),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
@@ -523,7 +674,7 @@ def infer(
 
     except GateError as e:
         _handle_gate_error(e, out, "infer")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("infer", exit_code=1)
         raise typer.Exit(code=1)
@@ -557,7 +708,7 @@ def score(
 
     except typer.Exit:
         raise
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("score", exit_code=1)
         raise typer.Exit(code=1)
@@ -583,7 +734,7 @@ def export(
 
     except GateError as e:
         _handle_gate_error(e, out, "export")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("export", exit_code=1)
         raise typer.Exit(code=1)
@@ -594,10 +745,10 @@ def train_stream(
     source: str = typer.Option(..., "--source", help="Remote CSV URL"),
     kind: str = typer.Option("true", "--kind", help="true|fake"),
     batch_mb: int = typer.Option(10, "--batch-mb", help="Batch size in MB"),
-    max_batches: Optional[int] = typer.Option(
+    max_batches: int | None = typer.Option(
         None, "--max-batches", help="Max batches to process"
     ),
-    limit_per_outlet: Optional[int] = typer.Option(
+    limit_per_outlet: int | None = typer.Option(
         None, "--limit-per-outlet", help="Limit per outlet"
     ),
     reset: bool = typer.Option(False, "--reset", help="Reset stream cursor"),
@@ -786,7 +937,7 @@ def train_stream(
         out.print_table(rows, ["metric", "value"], "Online EM Streaming Complete")
         out.output("train_stream", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("train_stream", exit_code=1)
         raise typer.Exit(code=1)
@@ -829,15 +980,15 @@ def train_report(
         out.print_table(rows, ["file"], "Training Report Generated")
         out.output("train_report", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("train_report", exit_code=1)
         raise typer.Exit(code=1)
 
 
 def _generate_training_report(
-    convergence_path: Optional[str],
-    trajectory_path: Optional[str] = None,
+    convergence_path: str | None,
+    trajectory_path: str | None = None,
     conn=None,
 ) -> str:
     """Generate HTML report for streaming EM training."""
@@ -861,7 +1012,7 @@ def _generate_training_report(
                 f"<tr><td>events</td><td>{n_events:,}</td><td>—</td></tr>"
                 f"<tr><td>claims</td><td>{n_claims:,}</td><td>—</td></tr>"
             )
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 - CLI boundary: report any failure and exit non-zero
             pass
 
     stats_section = ""
@@ -959,9 +1110,9 @@ def _generate_training_report(
 @app.command("load-frontpages")
 def load_frontpages_cmd(
     repo: str = typer.Option("/tmp/fp2026", "--repo", help="Path to frontpage-archive-2026 git clone"),
-    since: Optional[str] = typer.Option(None, "--since", help="ISO-8601 date filter (earliest)"),
-    until: Optional[str] = typer.Option(None, "--until", help="ISO-8601 date filter (latest)"),
-    limit_commits: Optional[int] = typer.Option(None, "--limit-commits", help="Max commits to process"),
+    since: str | None = typer.Option(None, "--since", help="ISO-8601 date filter (earliest)"),
+    until: str | None = typer.Option(None, "--until", help="ISO-8601 date filter (latest)"),
+    limit_commits: int | None = typer.Option(None, "--limit-commits", help="Max commits to process"),
     db: str = typer.Option("./stapled.db", help="Path to database"),
     json_output: bool = typer.Option(False, "--json", help="JSON output"),
 ):
@@ -983,7 +1134,7 @@ def load_frontpages_cmd(
         out.print_table(rows, ["metric", "value"], "Frontpages Load Complete")
         out.output("load-frontpages", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("load-frontpages", exit_code=1)
         raise typer.Exit(code=1)
@@ -1014,7 +1165,7 @@ def load_us_headlines_cmd(
         out.print_table(rows, ["metric", "value"], "US Headlines Load Complete")
         out.output("load-us-headlines", exit_code=0)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - CLI boundary: report any failure and exit non-zero
         out.add_error(str(e))
         out.output("load-us-headlines", exit_code=1)
         raise typer.Exit(code=1)

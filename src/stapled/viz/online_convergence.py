@@ -1,14 +1,16 @@
 """Online EM convergence visualization."""
 
-import sqlite3
 import json
+import sqlite3
 from pathlib import Path
-from typing import Optional
+
 import matplotlib
+
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
+
 mpl.rcParams.update({
     'figure.facecolor': '#f0f0f0',
     'axes.facecolor': '#f0f0f0',
@@ -18,7 +20,7 @@ mpl.rcParams.update({
 })
 
 
-def online_convergence(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
+def online_convergence(conn: sqlite3.Connection, out_dir: str) -> str | None:
     """
     Render online EM convergence: LL per batch + reliability trajectory.
     Generates matplotlib PNG charts.
@@ -111,7 +113,7 @@ def online_convergence(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
     return "assets/convergence.png"
 
 
-def reliability_trajectory(conn: sqlite3.Connection, out_dir: str) -> Optional[str]:
+def reliability_trajectory(conn: sqlite3.Connection, out_dir: str) -> str | None:
     """
     Render reliability trajectory by outlet over batches.
 

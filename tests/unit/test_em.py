@@ -55,7 +55,7 @@ def test_em_perfect_outlets(tmp_path):
     cursor = conn.execute(
         "SELECT status, iterations FROM inference_run WHERE id = ?", (run_id,)
     )
-    status, iterations = cursor.fetchone()
+    status, _iterations = cursor.fetchone()
     assert status in ["converged", "degenerate"]
 
     # Check: EM should produce some results

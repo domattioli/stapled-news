@@ -1,11 +1,12 @@
 """Unit tests for E4 external label (MBFC) experiment."""
 
 import json
+
 import numpy as np
 
+from stapled.db import connect
 from stapled.experiments import e4_external
 from stapled.experiments.runner import run_experiment
-from stapled.db import connect
 
 
 def test_e4_runs_on_synthetic_db(tmp_path):

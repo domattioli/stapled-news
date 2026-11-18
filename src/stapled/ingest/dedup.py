@@ -1,8 +1,8 @@
 """Near-duplicate detection via SimHash clustering."""
 
-import sqlite3
-import re
 import hashlib
+import re
+import sqlite3
 
 
 class UnionFind:
@@ -210,4 +210,4 @@ def _get_band_bits(h: int, band: int) -> str:
 def _hamming_distance(h1: int, h2: int) -> int:
     """Hamming distance between two 64-bit integers."""
     xor = h1 ^ h2
-    return bin(xor).count("1")
+    return xor.bit_count()

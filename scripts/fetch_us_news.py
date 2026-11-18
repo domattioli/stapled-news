@@ -20,7 +20,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 OUT_DIR = os.environ.get("OUT_DIR", "corpus/us")
 DAYS = int(os.environ.get("FETCH_DAYS", "30"))
@@ -65,7 +65,7 @@ def _get(url, timeout=30):
 
 def fetch_gdelt(days, report):
     rows = {}
-    end = datetime.now(timezone.utc)
+    end = datetime.now(UTC)
     for q in GDELT_QUERIES:
         got_q = 0
         for d in range(days):
@@ -95,8 +95,7 @@ def fetch_gdelt(days, report):
                 u = (a.get("url") or "").split("?")[0]
                 t = (a.get("title") or "").strip()
                 dom = (a.get("domain") or "").lower()
-                if dom.startswith("www."):
-                    dom = dom[4:]
+                dom = dom.removeprefix("www.")
                 if u and t and dom and u not in rows:
                     rows[u] = (dom, t, u, a.get("seendate", ""), "gdelt")
                     got_q += 1
@@ -107,10 +106,10 @@ def fetch_gdelt(days, report):
 
 def fetch_rss(report):
     rows = {}
-    title_re = re.compile(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", re.S)
-    link_re = re.compile(r"<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>", re.S)
-    item_re = re.compile(r"<item>(.*?)</item>", re.S)
-    now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    title_re = re.compile(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", re.DOTALL)
+    link_re = re.compile(r"<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>", re.DOTALL)
+    item_re = re.compile(r"<item>(.*?)</item>", re.DOTALL)
+    now = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     for dom, feed in RSS_FEEDS.items():
         try:
             xml = _get(feed).decode("utf-8", "replace")
@@ -146,11 +145,11 @@ GOOGLE_NEWS_FEEDS = [
 
 def fetch_google_news(report):
     rows = {}
-    item_re = re.compile(r"<item>(.*?)</item>", re.S)
-    title_re = re.compile(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", re.S)
-    link_re = re.compile(r"<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>", re.S)
+    item_re = re.compile(r"<item>(.*?)</item>", re.DOTALL)
+    title_re = re.compile(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", re.DOTALL)
+    link_re = re.compile(r"<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>", re.DOTALL)
     source_re = re.compile(r'<source url="([^"]+)"[^>]*>([^<]*)</source>')
-    now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    now = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     for feed in GOOGLE_NEWS_FEEDS:
         try:
             xml = _get(feed).decode("utf-8", "replace")
@@ -171,8 +170,7 @@ def fetch_google_news(report):
                 title = title[: -(len(pub) + 3)].strip()
             dom = src.group(1).lower()
             dom = re.sub(r"^https?://", "", dom).split("/")[0]
-            if dom.startswith("www."):
-                dom = dom[4:]
+            dom = dom.removeprefix("www.")
             url = li.group(1).strip()
             if title and url and dom and url not in rows:
                 rows[url] = (dom, title, url, now, "gnews")
@@ -195,7 +193,7 @@ def probe_hf(report):
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
-    report = [f"# US headline fetch — {datetime.now(timezone.utc).isoformat()}", ""]
+    report = [f"# US headline fetch — {datetime.now(UTC).isoformat()}", ""]
     mode = os.environ.get("FETCH_MODE", "all")
     rows = {} if mode == "rss" else fetch_gdelt(DAYS, report)
     rss_rows = fetch_rss(report)
@@ -206,11 +204,16 @@ def main():
         rows.setdefault(u, r)
     probe_hf(report)
 
-    out = os.path.join(OUT_DIR, "headlines.csv.gz")
+    store = os.environ.get("CORPUS_STORE", "git")
+    if store == "supabase":
+        # Supabase holds the corpus: write only this run's rows, no prior merge.
+        out = os.path.join(OUT_DIR, "fetch-latest.csv.gz")
+    else:
+        out = os.path.join(OUT_DIR, "headlines.csv.gz")
     # Accumulate across runs: prior corpus rows are kept (URL-keyed).
     prior_row_count = 0
     prior_merge_ok = True
-    if os.path.exists(out):
+    if store != "supabase" and os.path.exists(out):
         try:
             with gzip.open(out, "rt", encoding="utf-8") as f:
                 for prior in csv.DictReader(f):

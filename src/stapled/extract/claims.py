@@ -5,7 +5,6 @@ import sqlite3
 
 from stapled.db import insert_and_get_id
 
-
 # Curated verb lexicon
 VERB_LEXICON = [
     # Political / hard-news (past tense)

@@ -6,7 +6,6 @@ import sqlite3
 class GateError(Exception):
     """Raised when a stage gate is not passed."""
 
-    pass
 
 
 def assert_corpus_passed(conn: sqlite3.Connection, corpus_id: int) -> None:

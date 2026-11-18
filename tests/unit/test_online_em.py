@@ -1,9 +1,9 @@
 """Tests for online EM."""
 
 from stapled.db import connect
-from stapled.infer.online_em import OnlineEM
 from stapled.infer.em import run_em
 from stapled.infer.model import RunConfig
+from stapled.infer.online_em import OnlineEM
 
 
 def test_online_em_single_batch_vs_em(tmp_path):

@@ -1,7 +1,6 @@
 """Data models for inference."""
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -9,7 +8,7 @@ class TruthState:
     """Represents a latent truth state."""
 
     state: int  # binary: 0 or 1
-    magnitude_bucket: Optional[int] = None  # ordinal: 0, 1, 2, ...
+    magnitude_bucket: int | None = None  # ordinal: 0, 1, 2, ...
 
 
 @dataclass
