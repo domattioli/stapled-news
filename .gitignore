@@ -227,3 +227,9 @@ data/raw/
 *.db
 *.db.bak
 /data/
+
+# US headline corpus lives in Supabase. The gzip is still tracked until the
+# planned history rewrite (ignoring does not untrack it).
+corpus/us/headlines*.csv.gz
+corpus/us/fetch-latest.csv.gz
+supabase/.temp/

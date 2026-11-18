@@ -1,14 +1,15 @@
 """Matplotlib visualization charts for inference runs."""
 
-import sqlite3
 import json
+import sqlite3
 from pathlib import Path
-from typing import List
 
 import matplotlib
+
 matplotlib.use('Agg')  # Non-interactive backend
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 mpl.rcParams.update({
     'figure.facecolor': '#f0f0f0',
     'axes.facecolor': '#f0f0f0',
@@ -18,7 +19,7 @@ mpl.rcParams.update({
 })
 
 
-def render_all(conn: sqlite3.Connection, run_id: int, out_dir: str) -> List[str]:
+def render_all(conn: sqlite3.Connection, run_id: int, out_dir: str) -> list[str]:
     """
     Render all charts for a run.
     Returns list of created filenames (relative to out_dir).
@@ -39,7 +40,7 @@ def render_all(conn: sqlite3.Connection, run_id: int, out_dir: str) -> List[str]
     if not run_row:
         return filenames
 
-    status, corpus_id, config_json = run_row
+    _status, corpus_id, config_json = run_row
 
     # Reliability vs Bias scatter
     filename = _render_reliability_bias_scatter(

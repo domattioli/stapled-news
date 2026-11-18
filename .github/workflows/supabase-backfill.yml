@@ -1,0 +1,44 @@
+name: Supabase backfill
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: development
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Upsert corpus gzip
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/supabase_upsert.py corpus/us/headlines.csv.gz
+
+      - name: Compare counts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          table=$(python scripts/supabase_upsert.py --count)
+          gz=$(python - <<'PY'
+          import csv, gzip
+          with gzip.open("corpus/us/headlines.csv.gz", "rt", encoding="utf-8", newline="") as f:
+              print(len({r["url"] for r in csv.DictReader(f) if r["url"]}))
+          PY
+          )
+          echo "table rows: $table"
+          echo "gzip unique urls: $gz"
+          if [ "$table" -lt "$gz" ]; then
+            echo "::error::table count $table < gzip unique-url count $gz"
+            exit 1
+          fi

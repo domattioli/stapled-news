@@ -192,21 +192,21 @@ def test_load_two_commits(tmp_path):
     assert len(rows) == 3
 
     # Article A
-    a_row = [r for r in rows if "artikel-a" in r[0]][0]
+    a_row = next(r for r in rows if "artikel-a" in r[0])
     assert a_row[1] == "spiegel.de"
     assert a_row[2] == "politik"
     assert a_row[4] > a_row[3]  # last_seen > first_seen
     assert a_row[5] == 2  # title_variants == 2
 
     # Article B
-    b_row = [r for r in rows if "artikel-b" in r[0]][0]
+    b_row = next(r for r in rows if "artikel-b" in r[0])
     assert b_row[1] == "welt.de"
     assert b_row[2] == "politik"
     assert b_row[4] > b_row[3]  # last_seen > first_seen (appeared in both commits)
     assert b_row[5] == 1  # title_variants == 1 (same title, not a variant)
 
     # Article C
-    c_row = [r for r in rows if "artikel-c" in r[0]][0]
+    c_row = next(r for r in rows if "artikel-c" in r[0])
     assert c_row[1] == "spiegel.de"
     assert c_row[2] == "politik"
     assert c_row[3] == c_row[4]  # same timestamp

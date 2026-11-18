@@ -18,6 +18,10 @@ on:
 permissions:
   contents: write
 
+env:
+  # Repo variable CORPUS_STORE: 'git' (default, unset) or 'supabase'.
+  CORPUS_STORE: ${{ vars.CORPUS_STORE || 'git' }}
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -37,7 +41,9 @@ jobs:
           FETCH_MODE: ${{ github.event.inputs.mode || 'rss' }}
         run: python scripts/fetch_us_news.py
 
+      # ---- git mode (default) ----
       - name: Commit corpus
+        if: env.CORPUS_STORE != 'supabase'
         run: |
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
@@ -46,3 +52,36 @@ jobs:
           git commit -m "chore: fetch US political headline corpus"
           git pull --rebase origin development
           git push origin development
+
+      - name: Mirror gzip to Supabase (git mode, best effort)
+        if: env.CORPUS_STORE != 'supabase'
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::notice::SUPABASE_URL secret not set; skipping Supabase mirror"
+            exit 0
+          fi
+          python scripts/supabase_upsert.py corpus/us/headlines.csv.gz \
+            || echo "::warning::Supabase mirror failed (git copy is committed)"
+
+      # ---- supabase mode ----
+      - name: Upload this run's rows
+        if: always() && env.CORPUS_STORE == 'supabase'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fetch-latest
+          path: corpus/us/fetch-latest.csv.gz
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Upsert to Supabase
+        if: env.CORPUS_STORE == 'supabase'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python scripts/supabase_upsert.py corpus/us/fetch-latest.csv.gz \
+            || { echo "::error::Supabase upsert failed; rows kept in fetch-latest artifact"; exit 1; }

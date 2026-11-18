@@ -1,9 +1,9 @@
 """Integration test: degeneracy handling (SC-006)."""
 
 from stapled.db import connect
+from stapled.gates import corroboration_label
 from stapled.infer.em import run_em
 from stapled.infer.model import RunConfig
-from stapled.gates import corroboration_label
 
 
 def test_degeneracy_single_outlet(tmp_path):

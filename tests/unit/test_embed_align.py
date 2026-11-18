@@ -1,8 +1,10 @@
 """Tests for enhanced embedding-based alignment."""
 
 import sqlite3
+
 import pytest
-from stapled.align.embed_align import realign_all, _extract_entities, _normalize_claim_text
+
+from stapled.align.embed_align import _extract_entities, _normalize_claim_text, realign_all
 
 
 @pytest.fixture
@@ -87,7 +89,7 @@ def test_paraphrase_merges(test_db):
         },
     ]
 
-    outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
+    _outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
 
     # Use lower threshold for nearly-identical claims
     stats = realign_all(test_db, similarity_threshold=0.3, entity_mode="boost")
@@ -129,7 +131,7 @@ def test_disjoint_entities_not_merged(test_db):
         },
     ]
 
-    outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
+    _outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
 
     realign_all(test_db, similarity_threshold=0.5, entity_mode="boost")
 
@@ -169,7 +171,7 @@ def test_no_entity_fallback(test_db):
         },
     ]
 
-    outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
+    _outlet_map, _claim_ids = _setup_test_data(test_db, outlets_data)
 
     realign_all(test_db, similarity_threshold=0.4, entity_mode="boost")
 
@@ -197,7 +199,7 @@ def test_realign_clears_previous(test_db):
         },
     ]
 
-    outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
+    _outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
 
     # Assign bogus event ID before realign
     test_db.execute(
@@ -245,7 +247,7 @@ def test_stats_shape(test_db):
         },
     ]
 
-    outlet_map, claim_ids = _setup_test_data(test_db, outlets_data)
+    _outlet_map, _claim_ids = _setup_test_data(test_db, outlets_data)
 
     stats = realign_all(test_db, similarity_threshold=0.5)
 
@@ -346,7 +348,7 @@ def test_max_block_size_still_merges_via_rare_word_fallback(test_db):
         },
     ]
 
-    outlet_map, claim_ids = _setup_test_data(test_db, decoys + target)
+    _outlet_map, claim_ids = _setup_test_data(test_db, decoys + target)
     target_ids = claim_ids[-2:]
 
     # Cap smaller than the "trump" block size (6 decoys + 2 targets = 8 > 3)

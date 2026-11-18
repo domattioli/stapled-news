@@ -1,10 +1,10 @@
 """Reference baseline implementations for Dawid-Skene inference."""
 
+
 import numpy as np
-from typing import Dict, List
 
 
-def run_baseline(name: str, events: List[Dict]) -> Dict:
+def run_baseline(name: str, events: list[dict]) -> dict:
     """
     Run a baseline inference method.
 
@@ -31,7 +31,7 @@ def run_baseline(name: str, events: List[Dict]) -> Dict:
         raise ValueError(f"Unknown baseline: {name}")
 
 
-def _majority_vote(events: List[Dict]) -> Dict:
+def _majority_vote(events: list[dict]) -> dict:
     """
     Majority vote baseline.
 
@@ -96,7 +96,7 @@ def _majority_vote(events: List[Dict]) -> Dict:
     return {"posteriors": posteriors, "outlet_params": outlet_params}
 
 
-def _weighted_majority_vote(events: List[Dict]) -> Dict:
+def _weighted_majority_vote(events: list[dict]) -> dict:
     """
     Weighted majority vote baseline.
 
@@ -162,7 +162,7 @@ def _weighted_majority_vote(events: List[Dict]) -> Dict:
     return {"posteriors": posteriors, "outlet_params": outlet_params}
 
 
-def _batch_ds(events: List[Dict], n_iter: int = 20) -> Dict:
+def _batch_ds(events: list[dict], n_iter: int = 20) -> dict:
     """
     Batch Dawid-Skene EM (binary case).
 

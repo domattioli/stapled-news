@@ -1,6 +1,7 @@
 """Integration test: corpus validation gate."""
 
 import pytest
+
 from stapled.db import connect
 from stapled.gates import GateError, assert_corpus_passed
 from stapled.infer.em import run_em

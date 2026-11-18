@@ -1,14 +1,16 @@
 """Integration test: synthetic recovery pipeline (MVP scope)."""
 
-import yaml
 from pathlib import Path
+
+import yaml
+
 from stapled.db import connect
-from stapled.synth.generator import generate as synth_generate
-from stapled.synth.validate import validate as synth_validate
+from stapled.gates import assert_corpus_passed
 from stapled.infer.em import run_em
 from stapled.infer.model import RunConfig
 from stapled.recover.score import score
-from stapled.gates import assert_corpus_passed
+from stapled.synth.generator import generate as synth_generate
+from stapled.synth.validate import validate as synth_validate
 
 
 def test_recovery_full_pipeline(tmp_path):

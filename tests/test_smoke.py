@@ -17,7 +17,7 @@ def test_imports_align_incremental():
 
 def test_imports_stream():
     """Test stream module imports."""
-    from stapled.ingest.stream import iter_remote_lines, dedup_new_articles
+    from stapled.ingest.stream import dedup_new_articles, iter_remote_lines
     assert iter_remote_lines is not None
     assert dedup_new_articles is not None
 
@@ -37,9 +37,10 @@ def test_imports_cli():
 
 def test_database_migrations():
     """Test that migrations apply without error."""
-    from stapled.db import connect
-    import tempfile
     import os
+    import tempfile
+
+    from stapled.db import connect
 
     with tempfile.TemporaryDirectory() as tmpdir:
         db_path = os.path.join(tmpdir, "test.db")

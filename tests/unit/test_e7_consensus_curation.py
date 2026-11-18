@@ -1,10 +1,10 @@
 """Unit tests for E7 display-curation helpers (ranking, weekly, explorer cards)."""
 
 from stapled.experiments.e7_consensus import (
+    FAMOUS_OUTLETS,
     _curate_members,
     _curate_ranking_for_display,
     _curate_weekly_for_display,
-    FAMOUS_OUTLETS,
 )
 
 

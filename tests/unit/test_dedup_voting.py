@@ -1,6 +1,7 @@
 """Tests for fractional dedup-aware voting in OnlineEM."""
 
 import numpy as np
+
 from stapled.db import connect
 from stapled.infer.online_em import OnlineEM
 

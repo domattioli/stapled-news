@@ -11,8 +11,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -154,7 +155,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                                     int(r[0]) for r in budget_conn.execute(
                                         "SELECT DISTINCT c.event_id FROM claim c "
                                         "JOIN article a ON c.article_id = a.id "
-                                        "WHERE a.outlet_id = ?",
+                                        "WHERE a.outlet_id = ? AND c.event_id IS NOT NULL",
                                         (budget_reuters_id,),
                                     )
                                 }
@@ -177,7 +178,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 finally:
                     try:
                         budget_conn.close()
-                    except Exception:  # noqa: BLE001
+                    except Exception:  # noqa: BLE001, S110 - best-effort cleanup
                         pass
                     try:
                         os.remove(budget_db_path)
@@ -203,11 +204,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         with open(csv_path, "w") as f:
             f.write("budget,auc,real_rank,reuters_reliability,mean_fake_reliability\n")
-            for r in results:
-                f.write(
-                    f"{int(r['budget'])},{r['auc']:.6f},{int(r['real_rank'])},"
-                    f"{r['reuters_reliability']:.6f},{r['mean_fake_reliability']:.6f}\n"
-                )
+            f.writelines(f"{int(r['budget'])},{r['auc']:.6f},{int(r['real_rank'])},"
+                    f"{r['reuters_reliability']:.6f},{r['mean_fake_reliability']:.6f}\n" for r in results)
 
         # Compute metrics
         metrics = _compute_metrics(results, n_multi_outlet_events)
@@ -389,7 +387,7 @@ def _create_plot(results, out_path):
         'grid.linewidth': 0.5,
     })
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    _fig, ax = plt.subplots(figsize=(10, 6))
 
     # Plot line
     ax.plot(budgets, aucs, marker='o', markersize=8, linewidth=2, color='#008fd5', label='AUC')
@@ -405,7 +403,7 @@ def _create_plot(results, out_path):
                 f'Full recovery at k={int(r["budget"])}',
                 xy=(r["budget"], r["auc"]),
                 xytext=(r["budget"], 0.85),
-                arrowprops=dict(arrowstyle='->', color='#fc4f30', lw=1.5),
+                arrowprops={'arrowstyle': '->', 'color': '#fc4f30', 'lw': 1.5},
                 fontsize=10,
                 ha='center',
                 color='#fc4f30',

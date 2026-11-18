@@ -2,10 +2,10 @@
 
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from stapled.db import connect
-from stapled.ingest.fakenewsnet import normalize_domain, load_fakenewsnet, load_external_labels
+from stapled.ingest.fakenewsnet import load_external_labels, load_fakenewsnet, normalize_domain
 
 
 def test_normalize_domain():
@@ -76,7 +76,6 @@ def test_load_fakenewsnet_mocked():
             # Only for politifact_real
             if "politifact_real" in url:
                 yield mock_batch
-            return
 
         with patch(
             "stapled.ingest.fakenewsnet.iter_remote_lines", side_effect=mock_iter_remote_lines

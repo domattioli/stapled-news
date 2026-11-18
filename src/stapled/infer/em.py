@@ -1,10 +1,11 @@
 """Dawid-Skene binary EM inference with degeneracy checks."""
 
-import sqlite3
-import numpy as np
 import json
-from datetime import datetime
+import sqlite3
+from datetime import UTC, datetime
 from hashlib import sha256
+
+import numpy as np
 
 from stapled.infer.model import RunConfig
 
@@ -27,7 +28,7 @@ def run_em(
     if is_real:
         claims_by_event_filtered = {}
         for event_id, claims_list in claims_by_event.items():
-            outlets = set(c['outlet_id'] for c in claims_list)
+            outlets = {c['outlet_id'] for c in claims_list}
             if len(outlets) >= 2:
                 claims_by_event_filtered[event_id] = claims_list
         claims_by_event = claims_by_event_filtered
@@ -375,7 +376,7 @@ def _persist_run(
         VALUES (?, ?, ?, ?, ?, ?, ?)
     """,
         (
-            datetime.utcnow().isoformat(),
+            datetime.now(UTC).replace(tzinfo=None).isoformat(),
             corpus_id,
             claim_set_hash,
             run["status"],
@@ -394,9 +395,8 @@ def _persist_run(
         # Infer magnitude as modal claim value consistent with inferred state
         consistent_magnitudes = []
         for claim in claims_list:
-            if claim["observation"] == inferred_state:
-                if claim["magnitude"] is not None:
-                    consistent_magnitudes.append(claim["magnitude"])
+            if claim["observation"] == inferred_state and claim["magnitude"] is not None:
+                consistent_magnitudes.append(claim["magnitude"])
 
         inferred_magnitude = (
             int(np.median(consistent_magnitudes))

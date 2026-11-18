@@ -4,18 +4,19 @@ import os
 import tempfile
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import yaml
 from scipy.stats import spearmanr
 
-import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from stapled.db import connect
-from stapled.synth.generator import generate
 from stapled.infer.online_em import OnlineEM
 from stapled.ingest.dedup import dedup_articles
+from stapled.ingest.ncd_dedup import ncd_dedup
+from stapled.synth.generator import generate
 
 
 def run(config: dict, seed: int, out_dir: str) -> dict:
@@ -28,6 +29,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         synth_config_path: Path to synth config YAML (default "configs/synth-baseline.yml")
         n_seeds: Number of seeds per multiplicity (default 10)
         perturb: If True, run both "exact" and "perturbed" modes (default True)
+        dedup_method: "simhash" (default) or "ncd" (MinHash-blocked NCD dedup)
 
     Returns:
         dict with outputs (CSV, PNG paths) and metrics
@@ -38,6 +40,9 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
     n_seeds = config.get("n_seeds", 10)
     perturb = config.get("perturb", True)
     synth_config_path = config.get("synth_config_path", "configs/synth-baseline.yml")
+    dedup_method = config.get("dedup_method", "simhash")
+    if dedup_method not in ("simhash", "ncd"):
+        raise ValueError(f"dedup_method must be 'simhash' or 'ncd', got {dedup_method!r}")
 
     if quick:
         multiplicities = [1, 5]
@@ -54,7 +59,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         for m in multiplicities:
             for s in range(n_seeds):
                 seed_results = _run_seed(
-                    s, seed, synth_config, m, mode
+                    s, seed, synth_config, m, mode, dedup_method
                 )
                 results.extend(seed_results)
 
@@ -68,11 +73,8 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
     with open(csv_path, "w") as f:
         f.write("mode,multiplicity,seed,dedup,rho,wire_reliability_est\n")
-        for r in results:
-            f.write(
-                f"{r['mode']},{r['multiplicity']},{r['seed']},"
-                f"{r['dedup']},{r['rho']:.6f},{r['wire_reliability_est']:.6f}\n"
-            )
+        f.writelines(f"{r['mode']},{r['multiplicity']},{r['seed']},"
+                f"{r['dedup']},{r['rho']:.6f},{r['wire_reliability_est']:.6f}\n" for r in results)
 
     # Compute metrics
     metrics = _compute_metrics(results)
@@ -93,7 +95,12 @@ def _load_synth_config(path: str) -> dict:
 
 
 def _run_seed(
-    seed_idx: int, base_seed: int, synth_config: dict, multiplicity: int, mode: str
+    seed_idx: int,
+    base_seed: int,
+    synth_config: dict,
+    multiplicity: int,
+    mode: str,
+    dedup_method: str = "simhash",
 ) -> list:
     """
     Run experiment for one (seed, multiplicity, mode) triplet.
@@ -136,7 +143,10 @@ def _run_seed(
             )
 
         # Run dedup to cluster duplicates
-        dedup_articles(conn)
+        if dedup_method == "ncd":
+            ncd_dedup(conn)
+        else:
+            dedup_articles(conn)
 
         # Get event IDs
         cursor = conn.execute(
@@ -337,9 +347,9 @@ def _compute_rho(
     planted_list = []
     est_list = []
 
-    for outlet_id in planted:
+    for outlet_id, planted_value in planted.items():
         if outlet_id in est_params:
-            planted_list.append(planted[outlet_id])
+            planted_list.append(planted_value)
             params = est_params[outlet_id]
             if "reliability" in params:
                 reliability = params["reliability"]
@@ -379,7 +389,7 @@ def _compute_metrics(results: list) -> dict:
                 mean_rho_by_m[dedup_key][m] = mean_rho
 
     # Compute distortion metric: rho_off - rho_on at largest m
-    max_m = max(m for (_, m, _) in by_config.keys())
+    max_m = max(m for (_, m, _) in by_config)
     rho_off_max = mean_rho_by_m["dedup_off"].get(max_m, 0.0)
     rho_on_max = mean_rho_by_m["dedup_on"].get(max_m, 0.0)
     distortion = rho_off_max - rho_on_max
@@ -423,11 +433,11 @@ def _create_plots(results: list, out_path: Path) -> list:
 
     # Create one plot per mode
     for mode in sorted(by_mode.keys()):
-        fig, ax = plt.subplots(figsize=(10, 6))
+        _fig, ax = plt.subplots(figsize=(10, 6))
 
         # Extract multiplicities and compute means
         multiplicities = sorted(
-            set(m for (m, _) in by_mode[mode].keys())
+            {m for (m, _) in by_mode[mode]}
         )
         mean_rho_on = []
         mean_rho_off = []

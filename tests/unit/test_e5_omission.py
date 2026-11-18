@@ -2,9 +2,9 @@
 
 import json
 
+from stapled.db import connect
 from stapled.experiments import e5_omission
 from stapled.experiments.runner import run_experiment
-from stapled.db import connect
 
 
 def test_e5_quick_runs(tmp_path):
@@ -45,7 +45,7 @@ def test_e5_quick_runs(tmp_path):
             "INSERT INTO article (outlet_id, url, title, body, published_at, ingest_status) "
             "VALUES (?, ?, ?, ?, ?, ?)",
             (outlet_id, f"url-{article_id}", f"title-{article_id}", "body", "2024-01-01", "ok"),
-        )  # noqa: E501
+        )
         conn.execute(
             "INSERT INTO claim (article_id, event_id, action, certainty) VALUES (?, ?, ?, ?)",
             (article_id, 1, "occurred", 0.9),
