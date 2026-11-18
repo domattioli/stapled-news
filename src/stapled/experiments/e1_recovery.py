@@ -4,18 +4,18 @@ import os
 import tempfile
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import yaml
 from scipy.stats import spearmanr
 
-import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from stapled.db import connect
-from stapled.synth.generator import generate
-from stapled.infer.online_em import OnlineEM
 from stapled.baselines import run_baseline
+from stapled.db import connect
+from stapled.infer.online_em import OnlineEM
+from stapled.synth.generator import generate
 
 
 def run(config: dict, seed: int, out_dir: str) -> dict:
@@ -56,8 +56,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
     with open(csv_path, "w") as f:
         f.write("seed,method,rho\n")
-        for r in results:
-            f.write(f"{r['seed']},{r['method']},{r['rho']:.6f}\n")
+        f.writelines(f"{r['seed']},{r['method']},{r['rho']:.6f}\n" for r in results)
 
     # Compute summary statistics
     metrics = _compute_metrics(results)
@@ -206,9 +205,9 @@ def _compute_rho(planted: dict, est_params: dict) -> float:
     planted_list = []
     est_list = []
 
-    for outlet_id in planted:
+    for outlet_id, planted_value in planted.items():
         if outlet_id in est_params:
-            planted_list.append(planted[outlet_id])
+            planted_list.append(planted_value)
             reliability = est_params[outlet_id].get(
                 "reliability",
                 (est_params[outlet_id]["sens"] + est_params[outlet_id]["spec"]) / 2,
@@ -283,7 +282,7 @@ def _create_plot(results: list, n_seeds: int, out_path: Path) -> str:
         'grid.linewidth': 0.5,
     })
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    _fig, ax = plt.subplots(figsize=(10, 6))
 
     # Create box plot
     data = [by_method[m] for m in methods]

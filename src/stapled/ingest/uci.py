@@ -2,14 +2,12 @@
 
 import re
 import sqlite3
-from typing import Dict, Optional, Set
-from datetime import datetime
+from datetime import UTC, datetime
 
-from stapled.ingest.stream import iter_remote_lines
-from stapled.ingest.fakenewsnet import normalize_domain, PLATFORM_DOMAINS
-from stapled.ingest.csv_loader import _get_or_create_outlet
 from stapled.db import insert_and_get_id
-
+from stapled.ingest.csv_loader import _get_or_create_outlet
+from stapled.ingest.fakenewsnet import PLATFORM_DOMAINS, normalize_domain
+from stapled.ingest.stream import iter_remote_lines
 
 # UCI dataset URL
 UCI_URL = "https://media.githubusercontent.com/media/PacktPublishing/Apache-Spark-2-Data-Processing-and-Real-Time-Analytics/master/newsCorpora.csv"
@@ -21,9 +19,9 @@ UCI_FIELDNAMES = ["ID", "TITLE", "URL", "PUBLISHER", "CATEGORY", "STORY", "HOSTN
 def load_uci(
     conn: sqlite3.Connection,
     batch_bytes: int = 524288,
-    limit: Optional[int] = None,
-    categories: Optional[Set[str]] = None,
-) -> Dict[str, int]:
+    limit: int | None = None,
+    categories: set[str] | None = None,
+) -> dict[str, int]:
     """
     Stream UCI News Aggregator dataset via iter_remote_lines.
     Load articles, map stories to events, extract claims with negation detection.
@@ -46,7 +44,7 @@ def load_uci(
     }
 
     # Track story_id → event_id mapping in memory during batch
-    story_to_event: Dict[str, int] = {}
+    story_to_event: dict[str, int] = {}
     rows_processed = 0
 
     # Check existing story mappings
@@ -54,9 +52,9 @@ def load_uci(
     for story_id, event_id in cursor.fetchall():
         story_to_event[story_id] = event_id
 
-    seen_domains = set(
+    seen_domains = {
         r[0] for r in conn.execute("SELECT name FROM outlet").fetchall()
-    )
+    }
     for batch_rows in iter_remote_lines(
         UCI_URL,
         batch_bytes,
@@ -139,7 +137,7 @@ def load_uci(
             if timestamp_ms:
                 try:
                     ts_sec = int(timestamp_ms) / 1000.0
-                    published_at = datetime.utcfromtimestamp(ts_sec).isoformat()
+                    published_at = datetime.fromtimestamp(ts_sec, UTC).replace(tzinfo=None).isoformat()
                 except (ValueError, OSError):
                     pass
 
@@ -191,7 +189,7 @@ def load_uci(
     return counts
 
 
-def _extract_actor(title: str) -> Optional[str]:
+def _extract_actor(title: str) -> str | None:
     """Extract first capitalized word span as actor."""
     words = title.split()
     for word in words:

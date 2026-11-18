@@ -2,9 +2,9 @@
 
 import json
 
+from stapled.db import connect
 from stapled.experiments import e6_anchoring
 from stapled.experiments.runner import run_experiment
-from stapled.db import connect
 
 
 def test_e6_quick_runs(tmp_path):

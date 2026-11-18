@@ -1,10 +1,9 @@
 """Incremental claim alignment with frozen TF-IDF vocab."""
 
-import sqlite3
 import json
-import numpy as np
-from typing import Dict, List
+import sqlite3
 
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
@@ -33,9 +32,9 @@ class UnionFind:
 
 def align_incremental(
     conn: sqlite3.Connection,
-    claim_ids: List[int],
+    claim_ids: list[int],
     similarity_threshold: float = 0.55,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Align new claims into events, using frozen TF-IDF vocab if available.
     Batch 1: freeze vocab in tfidf_vocab table.
@@ -192,7 +191,7 @@ def _normalize_claim_text(actor: str, action: str, obj: str, title: str) -> str:
 
 
 def _vectorize_frozen_claims(
-    texts: List[str], vocab: Dict[str, int], idf_dict: Dict[str, float], n_features: int
+    texts: list[str], vocab: dict[str, int], idf_dict: dict[str, float], n_features: int
 ) -> np.ndarray:
     """Vectorize texts using frozen vocab (unigrams + bigrams)."""
     vectors = []

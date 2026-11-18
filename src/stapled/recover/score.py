@@ -1,6 +1,7 @@
 """Recovery scoring: compare inferred states vs ground truth."""
 
 import sqlite3
+
 import numpy as np
 from scipy import stats
 

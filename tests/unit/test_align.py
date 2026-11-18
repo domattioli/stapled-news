@@ -3,8 +3,8 @@
 import tempfile
 from pathlib import Path
 
-from stapled.db import connect, insert_and_get_id
 from stapled.align.cluster import align
+from stapled.db import connect, insert_and_get_id
 
 
 def test_align_creates_events():

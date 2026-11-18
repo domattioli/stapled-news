@@ -1,9 +1,8 @@
 """Near-duplicate detection via SimHash clustering."""
 
-import sqlite3
-import re
 import hashlib
-from typing import Dict, List, Tuple
+import re
+import sqlite3
 
 
 class UnionFind:
@@ -58,7 +57,7 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
 
     # Banded bucketing: partition hash space into 4 bands of 16 bits
     # For each band, articles with same bucket are candidates
-    buckets: Dict[Tuple[int, str], List[int]] = {}
+    buckets: dict[tuple[int, str], list[int]] = {}
     for i, h in enumerate(hashes):
         for band in range(4):
             bucket_bits = _get_band_bits(h, band)
@@ -77,7 +76,7 @@ def dedup_articles(conn: sqlite3.Connection) -> int:
                     uf.union(idx_i, idx_j)
 
     # Build clusters
-    clusters: Dict[int, List[int]] = {}
+    clusters: dict[int, list[int]] = {}
     for i in range(n):
         root = uf.find(i)
         if root not in clusters:
@@ -154,4 +153,4 @@ def _get_band_bits(h: int, band: int) -> str:
 def _hamming_distance(h1: int, h2: int) -> int:
     """Hamming distance between two 64-bit integers."""
     xor = h1 ^ h2
-    return bin(xor).count("1")
+    return xor.bit_count()

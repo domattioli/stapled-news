@@ -3,15 +3,17 @@
 import argparse
 import sys
 
+from stapled.experiments import (
+    e1_recovery,
+    e2_syndication,
+    e3_isot,
+    e3b_fnn,
+    e4_external,
+    e5_omission,
+    e6_anchoring,
+    e7_consensus,
+)
 from stapled.experiments.runner import run_experiment
-from stapled.experiments import e1_recovery
-from stapled.experiments import e2_syndication
-from stapled.experiments import e3_isot
-from stapled.experiments import e3b_fnn
-from stapled.experiments import e4_external
-from stapled.experiments import e5_omission
-from stapled.experiments import e6_anchoring
-from stapled.experiments import e7_consensus
 
 
 def main():

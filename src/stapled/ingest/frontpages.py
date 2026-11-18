@@ -1,18 +1,16 @@
 """Load frontpage-archive-2026 German news corpus with outlet/section coverage."""
 
-import re
-import json
 import hashlib
+import json
+import re
 import sqlite3
 import subprocess
-from typing import Dict, Optional
 from datetime import datetime
 from fnmatch import fnmatch
 from pathlib import Path
 
-from stapled.ingest.csv_loader import _get_or_create_outlet
 from stapled.db import insert_and_get_id
-
+from stapled.ingest.csv_loader import _get_or_create_outlet
 
 # Outlet → section glob patterns (political coverage only)
 OUTLET_SECTIONS = {
@@ -46,7 +44,7 @@ def _normalize_url(url: str) -> str:
     return url.strip()
 
 
-def _extract_actor(title: str) -> Optional[str]:
+def _extract_actor(title: str) -> str | None:
     """Extract first capitalized multi-char token span as actor."""
     words = title.split()
     for word in words:
@@ -73,10 +71,10 @@ def _extract_object(title: str) -> str:
 def load_frontpages(
     conn: sqlite3.Connection,
     repo_path: str = "/tmp/fp2026",
-    since: Optional[str] = None,
-    until: Optional[str] = None,
-    limit_commits: Optional[int] = None,
-) -> Dict[str, int]:
+    since: str | None = None,
+    until: str | None = None,
+    limit_commits: int | None = None,
+) -> dict[str, int]:
     """
     Load frontpage-archive-2026 from local git clone.
 
@@ -134,7 +132,7 @@ def load_frontpages(
         filtered = []
         for sha, commit_date_str in [c.split("|", 1) for c in commits]:
             try:
-                commit_dt = datetime.fromisoformat(commit_date_str.replace("Z", "+00:00"))
+                commit_dt = datetime.fromisoformat(commit_date_str)
             except ValueError:
                 continue
             if since_dt and commit_dt < since_dt:
@@ -170,7 +168,7 @@ def load_frontpages(
         sha, commit_date_str = parts
         try:
             commit_date = datetime.fromisoformat(
-                commit_date_str.replace("Z", "+00:00")
+                commit_date_str
             )
             commit_date_iso = commit_date.isoformat()
         except ValueError:
@@ -203,7 +201,7 @@ def load_frontpages(
                     for f in result.stdout.strip().split("\n")
                     if f and f.endswith(".json")
                 ]
-            except Exception:
+            except Exception:  # noqa: BLE001, S112 - skip commits whose file listing fails
                 continue
 
             # Filter by section globs

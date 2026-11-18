@@ -2,13 +2,12 @@
 
 import re
 import sqlite3
-import urllib.request
 import urllib.parse
-from typing import Dict, Optional, List
+import urllib.request
 
-from stapled.ingest.stream import iter_remote_lines
-from stapled.ingest.csv_loader import _get_or_create_outlet
 from stapled.db import insert_and_get_id
+from stapled.ingest.csv_loader import _get_or_create_outlet
+from stapled.ingest.stream import iter_remote_lines
 
 # Share/aggregator domains that are not publishers
 PLATFORM_DOMAINS = {
@@ -43,7 +42,7 @@ FNN_SOURCES = [
 ]
 
 
-def normalize_domain(url: str) -> Optional[str]:
+def normalize_domain(url: str) -> str | None:
     """
     Normalize a URL to a domain name.
     - Add scheme if missing
@@ -71,7 +70,7 @@ def normalize_domain(url: str) -> Optional[str]:
     try:
         parsed = urllib.parse.urlparse(url)
         domain = parsed.netloc
-    except Exception:
+    except Exception:  # noqa: BLE001 - any parse failure means no domain
         return None
 
     if not domain:
@@ -83,8 +82,7 @@ def normalize_domain(url: str) -> Optional[str]:
 
     # Remove leading subdomains (www., m., amp.)
     for prefix in ["www.", "m.", "amp."]:
-        if domain.startswith(prefix):
-            domain = domain[len(prefix) :]
+        domain = domain.removeprefix(prefix)
 
     # Ensure at least one dot (not a bare hostname)
     if "." not in domain:
@@ -100,9 +98,9 @@ def normalize_domain(url: str) -> Optional[str]:
 def load_fakenewsnet(
     conn: sqlite3.Connection,
     batch_bytes: int = 262144,
-    limit: Optional[int] = None,
-    datasets: Optional[List[str]] = None,
-) -> Dict[str, int]:
+    limit: int | None = None,
+    datasets: list[str] | None = None,
+) -> dict[str, int]:
     """
     Stream FakeNewsNet sources via iter_remote_lines. Load articles + labels.
 
@@ -167,11 +165,12 @@ def load_fakenewsnet(
                     "SELECT COUNT(*) FROM outlet WHERE name = ? AND id = ?",
                     (domain, outlet_id),
                 )
-                if cursor.fetchone()[0] > 0:
-                    # Check if this is the first time we've seen this outlet in this batch
-                    if domain not in [row.get("_outlet_domain") for row in batch_rows]:
-                        outlets_created_for_source += 1
-                        counts["per_dataset"][dataset]["outlets"] += 1
+                # Check if this is the first time we've seen this outlet in this batch
+                if cursor.fetchone()[0] > 0 and domain not in [
+                    row.get("_outlet_domain") for row in batch_rows
+                ]:
+                    outlets_created_for_source += 1
+                    counts["per_dataset"][dataset]["outlets"] += 1
 
                 # Insert article (body = title since FNN has no body text)
                 try:
@@ -251,8 +250,7 @@ def load_external_labels(
             continue
 
         # Strip www. prefix
-        if domain_raw.startswith("www."):
-            domain_raw = domain_raw[4:]
+        domain_raw = domain_raw.removeprefix("www.")
 
         conn.execute(
             """INSERT OR REPLACE INTO outlet_external_label

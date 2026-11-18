@@ -1,7 +1,9 @@
 """Unit tests for DB schema and migrations."""
 
-import pytest
 import sqlite3
+
+import pytest
+
 from stapled.db import connect
 
 

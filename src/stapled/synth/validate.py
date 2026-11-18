@@ -1,10 +1,11 @@
 """Synthetic corpus validation: chi-squared independence, vocabulary diversity, bias alignment."""
 
-import sqlite3
-import numpy as np
 import json
-from scipy import stats
+import sqlite3
 from collections import defaultdict
+
+import numpy as np
+from scipy import stats
 
 
 def validate(conn: sqlite3.Connection, corpus_id: int) -> dict:
@@ -113,7 +114,7 @@ def _check_chi_squared_independence(
             "offending_pair": None,
         }
 
-    chi2, p_value, dof, expected = stats.chi2_contingency(contingency)
+    _chi2, p_value, _dof, _expected = stats.chi2_contingency(contingency)
 
     # Fail if p < 0.01 (significant correlation)
     passed = p_value >= 0.01
@@ -257,7 +258,7 @@ def _check_bias_alignment(
         corr, p_value = stats.pointbiserialr(bias_signs, valences)
         # Lenient threshold: accept if low variance or if correlation exists
         passed = np.std(biases) < 0.05 or abs(corr) >= 0.1
-    except Exception:
+    except Exception:  # noqa: BLE001 - lenient pass when the test cannot be computed
         passed = True
 
     return {

@@ -1,34 +1,35 @@
 """E7: Consensus distance — headline variance across outlets."""
 
+import json
 import os
 import shutil
 import tempfile
-import json
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from stapled.db import connect
-from stapled.infer.online_em import OnlineEM
 from stapled.analyze.consensus_distance import (
-    compute_distances,
+    PANEL_LEAN,
+    PANEL_LEAN5,
     aggregate_outlets,
-    weekly_series,
-    validate_planted,
-    validate_split_half,
-    token_impacts,
+    compute_distances,
+    consensus_lean_axis,
     lean_breakdown,
     panel_composition,
     panel_spectrum,
-    consensus_lean_axis,
     regional_impact,
-    PANEL_LEAN,
-    PANEL_LEAN5,
+    token_impacts,
+    validate_planted,
+    validate_split_half,
+    weekly_series,
 )
+from stapled.db import connect
+from stapled.infer.online_em import OnlineEM
 
 
 def run(config: dict, seed: int, out_dir: str) -> dict:
@@ -126,10 +127,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         csv_articles_path = out_path / "e7_consensus_distance.csv"
         with open(csv_articles_path, "w") as f:
             f.write("article_id,outlet,event_id,distance\n")
-            for row in article_rows:
-                f.write(
-                    f"{row['article_id']},{row['outlet']},{row['event_id']},{row['distance']:.6f}\n"
-                )
+            f.writelines(f"{row['article_id']},{row['outlet']},{row['event_id']},{row['distance']:.6f}\n" for row in article_rows)
 
         # CSV: outlet-level aggregates
         csv_outlets_path = out_path / "e7_outlet_distance.csv"
@@ -167,7 +165,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
                 "SELECT MIN(first_seen), MAX(last_seen) FROM fp_article_meta"
             ).fetchone()
             since, until = (row[0] or "")[:10], (row[1] or "")[:10]
-        except Exception:
+        except Exception:  # noqa: BLE001 - fall back to article table if fp_article_meta is unavailable
             row = conn.execute(
                 "SELECT MIN(published_at), MAX(published_at) FROM article"
             ).fetchone()
@@ -189,7 +187,7 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
         ]
 
         consensus_bundle = {
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": datetime.now(UTC).replace(tzinfo=None).isoformat(),
             "corpus": {
                 "repo": "defgsus/frontpage-archive-2026",
                 "since": since,
@@ -333,7 +331,7 @@ def _curate_members(members):
         category = PANEL_LEAN5.get(m["outlet"], "unrated")
         by_category.setdefault(category, []).append(m)
     picked = [
-        sorted(group, key=lambda m: (m["outlet"] not in FAMOUS_OUTLETS, m["distance"]))[0]
+        min(group, key=lambda m: (m["outlet"] not in FAMOUS_OUTLETS, m["distance"]))
         for group in by_category.values()
     ]
     return sorted(picked, key=lambda m: m["distance"])

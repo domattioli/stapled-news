@@ -3,9 +3,8 @@
 import csv
 import re
 import sqlite3
-from pathlib import Path
 from datetime import datetime
-from typing import Optional, Dict
+from pathlib import Path
 
 from stapled.db import insert_and_get_id
 
@@ -14,8 +13,8 @@ def load_isot(
     conn: sqlite3.Connection,
     true_csv: str,
     fake_csv: str,
-    limit_per_outlet: Optional[int] = None,
-) -> Dict[str, int]:
+    limit_per_outlet: int | None = None,
+) -> dict[str, int]:
     """
     Load ISOT dataset: True.csv (Reuters) and Fake.csv (misinformation).
     Returns dict with counts: {articles_loaded, articles_skipped, outlets_created}.
@@ -49,7 +48,7 @@ def load_isot(
 def _get_or_create_outlet(
     conn: sqlite3.Connection,
     name: str,
-    feed_url: Optional[str] = None,
+    feed_url: str | None = None,
     is_synthetic: int = 0,
 ) -> int:
     """Get existing outlet or create new one. Returns outlet_id."""
@@ -72,9 +71,9 @@ def _load_true_csv(
     conn: sqlite3.Connection,
     csv_path: str,
     outlet_id: int,
-    limit_per_outlet: Optional[int],
-    counts: Dict[str, int],
-) -> Dict[str, int]:
+    limit_per_outlet: int | None,
+    counts: dict[str, int],
+) -> dict[str, int]:
     """Load True.csv rows. Strip Reuters dateline from text."""
     path = Path(csv_path)
     if not path.exists():
@@ -127,16 +126,16 @@ def _load_true_csv(
 def _load_fake_csv(
     conn: sqlite3.Connection,
     csv_path: str,
-    limit_per_outlet: Optional[int],
-    counts: Dict[str, int],
-) -> Dict[str, int]:
+    limit_per_outlet: int | None,
+    counts: dict[str, int],
+) -> dict[str, int]:
     """Load Fake.csv rows. Group by subject -> pseudo-outlet fake:<subject>."""
     path = Path(csv_path)
     if not path.exists():
         raise FileNotFoundError(f"Fake.csv not found: {csv_path}")
 
     # Track per-subject counts
-    subject_counts: Dict[str, int] = {}
+    subject_counts: dict[str, int] = {}
 
     with open(path) as f:
         reader = csv.DictReader(f)
@@ -189,7 +188,7 @@ def _load_fake_csv(
     return counts
 
 
-def _parse_date(date_str: str) -> Optional[str]:
+def _parse_date(date_str: str) -> str | None:
     """Parse date string in various formats. Return ISO-8601 string or NULL."""
     if not date_str or not date_str.strip():
         return None

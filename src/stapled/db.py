@@ -1,9 +1,9 @@
 """SQLite database layer with migrations."""
 
-import sqlite3
 import json
+import sqlite3
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime
 
 
 def connect(db_path: str) -> sqlite3.Connection:
@@ -45,7 +45,7 @@ def _apply_migrations(conn: sqlite3.Connection) -> None:
             conn.executescript(sql)
             conn.execute(
                 "INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)",
-                (version, datetime.utcnow().isoformat()),
+                (version, datetime.now(UTC).replace(tzinfo=None).isoformat()),
             )
             conn.commit()
 

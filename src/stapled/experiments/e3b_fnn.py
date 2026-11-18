@@ -10,8 +10,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.stats import spearmanr
@@ -106,12 +107,9 @@ def run(config: dict, seed: int, out_dir: str) -> dict:
 
         with open(csv_path, "w") as f:
             f.write("outlet,n_articles,fake_share,sens,spec,reliability,n_obs\n")
-            for s in valid_outlets:
-                f.write(
-                    f"{s['outlet']},{int(s['n_labeled_articles'])},{s['fake_share']:.6f},"
+            f.writelines(f"{s['outlet']},{int(s['n_labeled_articles'])},{s['fake_share']:.6f},"
                     f"{s['sens']:.6f},{s['spec']:.6f},{s['reliability']:.6f},"
-                    f"{int(s['n_obs'])}\n"
-                )
+                    f"{int(s['n_obs'])}\n" for s in valid_outlets)
 
         # Create scatter plot
         png_path = _create_plot(valid_outlets, out_path)
@@ -254,7 +252,7 @@ def _create_plot(valid_outlets, out_path):
         'grid.linewidth': 0.5,
     })
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    _fig, ax = plt.subplots(figsize=(10, 6))
 
     # Scatter: fake_share vs reliability
     fake_shares = [s["fake_share"] for s in valid_outlets]

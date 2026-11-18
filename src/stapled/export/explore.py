@@ -13,19 +13,18 @@ import csv
 import json
 import os
 import sqlite3
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 
 def build_bundle(
     run_json_path: str,
-    stream_db_path: Optional[str],
-    e1_csv_path: Optional[str],
+    stream_db_path: str | None,
+    e1_csv_path: str | None,
     out_path: str,
 ) -> dict:
     """Assemble explore.json from available artifacts. Missing sources are skipped."""
     bundle: dict = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "outlets": [],
         "events": [],
         "trajectory": {"batches": [], "series": []},

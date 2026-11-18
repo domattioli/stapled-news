@@ -1,10 +1,10 @@
 """Online EM for streaming Dawid-Skene (Cappé-Moulines)."""
 
-import sqlite3
-import numpy as np
 import json
-from datetime import datetime
-from typing import Dict, List
+import sqlite3
+from datetime import UTC, datetime
+
+import numpy as np
 
 
 class OnlineEM:
@@ -12,9 +12,9 @@ class OnlineEM:
 
     def __init__(
         self,
-        outlet_ids: List[int],
+        outlet_ids: list[int],
         tolerance: float = 1e-5,
-        conn: sqlite3.Connection = None,
+        conn: sqlite3.Connection | None = None,
         dedup_voting: bool = True,
     ):
         """
@@ -56,10 +56,10 @@ class OnlineEM:
                     """INSERT INTO em_state
                        (id, prior_pi, batches_seen, ll_trace_json, updated_at)
                        VALUES (1, 0.5, 0, '[]', ?)""",
-                    (datetime.utcnow().isoformat(),)
+                    (datetime.now(UTC).replace(tzinfo=None).isoformat(),)
                 )
                 conn.commit()
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 - best-effort persistence; in-memory state stays valid
             pass
 
     def _load_state(self, conn: sqlite3.Connection) -> None:
@@ -71,7 +71,7 @@ class OnlineEM:
                 self.pi = row[0] if row[0] is not None else 0.5
                 if row[1]:
                     self.ll_trace = json.loads(row[1])
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 - best-effort persistence; in-memory state stays valid
             pass
 
         # Load suffstats
@@ -95,14 +95,14 @@ class OnlineEM:
 
                     self.sens[outlet_id] = tp / (tp + fn) if (tp + fn) > 0 else 0.7
                     self.spec[outlet_id] = tn / (tn + fp) if (tn + fp) > 0 else 0.7
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 - best-effort persistence; in-memory state stays valid
             pass
 
     def connect(self, conn: sqlite3.Connection) -> None:
         """Bind database connection."""
         self.conn = conn
 
-    def ensure_outlets(self, outlet_ids: List[int]) -> None:
+    def ensure_outlets(self, outlet_ids: list[int]) -> None:
         """Register outlets discovered after init (streaming creates outlets lazily)."""
         for o in outlet_ids:
             if o not in self.sens:
@@ -138,7 +138,7 @@ class OnlineEM:
         else:
             raise ValueError("Invalid event input format")
 
-    def _e_step_from_dicts(self, events: List[Dict]) -> Dict[int, np.ndarray]:
+    def _e_step_from_dicts(self, events: list[dict]) -> dict[int, np.ndarray]:
         """E-step from event dicts."""
         posteriors = {}
 
@@ -212,7 +212,7 @@ class OnlineEM:
 
         return posteriors
 
-    def _e_step_from_ids(self, event_ids: List[int], outlet_params: Dict = None) -> Dict[str, any]:
+    def _e_step_from_ids(self, event_ids: list[int], outlet_params: dict | None = None) -> dict[str, any]:
         """
         E-step on batch of events, loading from database.
 
@@ -400,7 +400,7 @@ class OnlineEM:
             "batch_ll": float(batch_ll),
         }
 
-    def accumulate(self, batch_stats: Dict, t: int) -> None:
+    def accumulate(self, batch_stats: dict, t: int) -> None:
         """
         Accumulate batch statistics with Robbins-Monro step size.
 
@@ -480,13 +480,13 @@ class OnlineEM:
                 self.pi,
                 len(self.ll_trace),
                 json.dumps(self.ll_trace),
-                datetime.utcnow().isoformat(),
+                datetime.now(UTC).replace(tzinfo=None).isoformat(),
             ),
         )
 
         self.conn.commit()
 
-    def params(self) -> Dict[int, Dict[str, float]]:
+    def params(self) -> dict[int, dict[str, float]]:
         """
         Get current parameters.
 

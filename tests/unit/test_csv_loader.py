@@ -4,7 +4,12 @@ import tempfile
 from pathlib import Path
 
 from stapled.db import connect
-from stapled.ingest.csv_loader import load_isot, _parse_date, _strip_reuters_dateline, _normalize_subject
+from stapled.ingest.csv_loader import (
+    _normalize_subject,
+    _parse_date,
+    _strip_reuters_dateline,
+    load_isot,
+)
 
 
 def test_parse_date():
