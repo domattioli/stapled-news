@@ -9,6 +9,7 @@ from datetime import datetime
 
 from stapled.ingest.fakenewsnet import normalize_domain
 from stapled.ingest.csv_loader import _get_or_create_outlet
+from stapled.ingest.snapshot import resolve_corpus
 from stapled.db import insert_and_get_id
 
 
@@ -102,6 +103,8 @@ def load_us_headlines(
         "outlets_dropped": 0,
         "skipped": 0,
     }
+
+    path = resolve_corpus(path)
 
     # Determine if gzip or plain
     if path.endswith(".gz"):

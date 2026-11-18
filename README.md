@@ -193,6 +193,10 @@ CI (`.github/workflows/ci.yml`): ruff + pytest on push and PR to `main`/`develop
 
 <div align="right"><a href="#stapled-news"><sub>^ Back to top</sub></a></div>
 
+### US headline corpus storage
+
+The US headline corpus lives in the Supabase Postgres table `headlines` (schema: `supabase/migrations/`). The repo variable `CORPUS_STORE` selects the store: unset or `git` commits `corpus/us/headlines.csv.gz` as before; `supabase` upserts each daily fetch to the table instead. Run the `Supabase backfill` workflow once to load the existing gzip. A snapshot is pinned in `corpus/us/SNAPSHOT.json` (file, sha256, URL); if the tracked gzip is missing, `load-us-headlines` downloads and verifies it. The gzip will leave git history in a planned rewrite. `scripts/export_snapshot.py` exports the table to a new dated snapshot.
+
 ## 12. Project structure
 
 ```

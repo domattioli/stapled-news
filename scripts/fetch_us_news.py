@@ -205,9 +205,14 @@ def main():
         rows.setdefault(u, r)
     probe_hf(report)
 
-    out = os.path.join(OUT_DIR, "headlines.csv.gz")
+    store = os.environ.get("CORPUS_STORE", "git")
+    if store == "supabase":
+        # Supabase holds the corpus: write only this run's rows, no prior merge.
+        out = os.path.join(OUT_DIR, "fetch-latest.csv.gz")
+    else:
+        out = os.path.join(OUT_DIR, "headlines.csv.gz")
     # Accumulate across runs: prior corpus rows are kept (URL-keyed).
-    if os.path.exists(out):
+    if store != "supabase" and os.path.exists(out):
         try:
             with gzip.open(out, "rt", encoding="utf-8") as f:
                 for prior in csv.DictReader(f):
